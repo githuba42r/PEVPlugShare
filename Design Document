@@ -1,0 +1,140 @@
+Create an Android App to allow users to submit locations of Publicly available Powerpoints, where PEV riders can charge their devices when away from home.
+
+Main Screen
+------------
+The main screen of the app will show a Open Street Maps display of the users current location and the location of recorded charging points within the local area.
+
+The map will allow the user to search a location by address, postcode or suburb to center the map and show available charging locations.
+
+The main screen map will include a button to allow the user to add a new location.
+
+The main screen will allow the user to select a charge location if clicked will display the basic infodmation about the charge location in a small popup including
+  - location name
+  - date added
+  - brief desription
+  - distant to loation
+  - whether the lcoation is currently open
+  - action buttons at the bottom of the popup
+    - Location details
+    - Navigate to location.
+
+The location details action will open a new screen with all details about the location including
+ - the number of charge points,
+ - expected capacity,
+ - a gallery of the image stored against the charge point
+ - the distance to the charge point
+ - the opening hours/available hours
+ - the description of the location
+ - any other notes related to the location.
+
+The navigation to location action popup send the navigation request to android allowing the user to select the applciation to use to complete the navigation request.
+
+Adding a new location
+---------------------
+Then addding a new location allow the user to adjust the current position of the location using a OSM map view.
+
+A new location when being added will allow the user to add a name, description, number and capacity of the charging points.
+
+The user can add pictures of the location to help other user location the charging point.
+
+Charge points will be stored in a web service using AWS and the android app will utilise a Rest API to query available location within the local area, submit new locations, add images to a location, submit comments/notes to an existing location..
+
+A user must be logged in to add a new location, and have user or admin privileged
+
+If a guest user attempts to add a location the app will request that the enter an invitation code. The entered invitation code will be validated against the webservice, and will be record against the account id that provided the code, and make the account a user.
+
+Once use an invitation code has been submitted it will be marked as consumed, and thus will not be allowed to be provided by another user.
+
+Hamburger mnenu
+--------------
+
+the hamburger menu will provide options to sign in, log out, and add a new location.
+
+Guest user will also be provided an option to enter an invitation code.
+
+The Android App will use AWS Cognito for Account management and authorization to access to the webservice RestAPI Endpoint.
+
+
+Web Service
+------------
+
+The web service will be hosted on AWS and will user DynamoDB for storage of location data, user, invitation codes, and images.
+
+The webservice will user API gateway and Lambda function for all Rest API endpoints.
+
+The webservice will use AWS Cognito for user authentication and authorization
+
+The webservice willuser AWS S3 for the storage of images of charging locations. Access to S3 resources will be secured via the app and authorization.
+
+the webservice will provide 3 levels of users
+ - admin
+ - user
+ - guest
+
+a guest user is allow:
+  - to list locations and
+  - retreive lodation details including images.
+a user is allowed
+  - to list locations and
+  - retreive location details including images.
+  - upload images of a charging location
+  - add comments/noted to an existing location
+  - submit a change request/update for a location.
+  - submit a new loation
+  - update a location
+  - add photos to location
+  - add comments/notes to an existing location
+an admin is able to:
+  - to list locations and
+  - retreive lodation details including images.
+  - submit a new loation
+  - remove a location
+  - hide location
+  - remove a user
+  - block a user
+  - make another user into an admin
+  - create inviations that can be sent to other users.
+  - list inviations with filters by status, date created, date submited
+
+The web service will provide the following endpoints:
+
+- list location within a range in km of a GPS location (max range 20km)
+- list the details on a specific location
+- add a new location
+- hide a location
+- remove a location
+- update a location
+- add photos to a location that the user owns
+- create one or more invitation codes
+- list invitation codes based on status and date created or date submitted.
+- make a user adrmin
+- remove admin roles from a user.
+- list accounts with filters by name, email, status, date created, last seen
+
+Images uploaded for a lcoation by a user must be approved by an admin user before that are accessible on the app.
+
+Invidation codes status can be one of
+
+- Pending
+- Consumed
+- Canceled.
+
+The web service when validating an invitation code will ensure that the code submittted is in the pending status and exists.
+
+Invidation codes willbe 8 charge Uppercase alpha number values, prefiex with the Year and Month. eg. 2504-AS81-KA83, and will be randomly generated.
+
+Tasks
+------
+In a folder AndroidApp, create the source code, documentation, configuration for the android app.
+
+Include a readme with basic structure of the app including folder structure and file layout.
+
+Include in the readme the list of Android Permission that the app will require.
+
+In a folder AWS-Serverless, create the AWS SAM projecte to create the required AWS resources including
+- DynamoDB Table schema
+- Lambda Services for Rest API endpoints
+- API gateway configruation to route request to the Rest API enpoint lambda functions
+- AWS COgnitio configuration for storing account credentials, including the account roles.
+- AWS S3 bucket for storage of uploaded images.
+
