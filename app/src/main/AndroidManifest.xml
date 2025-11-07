@@ -53,6 +53,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.photo.PhotoCaptureActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.edit.EditLocationActivity"
             android:exported="false" />
 

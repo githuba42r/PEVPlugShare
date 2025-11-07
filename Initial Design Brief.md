@@ -30,7 +30,7 @@ the app should allow for the editing of existing locations in the My Places, inc
 
 the app allow for the deletion of a location following confirmation.
 
-the app will have a topbar with a hamburger menu.
+the app will have a topbar with a hamburger menu.1
 
 in the menu are a settings, about and logout, and resync options.
 
