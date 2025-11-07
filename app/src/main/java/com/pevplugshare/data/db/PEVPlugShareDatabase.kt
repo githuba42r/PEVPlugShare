@@ -7,10 +7,12 @@ import androidx.room.RoomDatabase
 import com.pevplugshare.data.db.dao.LocationDao
 import com.pevplugshare.data.db.dao.PhotoDao
 import com.pevplugshare.data.db.dao.PendingLocationDao
+import com.pevplugshare.data.db.dao.PendingOperationDao
 import com.pevplugshare.data.db.dao.SyncStateDao
 import com.pevplugshare.data.db.dao.UserPreferencesDao
 import com.pevplugshare.data.db.entity.LocationEntity
 import com.pevplugshare.data.db.entity.PendingLocationEntity
+import com.pevplugshare.data.db.entity.PendingOperationEntity
 import com.pevplugshare.data.db.entity.PhotoEntity
 import com.pevplugshare.data.db.entity.SyncStateEntity
 import com.pevplugshare.data.db.entity.UserPreferencesEntity
@@ -21,9 +23,10 @@ import com.pevplugshare.data.db.entity.UserPreferencesEntity
         PhotoEntity::class,
         SyncStateEntity::class,
         UserPreferencesEntity::class,
-        PendingLocationEntity::class
+        PendingLocationEntity::class,
+        PendingOperationEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class PEVPlugShareDatabase : RoomDatabase() {
@@ -32,6 +35,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
     abstract fun syncStateDao(): SyncStateDao
     abstract fun userPreferencesDao(): UserPreferencesDao
     abstract fun pendingLocationDao(): PendingLocationDao
+    abstract fun pendingOperationDao(): PendingOperationDao
 
     companion object {
         @Volatile

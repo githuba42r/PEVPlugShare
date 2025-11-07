@@ -5,6 +5,7 @@ import com.pevplugshare.data.db.PEVPlugShareDatabase
 import com.pevplugshare.data.db.dao.LocationDao
 import com.pevplugshare.data.db.dao.PhotoDao
 import com.pevplugshare.data.db.dao.PendingLocationDao
+import com.pevplugshare.data.db.dao.PendingOperationDao
 import com.pevplugshare.data.db.dao.SyncStateDao
 import com.pevplugshare.data.db.dao.UserPreferencesDao
 import dagger.Module
@@ -54,5 +55,11 @@ object DatabaseModule {
     @Provides
     fun providePendingLocationDao(database: PEVPlugShareDatabase): PendingLocationDao {
         return database.pendingLocationDao()
+    }
+
+    @Singleton
+    @Provides
+    fun providePendingOperationDao(database: PEVPlugShareDatabase): PendingOperationDao {
+        return database.pendingOperationDao()
     }
 }

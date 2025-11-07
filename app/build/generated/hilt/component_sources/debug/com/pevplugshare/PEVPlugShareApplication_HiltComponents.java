@@ -1,7 +1,9 @@
 package com.pevplugshare;
 
+import androidx.hilt.work.HiltWrapper_WorkerFactoryModule;
 import com.pevplugshare.di.DatabaseModule;
 import com.pevplugshare.di.NetworkModule;
+import com.pevplugshare.di.RepositoryModule;
 import com.pevplugshare.ui.add.AddLocationActivity_GeneratedInjector;
 import com.pevplugshare.ui.add.AddLocationViewModel_HiltModules;
 import com.pevplugshare.ui.auth.LoginActivity_GeneratedInjector;
@@ -14,6 +16,7 @@ import com.pevplugshare.ui.main.MainActivity_GeneratedInjector;
 import com.pevplugshare.ui.main.MainViewModel_HiltModules;
 import com.pevplugshare.ui.photo.PhotoCaptureActivity_GeneratedInjector;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel_HiltModules;
+import com.pevplugshare.worker.AutoSyncWorker_HiltModule;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -139,11 +142,14 @@ public final class PEVPlugShareApplication_HiltComponents {
   @Component(
       modules = {
           ApplicationContextModule.class,
+          AutoSyncWorker_HiltModule.class,
           DatabaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
+          HiltWrapper_WorkerFactoryModule.class,
           NetworkModule.class,
           ActivityRetainedCBuilderModule.class,
-          ServiceCBuilderModule.class
+          ServiceCBuilderModule.class,
+          RepositoryModule.class
       }
   )
   @Singleton

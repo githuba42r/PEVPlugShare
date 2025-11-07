@@ -177,9 +177,9 @@ document.getElementById(id).style.display = 'none';
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lint Report: 259 warnings</span>
+      <span class="mdl-layout-title">Lint Report: 265 warnings</span>
       <div class="mdl-layout-spacer"></div>
-      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Fri Nov 07 10:49:12 AEST 2025 by AGP (8.4.0)</nav>
+      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Fri Nov 07 11:06:28 AEST 2025 by AGP (8.4.0)</nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
@@ -191,7 +191,7 @@ document.getElementById(id).style.display = 'none';
       <a class="mdl-navigation__link" href="#CustomSplashScreen"><i class="material-icons warning-icon">warning</i>Application-defined Launch Screen (1)</a>
       <a class="mdl-navigation__link" href="#IntentFilterUniqueDataAttributes"><i class="material-icons warning-icon">warning</i>Data tags should only declare unique attributes (2)</a>
       <a class="mdl-navigation__link" href="#AndroidGradlePluginVersion"><i class="material-icons warning-icon">warning</i>Obsolete Android Gradle Plugin Version (3)</a>
-      <a class="mdl-navigation__link" href="#GradleDependency"><i class="material-icons warning-icon">warning</i>Obsolete Gradle Dependency (66)</a>
+      <a class="mdl-navigation__link" href="#GradleDependency"><i class="material-icons warning-icon">warning</i>Obsolete Gradle Dependency (72)</a>
       <a class="mdl-navigation__link" href="#KaptUsageInsteadOfKsp"><i class="material-icons warning-icon">warning</i>Kapt usage should be replaced with KSP (1)</a>
       <a class="mdl-navigation__link" href="#Overdraw"><i class="material-icons warning-icon">warning</i>Overdraw: Painting regions more than once (1)</a>
       <a class="mdl-navigation__link" href="#UnusedResources"><i class="material-icons warning-icon">warning</i>Unused resources (69)</a>
@@ -233,7 +233,7 @@ document.getElementById(id).style.display = 'none';
 <td class="countColumn">3</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#AndroidGradlePluginVersion">AndroidGradlePluginVersion</a>: Obsolete Android Gradle Plugin Version</td></tr>
 <tr>
-<td class="countColumn">66</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<td class="countColumn">72</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#GradleDependency">GradleDependency</a>: Obsolete Gradle Dependency</td></tr>
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Performance">Performance</a>
 </td></tr>
@@ -716,7 +716,7 @@ Dismiss</button>            </div>
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
 </pre>
 
-<button class="mdl-button mdl-js-button mdl-button--primary" id="GradleDependencyDivLink" onclick="reveal('GradleDependencyDiv');" />+ 61 More Occurrences...</button>
+<button class="mdl-button mdl-js-button mdl-button--primary" id="GradleDependencyDivLink" onclick="reveal('GradleDependencyDiv');" />+ 67 More Occurrences...</button>
 <div id="GradleDependencyDiv" style="display: none">
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:5</span>: <span class="message">A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.1</span><br /><pre class="errorlines">
 <span class="lineno">  2 </span>agp = "8.4.0"
@@ -1166,7 +1166,7 @@ Dismiss</button>            </div>
 <span class="lineno"> 19 </span>securityCryptoKtx = "1.1.0-alpha06"
 </pre>
 
-<br/><b>NOTE: 16 results omitted.</b><br/><br/></div>
+<br/><b>NOTE: 22 results omitted.</b><br/><br/></div>
 </div>
 <div class="metadata"><div class="explanation" id="explanationGradleDependency" style="display: none;">
 This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find.<br/>Note: This issue has an associated quickfix operation in Android Studio and IntelliJ IDEA.<br>

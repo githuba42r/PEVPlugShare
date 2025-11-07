@@ -28,6 +28,6 @@
       applicationId="com.pevplugshare"
       generatedSourceFolders="build/generated/source/kapt/debug:build/generated/ap_generated_sources/debug/out:build/generated/data_binding_base_class_source_out/debug/out"
       generatedResourceFolders="build/generated/res/resValues/debug"
-      desugaredMethodsFiles="/home/philg/.gradle/caches/transforms-4/165b95d163286073f7648072e8e92f9b/transformed/D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="/home/philg/.gradle/caches/transforms-4/e890e3b4002ffd594b6d7aeff8d3f839/transformed/D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

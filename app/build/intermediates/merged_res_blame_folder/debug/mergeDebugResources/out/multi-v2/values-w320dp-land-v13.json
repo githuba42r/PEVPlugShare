@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.pevplugshare.app-mergeDebugResources-51:/values-w320dp-land-v13/values-w320dp-land-v13.xml",
+            "outputFile": "com.pevplugshare.app-mergeDebugResources-52:/values-w320dp-land-v13/values-w320dp-land-v13.xml",
             "map": [
                 {
-                    "source": "/home/philg/.gradle/caches/transforms-4/9373c44fa233d670fb3f62c5e0717528/transformed/material-1.11.0/res/values-w320dp-land-v13/values-w320dp-land-v13.xml",
+                    "source": "/home/philg/.gradle/caches/transforms-4/e091f759ff6f0d7ba84b5748adc163f1/transformed/material-1.11.0/res/values-w320dp-land-v13/values-w320dp-land-v13.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

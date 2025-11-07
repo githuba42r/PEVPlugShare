@@ -15,6 +15,8 @@ import com.pevplugshare.data.db.dao.LocationDao;
 import com.pevplugshare.data.db.dao.LocationDao_Impl;
 import com.pevplugshare.data.db.dao.PendingLocationDao;
 import com.pevplugshare.data.db.dao.PendingLocationDao_Impl;
+import com.pevplugshare.data.db.dao.PendingOperationDao;
+import com.pevplugshare.data.db.dao.PendingOperationDao_Impl;
 import com.pevplugshare.data.db.dao.PhotoDao;
 import com.pevplugshare.data.db.dao.PhotoDao_Impl;
 import com.pevplugshare.data.db.dao.SyncStateDao;
@@ -26,6 +28,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,10 +49,12 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
 
   private volatile PendingLocationDao _pendingLocationDao;
 
+  private volatile PendingOperationDao _pendingOperationDao;
+
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(1) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS `locations` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `socketTypes` TEXT NOT NULL, `publicPrivate` TEXT NOT NULL, `hasFee` INTEGER NOT NULL, `gpoCount` INTEGER NOT NULL, `openingHours` TEXT, `additionalInfo` TEXT, `providerName` TEXT, `providerWebsite` TEXT, `chargingCosts` TEXT, `color` TEXT NOT NULL, `icon` TEXT NOT NULL, `lastModified` INTEGER NOT NULL, `isFavourite` INTEGER NOT NULL, `syncStatus` TEXT NOT NULL, PRIMARY KEY(`id`))");
@@ -57,8 +62,9 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
         db.execSQL("CREATE TABLE IF NOT EXISTS `sync_state` (`id` TEXT NOT NULL, `lastSyncTime` INTEGER NOT NULL, `syncStatus` TEXT NOT NULL, `pendingCount` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `user_preferences` (`id` TEXT NOT NULL, `selectedCategory` TEXT, `syncFrequencyHours` INTEGER NOT NULL, `osmandAccount` TEXT, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `pending_locations` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `socketTypes` TEXT NOT NULL, `publicPrivate` TEXT NOT NULL, `hasFee` INTEGER NOT NULL, `gpoCount` INTEGER NOT NULL, `openingHours` TEXT, `additionalInfo` TEXT, `providerName` TEXT, `providerWebsite` TEXT, `chargingCosts` TEXT, `createdAt` INTEGER NOT NULL, `syncAttempts` INTEGER NOT NULL, `lastSyncAttempt` INTEGER, PRIMARY KEY(`id`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `pending_operations` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `locationId` TEXT NOT NULL, `operationType` TEXT NOT NULL, `operationData` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `retryCount` INTEGER NOT NULL, `maxRetries` INTEGER NOT NULL, `lastRetryTime` INTEGER, `errorMessage` TEXT, FOREIGN KEY(`locationId`) REFERENCES `locations`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '61b30d6400c1d0ed239f8b4df47c9342')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e6d0757eadbec041bbb1b53f7979625')");
       }
 
       @Override
@@ -68,6 +74,7 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
         db.execSQL("DROP TABLE IF EXISTS `sync_state`");
         db.execSQL("DROP TABLE IF EXISTS `user_preferences`");
         db.execSQL("DROP TABLE IF EXISTS `pending_locations`");
+        db.execSQL("DROP TABLE IF EXISTS `pending_operations`");
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
           for (RoomDatabase.Callback _callback : _callbacks) {
@@ -89,6 +96,7 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
       @Override
       public void onOpen(@NonNull final SupportSQLiteDatabase db) {
         mDatabase = db;
+        db.execSQL("PRAGMA foreign_keys = ON");
         internalInitInvalidationTracker(db);
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
@@ -211,9 +219,29 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
                   + " Expected:\n" + _infoPendingLocations + "\n"
                   + " Found:\n" + _existingPendingLocations);
         }
+        final HashMap<String, TableInfo.Column> _columnsPendingOperations = new HashMap<String, TableInfo.Column>(9);
+        _columnsPendingOperations.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingOperations.put("locationId", new TableInfo.Column("locationId", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingOperations.put("operationType", new TableInfo.Column("operationType", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingOperations.put("operationData", new TableInfo.Column("operationData", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingOperations.put("timestamp", new TableInfo.Column("timestamp", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingOperations.put("retryCount", new TableInfo.Column("retryCount", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingOperations.put("maxRetries", new TableInfo.Column("maxRetries", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingOperations.put("lastRetryTime", new TableInfo.Column("lastRetryTime", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPendingOperations.put("errorMessage", new TableInfo.Column("errorMessage", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysPendingOperations = new HashSet<TableInfo.ForeignKey>(1);
+        _foreignKeysPendingOperations.add(new TableInfo.ForeignKey("locations", "CASCADE", "NO ACTION", Arrays.asList("locationId"), Arrays.asList("id")));
+        final HashSet<TableInfo.Index> _indicesPendingOperations = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoPendingOperations = new TableInfo("pending_operations", _columnsPendingOperations, _foreignKeysPendingOperations, _indicesPendingOperations);
+        final TableInfo _existingPendingOperations = TableInfo.read(db, "pending_operations");
+        if (!_infoPendingOperations.equals(_existingPendingOperations)) {
+          return new RoomOpenHelper.ValidationResult(false, "pending_operations(com.pevplugshare.data.db.entity.PendingOperationEntity).\n"
+                  + " Expected:\n" + _infoPendingOperations + "\n"
+                  + " Found:\n" + _existingPendingOperations);
+        }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "61b30d6400c1d0ed239f8b4df47c9342", "0aac868fb80f7082f089ca4b15869754");
+    }, "6e6d0757eadbec041bbb1b53f7979625", "c89159abc57cdd8f0319359ad7a02679");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;
@@ -224,23 +252,34 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
   protected InvalidationTracker createInvalidationTracker() {
     final HashMap<String, String> _shadowTablesMap = new HashMap<String, String>(0);
     final HashMap<String, Set<String>> _viewTables = new HashMap<String, Set<String>>(0);
-    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "locations","location_photos","sync_state","user_preferences","pending_locations");
+    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "locations","location_photos","sync_state","user_preferences","pending_locations","pending_operations");
   }
 
   @Override
   public void clearAllTables() {
     super.assertNotMainThread();
     final SupportSQLiteDatabase _db = super.getOpenHelper().getWritableDatabase();
+    final boolean _supportsDeferForeignKeys = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
     try {
+      if (!_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA foreign_keys = FALSE");
+      }
       super.beginTransaction();
+      if (_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA defer_foreign_keys = TRUE");
+      }
       _db.execSQL("DELETE FROM `locations`");
       _db.execSQL("DELETE FROM `location_photos`");
       _db.execSQL("DELETE FROM `sync_state`");
       _db.execSQL("DELETE FROM `user_preferences`");
       _db.execSQL("DELETE FROM `pending_locations`");
+      _db.execSQL("DELETE FROM `pending_operations`");
       super.setTransactionSuccessful();
     } finally {
       super.endTransaction();
+      if (!_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA foreign_keys = TRUE");
+      }
       _db.query("PRAGMA wal_checkpoint(FULL)").close();
       if (!_db.inTransaction()) {
         _db.execSQL("VACUUM");
@@ -257,6 +296,7 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
     _typeConvertersMap.put(SyncStateDao.class, SyncStateDao_Impl.getRequiredConverters());
     _typeConvertersMap.put(UserPreferencesDao.class, UserPreferencesDao_Impl.getRequiredConverters());
     _typeConvertersMap.put(PendingLocationDao.class, PendingLocationDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(PendingOperationDao.class, PendingOperationDao_Impl.getRequiredConverters());
     return _typeConvertersMap;
   }
 
@@ -341,6 +381,20 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
           _pendingLocationDao = new PendingLocationDao_Impl(this);
         }
         return _pendingLocationDao;
+      }
+    }
+  }
+
+  @Override
+  public PendingOperationDao pendingOperationDao() {
+    if (_pendingOperationDao != null) {
+      return _pendingOperationDao;
+    } else {
+      synchronized(this) {
+        if(_pendingOperationDao == null) {
+          _pendingOperationDao = new PendingOperationDao_Impl(this);
+        }
+        return _pendingOperationDao;
       }
     }
   }

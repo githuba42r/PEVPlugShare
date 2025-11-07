@@ -6,14 +6,23 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
+import com.pevplugshare.data.db.PEVPlugShareDatabase;
+import com.pevplugshare.data.db.dao.PendingOperationDao;
+import com.pevplugshare.data.network.ConnectivityObserver;
 import com.pevplugshare.data.remote.OsmandApiClient;
 import com.pevplugshare.data.remote.TokenManager;
+import com.pevplugshare.data.repository.PendingOperationRepository;
+import com.pevplugshare.data.repository.SyncManager;
 import com.pevplugshare.data.storage.PhotoStorageManager;
+import com.pevplugshare.di.DatabaseModule_ProvideDatabaseFactory;
+import com.pevplugshare.di.DatabaseModule_ProvidePendingOperationDaoFactory;
 import com.pevplugshare.di.NetworkModule_ProvideAuthRepositoryFactory;
+import com.pevplugshare.di.NetworkModule_ProvideConnectivityObserverFactory;
 import com.pevplugshare.di.NetworkModule_ProvideLocationRepositoryFactory;
 import com.pevplugshare.di.NetworkModule_ProvideOsmandApiClientFactory;
 import com.pevplugshare.di.NetworkModule_ProvidePhotoStorageManagerFactory;
 import com.pevplugshare.di.NetworkModule_ProvideTokenManagerFactory;
+import com.pevplugshare.di.RepositoryModule_ProvidePendingOperationRepositoryFactory;
 import com.pevplugshare.domain.repository.AuthRepository;
 import com.pevplugshare.domain.repository.LocationRepository;
 import com.pevplugshare.ui.add.AddLocationActivity;
@@ -511,7 +520,7 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
           return (T) new LoginViewModel(singletonCImpl.provideAuthRepositoryProvider.get());
 
           case 3: // com.pevplugshare.ui.main.MainViewModel 
-          return (T) new MainViewModel(singletonCImpl.provideLocationRepositoryProvider.get(), singletonCImpl.provideAuthRepositoryProvider.get());
+          return (T) new MainViewModel(singletonCImpl.provideLocationRepositoryProvider.get(), singletonCImpl.provideAuthRepositoryProvider.get(), singletonCImpl.provideConnectivityObserverProvider.get(), singletonCImpl.syncManagerProvider.get());
 
           case 4: // com.pevplugshare.ui.photo.PhotoCaptureViewModel 
           return (T) new PhotoCaptureViewModel(singletonCImpl.providePhotoStorageManagerProvider.get());
@@ -607,6 +616,16 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     private Provider<AuthRepository> provideAuthRepositoryProvider;
 
+    private Provider<ConnectivityObserver> provideConnectivityObserverProvider;
+
+    private Provider<PEVPlugShareDatabase> provideDatabaseProvider;
+
+    private Provider<PendingOperationDao> providePendingOperationDaoProvider;
+
+    private Provider<PendingOperationRepository> providePendingOperationRepositoryProvider;
+
+    private Provider<SyncManager> syncManagerProvider;
+
     private Provider<PhotoStorageManager> providePhotoStorageManagerProvider;
 
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
@@ -621,7 +640,12 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
       this.provideOsmandApiClientProvider = DoubleCheck.provider(new SwitchingProvider<OsmandApiClient>(singletonCImpl, 1));
       this.provideLocationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<LocationRepository>(singletonCImpl, 0));
       this.provideAuthRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AuthRepository>(singletonCImpl, 3));
-      this.providePhotoStorageManagerProvider = DoubleCheck.provider(new SwitchingProvider<PhotoStorageManager>(singletonCImpl, 4));
+      this.provideConnectivityObserverProvider = DoubleCheck.provider(new SwitchingProvider<ConnectivityObserver>(singletonCImpl, 4));
+      this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<PEVPlugShareDatabase>(singletonCImpl, 8));
+      this.providePendingOperationDaoProvider = DoubleCheck.provider(new SwitchingProvider<PendingOperationDao>(singletonCImpl, 7));
+      this.providePendingOperationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<PendingOperationRepository>(singletonCImpl, 6));
+      this.syncManagerProvider = DoubleCheck.provider(new SwitchingProvider<SyncManager>(singletonCImpl, 5));
+      this.providePhotoStorageManagerProvider = DoubleCheck.provider(new SwitchingProvider<PhotoStorageManager>(singletonCImpl, 9));
     }
 
     @Override
@@ -669,7 +693,22 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
           case 3: // com.pevplugshare.domain.repository.AuthRepository 
           return (T) NetworkModule_ProvideAuthRepositoryFactory.provideAuthRepository(singletonCImpl.provideOsmandApiClientProvider.get(), singletonCImpl.provideTokenManagerProvider.get());
 
-          case 4: // com.pevplugshare.data.storage.PhotoStorageManager 
+          case 4: // com.pevplugshare.data.network.ConnectivityObserver 
+          return (T) NetworkModule_ProvideConnectivityObserverFactory.provideConnectivityObserver(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 5: // com.pevplugshare.data.repository.SyncManager 
+          return (T) new SyncManager(singletonCImpl.providePendingOperationRepositoryProvider.get(), singletonCImpl.provideLocationRepositoryProvider.get());
+
+          case 6: // com.pevplugshare.data.repository.PendingOperationRepository 
+          return (T) RepositoryModule_ProvidePendingOperationRepositoryFactory.providePendingOperationRepository(singletonCImpl.providePendingOperationDaoProvider.get());
+
+          case 7: // com.pevplugshare.data.db.dao.PendingOperationDao 
+          return (T) DatabaseModule_ProvidePendingOperationDaoFactory.providePendingOperationDao(singletonCImpl.provideDatabaseProvider.get());
+
+          case 8: // com.pevplugshare.data.db.PEVPlugShareDatabase 
+          return (T) DatabaseModule_ProvideDatabaseFactory.provideDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 9: // com.pevplugshare.data.storage.PhotoStorageManager 
           return (T) NetworkModule_ProvidePhotoStorageManagerFactory.providePhotoStorageManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);

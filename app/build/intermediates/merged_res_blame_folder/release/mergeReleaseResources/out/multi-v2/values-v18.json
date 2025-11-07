@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.pevplugshare.app-mergeReleaseResources-51:/values-v18/values-v18.xml",
+            "outputFile": "com.pevplugshare.app-mergeReleaseResources-52:/values-v18/values-v18.xml",
             "map": [
                 {
-                    "source": "/home/philg/.gradle/caches/transforms-4/f741345ef084f0184f666ab3b38c3cb6/transformed/appcompat-1.6.1/res/values-v18/values-v18.xml",
+                    "source": "/home/philg/.gradle/caches/transforms-4/972eb775f2be7b34a4928d037e74ef9d/transformed/appcompat-1.6.1/res/values-v18/values-v18.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

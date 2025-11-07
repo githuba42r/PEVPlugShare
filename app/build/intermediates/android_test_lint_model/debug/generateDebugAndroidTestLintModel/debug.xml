@@ -26,6 +26,6 @@
       type="INSTRUMENTATION_TEST"
       applicationId="com.pevplugshare.test"
       generatedResourceFolders="build/generated/res/resValues/androidTest/debug"
-      desugaredMethodsFiles="/home/philg/.gradle/caches/transforms-4/165b95d163286073f7648072e8e92f9b/transformed/D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="/home/philg/.gradle/caches/transforms-4/e890e3b4002ffd594b6d7aeff8d3f839/transformed/D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>
