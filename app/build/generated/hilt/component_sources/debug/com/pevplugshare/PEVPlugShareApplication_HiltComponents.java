@@ -6,6 +6,8 @@ import com.pevplugshare.ui.auth.LoginActivity_GeneratedInjector;
 import com.pevplugshare.ui.auth.LoginViewModel_HiltModules;
 import com.pevplugshare.ui.auth.SplashActivity_GeneratedInjector;
 import com.pevplugshare.ui.auth.SplashViewModel_HiltModules;
+import com.pevplugshare.ui.main.MainActivity_GeneratedInjector;
+import com.pevplugshare.ui.main.MainViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -161,6 +163,7 @@ public final class PEVPlugShareApplication_HiltComponents {
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           LoginViewModel_HiltModules.KeyModule.class,
+          MainViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
           SplashViewModel_HiltModules.KeyModule.class
@@ -187,6 +190,7 @@ public final class PEVPlugShareApplication_HiltComponents {
   @ActivityScoped
   public abstract static class ActivityC implements LoginActivity_GeneratedInjector,
       SplashActivity_GeneratedInjector,
+      MainActivity_GeneratedInjector,
       ActivityComponent,
       DefaultViewModelFactories.ActivityEntryPoint,
       HiltWrapper_HiltViewModelFactory_ActivityCreatorEntryPoint,
@@ -202,6 +206,7 @@ public final class PEVPlugShareApplication_HiltComponents {
       modules = {
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           LoginViewModel_HiltModules.BindsModule.class,
+          MainViewModel_HiltModules.BindsModule.class,
           SplashViewModel_HiltModules.BindsModule.class
       }
   )

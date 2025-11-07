@@ -327,15 +327,9 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
    performance if you pre-mix the background with your drawable and use that
    resulting image or color as a custom theme background instead.
 
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:4: Warning: The resource R.color.md_theme_primary_variant appears to be unused [UnusedResources]
-    <color name="md_theme_primary_variant">#135a1f</color>
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:6: Warning: The resource R.color.md_theme_secondary_variant appears to be unused [UnusedResources]
     <color name="md_theme_secondary_variant">#1e5c2e</color>
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:8: Warning: The resource R.color.md_theme_surface appears to be unused [UnusedResources]
-    <color name="md_theme_surface">#fffbfe</color>
-           ~~~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:9: Warning: The resource R.color.md_theme_background appears to be unused [UnusedResources]
     <color name="md_theme_background">#fffbfe</color>
            ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -351,15 +345,6 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:15: Warning: The resource R.color.transparent appears to be unused [UnusedResources]
     <color name="transparent">#00000000</color>
            ~~~~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:17: Warning: The resource R.color.green_open appears to be unused [UnusedResources]
-    <color name="green_open">#4CAF50</color>
-           ~~~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:18: Warning: The resource R.color.red_closed appears to be unused [UnusedResources]
-    <color name="red_closed">#f44336</color>
-           ~~~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:19: Warning: The resource R.color.orange_warning appears to be unused [UnusedResources]
-    <color name="orange_warning">#ff9800</color>
-           ~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/colors.xml:20: Warning: The resource R.color.blue_info appears to be unused [UnusedResources]
     <color name="blue_info">#2196F3</color>
            ~~~~~~~~~~~~~~~~
@@ -640,7 +625,7 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 
    https://developer.android.com/guide/topics/text/autofill.html
 
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:16: Warning: Missing contentDescription attribute on image [ContentDescription]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:112: Warning: Missing contentDescription attribute on image [ContentDescription]
     <com.google.android.material.floatingactionbutton.FloatingActionButton
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -663,12 +648,104 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 
    https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases
 
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:53: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                locationGpoCount.text = "${location.gpoCount} GPO"
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:53: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                locationGpoCount.text = "${location.gpoCount} GPO"
+                                                             ~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:61: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        text = "💰 Paid"
+                                ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:64: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        text = "Free"
+                                ~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:100: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        binding.emptyState.text = "No charging locations found"
+                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:106: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                        binding.emptyState.text = "Error: ${state.message}"
+                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:106: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        binding.emptyState.text = "Error: ${state.message}"
+                                                   ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:116: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        text = "🔴 Offline"
+                                ~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:119: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        text = "🟢 Online"
+                                ~~~~~~~~~
+
+   Explanation for issues of type "SetTextI18n":
+   When calling TextView#setText
+   * Never call Number#toString() to format numbers; it will not handle
+   fraction separators and locale-specific digits properly. Consider using
+   String#format with proper format specifications (%d or %f) instead.
+   * Do not pass a string literal (e.g. "Hello") to display text. Hardcoded
+   text can not be properly translated to other languages. Consider using
+   Android resource strings instead.
+   * Do not build messages by concatenating text chunks. Such messages can not
+   be properly translated.
+
+   https://developer.android.com/guide/topics/resources/localization.html
+
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_import_locations.xml:11: Warning: Hardcoded string "Importing Locations...", should use @string resource [HardcodedText]
         android:text="Importing Locations..."
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_login.xml:29: Warning: Hardcoded string "Sign in to your OSMAnd account to manage charging locations.", should use @string resource [HardcodedText]
         android:text="Sign in to your OSMAnd account to manage charging locations."
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:26: Warning: Hardcoded string "Menu", should use @string resource [HardcodedText]
+                android:contentDescription="Menu"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:35: Warning: Hardcoded string "🟢 Online", should use @string resource [HardcodedText]
+                android:text="🟢 Online"
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:45: Warning: Hardcoded string "Select Category", should use @string resource [HardcodedText]
+                android:text="Select Category"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:66: Warning: Hardcoded string "Refresh", should use @string resource [HardcodedText]
+                android:contentDescription="Refresh"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:74: Warning: Hardcoded string "Tap to refresh locations", should use @string resource [HardcodedText]
+                android:text="Tap to refresh locations"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:104: Warning: Hardcoded string "No locations loaded", should use @string resource [HardcodedText]
+                android:text="No locations loaded"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:33: Warning: Hardcoded string "Location Name", should use @string resource [HardcodedText]
+                    android:text="Location Name"
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:42: Warning: Hardcoded string "1.2 km away", should use @string resource [HardcodedText]
+                    android:text="1.2 km away"
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:51: Warning: Hardcoded string "Favourite", should use @string resource [HardcodedText]
+                android:contentDescription="Favourite"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:63: Warning: Hardcoded string "Location description", should use @string resource [HardcodedText]
+            android:text="Location description"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:78: Warning: Hardcoded string "3 GPO", should use @string resource [HardcodedText]
+                android:text="3 GPO"
+                ~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:85: Warning: Hardcoded string "🌍 Public", should use @string resource [HardcodedText]
+                android:text="🌍 Public"
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:96: Warning: Hardcoded string "Free", should use @string resource [HardcodedText]
+                android:text="Free"
+                ~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:106: Warning: Hardcoded string "Navigate with OSMAnd", should use @string resource [HardcodedText]
+            android:text="Navigate with OSMAnd"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/menu/main_menu.xml:5: Warning: Hardcoded string "Settings", should use @string resource [HardcodedText]
+        android:title="Settings" />
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/menu/main_menu.xml:8: Warning: Hardcoded string "Search", should use @string resource [HardcodedText]
+        android:title="Search" />
+        ~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/menu/main_menu.xml:11: Warning: Hardcoded string "Logout", should use @string resource [HardcodedText]
+        android:title="Logout" />
+        ~~~~~~~~~~~~~~~~~~~~~~
 
    Explanation for issues of type "HardcodedText":
    Hardcoding text attributes directly in layout files is bad for several
@@ -684,4 +761,4 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
    There are quickfixes to automatically extract this hardcoded string into a
    resource lookup.
 
-0 errors, 150 warnings
+0 errors, 171 warnings

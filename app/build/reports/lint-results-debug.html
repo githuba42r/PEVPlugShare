@@ -177,9 +177,9 @@ document.getElementById(id).style.display = 'none';
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lint Report: 150 warnings</span>
+      <span class="mdl-layout-title">Lint Report: 171 warnings</span>
       <div class="mdl-layout-spacer"></div>
-      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Fri Nov 07 10:19:15 AEST 2025 by AGP (8.4.0)</nav>
+      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Fri Nov 07 10:23:26 AEST 2025 by AGP (8.4.0)</nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
@@ -194,13 +194,14 @@ document.getElementById(id).style.display = 'none';
       <a class="mdl-navigation__link" href="#GradleDependency"><i class="material-icons warning-icon">warning</i>Obsolete Gradle Dependency (57)</a>
       <a class="mdl-navigation__link" href="#KaptUsageInsteadOfKsp"><i class="material-icons warning-icon">warning</i>Kapt usage should be replaced with KSP (1)</a>
       <a class="mdl-navigation__link" href="#Overdraw"><i class="material-icons warning-icon">warning</i>Overdraw: Painting regions more than once (1)</a>
-      <a class="mdl-navigation__link" href="#UnusedResources"><i class="material-icons warning-icon">warning</i>Unused resources (67)</a>
+      <a class="mdl-navigation__link" href="#UnusedResources"><i class="material-icons warning-icon">warning</i>Unused resources (62)</a>
       <a class="mdl-navigation__link" href="#MonochromeLauncherIcon"><i class="material-icons warning-icon">warning</i>Monochrome icon is not defined (5)</a>
       <a class="mdl-navigation__link" href="#ButtonOrder"><i class="material-icons warning-icon">warning</i>Button order (1)</a>
       <a class="mdl-navigation__link" href="#ButtonStyle"><i class="material-icons warning-icon">warning</i>Button should be borderless (4)</a>
       <a class="mdl-navigation__link" href="#Autofill"><i class="material-icons warning-icon">warning</i>Use Autofill (3)</a>
       <a class="mdl-navigation__link" href="#ContentDescription"><i class="material-icons warning-icon">warning</i>Image without <code>contentDescription</code> (1)</a>
-      <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (2)</a>
+      <a class="mdl-navigation__link" href="#SetTextI18n"><i class="material-icons warning-icon">warning</i>TextView Internationalization (9)</a>
+      <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (19)</a>
     </nav>
   </div>
   <main class="mdl-layout__content">
@@ -242,7 +243,7 @@ document.getElementById(id).style.display = 'none';
 <td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#Overdraw">Overdraw</a>: Overdraw: Painting regions more than once</td></tr>
 <tr>
-<td class="countColumn">67</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<td class="countColumn">62</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#UnusedResources">UnusedResources</a>: Unused resources</td></tr>
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Usability:Icons">Usability:Icons</a>
 </td></tr>
@@ -268,7 +269,10 @@ document.getElementById(id).style.display = 'none';
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Internationalization">Internationalization</a>
 </td></tr>
 <tr>
-<td class="countColumn">2</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<td class="countColumn">9</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<a href="#SetTextI18n">SetTextI18n</a>: TextView Internationalization</td></tr>
+<tr>
+<td class="countColumn">19</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#HardcodedText">HardcodedText</a>: Hardcoded text</td></tr>
 <tr><td></td><td class="categoryColumn"><a href="#ExtraIssues">Included Additional Checks (42)</a>
 </td></tr>
@@ -1211,15 +1215,6 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:4</span>: <span class="message">The resource <code>R.color.md_theme_primary_variant</code> appears to be unused</span><br /><pre class="errorlines">
-<span class="lineno">  1 </span><span class="prologue">&lt;?xml version="1.0" encoding="utf-8"?></span>
-<span class="lineno">  2 </span><span class="tag">&lt;resources></span>
-<span class="lineno">  3 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_primary"</span>>#1f6b2a<span class="tag">&lt;/color></span>
-<span class="caretline"><span class="lineno">  4 </span>    <span class="tag">&lt;color</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"md_theme_primary_variant"</span></span>>#135a1f<span class="tag">&lt;/color></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  5 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_secondary"</span>>#2d7a3f<span class="tag">&lt;/color></span>
-<span class="lineno">  6 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_secondary_variant"</span>>#1e5c2e<span class="tag">&lt;/color></span>
-<span class="lineno">  7 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_error"</span>>#c00000<span class="tag">&lt;/color></span></pre>
-
 <span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:6</span>: <span class="message">The resource <code>R.color.md_theme_secondary_variant</code> appears to be unused</span><br /><pre class="errorlines">
 <span class="lineno">  3 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_primary"</span>>#1f6b2a<span class="tag">&lt;/color></span>
 <span class="lineno">  4 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_primary_variant"</span>>#135a1f<span class="tag">&lt;/color></span>
@@ -1228,15 +1223,6 @@ Dismiss</button>            </div>
 <span class="lineno">  7 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_error"</span>>#c00000<span class="tag">&lt;/color></span>
 <span class="lineno">  8 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_surface"</span>>#fffbfe<span class="tag">&lt;/color></span>
 <span class="lineno">  9 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_background"</span>>#fffbfe<span class="tag">&lt;/color></span></pre>
-
-<span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:8</span>: <span class="message">The resource <code>R.color.md_theme_surface</code> appears to be unused</span><br /><pre class="errorlines">
-<span class="lineno">  5 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_secondary"</span>>#2d7a3f<span class="tag">&lt;/color></span>
-<span class="lineno">  6 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_secondary_variant"</span>>#1e5c2e<span class="tag">&lt;/color></span>
-<span class="lineno">  7 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_error"</span>>#c00000<span class="tag">&lt;/color></span>
-<span class="caretline"><span class="lineno">  8 </span>    <span class="tag">&lt;color</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"md_theme_surface"</span></span>>#fffbfe<span class="tag">&lt;/color></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_background"</span>>#fffbfe<span class="tag">&lt;/color></span>
-<span class="lineno"> 10 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_on_background"</span>>#1a1a1a<span class="tag">&lt;/color></span>
-<span class="lineno"> 11 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_on_surface_variant"</span>>#726f78<span class="tag">&lt;/color></span></pre>
 
 <span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:9</span>: <span class="message">The resource <code>R.color.md_theme_background</code> appears to be unused</span><br /><pre class="errorlines">
 <span class="lineno">  6 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_secondary_variant"</span>>#1e5c2e<span class="tag">&lt;/color></span>
@@ -1256,8 +1242,6 @@ Dismiss</button>            </div>
 <span class="lineno"> 12 </span>
 <span class="lineno"> 13 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"white"</span>>#FFFFFF<span class="tag">&lt;/color></span></pre>
 
-<button class="mdl-button mdl-js-button mdl-button--primary" id="UnusedResourcesDivLink" onclick="reveal('UnusedResourcesDiv');" />+ 62 More Occurrences...</button>
-<div id="UnusedResourcesDiv" style="display: none">
 <span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:11</span>: <span class="message">The resource <code>R.color.md_theme_on_surface_variant</code> appears to be unused</span><br /><pre class="errorlines">
 <span class="lineno">  8 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_surface"</span>>#fffbfe<span class="tag">&lt;/color></span>
 <span class="lineno">  9 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"md_theme_background"</span>>#fffbfe<span class="tag">&lt;/color></span>
@@ -1276,6 +1260,8 @@ Dismiss</button>            </div>
 <span class="lineno"> 16 </span>
 <span class="lineno"> 17 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"green_open"</span>>#4CAF50<span class="tag">&lt;/color></span></pre>
 
+<button class="mdl-button mdl-js-button mdl-button--primary" id="UnusedResourcesDivLink" onclick="reveal('UnusedResourcesDiv');" />+ 57 More Occurrences...</button>
+<div id="UnusedResourcesDiv" style="display: none">
 <span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:15</span>: <span class="message">The resource <code>R.color.transparent</code> appears to be unused</span><br /><pre class="errorlines">
 <span class="lineno"> 12 </span>
 <span class="lineno"> 13 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"white"</span>>#FFFFFF<span class="tag">&lt;/color></span>
@@ -1284,33 +1270,6 @@ Dismiss</button>            </div>
 <span class="lineno"> 16 </span>
 <span class="lineno"> 17 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"green_open"</span>>#4CAF50<span class="tag">&lt;/color></span>
 <span class="lineno"> 18 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"red_closed"</span>>#f44336<span class="tag">&lt;/color></span></pre>
-
-<span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:17</span>: <span class="message">The resource <code>R.color.green_open</code> appears to be unused</span><br /><pre class="errorlines">
-<span class="lineno"> 14 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"black"</span>>#000000<span class="tag">&lt;/color></span>
-<span class="lineno"> 15 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"transparent"</span>>#00000000<span class="tag">&lt;/color></span>
-<span class="lineno"> 16 </span>
-<span class="caretline"><span class="lineno"> 17 </span>    <span class="tag">&lt;color</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"green_open"</span></span>>#4CAF50<span class="tag">&lt;/color></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 18 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"red_closed"</span>>#f44336<span class="tag">&lt;/color></span>
-<span class="lineno"> 19 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"orange_warning"</span>>#ff9800<span class="tag">&lt;/color></span>
-<span class="lineno"> 20 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"blue_info"</span>>#2196F3<span class="tag">&lt;/color></span></pre>
-
-<span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:18</span>: <span class="message">The resource <code>R.color.red_closed</code> appears to be unused</span><br /><pre class="errorlines">
-<span class="lineno"> 15 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"transparent"</span>>#00000000<span class="tag">&lt;/color></span>
-<span class="lineno"> 16 </span>
-<span class="lineno"> 17 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"green_open"</span>>#4CAF50<span class="tag">&lt;/color></span>
-<span class="caretline"><span class="lineno"> 18 </span>    <span class="tag">&lt;color</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"red_closed"</span></span>>#f44336<span class="tag">&lt;/color></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 19 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"orange_warning"</span>>#ff9800<span class="tag">&lt;/color></span>
-<span class="lineno"> 20 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"blue_info"</span>>#2196F3<span class="tag">&lt;/color></span>
-</pre>
-
-<span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:19</span>: <span class="message">The resource <code>R.color.orange_warning</code> appears to be unused</span><br /><pre class="errorlines">
-<span class="lineno"> 16 </span>
-<span class="lineno"> 17 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"green_open"</span>>#4CAF50<span class="tag">&lt;/color></span>
-<span class="lineno"> 18 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"red_closed"</span>>#f44336<span class="tag">&lt;/color></span>
-<span class="caretline"><span class="lineno"> 19 </span>    <span class="tag">&lt;color</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"orange_warning"</span></span>>#ff9800<span class="tag">&lt;/color></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 20 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"blue_info"</span>>#2196F3<span class="tag">&lt;/color></span>
-<span class="lineno"> 21 </span>
-<span class="lineno"> 22 </span><span class="tag">&lt;/resources></span></pre>
 
 <span class="location"><a href="../../src/main/res/values/colors.xml">../../src/main/res/values/colors.xml</a>:20</span>: <span class="message">The resource <code>R.color.blue_info</code> appears to be unused</span><br /><pre class="errorlines">
 <span class="lineno"> 17 </span>    <span class="tag">&lt;color</span><span class="attribute"> name</span>=<span class="value">"green_open"</span>>#4CAF50<span class="tag">&lt;/color></span>
@@ -1663,7 +1622,52 @@ Dismiss</button>            </div>
 <span class="lineno"> 62 </span>
 <span class="lineno"> 63 </span>    <span class="comment">&lt;!-- About --></span></pre>
 
-<br/><b>NOTE: 17 results omitted.</b><br/><br/></div>
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:61</span>: <span class="message">The resource <code>R.string.settings_clear_cache</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 58 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"settings_title"</span>>Settings<span class="tag">&lt;/string></span>
+<span class="lineno"> 59 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"settings_category"</span>>My Places Category<span class="tag">&lt;/string></span>
+<span class="lineno"> 60 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"settings_sync_frequency"</span>>Sync Frequency (Default: 1 day)<span class="tag">&lt;/string></span>
+<span class="caretline"><span class="lineno"> 61 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"settings_clear_cache"</span></span>>Clear Cache<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 62 </span>
+<span class="lineno"> 63 </span>    <span class="comment">&lt;!-- About --></span>
+<span class="lineno"> 64 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_title"</span>>About<span class="tag">&lt;/string></span></pre>
+
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:64</span>: <span class="message">The resource <code>R.string.about_title</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 61 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"settings_clear_cache"</span>>Clear Cache<span class="tag">&lt;/string></span>
+<span class="lineno"> 62 </span>
+<span class="lineno"> 63 </span>    <span class="comment">&lt;!-- About --></span>
+<span class="caretline"><span class="lineno"> 64 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"about_title"</span></span>>About<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 65 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_version"</span>>Version<span class="tag">&lt;/string></span>
+<span class="lineno"> 66 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_build_date"</span>>Build Date<span class="tag">&lt;/string></span>
+<span class="lineno"> 67 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_account"</span>>OSMAnd Account<span class="tag">&lt;/string></span></pre>
+
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:65</span>: <span class="message">The resource <code>R.string.about_version</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 62 </span>
+<span class="lineno"> 63 </span>    <span class="comment">&lt;!-- About --></span>
+<span class="lineno"> 64 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_title"</span>>About<span class="tag">&lt;/string></span>
+<span class="caretline"><span class="lineno"> 65 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"about_version"</span></span>>Version<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 66 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_build_date"</span>>Build Date<span class="tag">&lt;/string></span>
+<span class="lineno"> 67 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_account"</span>>OSMAnd Account<span class="tag">&lt;/string></span>
+<span class="lineno"> 68 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_last_sync"</span>>Last Sync<span class="tag">&lt;/string></span></pre>
+
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:66</span>: <span class="message">The resource <code>R.string.about_build_date</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 63 </span>    <span class="comment">&lt;!-- About --></span>
+<span class="lineno"> 64 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_title"</span>>About<span class="tag">&lt;/string></span>
+<span class="lineno"> 65 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_version"</span>>Version<span class="tag">&lt;/string></span>
+<span class="caretline"><span class="lineno"> 66 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"about_build_date"</span></span>>Build Date<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 67 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_account"</span>>OSMAnd Account<span class="tag">&lt;/string></span>
+<span class="lineno"> 68 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_last_sync"</span>>Last Sync<span class="tag">&lt;/string></span>
+<span class="lineno"> 69 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_pending_locations"</span>>Pending Locations<span class="tag">&lt;/string></span></pre>
+
+<span class="location"><a href="../../src/main/res/values/strings.xml">../../src/main/res/values/strings.xml</a>:67</span>: <span class="message">The resource <code>R.string.about_account</code> appears to be unused</span><br /><pre class="errorlines">
+<span class="lineno"> 64 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_title"</span>>About<span class="tag">&lt;/string></span>
+<span class="lineno"> 65 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_version"</span>>Version<span class="tag">&lt;/string></span>
+<span class="lineno"> 66 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_build_date"</span>>Build Date<span class="tag">&lt;/string></span>
+<span class="caretline"><span class="lineno"> 67 </span>    <span class="tag">&lt;string</span><span class="attribute"> </span><span class="warning"><span class="attribute">name</span>=<span class="value">"about_account"</span></span>>OSMAnd Account<span class="tag">&lt;/string></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 68 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_last_sync"</span>>Last Sync<span class="tag">&lt;/string></span>
+<span class="lineno"> 69 </span>    <span class="tag">&lt;string</span><span class="attribute"> name</span>=<span class="value">"about_pending_locations"</span>>Pending Locations<span class="tag">&lt;/string></span>
+</pre>
+
+<br/><b>NOTE: 12 results omitted.</b><br/><br/></div>
 </div>
 <div class="metadata"><div class="explanation" id="explanationUnusedResources" style="display: none;">
 Unused resources make applications larger and slow down builds.<br/>
@@ -1977,14 +1981,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/res/layout/activity_main.xml">../../src/main/res/layout/activity_main.xml</a>:16</span>: <span class="message">Missing <code>contentDescription</code> attribute on image</span><br /><pre class="errorlines">
-<span class="lineno"> 13 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintStart_toStartOf</span>=<span class="value">"parent"</span>
-<span class="lineno"> 14 </span>        <span class="prefix">app:</span><span class="attribute">layout_constraintTop_toTopOf</span>=<span class="value">"parent"</span> />
-<span class="lineno"> 15 </span>
-<span class="caretline"><span class="lineno"> 16 </span>    <span class="tag">&lt;</span><span class="warning"><span class="tag">com.google.android.material.floatingactionbutton.FloatingActionButton</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
-</span><span class="lineno"> 17 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/fab"</span>
-<span class="lineno"> 18 </span>        <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
-<span class="lineno"> 19 </span>        <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span></pre>
+<span class="location"><a href="../../src/main/res/layout/activity_main.xml">../../src/main/res/layout/activity_main.xml</a>:112</span>: <span class="message">Missing <code>contentDescription</code> attribute on image</span><br /><pre class="errorlines">
+<span class="lineno"> 109 </span>    <span class="tag">&lt;/LinearLayout></span>
+<span class="lineno"> 110 </span>
+<span class="lineno"> 111 </span>    <span class="comment">&lt;!-- FAB --></span>
+<span class="caretline"><span class="lineno"> 112 </span>    <span class="tag">&lt;</span><span class="warning"><span class="tag">com.google.android.material.floatingactionbutton.FloatingActionButton</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
+</span><span class="lineno"> 113 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/addLocationFab"</span>
+<span class="lineno"> 114 </span>        <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
+<span class="lineno"> 115 </span>        <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span></pre>
 
 </div>
 <div class="metadata"><div class="explanation" id="explanationContentDescription" style="display: none;">
@@ -2020,7 +2024,135 @@ Dismiss</button>            </div>
             </div>
           </section>
 <a name="Internationalization"></a>
-<a name="HardcodedText"></a>
+<a name="SetTextI18n"></a>
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="SetTextI18nCard" style="display: block;">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">TextView Internationalization</h2>
+  </div>
+              <div class="mdl-card__supporting-text">
+<div class="issue">
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:53</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
+<span class="lineno"> 50 </span>  locationDistance.text = LocationUtils.formatDistance(distance)
+<span class="lineno"> 51 </span>
+<span class="lineno"> 52 </span>  <span class="comment">// GPO count</span>
+<span class="caretline"><span class="lineno"> 53 </span>  locationGpoCount.text = <span class="warning"><span class="string">"${</span>location.gpoCount<span class="string">} GPO"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 54 </span>
+<span class="lineno"> 55 </span>  <span class="comment">// Public/Private badge</span>
+<span class="lineno"> 56 </span>  publicPrivateBadge.text = <span class="keyword">if</span> (location.publicPrivate.displayName == <span class="string">"Public"</span>) <span class="string">"🌍 Public"</span> <span class="keyword">else</span> <span class="string">"🔒 Private"</span></pre>
+
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:53</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 50 </span>  locationDistance.text = LocationUtils.formatDistance(distance)
+<span class="lineno"> 51 </span>
+<span class="lineno"> 52 </span>  <span class="comment">// GPO count</span>
+<span class="caretline"><span class="lineno"> 53 </span>  locationGpoCount.text = <span class="string">"${</span>location.gpoCount<span class="string">}</span><span class="warning"><span class="string"> GPO</span></span><span class="string">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 54 </span>
+<span class="lineno"> 55 </span>  <span class="comment">// Public/Private badge</span>
+<span class="lineno"> 56 </span>  publicPrivateBadge.text = <span class="keyword">if</span> (location.publicPrivate.displayName == <span class="string">"Public"</span>) <span class="string">"🌍 Public"</span> <span class="keyword">else</span> <span class="string">"🔒 Private"</span></pre>
+
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:61</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 58 </span>       <span class="comment">// Fee indicator</span>
+<span class="lineno"> 59 </span>       feeIndicator.apply {
+<span class="lineno"> 60 </span>           <span class="keyword">if</span> (location.hasFee) {
+<span class="caretline"><span class="lineno"> 61 </span>               text = <span class="string">"</span><span class="warning"><span class="string">💰 Paid</span></span><span class="string">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 62 </span>               setTextColor(binding.root.context.getColor(R.color.orange_warning))
+<span class="lineno"> 63 </span>           } <span class="keyword">else</span> {
+<span class="lineno"> 64 </span>               text = <span class="string">"Free"</span></pre>
+
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:64</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 61 </span>               text = <span class="string">"💰 Paid"</span>
+<span class="lineno"> 62 </span>               setTextColor(binding.root.context.getColor(R.color.orange_warning))
+<span class="lineno"> 63 </span>           } <span class="keyword">else</span> {
+<span class="caretline"><span class="lineno"> 64 </span>               text = <span class="string">"</span><span class="warning"><span class="string">Free</span></span><span class="string">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 65 </span>               setTextColor(binding.root.context.getColor(R.color.green_open))
+<span class="lineno"> 66 </span>           }
+<span class="lineno"> 67 </span>       }
+</pre>
+
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:100</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno">  97 </span>              binding.loadingProgressBar.visibility = android.view.View.GONE
+<span class="lineno">  98 </span>              binding.locationRecyclerView.visibility = android.view.View.GONE
+<span class="lineno">  99 </span>              binding.emptyState.visibility = android.view.View.VISIBLE
+<span class="caretline"><span class="lineno"> 100 </span>              binding.emptyState.text = <span class="string">"</span><span class="warning"><span class="string">No charging locations found</span></span><span class="string">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 101 </span>          }
+<span class="lineno"> 102 </span>          <span class="keyword">is</span> LocationListState.Error -> {
+<span class="lineno"> 103 </span>              binding.loadingProgressBar.visibility = android.view.View.GONE
+</pre>
+
+<button class="mdl-button mdl-js-button mdl-button--primary" id="SetTextI18nDivLink" onclick="reveal('SetTextI18nDiv');" />+ 4 More Occurrences...</button>
+<div id="SetTextI18nDiv" style="display: none">
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:106</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
+<span class="lineno"> 103 </span>                      binding.loadingProgressBar.visibility = android.view.View.GONE
+<span class="lineno"> 104 </span>                      binding.locationRecyclerView.visibility = android.view.View.GONE
+<span class="lineno"> 105 </span>                      binding.emptyState.visibility = android.view.View.VISIBLE
+<span class="caretline"><span class="lineno"> 106 </span>                      binding.emptyState.text = <span class="warning"><span class="string">"Error: ${</span>state.message<span class="string">}"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 107 </span>                  }
+<span class="lineno"> 108 </span>              }
+<span class="lineno"> 109 </span>          }
+</pre>
+
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:106</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 103 </span>                      binding.loadingProgressBar.visibility = android.view.View.GONE
+<span class="lineno"> 104 </span>                      binding.locationRecyclerView.visibility = android.view.View.GONE
+<span class="lineno"> 105 </span>                      binding.emptyState.visibility = android.view.View.VISIBLE
+<span class="caretline"><span class="lineno"> 106 </span>                      binding.emptyState.text = <span class="string">"</span><span class="warning"><span class="string">Error: </span></span><span class="string">${</span>state.message<span class="string">}"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 107 </span>                  }
+<span class="lineno"> 108 </span>              }
+<span class="lineno"> 109 </span>          }
+</pre>
+
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:116</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 113 </span>  viewModel.isOffline.collect { isOffline ->
+<span class="lineno"> 114 </span>      binding.offlineIndicator.apply {
+<span class="lineno"> 115 </span>          <span class="keyword">if</span> (isOffline) {
+<span class="caretline"><span class="lineno"> 116 </span>              text = <span class="string">"</span><span class="warning"><span class="string">🔴 Offline</span></span><span class="string">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 117 </span>              setTextColor(ContextCompat.getColor(<span class="keyword">this</span><span class="annotation">@MainActivity</span>, R.color.red_closed))
+<span class="lineno"> 118 </span>          } <span class="keyword">else</span> {
+<span class="lineno"> 119 </span>              text = <span class="string">"🟢 Online"</span></pre>
+
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:119</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno"> 116 </span>          text = <span class="string">"🔴 Offline"</span>
+<span class="lineno"> 117 </span>          setTextColor(ContextCompat.getColor(<span class="keyword">this</span><span class="annotation">@MainActivity</span>, R.color.red_closed))
+<span class="lineno"> 118 </span>      } <span class="keyword">else</span> {
+<span class="caretline"><span class="lineno"> 119 </span>          text = <span class="string">"</span><span class="warning"><span class="string">🟢 Online</span></span><span class="string">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 120 </span>          setTextColor(ContextCompat.getColor(<span class="keyword">this</span><span class="annotation">@MainActivity</span>, R.color.green_open))
+<span class="lineno"> 121 </span>      }
+<span class="lineno"> 122 </span>  }
+</pre>
+
+</div>
+</div>
+<div class="metadata"><div class="explanation" id="explanationSetTextI18n" style="display: none;">
+When calling <code>TextView#setText</code><br/>
+* Never call <code>Number#toString()</code> to format numbers; it will not handle fraction separators and locale-specific digits properly. Consider using <code>String#format</code> with proper format specifications (<code>%d</code> or <code>%f</code>) instead.<br/>
+* Do not pass a string literal (e.g. "Hello") to display text. Hardcoded text can not be properly translated to other languages. Consider using Android resource strings instead.<br/>
+* Do not build messages by concatenating text chunks. Such messages can not be properly translated.<br/><div class="moreinfo">More info: <a href="https://developer.android.com/guide/topics/resources/localization.html">https://developer.android.com/guide/topics/resources/localization.html</a>
+</div>To suppress this error, use the issue id "SetTextI18n" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+<br/></div>
+</div>
+</div>
+<div class="chips">
+<span class="mdl-chip">
+    <span class="mdl-chip__text">SetTextI18n</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Internationalization</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Warning</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Priority 6/10</span>
+</span>
+</div>
+              </div>
+              <div class="mdl-card__actions mdl-card--border">
+<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="explanationSetTextI18nLink" onclick="reveal('explanationSetTextI18n');">
+Explain</button><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="SetTextI18nCardLink" onclick="hideid('SetTextI18nCard');">
+Dismiss</button>            </div>
+            </div>
+          </section><a name="HardcodedText"></a>
 <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="HardcodedTextCard" style="display: block;">
             <div class="mdl-card mdl-cell mdl-cell--12-col">
   <div class="mdl-card__title">
@@ -2047,6 +2179,165 @@ Dismiss</button>            </div>
 <span class="lineno"> 31 </span>        <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"14sp"</span> />
 </pre>
 
+<span class="location"><a href="../../src/main/res/layout/activity_main.xml">../../src/main/res/layout/activity_main.xml</a>:26</span>: <span class="message">Hardcoded string "Menu", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  23 </span>                <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"40dp"</span>
+<span class="lineno">  24 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"40dp"</span>
+<span class="lineno">  25 </span>                <span class="prefix">android:</span><span class="attribute">background</span>=<span class="value">"?attr/selectableItemBackgroundBorderless"</span>
+<span class="caretline"><span class="lineno">  26 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">contentDescription</span>=<span class="value">"Menu"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  27 </span>                <span class="prefix">android:</span><span class="attribute">scaleType</span>=<span class="value">"centerInside"</span>
+<span class="lineno">  28 </span>                <span class="prefix">android:</span><span class="attribute">src</span>=<span class="value">"@drawable/ic_menu"</span> />
+</pre>
+
+<span class="location"><a href="../../src/main/res/layout/activity_main.xml">../../src/main/res/layout/activity_main.xml</a>:35</span>: <span class="message">Hardcoded string "&#55357;&#57314; Online", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  32 </span>                <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  33 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  34 </span>                <span class="prefix">android:</span><span class="attribute">layout_marginStart</span>=<span class="value">"16dp"</span>
+<span class="caretline"><span class="lineno">  35 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"🟢 Online"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  36 </span>                <span class="prefix">android:</span><span class="attribute">textColor</span>=<span class="value">"@color/white"</span>
+<span class="lineno">  37 </span>                <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"14sp"</span> />
+</pre>
+
+<span class="location"><a href="../../src/main/res/layout/activity_main.xml">../../src/main/res/layout/activity_main.xml</a>:45</span>: <span class="message">Hardcoded string "Select Category", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  42 </span><span class="attribute">                </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/categoryName"</span>
+<span class="lineno">  43 </span>                <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  44 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="caretline"><span class="lineno">  45 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Select Category"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  46 </span>                <span class="prefix">android:</span><span class="attribute">textColor</span>=<span class="value">"@color/white"</span>
+<span class="lineno">  47 </span>                <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"16sp"</span>
+<span class="lineno">  48 </span>                <span class="prefix">android:</span><span class="attribute">textStyle</span>=<span class="value">"bold"</span> />
+</pre>
+
+<button class="mdl-button mdl-js-button mdl-button--primary" id="HardcodedTextDivLink" onclick="reveal('HardcodedTextDiv');" />+ 14 More Occurrences...</button>
+<div id="HardcodedTextDiv" style="display: none">
+<span class="location"><a href="../../src/main/res/layout/activity_main.xml">../../src/main/res/layout/activity_main.xml</a>:66</span>: <span class="message">Hardcoded string "Refresh", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  63 </span>                <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"40dp"</span>
+<span class="lineno">  64 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"40dp"</span>
+<span class="lineno">  65 </span>                <span class="prefix">android:</span><span class="attribute">background</span>=<span class="value">"?attr/selectableItemBackgroundBorderless"</span>
+<span class="caretline"><span class="lineno">  66 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">contentDescription</span>=<span class="value">"Refresh"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  67 </span>                <span class="prefix">android:</span><span class="attribute">scaleType</span>=<span class="value">"centerInside"</span>
+<span class="lineno">  68 </span>                <span class="prefix">android:</span><span class="attribute">src</span>=<span class="value">"@drawable/ic_refresh"</span> />
+</pre>
+
+<span class="location"><a href="../../src/main/res/layout/activity_main.xml">../../src/main/res/layout/activity_main.xml</a>:74</span>: <span class="message">Hardcoded string "Tap to refresh locations", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  71 </span><span class="attribute">                </span><span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  72 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  73 </span>                <span class="prefix">android:</span><span class="attribute">layout_marginStart</span>=<span class="value">"8dp"</span>
+<span class="caretline"><span class="lineno">  74 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Tap to refresh locations"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  75 </span>                <span class="prefix">android:</span><span class="attribute">textColor</span>=<span class="value">"@color/white"</span>
+<span class="lineno">  76 </span>                <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"12sp"</span> />
+<span class="lineno">  77 </span>        <span class="tag">&lt;/LinearLayout></span></pre>
+
+<span class="location"><a href="../../src/main/res/layout/activity_main.xml">../../src/main/res/layout/activity_main.xml</a>:104</span>: <span class="message">Hardcoded string "No locations loaded", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno"> 101 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"match_parent"</span>
+<span class="lineno"> 102 </span>                <span class="prefix">android:</span><span class="attribute">gravity</span>=<span class="value">"center"</span>
+<span class="lineno"> 103 </span>                <span class="prefix">android:</span><span class="attribute">padding</span>=<span class="value">"32dp"</span>
+<span class="caretline"><span class="lineno"> 104 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"No locations loaded"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 105 </span>                <span class="prefix">android:</span><span class="attribute">textAlignment</span>=<span class="value">"center"</span>
+<span class="lineno"> 106 </span>                <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"16sp"</span>
+<span class="lineno"> 107 </span>                <span class="prefix">android:</span><span class="attribute">visibility</span>=<span class="value">"gone"</span> />
+</pre>
+
+<span class="location"><a href="../../src/main/res/layout/item_location.xml">../../src/main/res/layout/item_location.xml</a>:33</span>: <span class="message">Hardcoded string "Location Name", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  30 </span><span class="attribute">                    </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/locationName"</span>
+<span class="lineno">  31 </span>                    <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  32 </span>                    <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="caretline"><span class="lineno">  33 </span>                    <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Location Name"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  34 </span>                    <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"16sp"</span>
+<span class="lineno">  35 </span>                    <span class="prefix">android:</span><span class="attribute">textStyle</span>=<span class="value">"bold"</span> />
+</pre>
+
+<span class="location"><a href="../../src/main/res/layout/item_location.xml">../../src/main/res/layout/item_location.xml</a>:42</span>: <span class="message">Hardcoded string "1.2 km away", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  39 </span>                    <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  40 </span>                    <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  41 </span>                    <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"4dp"</span>
+<span class="caretline"><span class="lineno">  42 </span>                    <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"1.2 km away"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  43 </span>                    <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"12sp"</span> />
+<span class="lineno">  44 </span>            <span class="tag">&lt;/LinearLayout></span>
+</pre>
+
+<span class="location"><a href="../../src/main/res/layout/item_location.xml">../../src/main/res/layout/item_location.xml</a>:51</span>: <span class="message">Hardcoded string "Favourite", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  48 </span>                <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"40dp"</span>
+<span class="lineno">  49 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"40dp"</span>
+<span class="lineno">  50 </span>                <span class="prefix">android:</span><span class="attribute">background</span>=<span class="value">"?attr/selectableItemBackgroundBorderless"</span>
+<span class="caretline"><span class="lineno">  51 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">contentDescription</span>=<span class="value">"Favourite"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  52 </span>                <span class="prefix">android:</span><span class="attribute">scaleType</span>=<span class="value">"centerInside"</span>
+<span class="lineno">  53 </span>                <span class="prefix">android:</span><span class="attribute">src</span>=<span class="value">"@drawable/ic_favourite_outline"</span> />
+<span class="lineno">  54 </span>        <span class="tag">&lt;/LinearLayout></span></pre>
+
+<span class="location"><a href="../../src/main/res/layout/item_location.xml">../../src/main/res/layout/item_location.xml</a>:63</span>: <span class="message">Hardcoded string "Location description", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  60 </span>            <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  61 </span>            <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"8dp"</span>
+<span class="lineno">  62 </span>            <span class="prefix">android:</span><span class="attribute">maxLines</span>=<span class="value">"2"</span>
+<span class="caretline"><span class="lineno">  63 </span>            <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Location description"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  64 </span>            <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"12sp"</span> />
+<span class="lineno">  65 </span>
+<span class="lineno">  66 </span>        <span class="comment">&lt;!-- Info Row: GPO + Public/Private + Fee --></span></pre>
+
+<span class="location"><a href="../../src/main/res/layout/item_location.xml">../../src/main/res/layout/item_location.xml</a>:78</span>: <span class="message">Hardcoded string "3 GPO", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  75 </span><span class="attribute">                </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/locationGpoCount"</span>
+<span class="lineno">  76 </span>                <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  77 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="caretline"><span class="lineno">  78 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"3 GPO"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  79 </span>                <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"11sp"</span> />
+<span class="lineno">  80 </span>
+<span class="lineno">  81 </span>            <span class="tag">&lt;com.google.android.material.chip.Chip</span></pre>
+
+<span class="location"><a href="../../src/main/res/layout/item_location.xml">../../src/main/res/layout/item_location.xml</a>:85</span>: <span class="message">Hardcoded string "&#55356;&#57101; Public", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  82 </span><span class="attribute">                </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/publicPrivateBadge"</span>
+<span class="lineno">  83 </span>                <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"wrap_content"</span>
+<span class="lineno">  84 </span>                <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="caretline"><span class="lineno">  85 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"🌍 Public"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  86 </span>                <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"11sp"</span> />
+<span class="lineno">  87 </span>
+<span class="lineno">  88 </span>            <span class="tag">&lt;TextView</span></pre>
+
+<span class="location"><a href="../../src/main/res/layout/item_location.xml">../../src/main/res/layout/item_location.xml</a>:96</span>: <span class="message">Hardcoded string "Free", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  93 </span>                <span class="prefix">android:</span><span class="attribute">gravity</span>=<span class="value">"center"</span>
+<span class="lineno">  94 </span>                <span class="prefix">android:</span><span class="attribute">paddingHorizontal</span>=<span class="value">"8dp"</span>
+<span class="lineno">  95 </span>                <span class="prefix">android:</span><span class="attribute">paddingVertical</span>=<span class="value">"4dp"</span>
+<span class="caretline"><span class="lineno">  96 </span>                <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Free"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  97 </span>                <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"11sp"</span> />
+<span class="lineno">  98 </span>        <span class="tag">&lt;/LinearLayout></span>
+</pre>
+
+<span class="location"><a href="../../src/main/res/layout/item_location.xml">../../src/main/res/layout/item_location.xml</a>:106</span>: <span class="message">Hardcoded string "Navigate with OSMAnd", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno"> 103 </span>            <span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"match_parent"</span>
+<span class="lineno"> 104 </span>            <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="lineno"> 105 </span>            <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"8dp"</span>
+<span class="caretline"><span class="lineno"> 106 </span>            <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Navigate with OSMAnd"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 107 </span>            <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"12sp"</span> />
+<span class="lineno"> 108 </span>    <span class="tag">&lt;/LinearLayout></span>
+</pre>
+
+<span class="location"><a href="../../src/main/res/menu/main_menu.xml">../../src/main/res/menu/main_menu.xml</a>:5</span>: <span class="message">Hardcoded string "Settings", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  2 </span><span class="tag">&lt;menu</span><span class="attribute"> </span><span class="prefix">xmlns:</span><span class="attribute">android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>>
+<span class="lineno">  3 </span>    <span class="tag">&lt;item</span><span class="attribute">
+</span><span class="lineno">  4 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/menu_settings"</span>
+<span class="caretline"><span class="lineno">  5 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Settings"</span></span> />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  6 </span>    <span class="tag">&lt;item</span><span class="attribute">
+</span><span class="lineno">  7 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/menu_search"</span>
+<span class="lineno">  8 </span>        <span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Search"</span> />
+</pre>
+
+<span class="location"><a href="../../src/main/res/menu/main_menu.xml">../../src/main/res/menu/main_menu.xml</a>:8</span>: <span class="message">Hardcoded string "Search", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  5 </span>        <span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Settings"</span> />
+<span class="lineno">  6 </span>    <span class="tag">&lt;item</span><span class="attribute">
+</span><span class="lineno">  7 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/menu_search"</span>
+<span class="caretline"><span class="lineno">  8 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Search"</span></span> />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  9 </span>    <span class="tag">&lt;item</span><span class="attribute">
+</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/menu_logout"</span>
+<span class="lineno"> 11 </span>        <span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Logout"</span> />
+</pre>
+
+<span class="location"><a href="../../src/main/res/menu/main_menu.xml">../../src/main/res/menu/main_menu.xml</a>:11</span>: <span class="message">Hardcoded string "Logout", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno">  8 </span>        <span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Search"</span> />
+<span class="lineno">  9 </span>    <span class="tag">&lt;item</span><span class="attribute">
+</span><span class="lineno"> 10 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">id</span>=<span class="value">"@+id/menu_logout"</span>
+<span class="caretline"><span class="lineno"> 11 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">title</span>=<span class="value">"Logout"</span></span> />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 12 </span><span class="tag">&lt;/menu></span>
+</pre>
+
+</div>
 </div>
 <div class="metadata"><div class="explanation" id="explanationHardcodedText" style="display: none;">
 Hardcoding text attributes directly in layout files is bad for several reasons:<br/>

@@ -1,58 +1,94 @@
 [
     {
-        "merged": "com.pevplugshare.app-release-48:/mipmap-hdpi_ic_launcher.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/mipmap-hdpi/ic_launcher.xml"
+        "merged": "com.pevplugshare.app-release-48:/drawable_ic_refresh.xml.flat",
+        "source": "com.pevplugshare.app-main-49:/drawable/ic_refresh.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/mipmap-xxxhdpi_ic_launcher.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/mipmap-xxxhdpi/ic_launcher.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/xml_backup_rules.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/xml/backup_rules.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/layout_activity_splash.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/layout/activity_splash.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/layout_activity_edit_location.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/layout/activity_edit_location.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/xml_backup_rules.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/xml/backup_rules.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/layout_activity_import_locations.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/layout/activity_import_locations.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/layout_activity_edit_location.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/layout/activity_edit_location.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/layout_activity_splash.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/layout/activity_splash.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/mipmap-mdpi_ic_launcher.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/mipmap-mdpi/ic_launcher.xml"
+        "merged": "com.pevplugshare.app-release-48:/drawable_ic_menu.xml.flat",
+        "source": "com.pevplugshare.app-main-49:/drawable/ic_menu.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/layout_activity_add_location.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/layout/activity_add_location.xml"
-    },
-    {
-        "merged": "com.pevplugshare.app-release-48:/mipmap-xxhdpi_ic_launcher.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/mipmap-xxhdpi/ic_launcher.xml"
-    },
-    {
-        "merged": "com.pevplugshare.app-release-48:/mipmap-xhdpi_ic_launcher.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/mipmap-xhdpi/ic_launcher.xml"
-    },
-    {
-        "merged": "com.pevplugshare.app-release-48:/layout_activity_import_locations.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/layout/activity_import_locations.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/mipmap-mdpi_ic_launcher.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/mipmap-mdpi/ic_launcher.xml"
     },
     {
         "merged": "com.pevplugshare.app-release-48:/layout_activity_main.xml.flat",
         "source": "com.pevplugshare.app-main-49:/layout/activity_main.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.pevplugshare.app-release-48:/drawable_ic_favourite_filled.xml.flat",
+        "source": "com.pevplugshare.app-main-49:/drawable/ic_favourite_filled.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/layout_activity_login.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/layout/activity_login.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.pevplugshare.app-release-48:/xml_data_extraction_rules.xml.flat",
-        "source": "com.pevplugshare.app-main-49:/xml/data_extraction_rules.xml"
+        "merged": "com.pevplugshare.app-release-48:/layout_item_location.xml.flat",
+        "source": "com.pevplugshare.app-main-49:/layout/item_location.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/xml_data_extraction_rules.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/mipmap-hdpi_ic_launcher.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/mipmap-hdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/mipmap-xxhdpi_ic_launcher.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/mipmap-xxhdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-release-48:/drawable_chip_background.xml.flat",
+        "source": "com.pevplugshare.app-main-49:/drawable/chip_background.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/mipmap-xxxhdpi_ic_launcher.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/mipmap-xxxhdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/layout_activity_main.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/layout_activity_login.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-release-48:/drawable_ic_add.xml.flat",
+        "source": "com.pevplugshare.app-main-49:/drawable/ic_add.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/layout_activity_add_location.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/layout/activity_add_location.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-release-48:/mipmap-xhdpi_ic_launcher.xml.flat",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-49:/mipmap-xhdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-release-48:/menu_main_menu.xml.flat",
+        "source": "com.pevplugshare.app-main-49:/menu/main_menu.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-release-48:/drawable_ic_favourite_outline.xml.flat",
+        "source": "com.pevplugshare.app-main-49:/drawable/ic_favourite_outline.xml"
     }
 ]

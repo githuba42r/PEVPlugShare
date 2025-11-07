@@ -3013,6 +3013,7 @@ drawable btn_radio_off_mtrl
 drawable btn_radio_off_to_on_mtrl_animation
 drawable btn_radio_on_mtrl
 drawable btn_radio_on_to_off_mtrl_animation
+drawable chip_background
 drawable common_full_open_on_phone
 drawable common_google_signin_btn_icon_dark
 drawable common_google_signin_btn_icon_dark_focused
@@ -3039,6 +3040,7 @@ drawable design_password_eye
 drawable design_snackbar_background
 drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
+drawable ic_add
 drawable ic_arrow_back_black_24
 drawable ic_call_answer
 drawable ic_call_answer_low
@@ -3048,15 +3050,19 @@ drawable ic_call_decline
 drawable ic_call_decline_low
 drawable ic_clear_black_24
 drawable ic_clock_black_24dp
+drawable ic_favourite_filled
+drawable ic_favourite_outline
 drawable ic_keyboard_black_24dp
 drawable ic_launcher_foreground
 drawable ic_m3_chip_check
 drawable ic_m3_chip_checked_circle
 drawable ic_m3_chip_close
+drawable ic_menu
 drawable ic_mtrl_checked_circle
 drawable ic_mtrl_chip_checked_black
 drawable ic_mtrl_chip_checked_circle
 drawable ic_mtrl_chip_close_circle
+drawable ic_refresh
 drawable ic_search_black_24
 drawable m3_avd_hide_password
 drawable m3_avd_show_password
@@ -3204,6 +3210,7 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
+id addLocationFab
 id add_button
 id adjust_height
 id adjust_width
@@ -3239,6 +3246,7 @@ id cache_measures
 id callMeasure
 id cancel_button
 id carryVelocity
+id categoryName
 id center
 id centerCrop
 id centerInside
@@ -3313,6 +3321,7 @@ id edit_query
 id edit_text_id
 id elastic
 id embed
+id emptyState
 id end
 id endToStart
 id enterAlways
@@ -3320,8 +3329,9 @@ id enterAlwaysCollapsed
 id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
-id fab
 id fade
+id favouriteButton
+id feeIndicator
 id fill
 id fill_horizontal
 id fill_vertical
@@ -3382,6 +3392,12 @@ id line3
 id linear
 id listMode
 id list_item
+id loadingProgressBar
+id locationDescription
+id locationDistance
+id locationGpoCount
+id locationName
+id locationRecyclerView
 id location_name
 id loginButton
 id m3_side_sheet
@@ -3410,6 +3426,10 @@ id material_timepicker_ok_button
 id material_timepicker_view
 id material_value_index
 id matrix
+id menuButton
+id menu_logout
+id menu_search
+id menu_settings
 id message
 id middle
 id mini
@@ -3444,6 +3464,7 @@ id mtrl_picker_text_input_range_start
 id mtrl_picker_title_text
 id mtrl_view_tag_bottom_padding
 id multiply
+id navigateButton
 id navigation_bar_item_active_indicator_view
 id navigation_bar_item_icon_container
 id navigation_bar_item_icon_view
@@ -3463,6 +3484,7 @@ id notification_background
 id notification_main_column
 id notification_main_column_container
 id off
+id offlineIndicator
 id on
 id onInterceptTouchReturnSwipe
 id open_search_bar_text_view
@@ -3501,9 +3523,11 @@ id progress
 id progressBar
 id progress_circular
 id progress_horizontal
+id publicPrivateBadge
 id radio
 id ratio
 id rectangles
+id refreshButton
 id report_drawn
 id reverseSawtooth
 id right
@@ -3783,6 +3807,7 @@ layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
+layout item_location
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title
@@ -3844,6 +3869,7 @@ layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
+menu main_menu
 mipmap ic_launcher
 plurals mtrl_badge_content_description
 string abc_action_bar_home_description

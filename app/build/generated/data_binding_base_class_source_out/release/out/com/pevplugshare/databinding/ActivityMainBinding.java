@@ -4,10 +4,13 @@ package com.pevplugshare.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -18,24 +21,51 @@ import java.lang.String;
 
 public final class ActivityMainBinding implements ViewBinding {
   @NonNull
-  private final ConstraintLayout rootView;
+  private final CoordinatorLayout rootView;
 
   @NonNull
-  public final FrameLayout content;
+  public final FloatingActionButton addLocationFab;
 
   @NonNull
-  public final FloatingActionButton fab;
+  public final TextView categoryName;
 
-  private ActivityMainBinding(@NonNull ConstraintLayout rootView, @NonNull FrameLayout content,
-      @NonNull FloatingActionButton fab) {
+  @NonNull
+  public final TextView emptyState;
+
+  @NonNull
+  public final ProgressBar loadingProgressBar;
+
+  @NonNull
+  public final RecyclerView locationRecyclerView;
+
+  @NonNull
+  public final ImageButton menuButton;
+
+  @NonNull
+  public final TextView offlineIndicator;
+
+  @NonNull
+  public final ImageButton refreshButton;
+
+  private ActivityMainBinding(@NonNull CoordinatorLayout rootView,
+      @NonNull FloatingActionButton addLocationFab, @NonNull TextView categoryName,
+      @NonNull TextView emptyState, @NonNull ProgressBar loadingProgressBar,
+      @NonNull RecyclerView locationRecyclerView, @NonNull ImageButton menuButton,
+      @NonNull TextView offlineIndicator, @NonNull ImageButton refreshButton) {
     this.rootView = rootView;
-    this.content = content;
-    this.fab = fab;
+    this.addLocationFab = addLocationFab;
+    this.categoryName = categoryName;
+    this.emptyState = emptyState;
+    this.loadingProgressBar = loadingProgressBar;
+    this.locationRecyclerView = locationRecyclerView;
+    this.menuButton = menuButton;
+    this.offlineIndicator = offlineIndicator;
+    this.refreshButton = refreshButton;
   }
 
   @Override
   @NonNull
-  public ConstraintLayout getRoot() {
+  public CoordinatorLayout getRoot() {
     return rootView;
   }
 
@@ -60,19 +90,57 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.content;
-      FrameLayout content = ViewBindings.findChildViewById(rootView, id);
-      if (content == null) {
+      id = R.id.addLocationFab;
+      FloatingActionButton addLocationFab = ViewBindings.findChildViewById(rootView, id);
+      if (addLocationFab == null) {
         break missingId;
       }
 
-      id = R.id.fab;
-      FloatingActionButton fab = ViewBindings.findChildViewById(rootView, id);
-      if (fab == null) {
+      id = R.id.categoryName;
+      TextView categoryName = ViewBindings.findChildViewById(rootView, id);
+      if (categoryName == null) {
         break missingId;
       }
 
-      return new ActivityMainBinding((ConstraintLayout) rootView, content, fab);
+      id = R.id.emptyState;
+      TextView emptyState = ViewBindings.findChildViewById(rootView, id);
+      if (emptyState == null) {
+        break missingId;
+      }
+
+      id = R.id.loadingProgressBar;
+      ProgressBar loadingProgressBar = ViewBindings.findChildViewById(rootView, id);
+      if (loadingProgressBar == null) {
+        break missingId;
+      }
+
+      id = R.id.locationRecyclerView;
+      RecyclerView locationRecyclerView = ViewBindings.findChildViewById(rootView, id);
+      if (locationRecyclerView == null) {
+        break missingId;
+      }
+
+      id = R.id.menuButton;
+      ImageButton menuButton = ViewBindings.findChildViewById(rootView, id);
+      if (menuButton == null) {
+        break missingId;
+      }
+
+      id = R.id.offlineIndicator;
+      TextView offlineIndicator = ViewBindings.findChildViewById(rootView, id);
+      if (offlineIndicator == null) {
+        break missingId;
+      }
+
+      id = R.id.refreshButton;
+      ImageButton refreshButton = ViewBindings.findChildViewById(rootView, id);
+      if (refreshButton == null) {
+        break missingId;
+      }
+
+      return new ActivityMainBinding((CoordinatorLayout) rootView, addLocationFab, categoryName,
+          emptyState, loadingProgressBar, locationRecyclerView, menuButton, offlineIndicator,
+          refreshButton);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
