@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.activity.ktx)
 
     // Database
     implementation(libs.androidx.room.runtime)
@@ -84,6 +85,9 @@ dependencies {
 
     // Photo/EXIF
     implementation(libs.androidx.exifinterface)
+
+    // Security/Encryption
+    implementation(libs.androidx.security.crypto.ktx)
 
     // Testing
     testImplementation(libs.junit)
