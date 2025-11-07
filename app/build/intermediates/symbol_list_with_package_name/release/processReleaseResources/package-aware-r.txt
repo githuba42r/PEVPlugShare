@@ -3154,6 +3154,7 @@ id SYM
 id TOP_END
 id TOP_START
 id accelerate
+id accessTypeToggleGroup
 id accessibility_action_clickable_span
 id accessibility_custom_action_0
 id accessibility_custom_action_1
@@ -3211,7 +3212,7 @@ id actions
 id activity_chooser_view_content
 id add
 id addLocationFab
-id add_button
+id additionalInfoInput
 id adjust_height
 id adjust_width
 id alertTitle
@@ -3244,6 +3245,7 @@ id bounceStart
 id buttonPanel
 id cache_measures
 id callMeasure
+id cancelButton
 id cancel_button
 id carryVelocity
 id categoryName
@@ -3255,6 +3257,7 @@ id center_vertical
 id chain
 id chain2
 id chains
+id chargingCostsInput
 id checkbox
 id checked
 id chronometer
@@ -3290,6 +3293,7 @@ id default_activity_button
 id delete_button
 id deltaRelative
 id dependency_ordering
+id descriptionInput
 id design_bottom_sheet
 id design_menu_item_action_area
 id design_menu_item_action_area_stub
@@ -3331,6 +3335,8 @@ id expand_activities_button
 id expanded_menu
 id fade
 id favouriteButton
+id feeCheckbox
+id feeDetailsSection
 id feeIndicator
 id fill
 id fill_horizontal
@@ -3348,10 +3354,11 @@ id forever
 id fragment_container_view_tag
 id frost
 id fullscreen_header
+id getLocationButton
 id ghost_view
 id ghost_view_holder
 id gone
-id gpo_count
+id gpoCountInput
 id graph
 id graph_wrap
 id group_divider
@@ -3393,10 +3400,12 @@ id linear
 id listMode
 id list_item
 id loadingProgressBar
+id locationCoordinates
 id locationDescription
 id locationDistance
 id locationGpoCount
 id locationName
+id locationNameInput
 id locationRecyclerView
 id location_name
 id loginButton
@@ -3501,6 +3510,7 @@ id open_search_view_search_prefix
 id open_search_view_status_bar_spacer
 id open_search_view_toolbar
 id open_search_view_toolbar_container
+id openingHoursInput
 id outline
 id outward
 id overshoot
@@ -3519,10 +3529,14 @@ id pin
 id position
 id postLayout
 id pressed
+id privateButton
 id progress
 id progressBar
 id progress_circular
 id progress_horizontal
+id providerNameInput
+id providerWebsiteInput
+id publicButton
 id publicPrivateBadge
 id radio
 id ratio
@@ -3574,6 +3588,7 @@ id snackbar_action
 id snackbar_text
 id snap
 id snapMargins
+id socketTypeSpinner
 id south
 id spacer
 id special_effects_controller_view_tag
@@ -3596,6 +3611,7 @@ id staticPostLayout
 id stop
 id stretch
 id submenuarrow
+id submitButton
 id submit_area
 id supportScrollUp
 id tabMode

@@ -9,15 +9,20 @@ import androidx.lifecycle.ViewModel;
 import com.pevplugshare.data.remote.OsmandApiClient;
 import com.pevplugshare.data.remote.TokenManager;
 import com.pevplugshare.di.NetworkModule_ProvideAuthRepositoryFactory;
+import com.pevplugshare.di.NetworkModule_ProvideLocationRepositoryFactory;
 import com.pevplugshare.di.NetworkModule_ProvideOsmandApiClientFactory;
 import com.pevplugshare.di.NetworkModule_ProvideTokenManagerFactory;
 import com.pevplugshare.domain.repository.AuthRepository;
+import com.pevplugshare.domain.repository.LocationRepository;
 import com.pevplugshare.ui.auth.LoginActivity;
 import com.pevplugshare.ui.auth.LoginViewModel;
 import com.pevplugshare.ui.auth.LoginViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.pevplugshare.ui.auth.SplashActivity;
 import com.pevplugshare.ui.auth.SplashViewModel;
 import com.pevplugshare.ui.auth.SplashViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.pevplugshare.ui.main.MainActivity;
+import com.pevplugshare.ui.main.MainViewModel;
+import com.pevplugshare.ui.main.MainViewModel_HiltModules_KeyModule_ProvideFactory;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -373,13 +378,17 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     }
 
     @Override
+    public void injectMainActivity(MainActivity mainActivity) {
+    }
+
+    @Override
     public DefaultViewModelFactories.InternalFactoryFactory getHiltInternalFactoryFactory() {
       return DefaultViewModelFactories_InternalFactoryFactory_Factory.newInstance(getViewModelKeys(), new ViewModelCBuilder(singletonCImpl, activityRetainedCImpl));
     }
 
     @Override
     public Set<String> getViewModelKeys() {
-      return SetBuilder.<String>newSetBuilder(2).add(LoginViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(SplashViewModel_HiltModules_KeyModule_ProvideFactory.provide()).build();
+      return SetBuilder.<String>newSetBuilder(3).add(LoginViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(MainViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(SplashViewModel_HiltModules_KeyModule_ProvideFactory.provide()).build();
     }
 
     @Override
@@ -407,6 +416,8 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     private Provider<LoginViewModel> loginViewModelProvider;
 
+    private Provider<MainViewModel> mainViewModelProvider;
+
     private Provider<SplashViewModel> splashViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
@@ -423,12 +434,13 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.loginViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.splashViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.mainViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.splashViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
     }
 
     @Override
     public Map<String, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(2).put("com.pevplugshare.ui.auth.LoginViewModel", ((Provider) loginViewModelProvider)).put("com.pevplugshare.ui.auth.SplashViewModel", ((Provider) splashViewModelProvider)).build();
+      return MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(3).put("com.pevplugshare.ui.auth.LoginViewModel", ((Provider) loginViewModelProvider)).put("com.pevplugshare.ui.main.MainViewModel", ((Provider) mainViewModelProvider)).put("com.pevplugshare.ui.auth.SplashViewModel", ((Provider) splashViewModelProvider)).build();
     }
 
     @Override
@@ -460,7 +472,10 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
           case 0: // com.pevplugshare.ui.auth.LoginViewModel 
           return (T) new LoginViewModel(singletonCImpl.provideAuthRepositoryProvider.get());
 
-          case 1: // com.pevplugshare.ui.auth.SplashViewModel 
+          case 1: // com.pevplugshare.ui.main.MainViewModel 
+          return (T) new MainViewModel(singletonCImpl.provideLocationRepositoryProvider.get(), singletonCImpl.provideAuthRepositoryProvider.get());
+
+          case 2: // com.pevplugshare.ui.auth.SplashViewModel 
           return (T) new SplashViewModel(singletonCImpl.provideAuthRepositoryProvider.get());
 
           default: throw new AssertionError(id);
@@ -549,6 +564,8 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     private Provider<AuthRepository> provideAuthRepositoryProvider;
 
+    private Provider<LocationRepository> provideLocationRepositoryProvider;
+
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
       initialize(applicationContextModuleParam);
@@ -560,6 +577,7 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
       this.provideTokenManagerProvider = DoubleCheck.provider(new SwitchingProvider<TokenManager>(singletonCImpl, 2));
       this.provideOsmandApiClientProvider = DoubleCheck.provider(new SwitchingProvider<OsmandApiClient>(singletonCImpl, 1));
       this.provideAuthRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AuthRepository>(singletonCImpl, 0));
+      this.provideLocationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<LocationRepository>(singletonCImpl, 3));
     }
 
     @Override
@@ -603,6 +621,9 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
           case 2: // com.pevplugshare.data.remote.TokenManager 
           return (T) NetworkModule_ProvideTokenManagerFactory.provideTokenManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 3: // com.pevplugshare.domain.repository.LocationRepository 
+          return (T) NetworkModule_ProvideLocationRepositoryFactory.provideLocationRepository(singletonCImpl.provideOsmandApiClientProvider.get(), singletonCImpl.provideTokenManagerProvider.get());
 
           default: throw new AssertionError(id);
         }

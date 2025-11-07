@@ -20,6 +20,9 @@ import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_compo
 import hilt_aggregated_deps._com_pevplugshare_PEVPlugShareApplication_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_di_DatabaseModule;
 import hilt_aggregated_deps._com_pevplugshare_di_NetworkModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_add_AddLocationActivity_GeneratedInjector;
+import hilt_aggregated_deps._com_pevplugshare_ui_add_AddLocationViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_add_AddLocationViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_LoginActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_LoginViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_LoginViewModel_HiltModules_KeyModule;
@@ -72,6 +75,9 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_pevplugshare_PEVPlugShareApplication_GeneratedInjector.class,
         _com_pevplugshare_di_DatabaseModule.class,
         _com_pevplugshare_di_NetworkModule.class,
+        _com_pevplugshare_ui_add_AddLocationActivity_GeneratedInjector.class,
+        _com_pevplugshare_ui_add_AddLocationViewModel_HiltModules_BindsModule.class,
+        _com_pevplugshare_ui_add_AddLocationViewModel_HiltModules_KeyModule.class,
         _com_pevplugshare_ui_auth_LoginActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_auth_LoginViewModel_HiltModules_BindsModule.class,
         _com_pevplugshare_ui_auth_LoginViewModel_HiltModules_KeyModule.class,

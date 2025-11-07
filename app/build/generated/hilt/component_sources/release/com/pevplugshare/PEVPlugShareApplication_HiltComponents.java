@@ -2,6 +2,8 @@ package com.pevplugshare;
 
 import com.pevplugshare.di.DatabaseModule;
 import com.pevplugshare.di.NetworkModule;
+import com.pevplugshare.ui.add.AddLocationActivity_GeneratedInjector;
+import com.pevplugshare.ui.add.AddLocationViewModel_HiltModules;
 import com.pevplugshare.ui.auth.LoginActivity_GeneratedInjector;
 import com.pevplugshare.ui.auth.LoginViewModel_HiltModules;
 import com.pevplugshare.ui.auth.SplashActivity_GeneratedInjector;
@@ -160,6 +162,7 @@ public final class PEVPlugShareApplication_HiltComponents {
 
   @Subcomponent(
       modules = {
+          AddLocationViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           LoginViewModel_HiltModules.KeyModule.class,
@@ -188,7 +191,8 @@ public final class PEVPlugShareApplication_HiltComponents {
       }
   )
   @ActivityScoped
-  public abstract static class ActivityC implements LoginActivity_GeneratedInjector,
+  public abstract static class ActivityC implements AddLocationActivity_GeneratedInjector,
+      LoginActivity_GeneratedInjector,
       SplashActivity_GeneratedInjector,
       MainActivity_GeneratedInjector,
       ActivityComponent,
@@ -204,6 +208,7 @@ public final class PEVPlugShareApplication_HiltComponents {
 
   @Subcomponent(
       modules = {
+          AddLocationViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           LoginViewModel_HiltModules.BindsModule.class,
           MainViewModel_HiltModules.BindsModule.class,
