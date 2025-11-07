@@ -6,7 +6,7 @@
     mergedManifest="build/intermediates/merged_manifest/release/processReleaseMainManifest/AndroidManifest.xml"
     proguardFiles="build/intermediates/default_proguard_files/global/proguard-android-optimize.txt-8.4.0:proguard-rules.pro"
     partialResultsDir="build/intermediates/lint_vital_partial_results/release/lintVitalAnalyzeRelease/out"
-    desugaredMethodsFiles="/home/philg/.gradle/caches/transforms-4/9469af6c2252826a449ce9d98fb123a2/transformed/D8BackportedDesugaredMethods.txt">
+    desugaredMethodsFiles="/home/philg/.gradle/caches/transforms-4/165b95d163286073f7648072e8e92f9b/transformed/D8BackportedDesugaredMethods.txt">
   <buildFeatures
       viewBinding="true"
       namespacing="REQUIRED"/>
@@ -27,6 +27,6 @@
       applicationId="com.pevplugshare"
       generatedSourceFolders="build/generated/source/kapt/release:build/generated/ap_generated_sources/release/out:build/generated/data_binding_base_class_source_out/release/out"
       generatedResourceFolders="build/generated/res/resValues/release"
-      desugaredMethodsFiles="/home/philg/.gradle/caches/transforms-4/9469af6c2252826a449ce9d98fb123a2/transformed/D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="/home/philg/.gradle/caches/transforms-4/165b95d163286073f7648072e8e92f9b/transformed/D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

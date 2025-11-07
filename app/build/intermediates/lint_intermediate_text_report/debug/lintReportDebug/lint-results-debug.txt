@@ -64,10 +64,10 @@ class SplashActivity : AppCompatActivity() {
 
    https://developer.android.com/guide/topics/ui/splash-screen
 
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:67: Warning: Consider splitting data tag into multiple tags with individual attributes to avoid confusion [IntentFilterUniqueDataAttributes]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:71: Warning: Consider splitting data tag into multiple tags with individual attributes to avoid confusion [IntentFilterUniqueDataAttributes]
                 <data
                 ^
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:72: Warning: Consider splitting data tag into multiple tags with individual attributes to avoid confusion [IntentFilterUniqueDataAttributes]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:76: Warning: Consider splitting data tag into multiple tags with individual attributes to avoid confusion [IntentFilterUniqueDataAttributes]
                 <data
                 ^
 
@@ -197,103 +197,130 @@ activityKtx = "1.8.0"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:9: Warning: A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.11.0 [GradleDependency]
 activityKtx = "1.8.0"
               ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.camera:camera-camera2 than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraKtx = "1.3.4"
+            ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.camera:camera-camera2 than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraKtx = "1.3.4"
+            ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.camera:camera-camera2 than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraKtx = "1.3.4"
+            ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.camera:camera-lifecycle than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraKtx = "1.3.4"
+            ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.camera:camera-lifecycle than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraKtx = "1.3.4"
+            ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.camera:camera-lifecycle than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraKtx = "1.3.4"
+            ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:11: Warning: A newer version of androidx.camera:camera-view than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraView = "1.3.4"
+             ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:11: Warning: A newer version of androidx.camera:camera-view than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraView = "1.3.4"
+             ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:11: Warning: A newer version of androidx.camera:camera-view than 1.3.4 is available: 1.5.1 [GradleDependency]
+cameraView = "1.3.4"
+             ~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:10: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3 [GradleDependency]
 room = "2.6.1"
        ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:14: Warning: A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0 [GradleDependency]
 gson = "2.10.1"
        ~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:14: Warning: A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0 [GradleDependency]
 gson = "2.10.1"
        ~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:12: Warning: A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:14: Warning: A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0 [GradleDependency]
 gson = "2.10.1"
        ~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:14: Warning: A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:16: Warning: A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0 [GradleDependency]
 workmanager = "2.8.1"
               ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:14: Warning: A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:16: Warning: A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0 [GradleDependency]
 workmanager = "2.8.1"
               ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:14: Warning: A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:16: Warning: A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0 [GradleDependency]
 workmanager = "2.8.1"
               ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:15: Warning: A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:17: Warning: A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0 [GradleDependency]
 playServicesLocation = "21.1.0"
                        ~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:15: Warning: A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:17: Warning: A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0 [GradleDependency]
 playServicesLocation = "21.1.0"
                        ~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:15: Warning: A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:17: Warning: A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0 [GradleDependency]
 playServicesLocation = "21.1.0"
                        ~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:16: Warning: A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:18: Warning: A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1 [GradleDependency]
 exifinterface = "1.3.6"
                 ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:16: Warning: A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:18: Warning: A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1 [GradleDependency]
 exifinterface = "1.3.6"
                 ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:16: Warning: A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:18: Warning: A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1 [GradleDependency]
 exifinterface = "1.3.6"
                 ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:17: Warning: A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:19: Warning: A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0 [GradleDependency]
 securityCryptoKtx = "1.1.0-alpha06"
                     ~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:17: Warning: A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:19: Warning: A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0 [GradleDependency]
 securityCryptoKtx = "1.1.0-alpha06"
                     ~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:17: Warning: A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:19: Warning: A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0 [GradleDependency]
 securityCryptoKtx = "1.1.0-alpha06"
                     ~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:52: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:58: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
                                                                                    ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:52: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:58: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
                                                                                    ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:52: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:58: Warning: A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0 [GradleDependency]
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
                                                                                    ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:53: Warning: A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:59: Warning: A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0 [GradleDependency]
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
                                                                                                     ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:53: Warning: A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:59: Warning: A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0 [GradleDependency]
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
                                                                                                     ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:53: Warning: A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:59: Warning: A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0 [GradleDependency]
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
                                                                                                     ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:55: Warning: A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:61: Warning: A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1 [GradleDependency]
 mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
                                                                          ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:55: Warning: A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:61: Warning: A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1 [GradleDependency]
 mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
                                                                          ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:55: Warning: A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1 [GradleDependency]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml:61: Warning: A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1 [GradleDependency]
 mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
                                                                          ~~~~~~~
 
@@ -643,6 +670,9 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:12: Warning: Missing autofillHints attribute [Autofill]
         <EditText
          ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_photo_capture.xml:39: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
 
    Explanation for issues of type "Autofill":
    Specify an autofillHints attribute when targeting SDK version 26 or higher
@@ -818,6 +848,24 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_main.xml:104: Warning: Hardcoded string "No locations loaded", should use @string resource [HardcodedText]
                 android:text="No locations loaded"
                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_photo_capture.xml:18: Warning: Hardcoded string "Captured photo", should use @string resource [HardcodedText]
+        android:contentDescription="Captured photo"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_photo_capture.xml:36: Warning: Hardcoded string "Photo Caption (Optional)", should use @string resource [HardcodedText]
+            android:text="Photo Caption (Optional)"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_photo_capture.xml:44: Warning: Hardcoded string "Describe this charging location...", should use @string resource [HardcodedText]
+            android:hint="Describe this charging location..."
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_photo_capture.xml:66: Warning: Hardcoded string "📷 Capture", should use @string resource [HardcodedText]
+            android:text="📷 Capture"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_photo_capture.xml:75: Warning: Hardcoded string "✓ Accept", should use @string resource [HardcodedText]
+            android:text="✓ Accept"
+            ~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_photo_capture.xml:85: Warning: Hardcoded string "Cancel", should use @string resource [HardcodedText]
+            android:text="Cancel"
+            ~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/item_location.xml:33: Warning: Hardcoded string "Location Name", should use @string resource [HardcodedText]
                     android:text="Location Name"
                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -866,4 +914,4 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
    There are quickfixes to automatically extract this hardcoded string into a
    resource lookup.
 
-0 errors, 206 warnings
+0 errors, 222 warnings

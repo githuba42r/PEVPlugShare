@@ -72,6 +72,9 @@
             android:name="com.pevplugshare.ui.add.AddLocationActivity"
             android:exported="false" />
         <activity
+            android:name="com.pevplugshare.ui.photo.PhotoCaptureActivity"
+            android:exported="false" />
+        <activity
             android:name="com.pevplugshare.ui.edit.EditLocationActivity"
             android:exported="false" />
 
@@ -95,6 +98,20 @@
                     android:scheme="content" />
             </intent-filter>
         </activity>
+
+        <!--
+        Service for holding metadata. Cannot be instantiated.
+        Metadata will be merged from other manifests.
+        -->
+        <service
+            android:name="androidx.camera.core.impl.MetadataHolderService"
+            android:enabled="false"
+            android:exported="false" >
+            <meta-data
+                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+        </service>
+
         <activity
             android:name="com.google.android.gms.common.api.GoogleApiActivity"
             android:exported="false"

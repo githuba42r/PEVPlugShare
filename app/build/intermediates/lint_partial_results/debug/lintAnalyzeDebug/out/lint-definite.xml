@@ -13,12 +13,12 @@
             priority="0"/>
         <location
             file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
-            line="67"
+            line="71"
             column="17"
-            startOffset="2739"
-            endLine="71"
+            startOffset="2856"
+            endLine="75"
             endColumn="59"
-            endOffset="2934"/>
+            endOffset="3051"/>
     </incident>
 
     <incident
@@ -33,12 +33,12 @@
             priority="0"/>
         <location
             file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
-            line="72"
+            line="76"
             column="17"
-            startOffset="2951"
-            endLine="74"
+            startOffset="3068"
+            endLine="78"
             endColumn="59"
-            endOffset="3060"/>
+            endOffset="3177"/>
     </incident>
 
     <incident
@@ -867,6 +867,118 @@
     <incident
         id="HardcodedText"
         severity="warning"
+        message="Hardcoded string &quot;Captured photo&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_photo_capture.xml"
+            line="18"
+            column="9"
+            startOffset="620"
+            endLine="18"
+            endColumn="52"
+            endOffset="663"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Photo Caption (Optional)&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_photo_capture.xml"
+            line="36"
+            column="13"
+            startOffset="1247"
+            endLine="36"
+            endColumn="52"
+            endOffset="1286"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_photo_capture.xml"
+            line="39"
+            column="10"
+            startOffset="1337"
+            endLine="39"
+            endColumn="18"
+            endOffset="1345"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Describe this charging location...&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_photo_capture.xml"
+            line="44"
+            column="13"
+            startOffset="1541"
+            endLine="44"
+            endColumn="62"
+            endOffset="1590"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;📷 Capture&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_photo_capture.xml"
+            line="66"
+            column="13"
+            startOffset="2330"
+            endLine="66"
+            endColumn="38"
+            endOffset="2355"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;✓ Accept&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_photo_capture.xml"
+            line="75"
+            column="13"
+            startOffset="2695"
+            endLine="75"
+            endColumn="36"
+            endOffset="2718"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Cancel&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_photo_capture.xml"
+            line="85"
+            column="13"
+            startOffset="3077"
+            endLine="85"
+            endColumn="34"
+            endOffset="3098"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
         message="Hardcoded string &quot;Location Name&quot;, should use `@string` resource">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/item_location.xml"
@@ -1497,6 +1609,66 @@
     <incident
         id="GradleDependency"
         severity="warning"
+        message="A newer version of androidx.camera:camera-camera2 than 1.3.4 is available: 1.5.1">
+        <fix-replace
+            description="Change to 1.5.1"
+            family="Update versions"
+            oldString="1.3.4"
+            replacement="1.5.1"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="10"
+            column="13"
+            startOffset="183"
+            endLine="10"
+            endColumn="20"
+            endOffset="190"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.camera:camera-lifecycle than 1.3.4 is available: 1.5.1">
+        <fix-replace
+            description="Change to 1.5.1"
+            family="Update versions"
+            oldString="1.3.4"
+            replacement="1.5.1"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="10"
+            column="13"
+            startOffset="183"
+            endLine="10"
+            endColumn="20"
+            endOffset="190"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.camera:camera-view than 1.3.4 is available: 1.5.1">
+        <fix-replace
+            description="Change to 1.5.1"
+            family="Update versions"
+            oldString="1.3.4"
+            replacement="1.5.1"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="11"
+            column="14"
+            startOffset="204"
+            endLine="11"
+            endColumn="21"
+            endOffset="211"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
         message="A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3">
         <fix-replace
             description="Change to 2.8.3"
@@ -1506,12 +1678,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="10"
+            line="12"
             column="8"
-            startOffset="178"
-            endLine="10"
+            startOffset="219"
+            endLine="12"
             endColumn="15"
-            endOffset="185"/>
+            endOffset="226"/>
     </incident>
 
     <incident
@@ -1526,12 +1698,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="10"
+            line="12"
             column="8"
-            startOffset="178"
-            endLine="10"
+            startOffset="219"
+            endLine="12"
             endColumn="15"
-            endOffset="185"/>
+            endOffset="226"/>
     </incident>
 
     <incident
@@ -1546,12 +1718,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="10"
+            line="12"
             column="8"
-            startOffset="178"
-            endLine="10"
+            startOffset="219"
+            endLine="12"
             endColumn="15"
-            endOffset="185"/>
+            endOffset="226"/>
     </incident>
 
     <incident
@@ -1566,12 +1738,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="12"
+            line="14"
             column="8"
-            startOffset="213"
-            endLine="12"
+            startOffset="254"
+            endLine="14"
             endColumn="16"
-            endOffset="221"/>
+            endOffset="262"/>
     </incident>
 
     <incident
@@ -1586,12 +1758,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="14"
+            line="16"
             column="15"
-            startOffset="250"
-            endLine="14"
+            startOffset="291"
+            endLine="16"
             endColumn="22"
-            endOffset="257"/>
+            endOffset="298"/>
     </incident>
 
     <incident
@@ -1606,12 +1778,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="15"
+            line="17"
             column="24"
-            startOffset="281"
-            endLine="15"
+            startOffset="322"
+            endLine="17"
             endColumn="32"
-            endOffset="289"/>
+            endOffset="330"/>
     </incident>
 
     <incident
@@ -1626,12 +1798,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="16"
+            line="18"
             column="17"
-            startOffset="306"
-            endLine="16"
+            startOffset="347"
+            endLine="18"
             endColumn="24"
-            endOffset="313"/>
+            endOffset="354"/>
     </incident>
 
     <incident
@@ -1646,12 +1818,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="17"
+            line="19"
             column="21"
-            startOffset="334"
-            endLine="17"
+            startOffset="375"
+            endLine="19"
             endColumn="36"
-            endOffset="349"/>
+            endOffset="390"/>
     </incident>
 
     <incident
@@ -1666,12 +1838,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="52"
+            line="58"
             column="84"
-            startOffset="2768"
-            endLine="52"
+            startOffset="3133"
+            endLine="58"
             endColumn="91"
-            endOffset="2775"/>
+            endOffset="3140"/>
     </incident>
 
     <incident
@@ -1686,12 +1858,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="53"
+            line="59"
             column="101"
-            startOffset="2878"
-            endLine="53"
+            startOffset="3243"
+            endLine="59"
             endColumn="108"
-            endOffset="2885"/>
+            endOffset="3250"/>
     </incident>
 
     <incident
@@ -1706,12 +1878,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="55"
+            line="61"
             column="74"
-            startOffset="2962"
-            endLine="55"
+            startOffset="3327"
+            endLine="61"
             endColumn="81"
-            endOffset="2969"/>
+            endOffset="3334"/>
     </incident>
 
     <incident

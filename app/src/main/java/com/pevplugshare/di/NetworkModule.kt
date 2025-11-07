@@ -5,6 +5,7 @@ import com.pevplugshare.data.remote.OsmandApiClient
 import com.pevplugshare.data.remote.TokenManager
 import com.pevplugshare.data.repository.AuthRepositoryImpl
 import com.pevplugshare.data.repository.LocationRepositoryImpl
+import com.pevplugshare.data.storage.PhotoStorageManager
 import com.pevplugshare.domain.repository.AuthRepository
 import com.pevplugshare.domain.repository.LocationRepository
 import dagger.Module
@@ -50,5 +51,13 @@ object NetworkModule {
         tokenManager: TokenManager
     ): LocationRepository {
         return LocationRepositoryImpl(apiClient, tokenManager)
+    }
+
+    @Singleton
+    @Provides
+    fun providePhotoStorageManager(
+        @ApplicationContext context: Context
+    ): PhotoStorageManager {
+        return PhotoStorageManager(context)
     }
 }

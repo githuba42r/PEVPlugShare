@@ -8,9 +8,11 @@ import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import com.pevplugshare.data.remote.OsmandApiClient;
 import com.pevplugshare.data.remote.TokenManager;
+import com.pevplugshare.data.storage.PhotoStorageManager;
 import com.pevplugshare.di.NetworkModule_ProvideAuthRepositoryFactory;
 import com.pevplugshare.di.NetworkModule_ProvideLocationRepositoryFactory;
 import com.pevplugshare.di.NetworkModule_ProvideOsmandApiClientFactory;
+import com.pevplugshare.di.NetworkModule_ProvidePhotoStorageManagerFactory;
 import com.pevplugshare.di.NetworkModule_ProvideTokenManagerFactory;
 import com.pevplugshare.domain.repository.AuthRepository;
 import com.pevplugshare.domain.repository.LocationRepository;
@@ -26,6 +28,9 @@ import com.pevplugshare.ui.auth.SplashViewModel_HiltModules_KeyModule_ProvideFac
 import com.pevplugshare.ui.main.MainActivity;
 import com.pevplugshare.ui.main.MainViewModel;
 import com.pevplugshare.ui.main.MainViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.pevplugshare.ui.photo.PhotoCaptureActivity;
+import com.pevplugshare.ui.photo.PhotoCaptureViewModel;
+import com.pevplugshare.ui.photo.PhotoCaptureViewModel_HiltModules_KeyModule_ProvideFactory;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -389,13 +394,17 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     }
 
     @Override
+    public void injectPhotoCaptureActivity(PhotoCaptureActivity photoCaptureActivity) {
+    }
+
+    @Override
     public DefaultViewModelFactories.InternalFactoryFactory getHiltInternalFactoryFactory() {
       return DefaultViewModelFactories_InternalFactoryFactory_Factory.newInstance(getViewModelKeys(), new ViewModelCBuilder(singletonCImpl, activityRetainedCImpl));
     }
 
     @Override
     public Set<String> getViewModelKeys() {
-      return SetBuilder.<String>newSetBuilder(4).add(AddLocationViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(LoginViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(MainViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(SplashViewModel_HiltModules_KeyModule_ProvideFactory.provide()).build();
+      return SetBuilder.<String>newSetBuilder(5).add(AddLocationViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(LoginViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(MainViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(PhotoCaptureViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(SplashViewModel_HiltModules_KeyModule_ProvideFactory.provide()).build();
     }
 
     @Override
@@ -427,6 +436,8 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     private Provider<MainViewModel> mainViewModelProvider;
 
+    private Provider<PhotoCaptureViewModel> photoCaptureViewModelProvider;
+
     private Provider<SplashViewModel> splashViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
@@ -445,12 +456,13 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
       this.addLocationViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
       this.loginViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
       this.mainViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
-      this.splashViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.photoCaptureViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.splashViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
     }
 
     @Override
     public Map<String, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(4).put("com.pevplugshare.ui.add.AddLocationViewModel", ((Provider) addLocationViewModelProvider)).put("com.pevplugshare.ui.auth.LoginViewModel", ((Provider) loginViewModelProvider)).put("com.pevplugshare.ui.main.MainViewModel", ((Provider) mainViewModelProvider)).put("com.pevplugshare.ui.auth.SplashViewModel", ((Provider) splashViewModelProvider)).build();
+      return MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(5).put("com.pevplugshare.ui.add.AddLocationViewModel", ((Provider) addLocationViewModelProvider)).put("com.pevplugshare.ui.auth.LoginViewModel", ((Provider) loginViewModelProvider)).put("com.pevplugshare.ui.main.MainViewModel", ((Provider) mainViewModelProvider)).put("com.pevplugshare.ui.photo.PhotoCaptureViewModel", ((Provider) photoCaptureViewModelProvider)).put("com.pevplugshare.ui.auth.SplashViewModel", ((Provider) splashViewModelProvider)).build();
     }
 
     @Override
@@ -488,7 +500,10 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
           case 2: // com.pevplugshare.ui.main.MainViewModel 
           return (T) new MainViewModel(singletonCImpl.provideLocationRepositoryProvider.get(), singletonCImpl.provideAuthRepositoryProvider.get());
 
-          case 3: // com.pevplugshare.ui.auth.SplashViewModel 
+          case 3: // com.pevplugshare.ui.photo.PhotoCaptureViewModel 
+          return (T) new PhotoCaptureViewModel(singletonCImpl.providePhotoStorageManagerProvider.get());
+
+          case 4: // com.pevplugshare.ui.auth.SplashViewModel 
           return (T) new SplashViewModel(singletonCImpl.provideAuthRepositoryProvider.get());
 
           default: throw new AssertionError(id);
@@ -579,6 +594,8 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     private Provider<AuthRepository> provideAuthRepositoryProvider;
 
+    private Provider<PhotoStorageManager> providePhotoStorageManagerProvider;
+
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
       initialize(applicationContextModuleParam);
@@ -591,6 +608,7 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
       this.provideOsmandApiClientProvider = DoubleCheck.provider(new SwitchingProvider<OsmandApiClient>(singletonCImpl, 1));
       this.provideLocationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<LocationRepository>(singletonCImpl, 0));
       this.provideAuthRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AuthRepository>(singletonCImpl, 3));
+      this.providePhotoStorageManagerProvider = DoubleCheck.provider(new SwitchingProvider<PhotoStorageManager>(singletonCImpl, 4));
     }
 
     @Override
@@ -637,6 +655,9 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
           case 3: // com.pevplugshare.domain.repository.AuthRepository 
           return (T) NetworkModule_ProvideAuthRepositoryFactory.provideAuthRepository(singletonCImpl.provideOsmandApiClientProvider.get(), singletonCImpl.provideTokenManagerProvider.get());
+
+          case 4: // com.pevplugshare.data.storage.PhotoStorageManager 
+          return (T) NetworkModule_ProvidePhotoStorageManagerFactory.providePhotoStorageManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }

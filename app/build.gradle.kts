@@ -89,6 +89,11 @@ dependencies {
     // Security/Encryption
     implementation(libs.androidx.security.crypto.ktx)
 
+    // Camera
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
