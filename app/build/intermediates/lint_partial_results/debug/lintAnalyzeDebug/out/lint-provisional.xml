@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.4.0" type="conditional_incidents">
+
+    <incident
+        id="CustomSplashScreen"
+        severity="warning"
+        message="The application should not provide its own launch screen">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/auth/SplashActivity.kt"
+            line="7"
+            column="7"
+            startOffset="140"
+            endLine="7"
+            endColumn="21"
+            endOffset="154"/>
+        <map>
+            <condition targetGE="31"/>
+        </map>
+    </incident>
+
+</incidents>

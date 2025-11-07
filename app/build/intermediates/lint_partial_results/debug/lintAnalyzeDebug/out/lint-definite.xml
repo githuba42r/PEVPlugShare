@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.4.0" type="incidents">
+
+    <incident
+        id="IntentFilterUniqueDataAttributes"
+        severity="warning"
+        message="Consider splitting data tag into multiple tags with individual attributes to avoid confusion">
+        <fix-replace
+            description="Replace with &lt;data android:scheme=&quot;file&quot;/>..."
+            robot="true"
+            independent="true"
+            replacement="&lt;data android:scheme=&quot;file&quot;/>&#xA;                &lt;data android:host=&quot;*&quot;/>&#xA;                &lt;data android:pathPattern=&quot;.*\\.json&quot;/>&#xA;                &lt;data android:mimeType=&quot;application/json&quot;/>"
+            priority="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="57"
+            column="17"
+            startOffset="2278"
+            endLine="61"
+            endColumn="59"
+            endOffset="2473"/>
+    </incident>
+
+    <incident
+        id="IntentFilterUniqueDataAttributes"
+        severity="warning"
+        message="Consider splitting data tag into multiple tags with individual attributes to avoid confusion">
+        <fix-replace
+            description="Replace with &lt;data android:scheme=&quot;content&quot;/>..."
+            robot="true"
+            independent="true"
+            replacement="&lt;data android:scheme=&quot;content&quot;/>&#xA;                &lt;data android:mimeType=&quot;application/json&quot;/>"
+            priority="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="62"
+            column="17"
+            startOffset="2490"
+            endLine="64"
+            endColumn="59"
+            endOffset="2599"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+            line="19"
+            column="10"
+            startOffset="627"
+            endLine="19"
+            endColumn="18"
+            endOffset="635"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+            line="27"
+            column="10"
+            startOffset="920"
+            endLine="27"
+            endColumn="18"
+            endOffset="928"/>
+    </incident>
+
+    <incident
+        id="ButtonStyle"
+        severity="warning"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)">
+        <fix-composite
+            description="Make borderless">
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+                    startOffset="1206"
+                    endOffset="1985"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+                    startOffset="1454"
+                    endOffset="1697"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+                    startOffset="1711"
+                    endOffset="1960"/>
+            </fix-attribute>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+            line="42"
+            column="14"
+            startOffset="1455"
+            endLine="42"
+            endColumn="20"
+            endOffset="1461"/>
+    </incident>
+
+    <incident
+        id="ButtonStyle"
+        severity="warning"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)">
+        <fix-composite
+            description="Make borderless">
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+                    startOffset="1206"
+                    endOffset="1985"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+                    startOffset="1454"
+                    endOffset="1697"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+                    startOffset="1711"
+                    endOffset="1960"/>
+            </fix-attribute>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+            line="49"
+            column="14"
+            startOffset="1712"
+            endLine="49"
+            endColumn="20"
+            endOffset="1718"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="12"
+            column="10"
+            startOffset="381"
+            endLine="12"
+            endColumn="18"
+            endOffset="389"/>
+    </incident>
+
+    <incident
+        id="ButtonStyle"
+        severity="warning"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)">
+        <fix-composite
+            description="Make borderless">
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+                    startOffset="629"
+                    endOffset="1410"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+                    startOffset="877"
+                    endOffset="1122"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+                    startOffset="1136"
+                    endOffset="1385"/>
+            </fix-attribute>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="26"
+            column="14"
+            startOffset="878"
+            endLine="26"
+            endColumn="20"
+            endOffset="884"/>
+    </incident>
+
+    <incident
+        id="ButtonStyle"
+        severity="warning"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)">
+        <fix-composite
+            description="Make borderless">
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+                    startOffset="629"
+                    endOffset="1410"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+                    startOffset="877"
+                    endOffset="1122"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+                    startOffset="1136"
+                    endOffset="1385"/>
+            </fix-attribute>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="33"
+            column="14"
+            startOffset="1137"
+            endLine="33"
+            endColumn="20"
+            endOffset="1143"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Importing Locations...&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_import_locations.xml"
+            line="11"
+            column="9"
+            startOffset="368"
+            endLine="11"
+            endColumn="46"
+            endOffset="405"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="16"
+            column="6"
+            startOffset="627"
+            endLine="16"
+            endColumn="75"
+            endOffset="696"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive icon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-hdpi/ic_launcher.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="258"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive icon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-mdpi/ic_launcher.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="258"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive icon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-xhdpi/ic_launcher.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="258"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive icon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-xxhdpi/ic_launcher.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="258"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive icon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-xxxhdpi/ic_launcher.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="258"/>
+    </incident>
+
+    <incident
+        id="OldTargetApi"
+        severity="warning"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.">
+        <fix-replace
+            description="Update targetSdkVersion to 36"
+            oldString="34"
+            replacement="36"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="15"
+            column="9"
+            startOffset="326"
+            endLine="15"
+            endColumn="23"
+            endOffset="340"/>
+    </incident>
+
+    <incident
+        id="KaptUsageInsteadOfKsp"
+        severity="warning"
+        message="This library supports using KSP instead of kapt, which greatly improves performance. Learn more: https://developer.android.com/studio/build/migrate-to-ksp">
+        <show-url
+            description="Learn about how to enable KSP and use the KSP processor for this dependency instead"
+            url="https://developer.android.com/studio/build/migrate-to-ksp"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="67"
+            column="5"
+            startOffset="1582"
+            endLine="67"
+            endColumn="38"
+            endOffset="1615"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.13.0 is available: 1.17.0">
+        <fix-replace
+            description="Change to 1.17.0"
+            family="Update versions"
+            oldString="1.13.0"
+            replacement="1.17.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="4"
+            column="11"
+            startOffset="53"
+            endLine="4"
+            endColumn="19"
+            endOffset="61"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.1">
+        <fix-replace
+            description="Change to 1.7.1"
+            family="Update versions"
+            oldString="1.6.1"
+            replacement="1.7.1"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="5"
+            column="13"
+            startOffset="74"
+            endLine="5"
+            endColumn="20"
+            endOffset="81"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.android.material:material than 1.11.0 is available: 1.13.0">
+        <fix-replace
+            description="Change to 1.13.0"
+            family="Update versions"
+            oldString="1.11.0"
+            replacement="1.13.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="6"
+            column="12"
+            startOffset="93"
+            endLine="6"
+            endColumn="20"
+            endOffset="101"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.constraintlayout:constraintlayout than 2.1.4 is available: 2.2.1">
+        <fix-replace
+            description="Change to 2.2.1"
+            family="Update versions"
+            oldString="2.1.4"
+            replacement="2.2.1"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="7"
+            column="20"
+            startOffset="121"
+            endLine="7"
+            endColumn="27"
+            endOffset="128"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.7.0 is available: 2.9.4">
+        <fix-replace
+            description="Change to 2.9.4"
+            family="Update versions"
+            oldString="2.7.0"
+            replacement="2.9.4"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="8"
+            column="13"
+            startOffset="141"
+            endLine="8"
+            endColumn="20"
+            endOffset="148"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.7.0 is available: 2.9.4">
+        <fix-replace
+            description="Change to 2.9.4"
+            family="Update versions"
+            oldString="2.7.0"
+            replacement="2.9.4"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="8"
+            column="13"
+            startOffset="141"
+            endLine="8"
+            endColumn="20"
+            endOffset="148"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.7.0 is available: 2.9.4">
+        <fix-replace
+            description="Change to 2.9.4"
+            family="Update versions"
+            oldString="2.7.0"
+            replacement="2.9.4"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="8"
+            column="13"
+            startOffset="141"
+            endLine="8"
+            endColumn="20"
+            endOffset="148"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3">
+        <fix-replace
+            description="Change to 2.8.3"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.3"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="9"
+            column="8"
+            startOffset="156"
+            endLine="9"
+            endColumn="15"
+            endOffset="163"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3">
+        <fix-replace
+            description="Change to 2.8.3"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.3"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="9"
+            column="8"
+            startOffset="156"
+            endLine="9"
+            endColumn="15"
+            endOffset="163"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3">
+        <fix-replace
+            description="Change to 2.8.3"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.3"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="9"
+            column="8"
+            startOffset="156"
+            endLine="9"
+            endColumn="15"
+            endOffset="163"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0">
+        <fix-replace
+            description="Change to 2.11.0"
+            family="Update versions"
+            oldString="2.10.1"
+            replacement="2.11.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="11"
+            column="8"
+            startOffset="191"
+            endLine="11"
+            endColumn="16"
+            endOffset="199"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0">
+        <fix-replace
+            description="Change to 2.11.0"
+            family="Update versions"
+            oldString="2.8.1"
+            replacement="2.11.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="13"
+            column="15"
+            startOffset="228"
+            endLine="13"
+            endColumn="22"
+            endOffset="235"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0">
+        <fix-replace
+            description="Change to 21.3.0"
+            family="Update versions"
+            oldString="21.1.0"
+            replacement="21.3.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="14"
+            column="24"
+            startOffset="259"
+            endLine="14"
+            endColumn="32"
+            endOffset="267"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1">
+        <fix-replace
+            description="Change to 1.4.1"
+            family="Update versions"
+            oldString="1.3.6"
+            replacement="1.4.1"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="15"
+            column="17"
+            startOffset="284"
+            endLine="15"
+            endColumn="24"
+            endOffset="291"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0">
+        <fix-replace
+            description="Change to 1.3.0"
+            family="Update versions"
+            oldString="1.1.5"
+            replacement="1.3.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="46"
+            column="84"
+            startOffset="2472"
+            endLine="46"
+            endColumn="91"
+            endOffset="2479"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0">
+        <fix-replace
+            description="Change to 3.7.0"
+            family="Update versions"
+            oldString="3.5.1"
+            replacement="3.7.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="47"
+            column="101"
+            startOffset="2582"
+            endLine="47"
+            endColumn="108"
+            endOffset="2589"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1">
+        <fix-replace
+            description="Change to 5.3.1"
+            family="Update versions"
+            oldString="5.2.1"
+            replacement="5.3.1"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="49"
+            column="74"
+            startOffset="2666"
+            endLine="49"
+            endColumn="81"
+            endOffset="2673"/>
+    </incident>
+
+    <incident
+        id="AndroidGradlePluginVersion"
+        severity="warning"
+        message="A newer version of com.android.application than 8.4.0 is available: 8.13.0. (There is also a newer version of 8.4.𝑥 available, if upgrading to 8.13.0 is difficult: 8.4.2)">
+        <fix-alternatives>
+            <fix-replace
+                description="Change to 8.13.0"
+                family="Update versions"
+                oldString="8.4.0"
+                replacement="8.13.0"
+                priority="0"/>
+            <fix-replace
+                description="Change to 8.4.2"
+                family="Update versions"
+                robot="true"
+                independent="true"
+                oldString="8.4.0"
+                replacement="8.4.2"
+                priority="0"/>
+        </fix-alternatives>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="2"
+            column="7"
+            startOffset="17"
+            endLine="2"
+            endColumn="14"
+            endOffset="24"/>
+    </incident>
+
+    <incident
+        id="Overdraw"
+        severity="warning"
+        message="Possible overdraw: Root element paints background `@color/md_theme_primary` with a theme that also paints a background (inferred theme is `@style/Theme.PEVPlugShare`)">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_splash.xml"
+            line="5"
+            column="5"
+            startOffset="196"
+            endLine="5"
+            endColumn="49"
+            endOffset="240"/>
+    </incident>
+
+    <incident
+        id="ButtonOrder"
+        severity="warning"
+        message="Cancel button should be on the left (was &quot;Add | Cancel&quot;, should be &quot;Cancel | Add&quot;)">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_add_location.xml"
+            line="49"
+            column="14"
+            startOffset="1712"
+            endLine="49"
+            endColumn="20"
+            endOffset="1718"/>
+    </incident>
+
+</incidents>

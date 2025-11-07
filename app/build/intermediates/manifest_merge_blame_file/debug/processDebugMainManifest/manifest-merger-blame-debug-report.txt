@@ -1,0 +1,440 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.pevplugshare"
+4    android:versionCode="1"
+5    android:versionName="0.1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <!-- Core Permissions -->
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:5:5-67
+12-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:5:22-64
+13    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+13-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:6:5-79
+13-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:6:22-76
+14    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+14-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:7:5-81
+14-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:7:22-78
+15    <uses-permission android:name="android.permission.CAMERA" />
+15-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:8:5-65
+15-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:8:22-62
+16    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+16-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:9:5-79
+16-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:9:22-76
+17    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+17-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:10:5-77
+17-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:10:22-74
+18
+19    <uses-feature
+19-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:12:5-85
+20        android:name="android.hardware.camera"
+20-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:12:19-57
+21        android:required="false" />
+21-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:12:58-82
+22
+23    <uses-permission android:name="android.permission.WAKE_LOCK" />
+23-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:23:5-68
+23-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:23:22-65
+24    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+24-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:25:5-81
+24-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:25:22-78
+25    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+25-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:26:5-77
+25-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:26:22-74
+26
+27    <permission
+27-->[androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/a94277ce5a651468cb07f67d482ad448/transformed/core-1.13.0/AndroidManifest.xml:22:5-24:47
+28        android:name="com.pevplugshare.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+28-->[androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/a94277ce5a651468cb07f67d482ad448/transformed/core-1.13.0/AndroidManifest.xml:23:9-81
+29        android:protectionLevel="signature" />
+29-->[androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/a94277ce5a651468cb07f67d482ad448/transformed/core-1.13.0/AndroidManifest.xml:24:9-44
+30
+31    <uses-permission android:name="com.pevplugshare.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+31-->[androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/a94277ce5a651468cb07f67d482ad448/transformed/core-1.13.0/AndroidManifest.xml:26:5-97
+31-->[androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/a94277ce5a651468cb07f67d482ad448/transformed/core-1.13.0/AndroidManifest.xml:26:22-94
+32
+33    <application
+33-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:14:5-68:19
+34        android:name="com.pevplugshare.PEVPlugShareApplication"
+34-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:22:9-48
+35        android:allowBackup="true"
+35-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:15:9-35
+36        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+36-->[androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/a94277ce5a651468cb07f67d482ad448/transformed/core-1.13.0/AndroidManifest.xml:28:18-86
+37        android:dataExtractionRules="@xml/data_extraction_rules"
+37-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:16:9-65
+38        android:debuggable="true"
+39        android:extractNativeLibs="false"
+40        android:fullBackupContent="@xml/backup_rules"
+40-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:17:9-54
+41        android:icon="@mipmap/ic_launcher"
+41-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:18:9-43
+42        android:label="@string/app_name"
+42-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:19:9-41
+43        android:supportsRtl="true"
+43-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:20:9-35
+44        android:theme="@style/Theme.PEVPlugShare" >
+44-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:21:9-50
+45        <activity
+45-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:24:9-31:20
+46            android:name="com.pevplugshare.ui.auth.SplashActivity"
+46-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:25:13-51
+47            android:exported="true" >
+47-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:26:13-36
+48            <intent-filter>
+48-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:27:13-30:29
+49                <action android:name="android.intent.action.MAIN" />
+49-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:28:17-69
+49-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:28:25-66
+50
+51                <category android:name="android.intent.category.LAUNCHER" />
+51-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:29:17-77
+51-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:29:27-74
+52            </intent-filter>
+53        </activity>
+54        <activity
+54-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:33:9-35:40
+55            android:name="com.pevplugshare.ui.auth.LoginActivity"
+55-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:34:13-50
+56            android:exported="false" />
+56-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:35:13-37
+57        <activity
+57-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:37:9-39:40
+58            android:name="com.pevplugshare.ui.main.MainActivity"
+58-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:38:13-49
+59            android:exported="false" />
+59-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:39:13-37
+60        <activity
+60-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:41:9-43:40
+61            android:name="com.pevplugshare.ui.add.AddLocationActivity"
+61-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:42:13-55
+62            android:exported="false" />
+62-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:43:13-37
+63        <activity
+63-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:45:9-47:40
+64            android:name="com.pevplugshare.ui.edit.EditLocationActivity"
+64-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:46:13-57
+65            android:exported="false" />
+65-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:47:13-37
+66
+67        <!-- Intent filter for JSON file import -->
+68        <activity
+68-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:50:9-66:20
+69            android:name="com.pevplugshare.ui.import.ImportLocationsActivity"
+69-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:51:13-62
+70            android:exported="true" >
+70-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:52:13-36
+71            <intent-filter>
+71-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:53:13-65:29
+72                <action android:name="android.intent.action.VIEW" />
+72-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:54:17-69
+72-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:54:25-66
+73
+74                <category android:name="android.intent.category.DEFAULT" />
+74-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:55:17-76
+74-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:55:27-73
+75                <category android:name="android.intent.category.BROWSABLE" />
+75-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:56:17-78
+75-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:56:27-75
+76
+77                <data
+77-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:57:17-61:59
+78                    android:host="*"
+78-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:59:21-37
+79                    android:mimeType="application/json"
+79-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:61:21-56
+80                    android:pathPattern=".*\\.json"
+80-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:60:21-52
+81                    android:scheme="file" />
+81-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:58:21-42
+82                <data
+82-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:57:17-61:59
+83                    android:mimeType="application/json"
+83-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:61:21-56
+84                    android:scheme="content" />
+84-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:58:21-42
+85            </intent-filter>
+86        </activity>
+87
+88        <provider
+88-->[androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/43db1cec837dc2d34098db3200d112ee/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+89            android:name="androidx.startup.InitializationProvider"
+89-->[androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/43db1cec837dc2d34098db3200d112ee/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
+90            android:authorities="com.pevplugshare.androidx-startup"
+90-->[androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/43db1cec837dc2d34098db3200d112ee/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
+91            android:exported="false" >
+91-->[androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/43db1cec837dc2d34098db3200d112ee/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
+92            <meta-data
+92-->[androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/43db1cec837dc2d34098db3200d112ee/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+93                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+93-->[androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/43db1cec837dc2d34098db3200d112ee/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
+94                android:value="androidx.startup" />
+94-->[androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/43db1cec837dc2d34098db3200d112ee/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
+95            <meta-data
+95-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:34:13-36:52
+96                android:name="androidx.work.WorkManagerInitializer"
+96-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:35:17-68
+97                android:value="androidx.startup" />
+97-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:36:17-49
+98            <meta-data
+98-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/philg/.gradle/caches/transforms-4/9b8fda10461351c9c02d949739e83700/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:29:13-31:52
+99                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+99-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/philg/.gradle/caches/transforms-4/9b8fda10461351c9c02d949739e83700/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:30:17-78
+100                android:value="androidx.startup" />
+100-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/philg/.gradle/caches/transforms-4/9b8fda10461351c9c02d949739e83700/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:31:17-49
+101            <meta-data
+101-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:29:13-31:52
+102                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+102-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:30:17-85
+103                android:value="androidx.startup" />
+103-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:31:17-49
+104        </provider>
+105
+106        <activity
+106-->[com.google.android.gms:play-services-base:18.1.0] /home/philg/.gradle/caches/transforms-4/9b907ea0e7ba537c733289fa51f0122b/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:20:9-22:45
+107            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+107-->[com.google.android.gms:play-services-base:18.1.0] /home/philg/.gradle/caches/transforms-4/9b907ea0e7ba537c733289fa51f0122b/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:20:19-85
+108            android:exported="false"
+108-->[com.google.android.gms:play-services-base:18.1.0] /home/philg/.gradle/caches/transforms-4/9b907ea0e7ba537c733289fa51f0122b/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:22:19-43
+109            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+109-->[com.google.android.gms:play-services-base:18.1.0] /home/philg/.gradle/caches/transforms-4/9b907ea0e7ba537c733289fa51f0122b/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:21:19-78
+110
+111        <meta-data
+111-->[com.google.android.gms:play-services-basement:18.1.0] /home/philg/.gradle/caches/transforms-4/f93466a7d14ad7fb6412a0e4c4180d78/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:21:9-23:69
+112            android:name="com.google.android.gms.version"
+112-->[com.google.android.gms:play-services-basement:18.1.0] /home/philg/.gradle/caches/transforms-4/f93466a7d14ad7fb6412a0e4c4180d78/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:22:13-58
+113            android:value="@integer/google_play_services_version" />
+113-->[com.google.android.gms:play-services-basement:18.1.0] /home/philg/.gradle/caches/transforms-4/f93466a7d14ad7fb6412a0e4c4180d78/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:23:13-66
+114
+115        <service
+115-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:39:9-45:35
+116            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+116-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:40:13-88
+117            android:directBootAware="false"
+117-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:41:13-44
+118            android:enabled="@bool/enable_system_alarm_service_default"
+118-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:42:13-72
+119            android:exported="false" />
+119-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:43:13-37
+120        <service
+120-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:46:9-52:35
+121            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+121-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:47:13-84
+122            android:directBootAware="false"
+122-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:48:13-44
+123            android:enabled="@bool/enable_system_job_service_default"
+123-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:49:13-70
+124            android:exported="true"
+124-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:50:13-36
+125            android:permission="android.permission.BIND_JOB_SERVICE" />
+125-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:51:13-69
+126        <service
+126-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:53:9-59:35
+127            android:name="androidx.work.impl.foreground.SystemForegroundService"
+127-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:54:13-81
+128            android:directBootAware="false"
+128-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:55:13-44
+129            android:enabled="@bool/enable_system_foreground_service_default"
+129-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:56:13-77
+130            android:exported="false" />
+130-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:57:13-37
+131
+132        <receiver
+132-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:61:9-66:35
+133            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+133-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:62:13-88
+134            android:directBootAware="false"
+134-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:63:13-44
+135            android:enabled="true"
+135-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:64:13-35
+136            android:exported="false" />
+136-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:65:13-37
+137        <receiver
+137-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:67:9-77:20
+138            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+138-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:68:13-106
+139            android:directBootAware="false"
+139-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:69:13-44
+140            android:enabled="false"
+140-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:70:13-36
+141            android:exported="false" >
+141-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:71:13-37
+142            <intent-filter>
+142-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:73:13-76:29
+143                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+143-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:74:17-87
+143-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:74:25-84
+144                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+144-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:75:17-90
+144-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:75:25-87
+145            </intent-filter>
+146        </receiver>
+147        <receiver
+147-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:78:9-88:20
+148            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+148-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:79:13-104
+149            android:directBootAware="false"
+149-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:80:13-44
+150            android:enabled="false"
+150-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:81:13-36
+151            android:exported="false" >
+151-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:82:13-37
+152            <intent-filter>
+152-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:84:13-87:29
+153                <action android:name="android.intent.action.BATTERY_OKAY" />
+153-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:85:17-77
+153-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:85:25-74
+154                <action android:name="android.intent.action.BATTERY_LOW" />
+154-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:86:17-76
+154-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:86:25-73
+155            </intent-filter>
+156        </receiver>
+157        <receiver
+157-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:89:9-99:20
+158            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+158-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:90:13-104
+159            android:directBootAware="false"
+159-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:91:13-44
+160            android:enabled="false"
+160-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:92:13-36
+161            android:exported="false" >
+161-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:93:13-37
+162            <intent-filter>
+162-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:95:13-98:29
+163                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+163-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:96:17-83
+163-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:96:25-80
+164                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+164-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:97:17-82
+164-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:97:25-79
+165            </intent-filter>
+166        </receiver>
+167        <receiver
+167-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:100:9-109:20
+168            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+168-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:101:13-103
+169            android:directBootAware="false"
+169-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:102:13-44
+170            android:enabled="false"
+170-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:103:13-36
+171            android:exported="false" >
+171-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:104:13-37
+172            <intent-filter>
+172-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:106:13-108:29
+173                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+173-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:107:17-79
+173-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:107:25-76
+174            </intent-filter>
+175        </receiver>
+176        <receiver
+176-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:110:9-121:20
+177            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+177-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:111:13-88
+178            android:directBootAware="false"
+178-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:112:13-44
+179            android:enabled="false"
+179-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:113:13-36
+180            android:exported="false" >
+180-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:114:13-37
+181            <intent-filter>
+181-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:116:13-120:29
+182                <action android:name="android.intent.action.BOOT_COMPLETED" />
+182-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:117:17-79
+182-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:117:25-76
+183                <action android:name="android.intent.action.TIME_SET" />
+183-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:118:17-73
+183-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:118:25-70
+184                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+184-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:119:17-81
+184-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:119:25-78
+185            </intent-filter>
+186        </receiver>
+187        <receiver
+187-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:122:9-131:20
+188            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+188-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:123:13-99
+189            android:directBootAware="false"
+189-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:124:13-44
+190            android:enabled="@bool/enable_system_alarm_service_default"
+190-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:125:13-72
+191            android:exported="false" >
+191-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:126:13-37
+192            <intent-filter>
+192-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:128:13-130:29
+193                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+193-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:129:17-98
+193-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:129:25-95
+194            </intent-filter>
+195        </receiver>
+196        <receiver
+196-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:132:9-142:20
+197            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+197-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:133:13-78
+198            android:directBootAware="false"
+198-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:134:13-44
+199            android:enabled="true"
+199-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:135:13-35
+200            android:exported="true"
+200-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:136:13-36
+201            android:permission="android.permission.DUMP" >
+201-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:137:13-57
+202            <intent-filter>
+202-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:139:13-141:29
+203                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+203-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:140:17-88
+203-->[androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/307fe4ece78176de0b86422293d7b3aa/transformed/work-runtime-2.8.1/AndroidManifest.xml:140:25-85
+204            </intent-filter>
+205        </receiver>
+206
+207        <service
+207-->[androidx.room:room-runtime:2.6.1] /home/philg/.gradle/caches/transforms-4/4551c75fabdf50a72462b04445be8d0c/transformed/room-runtime-2.6.1/AndroidManifest.xml:24:9-28:63
+208            android:name="androidx.room.MultiInstanceInvalidationService"
+208-->[androidx.room:room-runtime:2.6.1] /home/philg/.gradle/caches/transforms-4/4551c75fabdf50a72462b04445be8d0c/transformed/room-runtime-2.6.1/AndroidManifest.xml:25:13-74
+209            android:directBootAware="true"
+209-->[androidx.room:room-runtime:2.6.1] /home/philg/.gradle/caches/transforms-4/4551c75fabdf50a72462b04445be8d0c/transformed/room-runtime-2.6.1/AndroidManifest.xml:26:13-43
+210            android:exported="false" />
+210-->[androidx.room:room-runtime:2.6.1] /home/philg/.gradle/caches/transforms-4/4551c75fabdf50a72462b04445be8d0c/transformed/room-runtime-2.6.1/AndroidManifest.xml:27:13-37
+211
+212        <receiver
+212-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:34:9-52:20
+213            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+213-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:35:13-76
+214            android:directBootAware="false"
+214-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:36:13-44
+215            android:enabled="true"
+215-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:37:13-35
+216            android:exported="true"
+216-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:38:13-36
+217            android:permission="android.permission.DUMP" >
+217-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:39:13-57
+218            <intent-filter>
+218-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:40:13-42:29
+219                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+219-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:41:17-91
+219-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:41:25-88
+220            </intent-filter>
+221            <intent-filter>
+221-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:43:13-45:29
+222                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+222-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:44:17-85
+222-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:44:25-82
+223            </intent-filter>
+224            <intent-filter>
+224-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:46:13-48:29
+225                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+225-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:47:17-88
+225-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:47:25-85
+226            </intent-filter>
+227            <intent-filter>
+227-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:49:13-51:29
+228                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+228-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:50:17-95
+228-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/bc4ef76f777c71b804945c14a3272d86/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:50:25-92
+229            </intent-filter>
+230        </receiver>
+231    </application>
+232
+233</manifest>
