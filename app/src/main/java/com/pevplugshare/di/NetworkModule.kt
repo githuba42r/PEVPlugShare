@@ -1,6 +1,7 @@
 package com.pevplugshare.di
 
 import android.content.Context
+import com.pevplugshare.data.network.ConnectivityObserver
 import com.pevplugshare.data.remote.OsmandApiClient
 import com.pevplugshare.data.remote.TokenManager
 import com.pevplugshare.data.repository.AuthRepositoryImpl
@@ -59,5 +60,13 @@ object NetworkModule {
         @ApplicationContext context: Context
     ): PhotoStorageManager {
         return PhotoStorageManager(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideConnectivityObserver(
+        @ApplicationContext context: Context
+    ): ConnectivityObserver {
+        return ConnectivityObserver.create(context)
     }
 }

@@ -3,11 +3,15 @@ package com.pevplugshare.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pevplugshare.data.model.Location
+import com.pevplugshare.data.network.ConnectivityObserver
+import com.pevplugshare.data.network.NetworkStatus
+import com.pevplugshare.data.repository.SyncManager
 import com.pevplugshare.domain.repository.LocationRepository
 import com.pevplugshare.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +31,9 @@ sealed class CategoryState {
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val locationRepository: LocationRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val connectivityObserver: ConnectivityObserver,
+    private val syncManager: SyncManager
 ) : ViewModel() {
 
     private val _locationListState = MutableStateFlow<LocationListState>(LocationListState.Loading)
@@ -44,6 +50,50 @@ class MainViewModel @Inject constructor(
 
     private val _isOffline = MutableStateFlow(false)
     val isOffline: StateFlow<Boolean> = _isOffline
+
+    private val _networkStatus = MutableStateFlow<NetworkStatus>(NetworkStatus.ONLINE)
+    val networkStatus: StateFlow<NetworkStatus> = _networkStatus
+
+    private val _hasPendingOperations = MutableStateFlow(false)
+    val hasPendingOperations: StateFlow<Boolean> = _hasPendingOperations
+
+    private val _isSyncing = MutableStateFlow(false)
+    val isSyncing: StateFlow<Boolean> = _isSyncing
+
+    init {
+        observeNetworkStatus()
+        observeSyncStatus()
+    }
+
+    private fun observeNetworkStatus() {
+        viewModelScope.launch {
+            connectivityObserver.observe().collectLatest { status ->
+                _networkStatus.value = status
+                _isOffline.value = status == NetworkStatus.OFFLINE || status == NetworkStatus.UNAVAILABLE
+                
+                if (status == NetworkStatus.ONLINE) {
+                    checkPendingOperationsAndSync()
+                }
+            }
+        }
+    }
+
+    private fun observeSyncStatus() {
+        viewModelScope.launch {
+            syncManager.syncState.collectLatest { state ->
+                _isSyncing.value = state.name == "SYNCING"
+            }
+        }
+    }
+
+    private suspend fun checkPendingOperationsAndSync() {
+        val hasPending = syncManager.hasPendingOperations()
+        _hasPendingOperations.value = hasPending
+        
+        if (hasPending) {
+            syncManager.syncPendingOperations()
+        }
+    }
 
     fun loadCategories() {
         viewModelScope.launch {
@@ -113,6 +163,10 @@ class MainViewModel @Inject constructor(
         loadLocations(category)
     }
 
+    suspend fun manualSync() {
+        checkPendingOperationsAndSync()
+    }
+
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
@@ -124,7 +178,7 @@ class MainViewModel @Inject constructor(
         return locations.sortedBy { location ->
             val dx = location.latitude - userLoc.first
             val dy = location.longitude - userLoc.second
-            dx * dx + dy * dy // Simple distance approximation (good enough for sorting)
+            dx * dx + dy * dy
         }
     }
 }

@@ -79,6 +79,8 @@ dependencies {
 
     // Background Tasks
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.hilt.work)
+    kapt(libs.hilt.compiler.work)
 
     // Location Services
     implementation(libs.play.services.location)
