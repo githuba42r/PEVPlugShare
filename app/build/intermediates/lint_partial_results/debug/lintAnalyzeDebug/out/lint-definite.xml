@@ -609,6 +609,76 @@
     </incident>
 
     <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Edit Location&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="32"
+            column="17"
+            startOffset="1090"
+            endLine="32"
+            endColumn="45"
+            endOffset="1118"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Location Information&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="41"
+            column="17"
+            startOffset="1497"
+            endLine="41"
+            endColumn="52"
+            endOffset="1532"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;📍 Loading...&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="51"
+            column="17"
+            startOffset="1922"
+            endLine="51"
+            endColumn="45"
+            endOffset="1950"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Update Location&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="58"
+            column="17"
+            startOffset="2238"
+            endLine="58"
+            endColumn="47"
+            endOffset="2268"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Required Information&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="65"
+            column="17"
+            startOffset="2509"
+            endLine="65"
+            endColumn="52"
+            endOffset="2544"/>
+    </incident>
+
+    <incident
         id="Autofill"
         severity="warning"
         message="Missing `autofillHints` attribute">
@@ -628,100 +698,481 @@
         </fix-alternatives>
         <location
             file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-            line="12"
-            column="10"
-            startOffset="381"
-            endLine="12"
-            endColumn="18"
-            endOffset="389"/>
+            line="68"
+            column="14"
+            startOffset="2603"
+            endLine="68"
+            endColumn="22"
+            endOffset="2611"/>
     </incident>
 
     <incident
-        id="ButtonStyle"
+        id="HardcodedText"
         severity="warning"
-        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)">
-        <fix-composite
-            description="Make borderless">
-            <fix-attribute
-                description="Set style=&quot;?android:attr/buttonBarStyle&quot;"
-                attribute="style"
-                value="?android:attr/buttonBarStyle">
-                <range
-                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-                    startOffset="629"
-                    endOffset="1410"/>
-            </fix-attribute>
-            <fix-attribute
-                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
-                attribute="style"
-                value="?android:attr/buttonBarButtonStyle">
-                <range
-                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-                    startOffset="877"
-                    endOffset="1122"/>
-            </fix-attribute>
-            <fix-attribute
-                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
-                attribute="style"
-                value="?android:attr/buttonBarButtonStyle">
-                <range
-                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-                    startOffset="1136"
-                    endOffset="1385"/>
-            </fix-attribute>
-        </fix-composite>
+        message="Hardcoded string &quot;Location Name&quot;, should use `@string` resource">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-            line="26"
-            column="14"
-            startOffset="878"
-            endLine="26"
-            endColumn="20"
-            endOffset="884"/>
+            line="73"
+            column="17"
+            startOffset="2824"
+            endLine="73"
+            endColumn="45"
+            endOffset="2852"/>
     </incident>
 
     <incident
-        id="ButtonStyle"
+        id="Autofill"
         severity="warning"
-        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)">
-        <fix-composite
-            description="Make borderless">
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
             <fix-attribute
-                description="Set style=&quot;?android:attr/buttonBarStyle&quot;"
-                attribute="style"
-                value="?android:attr/buttonBarStyle">
-                <range
-                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-                    startOffset="629"
-                    endOffset="1410"/>
-            </fix-attribute>
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
             <fix-attribute
-                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
-                attribute="style"
-                value="?android:attr/buttonBarButtonStyle">
-                <range
-                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-                    startOffset="877"
-                    endOffset="1122"/>
-            </fix-attribute>
-            <fix-attribute
-                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
-                attribute="style"
-                value="?android:attr/buttonBarButtonStyle">
-                <range
-                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-                    startOffset="1136"
-                    endOffset="1385"/>
-            </fix-attribute>
-        </fix-composite>
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
         <location
             file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
-            line="33"
+            line="76"
             column="14"
-            startOffset="1137"
-            endLine="33"
-            endColumn="20"
-            endOffset="1143"/>
+            startOffset="2911"
+            endLine="76"
+            endColumn="22"
+            endOffset="2919"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Number of GPO (1-10)&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="81"
+            column="17"
+            startOffset="3136"
+            endLine="81"
+            endColumn="52"
+            endOffset="3171"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Location Type &amp; Fees&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="95"
+            column="17"
+            startOffset="3688"
+            endLine="95"
+            endColumn="56"
+            endOffset="3727"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Public&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="111"
+            column="21"
+            startOffset="4429"
+            endLine="111"
+            endColumn="42"
+            endOffset="4450"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Private&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="119"
+            column="21"
+            startOffset="4828"
+            endLine="119"
+            endColumn="43"
+            endOffset="4850"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;This location has charging fees&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="128"
+            column="17"
+            startOffset="5251"
+            endLine="128"
+            endColumn="63"
+            endOffset="5297"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="141"
+            column="18"
+            startOffset="5788"
+            endLine="141"
+            endColumn="26"
+            endOffset="5796"/>
+    </incident>
+
+    <incident
+        id="TextFields"
+        severity="warning"
+        message="This text field does not specify an `inputType`">
+        <fix-attribute
+            description="Set inputType"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="inputType"
+            value="TODO"
+            point="4"
+            mark="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="141"
+            column="18"
+            startOffset="5788"
+            endLine="141"
+            endColumn="26"
+            endOffset="5796"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Provider Name&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="145"
+            column="21"
+            startOffset="5986"
+            endLine="145"
+            endColumn="49"
+            endOffset="6014"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="147"
+            column="18"
+            startOffset="6036"
+            endLine="147"
+            endColumn="26"
+            endOffset="6044"/>
+    </incident>
+
+    <incident
+        id="TextFields"
+        severity="warning"
+        message="This text field does not specify an `inputType`">
+        <fix-attribute
+            description="Set inputType"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="inputType"
+            value="TODO"
+            point="4"
+            mark="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="147"
+            column="18"
+            startOffset="6036"
+            endLine="147"
+            endColumn="26"
+            endOffset="6044"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Approximate Costs&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="152"
+            column="21"
+            startOffset="6286"
+            endLine="152"
+            endColumn="53"
+            endOffset="6318"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="154"
+            column="18"
+            startOffset="6340"
+            endLine="154"
+            endColumn="26"
+            endOffset="6348"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Provider Website&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="159"
+            column="21"
+            startOffset="6592"
+            endLine="159"
+            endColumn="52"
+            endOffset="6623"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Additional Information (Optional)&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="168"
+            column="17"
+            startOffset="6941"
+            endLine="168"
+            endColumn="65"
+            endOffset="6989"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="171"
+            column="14"
+            startOffset="7048"
+            endLine="171"
+            endColumn="22"
+            endOffset="7056"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Description&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="176"
+            column="17"
+            startOffset="7276"
+            endLine="176"
+            endColumn="43"
+            endOffset="7302"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="180"
+            column="14"
+            startOffset="7404"
+            endLine="180"
+            endColumn="22"
+            endOffset="7412"/>
+    </incident>
+
+    <incident
+        id="TextFields"
+        severity="warning"
+        message="This text field does not specify an `inputType`">
+        <fix-attribute
+            description="Set inputType"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="inputType"
+            value="TODO"
+            point="4"
+            mark="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="180"
+            column="14"
+            startOffset="7404"
+            endLine="180"
+            endColumn="22"
+            endOffset="7412"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Opening Hours&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="185"
+            column="17"
+            startOffset="7633"
+            endLine="185"
+            endColumn="45"
+            endOffset="7661"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="187"
+            column="14"
+            startOffset="7679"
+            endLine="187"
+            endColumn="22"
+            endOffset="7687"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Additional Information&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="192"
+            column="17"
+            startOffset="7910"
+            endLine="192"
+            endColumn="54"
+            endOffset="7947"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Update&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="209"
+            column="21"
+            startOffset="8628"
+            endLine="209"
+            endColumn="42"
+            endOffset="8649"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Cancel&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_edit_location.xml"
+            line="216"
+            column="21"
+            startOffset="8942"
+            endLine="216"
+            endColumn="42"
+            endOffset="8963"/>
     </incident>
 
     <incident
@@ -1268,6 +1719,90 @@
             endLine="151"
             endColumn="101"
             endOffset="6044"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/edit/EditLocationActivity.kt"
+            line="140"
+            column="40"
+            startOffset="5927"
+            endLine="140"
+            endColumn="114"
+            endOffset="6001"/>
+    </incident>
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/edit/EditLocationActivity.kt"
+            line="140"
+            column="46"
+            startOffset="5933"
+            endLine="140"
+            endColumn="112"
+            endOffset="5999"/>
+    </incident>
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/edit/EditLocationActivity.kt"
+            line="140"
+            column="46"
+            startOffset="5933"
+            endLine="140"
+            endColumn="112"
+            endOffset="5999"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/edit/EditLocationActivity.kt"
+            line="220"
+            column="56"
+            startOffset="9413"
+            endLine="220"
+            endColumn="130"
+            endOffset="9487"/>
+    </incident>
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/edit/EditLocationActivity.kt"
+            line="220"
+            column="62"
+            startOffset="9419"
+            endLine="220"
+            endColumn="128"
+            endOffset="9485"/>
+    </incident>
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/edit/EditLocationActivity.kt"
+            line="220"
+            column="62"
+            startOffset="9419"
+            endLine="220"
+            endColumn="128"
+            endOffset="9485"/>
     </incident>
 
     <incident

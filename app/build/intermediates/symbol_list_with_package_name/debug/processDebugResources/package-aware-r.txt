@@ -3157,6 +3157,7 @@ id TOP_END
 id TOP_START
 id accelerate
 id acceptButton
+id accessTypeToggle
 id accessTypeToggleGroup
 id accessibility_action_clickable_span
 id accessibility_custom_action_0
@@ -3245,7 +3246,10 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id buttonCancel
+id buttonGetLocation
 id buttonPanel
+id buttonSubmit
 id cache_measures
 id callMeasure
 id cancelButton
@@ -3298,7 +3302,6 @@ id decelerate
 id decelerateAndComplete
 id decor_content_parent
 id default_activity_button
-id delete_button
 id deltaRelative
 id dependency_ordering
 id descriptionInput
@@ -3362,6 +3365,7 @@ id fixed
 id flip
 id floating
 id forever
+id formContainer
 id fragment_container_view_tag
 id frost
 id fullscreen_header
@@ -3418,7 +3422,6 @@ id locationGpoCount
 id locationName
 id locationNameInput
 id locationRecyclerView
-id location_name
 id loginButton
 id m3_side_sheet
 id marquee
@@ -3484,6 +3487,7 @@ id mtrl_picker_text_input_range_start
 id mtrl_picker_title_text
 id mtrl_view_tag_bottom_padding
 id multiply
+id nameInput
 id navigateButton
 id navigation_bar_item_active_indicator_view
 id navigation_bar_item_icon_container
@@ -3543,6 +3547,7 @@ id postLayout
 id pressed
 id previewView
 id privateButton
+id private_button
 id progress
 id progressBar
 id progress_circular
@@ -3551,6 +3556,7 @@ id providerNameInput
 id providerWebsiteInput
 id publicButton
 id publicPrivateBadge
+id public_button
 id radio
 id ratio
 id rectangles
@@ -3563,7 +3569,6 @@ id right_icon
 id right_side
 id rounded
 id row_index_key
-id save_button
 id save_non_transition_alpha
 id save_overlay_view
 id sawtooth

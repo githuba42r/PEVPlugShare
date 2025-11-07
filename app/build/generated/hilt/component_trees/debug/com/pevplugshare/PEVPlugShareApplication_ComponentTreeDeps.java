@@ -29,6 +29,9 @@ import hilt_aggregated_deps._com_pevplugshare_ui_auth_LoginViewModel_HiltModules
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_edit_EditLocationActivity_GeneratedInjector;
+import hilt_aggregated_deps._com_pevplugshare_ui_edit_EditLocationViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_edit_EditLocationViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_main_MainActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_main_MainViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_main_MainViewModel_HiltModules_KeyModule;
@@ -87,6 +90,9 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_pevplugshare_ui_auth_SplashActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_auth_SplashViewModel_HiltModules_BindsModule.class,
         _com_pevplugshare_ui_auth_SplashViewModel_HiltModules_KeyModule.class,
+        _com_pevplugshare_ui_edit_EditLocationActivity_GeneratedInjector.class,
+        _com_pevplugshare_ui_edit_EditLocationViewModel_HiltModules_BindsModule.class,
+        _com_pevplugshare_ui_edit_EditLocationViewModel_HiltModules_KeyModule.class,
         _com_pevplugshare_ui_main_MainActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_main_MainViewModel_HiltModules_BindsModule.class,
         _com_pevplugshare_ui_main_MainViewModel_HiltModules_KeyModule.class,

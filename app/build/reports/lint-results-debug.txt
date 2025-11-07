@@ -10,6 +10,18 @@
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/add/AddLocationActivity.kt:151: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
                     "📍 ${String.format("%.4f", it.latitude)}, ${String.format("%.4f", it.longitude)}"
                                                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/edit/EditLocationActivity.kt:140: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            locationCoordinates.text = "📍 ${String.format("%.6f, %.6f", location.latitude, location.longitude)}"
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/edit/EditLocationActivity.kt:140: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            locationCoordinates.text = "📍 ${String.format("%.6f, %.6f", location.latitude, location.longitude)}"
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/edit/EditLocationActivity.kt:220: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    binding.locationCoordinates.text = "📍 ${String.format("%.6f, %.6f", location.latitude, location.longitude)}"
+                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/edit/EditLocationActivity.kt:220: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    binding.locationCoordinates.text = "📍 ${String.format("%.6f, %.6f", location.latitude, location.longitude)}"
+                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/util/LocationUtils.kt:33: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
             else -> String.format("%.1f km", meters / 1000)
                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -417,6 +429,9 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/strings.xml:21: Warning: The resource R.string.add_location_title appears to be unused [UnusedResources]
     <string name="add_location_title">Add Charging Location</string>
             ~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/strings.xml:22: Warning: The resource R.string.location_name appears to be unused [UnusedResources]
+    <string name="location_name">Location Name</string>
+            ~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/strings.xml:23: Warning: The resource R.string.location_name_required appears to be unused [UnusedResources]
     <string name="location_name_required">Location name is required</string>
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -488,6 +503,12 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
             ~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/strings.xml:46: Warning: The resource R.string.cancel_button appears to be unused [UnusedResources]
     <string name="cancel_button">Cancel</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/strings.xml:47: Warning: The resource R.string.save_button appears to be unused [UnusedResources]
+    <string name="save_button">Save</string>
+            ~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/strings.xml:48: Warning: The resource R.string.delete_button appears to be unused [UnusedResources]
+    <string name="delete_button">Delete</string>
             ~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/values/strings.xml:51: Warning: The resource R.string.menu_settings appears to be unused [UnusedResources]
     <string name="menu_settings">Settings</string>
@@ -629,12 +650,6 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_add_location.xml:230: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
             <Button
              ~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:26: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
-            <Button
-             ~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:33: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
-            <Button
-             ~~~~~~
 
    Explanation for issues of type "ButtonStyle":
    Button bars typically use a borderless style for the buttons. Set the
@@ -642,6 +657,29 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
    buttons, and set style="?android:attr/buttonBarStyle" on the parent layout
 
    https://d.android.com/r/studio-ui/designer/material/dialogs
+
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:141: Warning: This text field does not specify an inputType [TextFields]
+                <EditText
+                 ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:147: Warning: This text field does not specify an inputType [TextFields]
+                <EditText
+                 ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:180: Warning: This text field does not specify an inputType [TextFields]
+            <EditText
+             ~~~~~~~~
+
+   Explanation for issues of type "TextFields":
+   Providing an inputType attribute on a text field improves usability because
+   depending on the data to be input, optimized keyboards can be shown to the
+   user (such as just digits and parentheses for a phone number). 
+
+   The lint detector also looks at the id of the view, and if the id offers a
+   hint of the purpose of the field (for example, the id contains the phrase
+   phone or email), then lint will also ensure that the inputType contains the
+   corresponding type attributes.
+
+   If you really want to keep the text field generic, you can suppress this
+   warning by setting inputType="text".
 
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_add_location.xml:63: Warning: Missing autofillHints attribute [Autofill]
             <EditText
@@ -667,9 +705,30 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_add_location.xml:203: Warning: Missing autofillHints attribute [Autofill]
             <EditText
              ~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:12: Warning: Missing autofillHints attribute [Autofill]
-        <EditText
-         ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:68: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:76: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:141: Warning: Missing autofillHints attribute [Autofill]
+                <EditText
+                 ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:147: Warning: Missing autofillHints attribute [Autofill]
+                <EditText
+                 ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:154: Warning: Missing autofillHints attribute [Autofill]
+                <EditText
+                 ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:171: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:180: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:187: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_photo_capture.xml:39: Warning: Missing autofillHints attribute [Autofill]
         <EditText
          ~~~~~~~~
@@ -720,6 +779,12 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/add/AddLocationActivity.kt:151: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                     "📍 ${String.format("%.4f", it.latitude)}, ${String.format("%.4f", it.longitude)}"
                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/edit/EditLocationActivity.kt:140: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            locationCoordinates.text = "📍 ${String.format("%.6f, %.6f", location.latitude, location.longitude)}"
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/edit/EditLocationActivity.kt:220: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                    binding.locationCoordinates.text = "📍 ${String.format("%.6f, %.6f", location.latitude, location.longitude)}"
+                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:53: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                 locationGpoCount.text = "${location.gpoCount} GPO"
                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -824,6 +889,66 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_add_location.xml:242: Warning: Hardcoded string "Cancel", should use @string resource [HardcodedText]
                 android:text="Cancel"
                 ~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:32: Warning: Hardcoded string "Edit Location", should use @string resource [HardcodedText]
+                android:text="Edit Location"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:41: Warning: Hardcoded string "Location Information", should use @string resource [HardcodedText]
+                android:text="Location Information"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:51: Warning: Hardcoded string "📍 Loading...", should use @string resource [HardcodedText]
+                android:text="📍 Loading..." />
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:58: Warning: Hardcoded string "Update Location", should use @string resource [HardcodedText]
+                android:text="Update Location" />
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:65: Warning: Hardcoded string "Required Information", should use @string resource [HardcodedText]
+                android:text="Required Information"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:73: Warning: Hardcoded string "Location Name", should use @string resource [HardcodedText]
+                android:hint="Location Name"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:81: Warning: Hardcoded string "Number of GPO (1-10)", should use @string resource [HardcodedText]
+                android:hint="Number of GPO (1-10)"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:95: Warning: Hardcoded string "Location Type & Fees", should use @string resource [HardcodedText]
+                android:text="Location Type &amp; Fees"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:111: Warning: Hardcoded string "Public", should use @string resource [HardcodedText]
+                    android:text="Public"
+                    ~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:119: Warning: Hardcoded string "Private", should use @string resource [HardcodedText]
+                    android:text="Private"
+                    ~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:128: Warning: Hardcoded string "This location has charging fees", should use @string resource [HardcodedText]
+                android:text="This location has charging fees" />
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:145: Warning: Hardcoded string "Provider Name", should use @string resource [HardcodedText]
+                    android:hint="Provider Name" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:152: Warning: Hardcoded string "Approximate Costs", should use @string resource [HardcodedText]
+                    android:hint="Approximate Costs" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:159: Warning: Hardcoded string "Provider Website", should use @string resource [HardcodedText]
+                    android:hint="Provider Website"
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:168: Warning: Hardcoded string "Additional Information (Optional)", should use @string resource [HardcodedText]
+                android:text="Additional Information (Optional)"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:176: Warning: Hardcoded string "Description", should use @string resource [HardcodedText]
+                android:hint="Description"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:185: Warning: Hardcoded string "Opening Hours", should use @string resource [HardcodedText]
+                android:hint="Opening Hours" />
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:192: Warning: Hardcoded string "Additional Information", should use @string resource [HardcodedText]
+                android:hint="Additional Information"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:209: Warning: Hardcoded string "Update", should use @string resource [HardcodedText]
+                    android:text="Update" />
+                    ~~~~~~~~~~~~~~~~~~~~~
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_edit_location.xml:216: Warning: Hardcoded string "Cancel", should use @string resource [HardcodedText]
+                    android:text="Cancel"
+                    ~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_import_locations.xml:11: Warning: Hardcoded string "Importing Locations...", should use @string resource [HardcodedText]
         android:text="Importing Locations..."
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -914,4 +1039,4 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
    There are quickfixes to automatically extract this hardcoded string into a
    resource lookup.
 
-0 errors, 222 warnings
+0 errors, 259 warnings

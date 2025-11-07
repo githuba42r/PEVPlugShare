@@ -4,13 +4,20 @@ package com.pevplugshare.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.pevplugshare.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -18,28 +25,105 @@ import java.lang.String;
 
 public final class ActivityEditLocationBinding implements ViewBinding {
   @NonNull
-  private final ScrollView rootView;
+  private final FrameLayout rootView;
 
   @NonNull
-  public final Button deleteButton;
+  public final MaterialButtonToggleGroup accessTypeToggle;
 
   @NonNull
-  public final EditText locationName;
+  public final EditText additionalInfoInput;
 
   @NonNull
-  public final Button saveButton;
+  public final MaterialButton buttonCancel;
 
-  private ActivityEditLocationBinding(@NonNull ScrollView rootView, @NonNull Button deleteButton,
-      @NonNull EditText locationName, @NonNull Button saveButton) {
+  @NonNull
+  public final MaterialButton buttonGetLocation;
+
+  @NonNull
+  public final MaterialButton buttonSubmit;
+
+  @NonNull
+  public final EditText chargingCostsInput;
+
+  @NonNull
+  public final EditText descriptionInput;
+
+  @NonNull
+  public final CheckBox feeCheckbox;
+
+  @NonNull
+  public final LinearLayout feeDetailsSection;
+
+  @NonNull
+  public final ScrollView formContainer;
+
+  @NonNull
+  public final EditText gpoCountInput;
+
+  @NonNull
+  public final TextView locationCoordinates;
+
+  @NonNull
+  public final EditText nameInput;
+
+  @NonNull
+  public final EditText openingHoursInput;
+
+  @NonNull
+  public final MaterialButton privateButton;
+
+  @NonNull
+  public final ProgressBar progressBar;
+
+  @NonNull
+  public final EditText providerNameInput;
+
+  @NonNull
+  public final EditText providerWebsiteInput;
+
+  @NonNull
+  public final MaterialButton publicButton;
+
+  @NonNull
+  public final Spinner socketTypeSpinner;
+
+  private ActivityEditLocationBinding(@NonNull FrameLayout rootView,
+      @NonNull MaterialButtonToggleGroup accessTypeToggle, @NonNull EditText additionalInfoInput,
+      @NonNull MaterialButton buttonCancel, @NonNull MaterialButton buttonGetLocation,
+      @NonNull MaterialButton buttonSubmit, @NonNull EditText chargingCostsInput,
+      @NonNull EditText descriptionInput, @NonNull CheckBox feeCheckbox,
+      @NonNull LinearLayout feeDetailsSection, @NonNull ScrollView formContainer,
+      @NonNull EditText gpoCountInput, @NonNull TextView locationCoordinates,
+      @NonNull EditText nameInput, @NonNull EditText openingHoursInput,
+      @NonNull MaterialButton privateButton, @NonNull ProgressBar progressBar,
+      @NonNull EditText providerNameInput, @NonNull EditText providerWebsiteInput,
+      @NonNull MaterialButton publicButton, @NonNull Spinner socketTypeSpinner) {
     this.rootView = rootView;
-    this.deleteButton = deleteButton;
-    this.locationName = locationName;
-    this.saveButton = saveButton;
+    this.accessTypeToggle = accessTypeToggle;
+    this.additionalInfoInput = additionalInfoInput;
+    this.buttonCancel = buttonCancel;
+    this.buttonGetLocation = buttonGetLocation;
+    this.buttonSubmit = buttonSubmit;
+    this.chargingCostsInput = chargingCostsInput;
+    this.descriptionInput = descriptionInput;
+    this.feeCheckbox = feeCheckbox;
+    this.feeDetailsSection = feeDetailsSection;
+    this.formContainer = formContainer;
+    this.gpoCountInput = gpoCountInput;
+    this.locationCoordinates = locationCoordinates;
+    this.nameInput = nameInput;
+    this.openingHoursInput = openingHoursInput;
+    this.privateButton = privateButton;
+    this.progressBar = progressBar;
+    this.providerNameInput = providerNameInput;
+    this.providerWebsiteInput = providerWebsiteInput;
+    this.publicButton = publicButton;
+    this.socketTypeSpinner = socketTypeSpinner;
   }
 
   @Override
   @NonNull
-  public ScrollView getRoot() {
+  public FrameLayout getRoot() {
     return rootView;
   }
 
@@ -64,26 +148,131 @@ public final class ActivityEditLocationBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.delete_button;
-      Button deleteButton = ViewBindings.findChildViewById(rootView, id);
-      if (deleteButton == null) {
+      id = R.id.accessTypeToggle;
+      MaterialButtonToggleGroup accessTypeToggle = ViewBindings.findChildViewById(rootView, id);
+      if (accessTypeToggle == null) {
         break missingId;
       }
 
-      id = R.id.location_name;
-      EditText locationName = ViewBindings.findChildViewById(rootView, id);
-      if (locationName == null) {
+      id = R.id.additionalInfoInput;
+      EditText additionalInfoInput = ViewBindings.findChildViewById(rootView, id);
+      if (additionalInfoInput == null) {
         break missingId;
       }
 
-      id = R.id.save_button;
-      Button saveButton = ViewBindings.findChildViewById(rootView, id);
-      if (saveButton == null) {
+      id = R.id.buttonCancel;
+      MaterialButton buttonCancel = ViewBindings.findChildViewById(rootView, id);
+      if (buttonCancel == null) {
         break missingId;
       }
 
-      return new ActivityEditLocationBinding((ScrollView) rootView, deleteButton, locationName,
-          saveButton);
+      id = R.id.buttonGetLocation;
+      MaterialButton buttonGetLocation = ViewBindings.findChildViewById(rootView, id);
+      if (buttonGetLocation == null) {
+        break missingId;
+      }
+
+      id = R.id.buttonSubmit;
+      MaterialButton buttonSubmit = ViewBindings.findChildViewById(rootView, id);
+      if (buttonSubmit == null) {
+        break missingId;
+      }
+
+      id = R.id.chargingCostsInput;
+      EditText chargingCostsInput = ViewBindings.findChildViewById(rootView, id);
+      if (chargingCostsInput == null) {
+        break missingId;
+      }
+
+      id = R.id.descriptionInput;
+      EditText descriptionInput = ViewBindings.findChildViewById(rootView, id);
+      if (descriptionInput == null) {
+        break missingId;
+      }
+
+      id = R.id.feeCheckbox;
+      CheckBox feeCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (feeCheckbox == null) {
+        break missingId;
+      }
+
+      id = R.id.feeDetailsSection;
+      LinearLayout feeDetailsSection = ViewBindings.findChildViewById(rootView, id);
+      if (feeDetailsSection == null) {
+        break missingId;
+      }
+
+      id = R.id.formContainer;
+      ScrollView formContainer = ViewBindings.findChildViewById(rootView, id);
+      if (formContainer == null) {
+        break missingId;
+      }
+
+      id = R.id.gpoCountInput;
+      EditText gpoCountInput = ViewBindings.findChildViewById(rootView, id);
+      if (gpoCountInput == null) {
+        break missingId;
+      }
+
+      id = R.id.locationCoordinates;
+      TextView locationCoordinates = ViewBindings.findChildViewById(rootView, id);
+      if (locationCoordinates == null) {
+        break missingId;
+      }
+
+      id = R.id.nameInput;
+      EditText nameInput = ViewBindings.findChildViewById(rootView, id);
+      if (nameInput == null) {
+        break missingId;
+      }
+
+      id = R.id.openingHoursInput;
+      EditText openingHoursInput = ViewBindings.findChildViewById(rootView, id);
+      if (openingHoursInput == null) {
+        break missingId;
+      }
+
+      id = R.id.private_button;
+      MaterialButton privateButton = ViewBindings.findChildViewById(rootView, id);
+      if (privateButton == null) {
+        break missingId;
+      }
+
+      id = R.id.progressBar;
+      ProgressBar progressBar = ViewBindings.findChildViewById(rootView, id);
+      if (progressBar == null) {
+        break missingId;
+      }
+
+      id = R.id.providerNameInput;
+      EditText providerNameInput = ViewBindings.findChildViewById(rootView, id);
+      if (providerNameInput == null) {
+        break missingId;
+      }
+
+      id = R.id.providerWebsiteInput;
+      EditText providerWebsiteInput = ViewBindings.findChildViewById(rootView, id);
+      if (providerWebsiteInput == null) {
+        break missingId;
+      }
+
+      id = R.id.public_button;
+      MaterialButton publicButton = ViewBindings.findChildViewById(rootView, id);
+      if (publicButton == null) {
+        break missingId;
+      }
+
+      id = R.id.socketTypeSpinner;
+      Spinner socketTypeSpinner = ViewBindings.findChildViewById(rootView, id);
+      if (socketTypeSpinner == null) {
+        break missingId;
+      }
+
+      return new ActivityEditLocationBinding((FrameLayout) rootView, accessTypeToggle,
+          additionalInfoInput, buttonCancel, buttonGetLocation, buttonSubmit, chargingCostsInput,
+          descriptionInput, feeCheckbox, feeDetailsSection, formContainer, gpoCountInput,
+          locationCoordinates, nameInput, openingHoursInput, privateButton, progressBar,
+          providerNameInput, providerWebsiteInput, publicButton, socketTypeSpinner);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
