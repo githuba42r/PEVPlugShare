@@ -7,12 +7,12 @@
         message="The application should not provide its own launch screen">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/auth/SplashActivity.kt"
-            line="7"
+            line="14"
             column="7"
-            startOffset="140"
-            endLine="7"
+            startOffset="421"
+            endLine="14"
             endColumn="21"
-            endOffset="154"/>
+            endOffset="435"/>
         <map>
             <condition targetGE="31"/>
         </map>

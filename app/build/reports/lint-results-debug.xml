@@ -2,6 +2,24 @@
 <issues format="6" by="lint 8.4.0">
 
     <issue
+        id="DefaultLocale"
+        severity="Warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        category="Correctness"
+        priority="6"
+        summary="Implied default locale in case conversion"
+        explanation="Calling `String#toLowerCase()` or `#toUpperCase()` **without specifying an explicit locale** is a common source of bugs. The reason for that is that those methods will use the current locale on the user&apos;s device, and even though the code appears to work correctly when you are developing the app, it will fail in some locales. For example, in the Turkish locale, the uppercase replacement for `i` is **not** `I`.&#xA;&#xA;If you want the methods to just perform ASCII replacement, for example to convert an enum name, call `String#toUpperCase(Locale.ROOT)` instead. If you really want to use the current locale, call `String#toUpperCase(Locale.getDefault())` instead."
+        url="https://developer.android.com/reference/java/util/Locale.html#default_locale"
+        urls="https://developer.android.com/reference/java/util/Locale.html#default_locale"
+        errorLine1="            else -> String.format(&quot;%.1f km&quot;, meters / 1000)"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/util/LocationUtils.kt"
+            line="33"
+            column="21"/>
+    </issue>
+
+    <issue
         id="OldTargetApi"
         severity="Warning"
         message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
@@ -33,7 +51,7 @@
         errorLine2="      ~~~~~~~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/auth/SplashActivity.kt"
-            line="7"
+            line="14"
             column="7"/>
     </issue>
 
@@ -51,7 +69,7 @@
         errorLine2="                ^">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml"
-            line="57"
+            line="67"
             column="17"/>
     </issue>
 
@@ -69,7 +87,7 @@
         errorLine2="                ^">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml"
-            line="62"
+            line="72"
             column="17"/>
     </issue>
 
@@ -460,6 +478,54 @@
     <issue
         id="GradleDependency"
         severity="Warning"
+        message="A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.11.0"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="activityKtx = &quot;1.8.0&quot;"
+        errorLine2="              ~~~~~~~">
+        <location
+            file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="9"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
+        message="A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.11.0"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="activityKtx = &quot;1.8.0&quot;"
+        errorLine2="              ~~~~~~~">
+        <location
+            file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="9"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
+        message="A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.11.0"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="activityKtx = &quot;1.8.0&quot;"
+        errorLine2="              ~~~~~~~">
+        <location
+            file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="9"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
         message="A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3"
         category="Correctness"
         priority="4"
@@ -469,7 +535,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -485,7 +551,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -501,7 +567,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -517,7 +583,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -533,7 +599,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -549,7 +615,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -565,7 +631,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -581,7 +647,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -597,7 +663,7 @@
         errorLine2="       ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"/>
     </issue>
 
@@ -613,7 +679,7 @@
         errorLine2="       ~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="11"
+            line="12"
             column="8"/>
     </issue>
 
@@ -629,7 +695,7 @@
         errorLine2="       ~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="11"
+            line="12"
             column="8"/>
     </issue>
 
@@ -645,7 +711,7 @@
         errorLine2="       ~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="11"
+            line="12"
             column="8"/>
     </issue>
 
@@ -661,7 +727,7 @@
         errorLine2="              ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="13"
+            line="14"
             column="15"/>
     </issue>
 
@@ -677,7 +743,7 @@
         errorLine2="              ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="13"
+            line="14"
             column="15"/>
     </issue>
 
@@ -693,7 +759,7 @@
         errorLine2="              ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="13"
+            line="14"
             column="15"/>
     </issue>
 
@@ -709,7 +775,7 @@
         errorLine2="                       ~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="14"
+            line="15"
             column="24"/>
     </issue>
 
@@ -725,7 +791,7 @@
         errorLine2="                       ~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="14"
+            line="15"
             column="24"/>
     </issue>
 
@@ -741,7 +807,7 @@
         errorLine2="                       ~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="14"
+            line="15"
             column="24"/>
     </issue>
 
@@ -757,7 +823,7 @@
         errorLine2="                ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="15"
+            line="16"
             column="17"/>
     </issue>
 
@@ -773,7 +839,7 @@
         errorLine2="                ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="15"
+            line="16"
             column="17"/>
     </issue>
 
@@ -789,8 +855,56 @@
         errorLine2="                ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="15"
+            line="16"
             column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
+        message="A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="securityCryptoKtx = &quot;1.1.0-alpha06&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~">
+        <location
+            file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="17"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
+        message="A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="securityCryptoKtx = &quot;1.1.0-alpha06&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~">
+        <location
+            file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="17"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        severity="Warning"
+        message="A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0"
+        category="Correctness"
+        priority="4"
+        summary="Obsolete Gradle Dependency"
+        explanation="This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+        errorLine1="securityCryptoKtx = &quot;1.1.0-alpha06&quot;"
+        errorLine2="                    ~~~~~~~~~~~~~~~">
+        <location
+            file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="17"
+            column="21"/>
     </issue>
 
     <issue
@@ -805,7 +919,7 @@
         errorLine2="                                                                                   ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="46"
+            line="52"
             column="84"/>
     </issue>
 
@@ -821,7 +935,7 @@
         errorLine2="                                                                                   ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="46"
+            line="52"
             column="84"/>
     </issue>
 
@@ -837,7 +951,7 @@
         errorLine2="                                                                                   ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="46"
+            line="52"
             column="84"/>
     </issue>
 
@@ -853,7 +967,7 @@
         errorLine2="                                                                                                    ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="47"
+            line="53"
             column="101"/>
     </issue>
 
@@ -869,7 +983,7 @@
         errorLine2="                                                                                                    ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="47"
+            line="53"
             column="101"/>
     </issue>
 
@@ -885,7 +999,7 @@
         errorLine2="                                                                                                    ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="47"
+            line="53"
             column="101"/>
     </issue>
 
@@ -901,7 +1015,7 @@
         errorLine2="                                                                         ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="49"
+            line="55"
             column="74"/>
     </issue>
 
@@ -917,7 +1031,7 @@
         errorLine2="                                                                         ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="49"
+            line="55"
             column="74"/>
     </issue>
 
@@ -933,7 +1047,7 @@
         errorLine2="                                                                         ~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="49"
+            line="55"
             column="74"/>
     </issue>
 
@@ -951,7 +1065,7 @@
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/build.gradle.kts"
-            line="67"
+            line="68"
             column="5"/>
     </issue>
 
@@ -2298,6 +2412,22 @@
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_import_locations.xml"
             line="11"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="HardcodedText"
+        severity="Warning"
+        message="Hardcoded string &quot;Sign in to your OSMAnd account to manage charging locations.&quot;, should use `@string` resource"
+        category="Internationalization"
+        priority="5"
+        summary="Hardcoded text"
+        explanation="Hardcoding text attributes directly in layout files is bad for several reasons:&#xA;&#xA;* When creating configuration variations (for example for landscape or portrait) you have to repeat the actual text (and keep it up to date when making changes)&#xA;&#xA;* The application cannot be translated to other languages by just adding new translations for existing string resources.&#xA;&#xA;There are quickfixes to automatically extract this hardcoded string into a resource lookup."
+        errorLine1="        android:text=&quot;Sign in to your OSMAnd account to manage charging locations.&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/res/layout/activity_login.xml"
+            line="29"
             column="9"/>
     </issue>
 

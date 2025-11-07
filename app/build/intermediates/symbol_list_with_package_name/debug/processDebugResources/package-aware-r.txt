@@ -3383,6 +3383,7 @@ id linear
 id listMode
 id list_item
 id location_name
+id loginButton
 id m3_side_sheet
 id marquee
 id masked
@@ -3497,6 +3498,7 @@ id position
 id postLayout
 id pressed
 id progress
+id progressBar
 id progress_circular
 id progress_horizontal
 id radio

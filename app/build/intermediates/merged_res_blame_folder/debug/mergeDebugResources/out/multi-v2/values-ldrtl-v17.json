@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.pevplugshare.app-mergeDebugResources-42:/values-ldrtl-v17/values-ldrtl-v17.xml",
+            "outputFile": "com.pevplugshare.app-mergeDebugResources-46:/values-ldrtl-v17/values-ldrtl-v17.xml",
             "map": [
                 {
-                    "source": "/home/philg/.gradle/caches/transforms-4/8f49414e4d5156f731c534aabfbccfda/transformed/material-1.11.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
+                    "source": "/home/philg/.gradle/caches/transforms-4/66fd14c5a2220fa809b3bfa8501a1a26/transformed/material-1.11.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

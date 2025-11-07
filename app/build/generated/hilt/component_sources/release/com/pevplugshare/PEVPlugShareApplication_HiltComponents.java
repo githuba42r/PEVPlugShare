@@ -1,6 +1,11 @@
 package com.pevplugshare;
 
 import com.pevplugshare.di.DatabaseModule;
+import com.pevplugshare.di.NetworkModule;
+import com.pevplugshare.ui.auth.LoginActivity_GeneratedInjector;
+import com.pevplugshare.ui.auth.LoginViewModel_HiltModules;
+import com.pevplugshare.ui.auth.SplashActivity_GeneratedInjector;
+import com.pevplugshare.ui.auth.SplashViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -128,6 +133,7 @@ public final class PEVPlugShareApplication_HiltComponents {
           ApplicationContextModule.class,
           DatabaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
+          NetworkModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class
       }
@@ -154,8 +160,10 @@ public final class PEVPlugShareApplication_HiltComponents {
       modules = {
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
+          LoginViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
-          ViewModelCBuilderModule.class
+          ViewModelCBuilderModule.class,
+          SplashViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -177,7 +185,9 @@ public final class PEVPlugShareApplication_HiltComponents {
       }
   )
   @ActivityScoped
-  public abstract static class ActivityC implements ActivityComponent,
+  public abstract static class ActivityC implements LoginActivity_GeneratedInjector,
+      SplashActivity_GeneratedInjector,
+      ActivityComponent,
       DefaultViewModelFactories.ActivityEntryPoint,
       HiltWrapper_HiltViewModelFactory_ActivityCreatorEntryPoint,
       FragmentComponentManager.FragmentComponentBuilderEntryPoint,
@@ -189,7 +199,11 @@ public final class PEVPlugShareApplication_HiltComponents {
   }
 
   @Subcomponent(
-      modules = HiltWrapper_HiltViewModelFactory_ViewModelModule.class
+      modules = {
+          HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          LoginViewModel_HiltModules.BindsModule.class,
+          SplashViewModel_HiltModules.BindsModule.class
+      }
   )
   @ViewModelScoped
   public abstract static class ViewModelC implements ViewModelComponent,

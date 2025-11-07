@@ -177,20 +177,21 @@ document.getElementById(id).style.display = 'none';
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
   <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
-      <span class="mdl-layout-title">Lint Report: 142 warnings</span>
+      <span class="mdl-layout-title">Lint Report: 150 warnings</span>
       <div class="mdl-layout-spacer"></div>
-      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Fri Nov 07 10:12:19 AEST 2025 by AGP (8.4.0)</nav>
+      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Fri Nov 07 10:19:15 AEST 2025 by AGP (8.4.0)</nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title">Issue Types</span>
     <nav class="mdl-navigation">
       <a class="mdl-navigation__link" href="#overview"><i class="material-icons">dashboard</i>Overview</a>
+      <a class="mdl-navigation__link" href="#DefaultLocale"><i class="material-icons warning-icon">warning</i>Implied default locale in case conversion (1)</a>
       <a class="mdl-navigation__link" href="#OldTargetApi"><i class="material-icons warning-icon">warning</i>Target SDK attribute is not targeting latest version (1)</a>
       <a class="mdl-navigation__link" href="#CustomSplashScreen"><i class="material-icons warning-icon">warning</i>Application-defined Launch Screen (1)</a>
       <a class="mdl-navigation__link" href="#IntentFilterUniqueDataAttributes"><i class="material-icons warning-icon">warning</i>Data tags should only declare unique attributes (2)</a>
       <a class="mdl-navigation__link" href="#AndroidGradlePluginVersion"><i class="material-icons warning-icon">warning</i>Obsolete Android Gradle Plugin Version (3)</a>
-      <a class="mdl-navigation__link" href="#GradleDependency"><i class="material-icons warning-icon">warning</i>Obsolete Gradle Dependency (51)</a>
+      <a class="mdl-navigation__link" href="#GradleDependency"><i class="material-icons warning-icon">warning</i>Obsolete Gradle Dependency (57)</a>
       <a class="mdl-navigation__link" href="#KaptUsageInsteadOfKsp"><i class="material-icons warning-icon">warning</i>Kapt usage should be replaced with KSP (1)</a>
       <a class="mdl-navigation__link" href="#Overdraw"><i class="material-icons warning-icon">warning</i>Overdraw: Painting regions more than once (1)</a>
       <a class="mdl-navigation__link" href="#UnusedResources"><i class="material-icons warning-icon">warning</i>Unused resources (67)</a>
@@ -199,7 +200,7 @@ document.getElementById(id).style.display = 'none';
       <a class="mdl-navigation__link" href="#ButtonStyle"><i class="material-icons warning-icon">warning</i>Button should be borderless (4)</a>
       <a class="mdl-navigation__link" href="#Autofill"><i class="material-icons warning-icon">warning</i>Use Autofill (3)</a>
       <a class="mdl-navigation__link" href="#ContentDescription"><i class="material-icons warning-icon">warning</i>Image without <code>contentDescription</code> (1)</a>
-      <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (1)</a>
+      <a class="mdl-navigation__link" href="#HardcodedText"><i class="material-icons warning-icon">warning</i>Hardcoded text (2)</a>
     </nav>
   </div>
   <main class="mdl-layout__content">
@@ -216,6 +217,9 @@ document.getElementById(id).style.display = 'none';
 </td></tr>
 <tr>
 <td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<a href="#DefaultLocale">DefaultLocale</a>: Implied default locale in case conversion</td></tr>
+<tr>
+<td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#OldTargetApi">OldTargetApi</a>: Target SDK attribute is not targeting latest version</td></tr>
 <tr>
 <td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
@@ -227,7 +231,7 @@ document.getElementById(id).style.display = 'none';
 <td class="countColumn">3</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#AndroidGradlePluginVersion">AndroidGradlePluginVersion</a>: Obsolete Android Gradle Plugin Version</td></tr>
 <tr>
-<td class="countColumn">51</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<td class="countColumn">57</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#GradleDependency">GradleDependency</a>: Obsolete Gradle Dependency</td></tr>
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Performance">Performance</a>
 </td></tr>
@@ -264,7 +268,7 @@ document.getElementById(id).style.display = 'none';
 <tr><td class="countColumn"></td><td class="categoryColumn"><a href="#Internationalization">Internationalization</a>
 </td></tr>
 <tr>
-<td class="countColumn">1</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
+<td class="countColumn">2</td><td class="issueColumn"><i class="material-icons warning-icon">warning</i>
 <a href="#HardcodedText">HardcodedText</a>: Hardcoded text</td></tr>
 <tr><td></td><td class="categoryColumn"><a href="#ExtraIssues">Included Additional Checks (42)</a>
 </td></tr>
@@ -278,7 +282,56 @@ Dismiss</button>            </div>
             </div>
           </section>
 <a name="Correctness"></a>
-<a name="OldTargetApi"></a>
+<a name="DefaultLocale"></a>
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="DefaultLocaleCard" style="display: block;">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+  <div class="mdl-card__title">
+    <h2 class="mdl-card__title-text">Implied default locale in case conversion</h2>
+  </div>
+              <div class="mdl-card__supporting-text">
+<div class="issue">
+<div class="warningslist">
+<span class="location"><a href="../../src/main/java/com/pevplugshare/util/LocationUtils.kt">../../src/main/java/com/pevplugshare/util/LocationUtils.kt</a>:33</span>: <span class="message">Implicitly using the default locale is a common source of bugs: Use <code>String.format(Locale, ...)</code> instead</span><br /><pre class="errorlines">
+<span class="lineno"> 30 </span>    <span class="keyword">fun</span> formatDistance(meters: Double): String {
+<span class="lineno"> 31 </span>        <span class="keyword">return</span> <span class="keyword">when</span> {
+<span class="lineno"> 32 </span>            meters &lt; <span class="number">1000</span> -> <span class="string">"${</span>meters.toInt()<span class="string">}m"</span>
+<span class="caretline"><span class="lineno"> 33 </span>            <span class="keyword">else</span> -> <span class="warning">String.format(<span class="string">"%.1f km"</span>, meters / <span class="number">1000</span>)</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 34 </span>        }
+<span class="lineno"> 35 </span>    }
+<span class="lineno"> 36 </span>}
+</pre>
+
+</div>
+<div class="metadata"><div class="explanation" id="explanationDefaultLocale" style="display: none;">
+Calling <code>String#toLowerCase()</code> or <code>#toUpperCase()</code> <b>without specifying an explicit locale</b> is a common source of bugs. The reason for that is that those methods will use the current locale on the user's device, and even though the code appears to work correctly when you are developing the app, it will fail in some locales. For example, in the Turkish locale, the uppercase replacement for <code>i</code> is <b>not</b> <code>I</code>.<br/>
+<br/>
+If you want the methods to just perform ASCII replacement, for example to convert an enum name, call <code>String#toUpperCase(Locale.ROOT)</code> instead. If you really want to use the current locale, call <code>String#toUpperCase(Locale.getDefault())</code> instead.<br/><div class="moreinfo">More info: <a href="https://developer.android.com/reference/java/util/Locale.html#default_locale">https://developer.android.com/reference/java/util/Locale.html#default_locale</a>
+</div>Note: This issue has an associated quickfix operation in Android Studio and IntelliJ IDEA.<br>
+To suppress this error, use the issue id "DefaultLocale" as explained in the <a href="#SuppressInfo">Suppressing Warnings and Errors</a> section.<br/>
+<br/></div>
+</div>
+</div>
+<div class="chips">
+<span class="mdl-chip">
+    <span class="mdl-chip__text">DefaultLocale</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Correctness</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Warning</span>
+</span>
+<span class="mdl-chip">
+    <span class="mdl-chip__text">Priority 6/10</span>
+</span>
+</div>
+              </div>
+              <div class="mdl-card__actions mdl-card--border">
+<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="explanationDefaultLocaleLink" onclick="reveal('explanationDefaultLocale');">
+Explain</button><button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="DefaultLocaleCardLink" onclick="hideid('DefaultLocaleCard');">
+Dismiss</button>            </div>
+            </div>
+          </section><a name="OldTargetApi"></a>
 <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="OldTargetApiCard" style="display: block;">
             <div class="mdl-card mdl-cell mdl-cell--12-col">
   <div class="mdl-card__title">
@@ -288,12 +341,12 @@ Dismiss</button>            </div>
 <div class="issue">
 <div class="warningslist">
 <span class="location"><a href="../../build.gradle.kts">../../build.gradle.kts</a>:15</span>: <span class="message">Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the <code>android.os.Build.VERSION_CODES</code> javadoc for details.</span><br /><pre class="errorlines">
-<span class="lineno"> 12 </span>    defaultConfig {
-<span class="lineno"> 13 </span>        applicationId = "com.pevplugshare"
-<span class="lineno"> 14 </span>        minSdk = 26
-<span class="caretline"><span class="lineno"> 15 </span>        <span class="warning">targetSdk = 34</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 16 </span>        versionCode = 1
-<span class="lineno"> 17 </span>        versionName = "0.1.0"
+<span class="lineno">  12 </span>    defaultConfig {
+<span class="lineno">  13 </span>        applicationId = "com.pevplugshare"
+<span class="lineno">  14 </span>        minSdk = 26
+<span class="caretline"><span class="lineno">  15 </span>        <span class="warning">targetSdk = 34</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  16 </span>        versionCode = 1
+<span class="lineno">  17 </span>        versionName = "0.1.0"
 </pre>
 
 </div>
@@ -337,14 +390,13 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/auth/SplashActivity.kt">../../src/main/java/com/pevplugshare/ui/auth/SplashActivity.kt</a>:7</span>: <span class="message">The application should not provide its own launch screen</span><br /><pre class="errorlines">
-<span class="lineno">  4 </span>import androidx.appcompat.app.AppCompatActivity
-<span class="lineno">  5 </span>import com.pevplugshare.R
-<span class="lineno">  6 </span>
-<span class="caretline"><span class="lineno">  7 </span><span class="keyword">class</span> <span class="warning">SplashActivity</span> : AppCompatActivity() {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  8 </span>    override <span class="keyword">fun</span> onCreate(savedInstanceState: Bundle?) {
-<span class="lineno">  9 </span>        <span class="keyword">super</span>.onCreate(savedInstanceState)
-<span class="lineno"> 10 </span>        setContentView(R.layout.activity_splash)
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/auth/SplashActivity.kt">../../src/main/java/com/pevplugshare/ui/auth/SplashActivity.kt</a>:14</span>: <span class="message">The application should not provide its own launch screen</span><br /><pre class="errorlines">
+<span class="lineno"> 11 </span>import kotlinx.coroutines.launch
+<span class="lineno"> 12 </span>
+<span class="lineno"> 13 </span><span class="annotation">@AndroidEntryPoint</span>
+<span class="caretline"><span class="lineno"> 14 </span><span class="keyword">class</span> <span class="warning">SplashActivity</span> : AppCompatActivity() {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 15 </span>    private lateinit <span class="keyword">var</span> binding: ActivitySplashBinding
+<span class="lineno"> 16 </span>    private <span class="keyword">val</span> viewModel: SplashViewModel by viewModels()
 </pre>
 
 </div>
@@ -383,23 +435,23 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/AndroidManifest.xml">../../src/main/AndroidManifest.xml</a>:57</span>: <span class="message">Consider splitting data tag into multiple tags with individual attributes to avoid confusion</span><br /><pre class="errorlines">
-<span class="lineno"> 54 </span>                <span class="tag">&lt;action</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.intent.action.VIEW"</span> />
-<span class="lineno"> 55 </span>                <span class="tag">&lt;category</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.intent.category.DEFAULT"</span> />
-<span class="lineno"> 56 </span>                <span class="tag">&lt;category</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.intent.category.BROWSABLE"</span> />
-<span class="caretline"><span class="lineno"> 57 </span>                <span class="warning"><span class="tag">&lt;data</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
-</span><span class="lineno"> 58 </span><span class="attribute">                    </span><span class="prefix">android:</span><span class="attribute">scheme</span>=<span class="value">"file"</span>
-<span class="lineno"> 59 </span>                    <span class="prefix">android:</span><span class="attribute">host</span>=<span class="value">"*"</span>
-<span class="lineno"> 60 </span>                    <span class="prefix">android:</span><span class="attribute">pathPattern</span>=<span class="value">".*\\.json"</span></pre>
+<span class="location"><a href="../../src/main/AndroidManifest.xml">../../src/main/AndroidManifest.xml</a>:67</span>: <span class="message">Consider splitting data tag into multiple tags with individual attributes to avoid confusion</span><br /><pre class="errorlines">
+<span class="lineno"> 64 </span>                <span class="tag">&lt;action</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.intent.action.VIEW"</span> />
+<span class="lineno"> 65 </span>                <span class="tag">&lt;category</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.intent.category.DEFAULT"</span> />
+<span class="lineno"> 66 </span>                <span class="tag">&lt;category</span><span class="attribute"> </span><span class="prefix">android:</span><span class="attribute">name</span>=<span class="value">"android.intent.category.BROWSABLE"</span> />
+<span class="caretline"><span class="lineno"> 67 </span>                <span class="warning"><span class="tag">&lt;data</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
+</span><span class="lineno"> 68 </span><span class="attribute">                    </span><span class="prefix">android:</span><span class="attribute">scheme</span>=<span class="value">"file"</span>
+<span class="lineno"> 69 </span>                    <span class="prefix">android:</span><span class="attribute">host</span>=<span class="value">"*"</span>
+<span class="lineno"> 70 </span>                    <span class="prefix">android:</span><span class="attribute">pathPattern</span>=<span class="value">".*\\.json"</span></pre>
 
-<span class="location"><a href="../../src/main/AndroidManifest.xml">../../src/main/AndroidManifest.xml</a>:62</span>: <span class="message">Consider splitting data tag into multiple tags with individual attributes to avoid confusion</span><br /><pre class="errorlines">
-<span class="lineno"> 59 </span>                    <span class="prefix">android:</span><span class="attribute">host</span>=<span class="value">"*"</span>
-<span class="lineno"> 60 </span>                    <span class="prefix">android:</span><span class="attribute">pathPattern</span>=<span class="value">".*\\.json"</span>
-<span class="lineno"> 61 </span>                    <span class="prefix">android:</span><span class="attribute">mimeType</span>=<span class="value">"application/json"</span> />
-<span class="caretline"><span class="lineno"> 62 </span>                <span class="warning"><span class="tag">&lt;data</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
-</span><span class="lineno"> 63 </span><span class="attribute">                    </span><span class="prefix">android:</span><span class="attribute">scheme</span>=<span class="value">"content"</span>
-<span class="lineno"> 64 </span>                    <span class="prefix">android:</span><span class="attribute">mimeType</span>=<span class="value">"application/json"</span> />
-<span class="lineno"> 65 </span>            <span class="tag">&lt;/intent-filter></span></pre>
+<span class="location"><a href="../../src/main/AndroidManifest.xml">../../src/main/AndroidManifest.xml</a>:72</span>: <span class="message">Consider splitting data tag into multiple tags with individual attributes to avoid confusion</span><br /><pre class="errorlines">
+<span class="lineno"> 69 </span>                    <span class="prefix">android:</span><span class="attribute">host</span>=<span class="value">"*"</span>
+<span class="lineno"> 70 </span>                    <span class="prefix">android:</span><span class="attribute">pathPattern</span>=<span class="value">".*\\.json"</span>
+<span class="lineno"> 71 </span>                    <span class="prefix">android:</span><span class="attribute">mimeType</span>=<span class="value">"application/json"</span> />
+<span class="caretline"><span class="lineno"> 72 </span>                <span class="warning"><span class="tag">&lt;data</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="attribute">
+</span><span class="lineno"> 73 </span><span class="attribute">                    </span><span class="prefix">android:</span><span class="attribute">scheme</span>=<span class="value">"content"</span>
+<span class="lineno"> 74 </span>                    <span class="prefix">android:</span><span class="attribute">mimeType</span>=<span class="value">"application/json"</span> />
+<span class="lineno"> 75 </span>            <span class="tag">&lt;/intent-filter></span></pre>
 
 </div>
 <div class="metadata"><div class="explanation" id="explanationIntentFilterUniqueDataAttributes" style="display: none;">
@@ -575,7 +627,7 @@ Dismiss</button>            </div>
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
 </pre>
 
-<button class="mdl-button mdl-js-button mdl-button--primary" id="GradleDependencyDivLink" onclick="reveal('GradleDependencyDiv');" />+ 46 More Occurrences...</button>
+<button class="mdl-button mdl-js-button mdl-button--primary" id="GradleDependencyDivLink" onclick="reveal('GradleDependencyDiv');" />+ 52 More Occurrences...</button>
 <div id="GradleDependencyDiv" style="display: none">
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:5</span>: <span class="message">A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.1</span><br /><pre class="errorlines">
 <span class="lineno">  2 </span>agp = "8.4.0"
@@ -594,7 +646,7 @@ Dismiss</button>            </div>
 <span class="caretline"><span class="lineno">  6 </span>material = <span class="warning">"1.11.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:6</span>: <span class="message">A newer version of com.google.android.material:material than 1.11.0 is available: 1.13.0</span><br /><pre class="errorlines">
@@ -604,7 +656,7 @@ Dismiss</button>            </div>
 <span class="caretline"><span class="lineno">  6 </span>material = <span class="warning">"1.11.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:6</span>: <span class="message">A newer version of com.google.android.material:material than 1.11.0 is available: 1.13.0</span><br /><pre class="errorlines">
@@ -614,7 +666,7 @@ Dismiss</button>            </div>
 <span class="caretline"><span class="lineno">  6 </span>material = <span class="warning">"1.11.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:7</span>: <span class="message">A newer version of androidx.constraintlayout:constraintlayout than 2.1.4 is available: 2.2.1</span><br /><pre class="errorlines">
@@ -623,8 +675,8 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="caretline"><span class="lineno">  7 </span>constraintlayout = <span class="warning">"2.1.4"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:7</span>: <span class="message">A newer version of androidx.constraintlayout:constraintlayout than 2.1.4 is available: 2.2.1</span><br /><pre class="errorlines">
@@ -633,8 +685,8 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="caretline"><span class="lineno">  7 </span>constraintlayout = <span class="warning">"2.1.4"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:7</span>: <span class="message">A newer version of androidx.constraintlayout:constraintlayout than 2.1.4 is available: 2.2.1</span><br /><pre class="errorlines">
@@ -643,8 +695,8 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="caretline"><span class="lineno">  7 </span>constraintlayout = <span class="warning">"2.1.4"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -652,9 +704,9 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -662,9 +714,9 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -672,9 +724,9 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -682,9 +734,9 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -692,9 +744,9 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -702,9 +754,9 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -712,9 +764,9 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -722,9 +774,9 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
 <span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:8</span>: <span class="message">A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.7.0 is available: 2.9.4</span><br /><pre class="errorlines">
@@ -732,299 +784,299 @@ Dismiss</button>            </div>
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="caretline"><span class="lineno">  8 </span>lifecycle = <span class="warning">"2.7.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.11.0</span><br /><pre class="errorlines">
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="caretline"><span class="lineno">  9 </span>activityKtx = <span class="warning">"1.8.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.11.0</span><br /><pre class="errorlines">
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="caretline"><span class="lineno">  9 </span>activityKtx = <span class="warning">"1.8.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.11.0</span><br /><pre class="errorlines">
 <span class="lineno">  6 </span>material = "1.11.0"
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="caretline"><span class="lineno">  9 </span>activityKtx = <span class="warning">"1.8.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
-<span class="lineno">  6 </span>material = "1.11.0"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
-<span class="lineno">  6 </span>material = "1.11.0"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
-<span class="lineno">  6 </span>material = "1.11.0"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
-<span class="lineno">  6 </span>material = "1.11.0"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
-<span class="lineno">  6 </span>material = "1.11.0"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:9</span>: <span class="message">A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
-<span class="lineno">  6 </span>material = "1.11.0"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
 <span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="caretline"><span class="lineno">  9 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:11</span>: <span class="message">A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
+<span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="caretline"><span class="lineno"> 11 </span>gson = <span class="warning">"2.10.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:11</span>: <span class="message">A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
+<span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="caretline"><span class="lineno"> 11 </span>gson = <span class="warning">"2.10.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:11</span>: <span class="message">A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:10</span>: <span class="message">A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3</span><br /><pre class="errorlines">
+<span class="lineno">  7 </span>constraintlayout = "2.1.4"
 <span class="lineno">  8 </span>lifecycle = "2.7.0"
-<span class="lineno">  9 </span>room = "2.6.1"
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="caretline"><span class="lineno"> 11 </span>gson = <span class="warning">"2.10.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="caretline"><span class="lineno"> 10 </span>room = <span class="warning">"2.6.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:13</span>: <span class="message">A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0</span><br /><pre class="errorlines">
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="caretline"><span class="lineno"> 13 </span>workmanager = <span class="warning">"2.8.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
-<span class="lineno"> 15 </span>exifinterface = "1.3.6"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:12</span>: <span class="message">A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="caretline"><span class="lineno"> 12 </span>gson = <span class="warning">"2.10.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:13</span>: <span class="message">A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0</span><br /><pre class="errorlines">
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="caretline"><span class="lineno"> 13 </span>workmanager = <span class="warning">"2.8.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
-<span class="lineno"> 15 </span>exifinterface = "1.3.6"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:12</span>: <span class="message">A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="caretline"><span class="lineno"> 12 </span>gson = <span class="warning">"2.10.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:13</span>: <span class="message">A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0</span><br /><pre class="errorlines">
-<span class="lineno"> 10 </span>retrofit = "2.11.0"
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="caretline"><span class="lineno"> 13 </span>workmanager = <span class="warning">"2.8.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
-<span class="lineno"> 15 </span>exifinterface = "1.3.6"
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:12</span>: <span class="message">A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="lineno">  9 </span>activityKtx = "1.8.0"
+<span class="lineno"> 10 </span>room = "2.6.1"
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="caretline"><span class="lineno"> 12 </span>gson = <span class="warning">"2.10.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:14</span>: <span class="message">A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0</span><br /><pre class="errorlines">
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="caretline"><span class="lineno"> 14 </span>playServicesLocation = <span class="warning">"21.1.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 15 </span>exifinterface = "1.3.6"
-<span class="lineno"> 16 </span>
-<span class="lineno"> 17 </span>[libraries]
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:14</span>: <span class="message">A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="caretline"><span class="lineno"> 14 </span>workmanager = <span class="warning">"2.8.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:14</span>: <span class="message">A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0</span><br /><pre class="errorlines">
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="caretline"><span class="lineno"> 14 </span>playServicesLocation = <span class="warning">"21.1.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 15 </span>exifinterface = "1.3.6"
-<span class="lineno"> 16 </span>
-<span class="lineno"> 17 </span>[libraries]
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:14</span>: <span class="message">A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="caretline"><span class="lineno"> 14 </span>workmanager = <span class="warning">"2.8.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:14</span>: <span class="message">A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0</span><br /><pre class="errorlines">
-<span class="lineno"> 11 </span>gson = "2.10.1"
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="caretline"><span class="lineno"> 14 </span>playServicesLocation = <span class="warning">"21.1.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 15 </span>exifinterface = "1.3.6"
-<span class="lineno"> 16 </span>
-<span class="lineno"> 17 </span>[libraries]
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:14</span>: <span class="message">A newer version of androidx.work:work-runtime-ktx than 2.8.1 is available: 2.11.0</span><br /><pre class="errorlines">
+<span class="lineno"> 11 </span>retrofit = "2.11.0"
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="caretline"><span class="lineno"> 14 </span>workmanager = <span class="warning">"2.8.1"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:15</span>: <span class="message">A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1</span><br /><pre class="errorlines">
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
-<span class="caretline"><span class="lineno"> 15 </span>exifinterface = <span class="warning">"1.3.6"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 16 </span>
-<span class="lineno"> 17 </span>[libraries]
-<span class="lineno"> 18 </span>androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:15</span>: <span class="message">A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0</span><br /><pre class="errorlines">
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="caretline"><span class="lineno"> 15 </span>playServicesLocation = <span class="warning">"21.1.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:15</span>: <span class="message">A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1</span><br /><pre class="errorlines">
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
-<span class="caretline"><span class="lineno"> 15 </span>exifinterface = <span class="warning">"1.3.6"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 16 </span>
-<span class="lineno"> 17 </span>[libraries]
-<span class="lineno"> 18 </span>androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:15</span>: <span class="message">A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0</span><br /><pre class="errorlines">
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="caretline"><span class="lineno"> 15 </span>playServicesLocation = <span class="warning">"21.1.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:15</span>: <span class="message">A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1</span><br /><pre class="errorlines">
-<span class="lineno"> 12 </span>hilt = "2.50"
-<span class="lineno"> 13 </span>workmanager = "2.8.1"
-<span class="lineno"> 14 </span>playServicesLocation = "21.1.0"
-<span class="caretline"><span class="lineno"> 15 </span>exifinterface = <span class="warning">"1.3.6"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 16 </span>
-<span class="lineno"> 17 </span>[libraries]
-<span class="lineno"> 18 </span>androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:15</span>: <span class="message">A newer version of com.google.android.gms:play-services-location than 21.1.0 is available: 21.3.0</span><br /><pre class="errorlines">
+<span class="lineno"> 12 </span>gson = "2.10.1"
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="caretline"><span class="lineno"> 15 </span>playServicesLocation = <span class="warning">"21.1.0"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:46</span>: <span class="message">A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0</span><br /><pre class="errorlines">
-<span class="lineno"> 43 </span>androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
-<span class="lineno"> 44 </span>
-<span class="lineno"> 45 </span>junit = { group = "junit", name = "junit", version = "4.13.2" }
-<span class="caretline"><span class="lineno"> 46 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = <span class="warning">"1.1.5"</span> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 47 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
-<span class="lineno"> 48 </span>
-<span class="lineno"> 49 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:16</span>: <span class="message">A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1</span><br /><pre class="errorlines">
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="caretline"><span class="lineno"> 16 </span>exifinterface = <span class="warning">"1.3.6"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
+<span class="lineno"> 18 </span>
+<span class="lineno"> 19 </span>[libraries]
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:46</span>: <span class="message">A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0</span><br /><pre class="errorlines">
-<span class="lineno"> 43 </span>androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
-<span class="lineno"> 44 </span>
-<span class="lineno"> 45 </span>junit = { group = "junit", name = "junit", version = "4.13.2" }
-<span class="caretline"><span class="lineno"> 46 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = <span class="warning">"1.1.5"</span> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 47 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
-<span class="lineno"> 48 </span>
-<span class="lineno"> 49 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:16</span>: <span class="message">A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1</span><br /><pre class="errorlines">
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="caretline"><span class="lineno"> 16 </span>exifinterface = <span class="warning">"1.3.6"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
+<span class="lineno"> 18 </span>
+<span class="lineno"> 19 </span>[libraries]
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:46</span>: <span class="message">A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0</span><br /><pre class="errorlines">
-<span class="lineno"> 43 </span>androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
-<span class="lineno"> 44 </span>
-<span class="lineno"> 45 </span>junit = { group = "junit", name = "junit", version = "4.13.2" }
-<span class="caretline"><span class="lineno"> 46 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = <span class="warning">"1.1.5"</span> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 47 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
-<span class="lineno"> 48 </span>
-<span class="lineno"> 49 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:16</span>: <span class="message">A newer version of androidx.exifinterface:exifinterface than 1.3.6 is available: 1.4.1</span><br /><pre class="errorlines">
+<span class="lineno"> 13 </span>hilt = "2.50"
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="caretline"><span class="lineno"> 16 </span>exifinterface = <span class="warning">"1.3.6"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 17 </span>securityCryptoKtx = "1.1.0-alpha06"
+<span class="lineno"> 18 </span>
+<span class="lineno"> 19 </span>[libraries]
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:47</span>: <span class="message">A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0</span><br /><pre class="errorlines">
-<span class="lineno"> 44 </span>
-<span class="lineno"> 45 </span>junit = { group = "junit", name = "junit", version = "4.13.2" }
-<span class="lineno"> 46 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
-<span class="caretline"><span class="lineno"> 47 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = <span class="warning">"3.5.1"</span> }</span>
-<span class="lineno"> 48 </span>
-<span class="lineno"> 49 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
-<span class="lineno"> 50 </span>mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.1.0" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:17</span>: <span class="message">A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0</span><br /><pre class="errorlines">
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="caretline"><span class="lineno"> 17 </span>securityCryptoKtx = <span class="warning">"1.1.0-alpha06"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 18 </span>
+<span class="lineno"> 19 </span>[libraries]
+<span class="lineno"> 20 </span>androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:47</span>: <span class="message">A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0</span><br /><pre class="errorlines">
-<span class="lineno"> 44 </span>
-<span class="lineno"> 45 </span>junit = { group = "junit", name = "junit", version = "4.13.2" }
-<span class="lineno"> 46 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
-<span class="caretline"><span class="lineno"> 47 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = <span class="warning">"3.5.1"</span> }</span>
-<span class="lineno"> 48 </span>
-<span class="lineno"> 49 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
-<span class="lineno"> 50 </span>mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.1.0" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:17</span>: <span class="message">A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0</span><br /><pre class="errorlines">
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="caretline"><span class="lineno"> 17 </span>securityCryptoKtx = <span class="warning">"1.1.0-alpha06"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 18 </span>
+<span class="lineno"> 19 </span>[libraries]
+<span class="lineno"> 20 </span>androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:47</span>: <span class="message">A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0</span><br /><pre class="errorlines">
-<span class="lineno"> 44 </span>
-<span class="lineno"> 45 </span>junit = { group = "junit", name = "junit", version = "4.13.2" }
-<span class="lineno"> 46 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
-<span class="caretline"><span class="lineno"> 47 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = <span class="warning">"3.5.1"</span> }</span>
-<span class="lineno"> 48 </span>
-<span class="lineno"> 49 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
-<span class="lineno"> 50 </span>mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.1.0" }
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:17</span>: <span class="message">A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0</span><br /><pre class="errorlines">
+<span class="lineno"> 14 </span>workmanager = "2.8.1"
+<span class="lineno"> 15 </span>playServicesLocation = "21.1.0"
+<span class="lineno"> 16 </span>exifinterface = "1.3.6"
+<span class="caretline"><span class="lineno"> 17 </span>securityCryptoKtx = <span class="warning">"1.1.0-alpha06"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 18 </span>
+<span class="lineno"> 19 </span>[libraries]
+<span class="lineno"> 20 </span>androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:49</span>: <span class="message">A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1</span><br /><pre class="errorlines">
-<span class="lineno"> 46 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
-<span class="lineno"> 47 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
-<span class="lineno"> 48 </span>
-<span class="caretline"><span class="lineno"> 49 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = <span class="warning">"5.2.1"</span> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 50 </span>mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.1.0" }
-<span class="lineno"> 51 </span>
-<span class="lineno"> 52 </span>[plugins]
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:52</span>: <span class="message">A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0</span><br /><pre class="errorlines">
+<span class="lineno"> 49 </span>androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" }
+<span class="lineno"> 50 </span>
+<span class="lineno"> 51 </span>junit = { group = "junit", name = "junit", version = "4.13.2" }
+<span class="caretline"><span class="lineno"> 52 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = <span class="warning">"1.1.5"</span> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 53 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
+<span class="lineno"> 54 </span>
+<span class="lineno"> 55 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
 </pre>
 
-<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:49</span>: <span class="message">A newer version of org.mockito:mockito-core than 5.2.1 is available: 5.3.1</span><br /><pre class="errorlines">
-<span class="lineno"> 46 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.1.5" }
-<span class="lineno"> 47 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
-<span class="lineno"> 48 </span>
-<span class="caretline"><span class="lineno"> 49 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = <span class="warning">"5.2.1"</span> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 50 </span>mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version = "5.1.0" }
-<span class="lineno"> 51 </span>
-<span class="lineno"> 52 </span>[plugins]
+<span class="location"><a href="../../../gradle/libs.versions.toml">../../../gradle/libs.versions.toml</a>:52</span>: <span class="message">A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0</span><br /><pre class="errorlines">
+<span class="lineno"> 49 </span>androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" }
+<span class="lineno"> 50 </span>
+<span class="lineno"> 51 </span>junit = { group = "junit", name = "junit", version = "4.13.2" }
+<span class="caretline"><span class="lineno"> 52 </span>androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = <span class="warning">"1.1.5"</span> }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 53 </span>androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
+<span class="lineno"> 54 </span>
+<span class="lineno"> 55 </span>mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1" }
 </pre>
 
-<br/><b>NOTE: 1 results omitted.</b><br/><br/></div>
+<br/><b>NOTE: 7 results omitted.</b><br/><br/></div>
 </div>
 <div class="metadata"><div class="explanation" id="explanationGradleDependency" style="display: none;">
 This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find.<br/>Note: This issue has an associated quickfix operation in Android Studio and IntelliJ IDEA.<br>
@@ -1063,14 +1115,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../build.gradle.kts">../../build.gradle.kts</a>:67</span>: <span class="message">This library supports using KSP instead of kapt, which greatly improves performance. Learn more: <a href="https://developer.android.com/studio/build/migrate-to-ksp">https://developer.android.com/studio/build/migrate-to-ksp</a></span><br /><pre class="errorlines">
-<span class="lineno"> 64 </span>    // Database
-<span class="lineno"> 65 </span>    implementation(libs.androidx.room.runtime)
-<span class="lineno"> 66 </span>    implementation(libs.androidx.room.ktx)
-<span class="caretline"><span class="lineno"> 67 </span>    <span class="warning">kapt(libs.androidx.room.compiler)</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 68 </span>
-<span class="lineno"> 69 </span>    // Networking
-<span class="lineno"> 70 </span>    implementation(libs.retrofit)
+<span class="location"><a href="../../build.gradle.kts">../../build.gradle.kts</a>:68</span>: <span class="message">This library supports using KSP instead of kapt, which greatly improves performance. Learn more: <a href="https://developer.android.com/studio/build/migrate-to-ksp">https://developer.android.com/studio/build/migrate-to-ksp</a></span><br /><pre class="errorlines">
+<span class="lineno">  65 </span>    // Database
+<span class="lineno">  66 </span>    implementation(libs.androidx.room.runtime)
+<span class="lineno">  67 </span>    implementation(libs.androidx.room.ktx)
+<span class="caretline"><span class="lineno">  68 </span>    <span class="warning">kapt(libs.androidx.room.compiler)</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  69 </span>
+<span class="lineno">  70 </span>    // Networking
+<span class="lineno">  71 </span>    implementation(libs.retrofit)
 </pre>
 
 </div>
@@ -1985,6 +2037,15 @@ Dismiss</button>            </div>
 <span class="lineno"> 12 </span>        <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"24sp"</span> />
 <span class="lineno"> 13 </span>
 <span class="lineno"> 14 </span>    <span class="tag">&lt;ProgressBar</span></pre>
+
+<span class="location"><a href="../../src/main/res/layout/activity_login.xml">../../src/main/res/layout/activity_login.xml</a>:29</span>: <span class="message">Hardcoded string "Sign in to your OSMAnd account to manage charging locations.", should use <code>@string</code> resource</span><br /><pre class="errorlines">
+<span class="lineno"> 26 </span><span class="attribute">        </span><span class="prefix">android:</span><span class="attribute">layout_width</span>=<span class="value">"match_parent"</span>
+<span class="lineno"> 27 </span>        <span class="prefix">android:</span><span class="attribute">layout_height</span>=<span class="value">"wrap_content"</span>
+<span class="lineno"> 28 </span>        <span class="prefix">android:</span><span class="attribute">layout_marginTop</span>=<span class="value">"32dp"</span>
+<span class="caretline"><span class="lineno"> 29 </span>        <span class="warning"><span class="prefix">android:</span><span class="attribute">text</span>=<span class="value">"Sign in to your OSMAnd account to manage charging locations."</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 30 </span>        <span class="prefix">android:</span><span class="attribute">textAlignment</span>=<span class="value">"center"</span>
+<span class="lineno"> 31 </span>        <span class="prefix">android:</span><span class="attribute">textSize</span>=<span class="value">"14sp"</span> />
+</pre>
 
 </div>
 <div class="metadata"><div class="explanation" id="explanationHardcodedText" style="display: none;">

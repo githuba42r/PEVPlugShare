@@ -19,6 +19,13 @@ import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_andro
 import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_components_SingletonComponent;
 import hilt_aggregated_deps._com_pevplugshare_PEVPlugShareApplication_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_di_DatabaseModule;
+import hilt_aggregated_deps._com_pevplugshare_di_NetworkModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_auth_LoginActivity_GeneratedInjector;
+import hilt_aggregated_deps._com_pevplugshare_ui_auth_LoginViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_auth_LoginViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashActivity_GeneratedInjector;
+import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint;
 import hilt_aggregated_deps._dagger_hilt_android_flags_HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule;
 import hilt_aggregated_deps._dagger_hilt_android_internal_lifecycle_DefaultViewModelFactories_ActivityEntryPoint;
@@ -61,6 +68,13 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
     aggregatedDeps = {
         _com_pevplugshare_PEVPlugShareApplication_GeneratedInjector.class,
         _com_pevplugshare_di_DatabaseModule.class,
+        _com_pevplugshare_di_NetworkModule.class,
+        _com_pevplugshare_ui_auth_LoginActivity_GeneratedInjector.class,
+        _com_pevplugshare_ui_auth_LoginViewModel_HiltModules_BindsModule.class,
+        _com_pevplugshare_ui_auth_LoginViewModel_HiltModules_KeyModule.class,
+        _com_pevplugshare_ui_auth_SplashActivity_GeneratedInjector.class,
+        _com_pevplugshare_ui_auth_SplashViewModel_HiltModules_BindsModule.class,
+        _com_pevplugshare_ui_auth_SplashViewModel_HiltModules_KeyModule.class,
         _dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint.class,
         _dagger_hilt_android_flags_HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
         _dagger_hilt_android_internal_lifecycle_DefaultViewModelFactories_ActivityEntryPoint.class,

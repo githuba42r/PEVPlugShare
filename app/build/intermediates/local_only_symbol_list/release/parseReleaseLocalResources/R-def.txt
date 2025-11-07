@@ -24,7 +24,9 @@ id delete_button
 id fab
 id gpo_count
 id location_name
+id loginButton
 id progress
+id progressBar
 id save_button
 layout activity_add_location
 layout activity_edit_location

@@ -6,6 +6,18 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
+import com.pevplugshare.data.remote.OsmandApiClient;
+import com.pevplugshare.data.remote.TokenManager;
+import com.pevplugshare.di.NetworkModule_ProvideAuthRepositoryFactory;
+import com.pevplugshare.di.NetworkModule_ProvideOsmandApiClientFactory;
+import com.pevplugshare.di.NetworkModule_ProvideTokenManagerFactory;
+import com.pevplugshare.domain.repository.AuthRepository;
+import com.pevplugshare.ui.auth.LoginActivity;
+import com.pevplugshare.ui.auth.LoginViewModel;
+import com.pevplugshare.ui.auth.LoginViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.pevplugshare.ui.auth.SplashActivity;
+import com.pevplugshare.ui.auth.SplashViewModel;
+import com.pevplugshare.ui.auth.SplashViewModel_HiltModules_KeyModule_ProvideFactory;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -20,14 +32,17 @@ import dagger.hilt.android.internal.lifecycle.DefaultViewModelFactories_Internal
 import dagger.hilt.android.internal.managers.ActivityRetainedComponentManager_LifecycleModule_ProvideActivityRetainedLifecycleFactory;
 import dagger.hilt.android.internal.managers.SavedStateHandleHolder;
 import dagger.hilt.android.internal.modules.ApplicationContextModule;
+import dagger.hilt.android.internal.modules.ApplicationContextModule_ProvideContextFactory;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.DoubleCheck;
+import dagger.internal.MapBuilder;
 import dagger.internal.Preconditions;
+import dagger.internal.Provider;
+import dagger.internal.SetBuilder;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.Generated;
-import javax.inject.Provider;
 
 @DaggerGenerated
 @Generated(
@@ -48,25 +63,20 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     return new Builder();
   }
 
-  public static PEVPlugShareApplication_HiltComponents.SingletonC create() {
-    return new Builder().build();
-  }
-
   public static final class Builder {
+    private ApplicationContextModule applicationContextModule;
+
     private Builder() {
     }
 
-    /**
-     * @deprecated This module is declared, but an instance is not used in the component. This method is a no-op. For more, see https://dagger.dev/unused-modules.
-     */
-    @Deprecated
     public Builder applicationContextModule(ApplicationContextModule applicationContextModule) {
-      Preconditions.checkNotNull(applicationContextModule);
+      this.applicationContextModule = Preconditions.checkNotNull(applicationContextModule);
       return this;
     }
 
     public PEVPlugShareApplication_HiltComponents.SingletonC build() {
-      return new SingletonCImpl();
+      Preconditions.checkBuilderRequirement(applicationContextModule, ApplicationContextModule.class);
+      return new SingletonCImpl(applicationContextModule);
     }
   }
 
@@ -355,13 +365,21 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     }
 
     @Override
+    public void injectLoginActivity(LoginActivity loginActivity) {
+    }
+
+    @Override
+    public void injectSplashActivity(SplashActivity splashActivity) {
+    }
+
+    @Override
     public DefaultViewModelFactories.InternalFactoryFactory getHiltInternalFactoryFactory() {
-      return DefaultViewModelFactories_InternalFactoryFactory_Factory.newInstance(Collections.<String>emptySet(), new ViewModelCBuilder(singletonCImpl, activityRetainedCImpl));
+      return DefaultViewModelFactories_InternalFactoryFactory_Factory.newInstance(getViewModelKeys(), new ViewModelCBuilder(singletonCImpl, activityRetainedCImpl));
     }
 
     @Override
     public Set<String> getViewModelKeys() {
-      return Collections.<String>emptySet();
+      return SetBuilder.<String>newSetBuilder(2).add(LoginViewModel_HiltModules_KeyModule_ProvideFactory.provide()).add(SplashViewModel_HiltModules_KeyModule_ProvideFactory.provide()).build();
     }
 
     @Override
@@ -387,23 +405,67 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     private final ViewModelCImpl viewModelCImpl = this;
 
+    private Provider<LoginViewModel> loginViewModelProvider;
+
+    private Provider<SplashViewModel> splashViewModelProvider;
+
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
         ViewModelLifecycle viewModelLifecycleParam) {
       this.singletonCImpl = singletonCImpl;
       this.activityRetainedCImpl = activityRetainedCImpl;
 
+      initialize(savedStateHandleParam, viewModelLifecycleParam);
 
     }
 
+    @SuppressWarnings("unchecked")
+    private void initialize(final SavedStateHandle savedStateHandleParam,
+        final ViewModelLifecycle viewModelLifecycleParam) {
+      this.loginViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+      this.splashViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+    }
+
     @Override
-    public Map<String, Provider<ViewModel>> getHiltViewModelMap() {
-      return Collections.<String, Provider<ViewModel>>emptyMap();
+    public Map<String, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
+      return MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(2).put("com.pevplugshare.ui.auth.LoginViewModel", ((Provider) loginViewModelProvider)).put("com.pevplugshare.ui.auth.SplashViewModel", ((Provider) splashViewModelProvider)).build();
     }
 
     @Override
     public Map<String, Object> getHiltViewModelAssistedMap() {
       return Collections.<String, Object>emptyMap();
+    }
+
+    private static final class SwitchingProvider<T> implements Provider<T> {
+      private final SingletonCImpl singletonCImpl;
+
+      private final ActivityRetainedCImpl activityRetainedCImpl;
+
+      private final ViewModelCImpl viewModelCImpl;
+
+      private final int id;
+
+      SwitchingProvider(SingletonCImpl singletonCImpl, ActivityRetainedCImpl activityRetainedCImpl,
+          ViewModelCImpl viewModelCImpl, int id) {
+        this.singletonCImpl = singletonCImpl;
+        this.activityRetainedCImpl = activityRetainedCImpl;
+        this.viewModelCImpl = viewModelCImpl;
+        this.id = id;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public T get() {
+        switch (id) {
+          case 0: // com.pevplugshare.ui.auth.LoginViewModel 
+          return (T) new LoginViewModel(singletonCImpl.provideAuthRepositoryProvider.get());
+
+          case 1: // com.pevplugshare.ui.auth.SplashViewModel 
+          return (T) new SplashViewModel(singletonCImpl.provideAuthRepositoryProvider.get());
+
+          default: throw new AssertionError(id);
+        }
+      }
     }
   }
 
@@ -412,7 +474,7 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     private final ActivityRetainedCImpl activityRetainedCImpl = this;
 
-    private dagger.internal.Provider<ActivityRetainedLifecycle> provideActivityRetainedLifecycleProvider;
+    private Provider<ActivityRetainedLifecycle> provideActivityRetainedLifecycleProvider;
 
     private ActivityRetainedCImpl(SingletonCImpl singletonCImpl,
         SavedStateHandleHolder savedStateHandleHolderParam) {
@@ -437,7 +499,7 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
       return provideActivityRetainedLifecycleProvider.get();
     }
 
-    private static final class SwitchingProvider<T> implements dagger.internal.Provider<T> {
+    private static final class SwitchingProvider<T> implements Provider<T> {
       private final SingletonCImpl singletonCImpl;
 
       private final ActivityRetainedCImpl activityRetainedCImpl;
@@ -477,11 +539,27 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
   }
 
   private static final class SingletonCImpl extends PEVPlugShareApplication_HiltComponents.SingletonC {
+    private final ApplicationContextModule applicationContextModule;
+
     private final SingletonCImpl singletonCImpl = this;
 
-    private SingletonCImpl() {
+    private Provider<TokenManager> provideTokenManagerProvider;
 
+    private Provider<OsmandApiClient> provideOsmandApiClientProvider;
 
+    private Provider<AuthRepository> provideAuthRepositoryProvider;
+
+    private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
+      this.applicationContextModule = applicationContextModuleParam;
+      initialize(applicationContextModuleParam);
+
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initialize(final ApplicationContextModule applicationContextModuleParam) {
+      this.provideTokenManagerProvider = DoubleCheck.provider(new SwitchingProvider<TokenManager>(singletonCImpl, 2));
+      this.provideOsmandApiClientProvider = DoubleCheck.provider(new SwitchingProvider<OsmandApiClient>(singletonCImpl, 1));
+      this.provideAuthRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AuthRepository>(singletonCImpl, 0));
     }
 
     @Override
@@ -501,6 +579,34 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     @Override
     public ServiceComponentBuilder serviceComponentBuilder() {
       return new ServiceCBuilder(singletonCImpl);
+    }
+
+    private static final class SwitchingProvider<T> implements Provider<T> {
+      private final SingletonCImpl singletonCImpl;
+
+      private final int id;
+
+      SwitchingProvider(SingletonCImpl singletonCImpl, int id) {
+        this.singletonCImpl = singletonCImpl;
+        this.id = id;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public T get() {
+        switch (id) {
+          case 0: // com.pevplugshare.domain.repository.AuthRepository 
+          return (T) NetworkModule_ProvideAuthRepositoryFactory.provideAuthRepository(singletonCImpl.provideOsmandApiClientProvider.get(), singletonCImpl.provideTokenManagerProvider.get());
+
+          case 1: // com.pevplugshare.data.remote.OsmandApiClient 
+          return (T) NetworkModule_ProvideOsmandApiClientFactory.provideOsmandApiClient(singletonCImpl.provideTokenManagerProvider.get());
+
+          case 2: // com.pevplugshare.data.remote.TokenManager 
+          return (T) NetworkModule_ProvideTokenManagerFactory.provideTokenManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          default: throw new AssertionError(id);
+        }
+      }
     }
   }
 }

@@ -13,12 +13,12 @@
             priority="0"/>
         <location
             file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
-            line="57"
+            line="67"
             column="17"
-            startOffset="2278"
-            endLine="61"
+            startOffset="2739"
+            endLine="71"
             endColumn="59"
-            endOffset="2473"/>
+            endOffset="2934"/>
     </incident>
 
     <incident
@@ -33,12 +33,12 @@
             priority="0"/>
         <location
             file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
-            line="62"
+            line="72"
             column="17"
-            startOffset="2490"
-            endLine="64"
+            startOffset="2951"
+            endLine="74"
             endColumn="59"
-            endOffset="2599"/>
+            endOffset="3060"/>
     </incident>
 
     <incident
@@ -316,6 +316,20 @@
     </incident>
 
     <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Sign in to your OSMAnd account to manage charging locations.&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_login.xml"
+            line="29"
+            column="9"
+            startOffset="949"
+            endLine="29"
+            endColumn="84"
+            endOffset="1024"/>
+    </incident>
+
+    <incident
         id="ContentDescription"
         severity="warning"
         message="Missing `contentDescription` attribute on image">
@@ -414,6 +428,20 @@
     </incident>
 
     <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/util/LocationUtils.kt"
+            line="33"
+            column="21"
+            startOffset="990"
+            endLine="33"
+            endColumn="60"
+            endOffset="1029"/>
+    </incident>
+
+    <incident
         id="OldTargetApi"
         severity="warning"
         message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.">
@@ -441,12 +469,12 @@
             url="https://developer.android.com/studio/build/migrate-to-ksp"/>
         <location
             file="${:app*projectDir}/build.gradle.kts"
-            line="67"
+            line="68"
             column="5"
-            startOffset="1582"
-            endLine="67"
+            startOffset="1629"
+            endLine="68"
             endColumn="38"
-            endOffset="1615"/>
+            endOffset="1662"/>
     </incident>
 
     <incident
@@ -592,6 +620,26 @@
     <incident
         id="GradleDependency"
         severity="warning"
+        message="A newer version of androidx.activity:activity-ktx than 1.8.0 is available: 1.11.0">
+        <fix-replace
+            description="Change to 1.11.0"
+            family="Update versions"
+            oldString="1.8.0"
+            replacement="1.11.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="9"
+            column="15"
+            startOffset="163"
+            endLine="9"
+            endColumn="22"
+            endOffset="170"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
         message="A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.3">
         <fix-replace
             description="Change to 2.8.3"
@@ -601,12 +649,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"
-            startOffset="156"
-            endLine="9"
+            startOffset="178"
+            endLine="10"
             endColumn="15"
-            endOffset="163"/>
+            endOffset="185"/>
     </incident>
 
     <incident
@@ -621,12 +669,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"
-            startOffset="156"
-            endLine="9"
+            startOffset="178"
+            endLine="10"
             endColumn="15"
-            endOffset="163"/>
+            endOffset="185"/>
     </incident>
 
     <incident
@@ -641,12 +689,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="9"
+            line="10"
             column="8"
-            startOffset="156"
-            endLine="9"
+            startOffset="178"
+            endLine="10"
             endColumn="15"
-            endOffset="163"/>
+            endOffset="185"/>
     </incident>
 
     <incident
@@ -661,12 +709,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="11"
+            line="12"
             column="8"
-            startOffset="191"
-            endLine="11"
+            startOffset="213"
+            endLine="12"
             endColumn="16"
-            endOffset="199"/>
+            endOffset="221"/>
     </incident>
 
     <incident
@@ -681,12 +729,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="13"
+            line="14"
             column="15"
-            startOffset="228"
-            endLine="13"
+            startOffset="250"
+            endLine="14"
             endColumn="22"
-            endOffset="235"/>
+            endOffset="257"/>
     </incident>
 
     <incident
@@ -701,12 +749,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="14"
+            line="15"
             column="24"
-            startOffset="259"
-            endLine="14"
+            startOffset="281"
+            endLine="15"
             endColumn="32"
-            endOffset="267"/>
+            endOffset="289"/>
     </incident>
 
     <incident
@@ -721,12 +769,32 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="15"
+            line="16"
             column="17"
-            startOffset="284"
-            endLine="15"
+            startOffset="306"
+            endLine="16"
             endColumn="24"
-            endOffset="291"/>
+            endOffset="313"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.security:security-crypto-ktx than 1.1.0-alpha06 is available: 1.1.0">
+        <fix-replace
+            description="Change to 1.1.0"
+            family="Update versions"
+            oldString="1.1.0-alpha06"
+            replacement="1.1.0"
+            priority="0"/>
+        <location
+            file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
+            line="17"
+            column="21"
+            startOffset="334"
+            endLine="17"
+            endColumn="36"
+            endOffset="349"/>
     </incident>
 
     <incident
@@ -741,12 +809,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="46"
+            line="52"
             column="84"
-            startOffset="2472"
-            endLine="46"
+            startOffset="2768"
+            endLine="52"
             endColumn="91"
-            endOffset="2479"/>
+            endOffset="2775"/>
     </incident>
 
     <incident
@@ -761,12 +829,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="47"
+            line="53"
             column="101"
-            startOffset="2582"
-            endLine="47"
+            startOffset="2878"
+            endLine="53"
             endColumn="108"
-            endOffset="2589"/>
+            endOffset="2885"/>
     </incident>
 
     <incident
@@ -781,12 +849,12 @@
             priority="0"/>
         <location
             file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-            line="49"
+            line="55"
             column="74"
-            startOffset="2666"
-            endLine="49"
+            startOffset="2962"
+            endLine="55"
             endColumn="81"
-            endOffset="2673"/>
+            endOffset="2969"/>
     </incident>
 
     <incident
