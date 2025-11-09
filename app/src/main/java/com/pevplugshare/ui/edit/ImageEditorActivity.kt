@@ -15,9 +15,10 @@ import android.util.Log
 import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.Toast
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import com.pevplugshare.databinding.ActivityImageEditorBinding
+import com.pevplugshare.R
 import java.io.File
 import java.io.FileOutputStream
 
@@ -25,7 +26,15 @@ import java.io.FileOutputStream
  * Activity for editing images: crop, zoom, and define focus areas
  */
 class ImageEditorActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityImageEditorBinding
+    private lateinit var imageView: ImageView
+    private lateinit var zoomInButton: Button
+    private lateinit var zoomOutButton: Button
+    private lateinit var toggleFocusButton: Button
+    private lateinit var clearFocusButton: Button
+    private lateinit var cropButton: Button
+    private lateinit var resetButton: Button
+    private lateinit var saveButton: Button
+    
     private lateinit var originalBitmap: Bitmap
     private lateinit var editBitmap: Bitmap
     private var currentZoom = 1.0f
@@ -43,8 +52,24 @@ class ImageEditorActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityImageEditorBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_image_editor)
+
+        try {
+            // Find views
+            imageView = findViewById(R.id.imageView)
+            zoomInButton = findViewById(R.id.zoomInButton)
+            zoomOutButton = findViewById(R.id.zoomOutButton)
+            toggleFocusButton = findViewById(R.id.toggleFocusButton)
+            clearFocusButton = findViewById(R.id.clearFocusButton)
+            cropButton = findViewById(R.id.cropButton)
+            resetButton = findViewById(R.id.resetButton)
+            saveButton = findViewById(R.id.saveButton)
+        } catch (e: Exception) {
+            Log.e("ImageEditorActivity", "Error finding views", e)
+            Toast.makeText(this, "Error initializing UI: ${e.message}", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         val imagePath = intent.getStringExtra(EXTRA_IMAGE_PATH) ?: run {
             Toast.makeText(this, "No image path provided", Toast.LENGTH_SHORT).show()
@@ -70,7 +95,7 @@ class ImageEditorActivity : AppCompatActivity() {
             
             originalBitmap = bitmap
             editBitmap = originalBitmap.copy(originalBitmap.config, true)
-            binding.imageView.setImageBitmap(editBitmap)
+            imageView.setImageBitmap(editBitmap)
         } catch (e: Exception) {
             Log.e("ImageEditorActivity", "Error loading image", e)
             Toast.makeText(this, "Error loading image: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -80,33 +105,33 @@ class ImageEditorActivity : AppCompatActivity() {
 
     private fun setupUI() {
         // Zoom controls
-        binding.zoomInButton.setOnClickListener {
+        zoomInButton.setOnClickListener {
             zoomImage(1.2f)
         }
-        binding.zoomOutButton.setOnClickListener {
+        zoomOutButton.setOnClickListener {
             zoomImage(0.8f)
         }
 
         // Focus area controls
-        binding.toggleFocusButton.setOnClickListener {
+        toggleFocusButton.setOnClickListener {
             isDrawingFocus = !isDrawingFocus
-            binding.toggleFocusButton.text = if (isDrawingFocus) "Stop Focus" else "Add Focus Area"
-            binding.toggleFocusButton.setBackgroundColor(
+            toggleFocusButton.text = if (isDrawingFocus) "Stop Focus" else "Add Focus Area"
+            toggleFocusButton.setBackgroundColor(
                 if (isDrawingFocus) getColor(android.R.color.holo_green_dark)
                 else getColor(android.R.color.darker_gray)
             )
         }
 
-        binding.clearFocusButton.setOnClickListener {
+        clearFocusButton.setOnClickListener {
             focusRect = null
             isDrawingFocus = false
-            binding.toggleFocusButton.text = "Add Focus Area"
-            binding.toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
+            toggleFocusButton.text = "Add Focus Area"
+            toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
             refreshImage()
         }
 
         // Image canvas touch handling
-        binding.imageView.setOnTouchListener { _, event ->
+        imageView.setOnTouchListener { _, event ->
             if (isDrawingFocus) {
                 handleFocusDrawing(event)
             }
@@ -114,23 +139,23 @@ class ImageEditorActivity : AppCompatActivity() {
         }
 
         // Crop controls
-        binding.cropButton.setOnClickListener {
+        cropButton.setOnClickListener {
             cropImage()
         }
 
         // Reset button
-        binding.resetButton.setOnClickListener {
+        resetButton.setOnClickListener {
             editBitmap = originalBitmap.copy(originalBitmap.config, true)
             focusRect = null
             isDrawingFocus = false
             currentZoom = 1.0f
-            binding.toggleFocusButton.text = "Add Focus Area"
-            binding.toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
+            toggleFocusButton.text = "Add Focus Area"
+            toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
             refreshImage()
         }
 
         // Save button
-        binding.saveButton.setOnClickListener {
+        saveButton.setOnClickListener {
             saveImage()
         }
     }
@@ -138,8 +163,8 @@ class ImageEditorActivity : AppCompatActivity() {
     private fun zoomImage(factor: Float) {
         currentZoom *= factor
         currentZoom = currentZoom.coerceIn(0.5f, 3.0f)
-        binding.imageView.scaleX = currentZoom
-        binding.imageView.scaleY = currentZoom
+        imageView.scaleX = currentZoom
+        imageView.scaleY = currentZoom
     }
 
     private fun handleFocusDrawing(event: MotionEvent) {
@@ -167,8 +192,8 @@ class ImageEditorActivity : AppCompatActivity() {
                 )
                 focusRect = rect
                 isDrawingFocus = false
-                binding.toggleFocusButton.text = "Add Focus Area"
-                binding.toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
+                toggleFocusButton.text = "Add Focus Area"
+                toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
                 refreshImageWithFocus()
             }
         }
@@ -206,11 +231,11 @@ class ImageEditorActivity : AppCompatActivity() {
             }
         }
 
-        binding.imageView.setImageBitmap(bitmap)
+        imageView.setImageBitmap(bitmap)
     }
 
     private fun refreshImage() {
-        binding.imageView.setImageBitmap(editBitmap)
+        imageView.setImageBitmap(editBitmap)
     }
 
     private fun cropImage() {
@@ -223,10 +248,10 @@ class ImageEditorActivity : AppCompatActivity() {
             editBitmap = Bitmap.createBitmap(editBitmap, left, top, width, height)
             focusRect = null
             isDrawingFocus = false
-            binding.toggleFocusButton.text = "Add Focus Area"
+            toggleFocusButton.text = "Add Focus Area"
             currentZoom = 1.0f
-            binding.imageView.scaleX = 1f
-            binding.imageView.scaleY = 1f
+            imageView.scaleX = 1f
+            imageView.scaleY = 1f
             refreshImage()
             Toast.makeText(this, "Image cropped", Toast.LENGTH_SHORT).show()
         } ?: run {
