@@ -24,10 +24,6 @@
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_settings.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-60:/layout/activity_main.xml",
-        "source": "com.pevplugshare.app-main-63:/layout/activity_main.xml"
-    },
-    {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/item_photo_thumbnail.xml",
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/item_photo_thumbnail.xml"
     },
@@ -54,6 +50,10 @@
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_add_location.xml",
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_add_location.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeDebugResources-60:/layout/activity_photo_gallery_editor.xml",
+        "source": "com.pevplugshare.app-main-63:/layout/activity_photo_gallery_editor.xml"
     },
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_main.xml",

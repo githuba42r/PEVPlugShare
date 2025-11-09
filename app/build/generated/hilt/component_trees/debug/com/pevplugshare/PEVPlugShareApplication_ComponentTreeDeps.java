@@ -42,6 +42,7 @@ import hilt_aggregated_deps._com_pevplugshare_ui_main_MainViewModel_HiltModules_
 import hilt_aggregated_deps._com_pevplugshare_ui_photo_PhotoCaptureActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_photo_PhotoCaptureViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_photo_PhotoCaptureViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_quicklocation_PhotoGalleryEditorActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_quicklocation_QuickLocationActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_settings_SettingsActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_worker_AutoSyncWorker_HiltModule;
@@ -110,6 +111,7 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_pevplugshare_ui_photo_PhotoCaptureActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_photo_PhotoCaptureViewModel_HiltModules_BindsModule.class,
         _com_pevplugshare_ui_photo_PhotoCaptureViewModel_HiltModules_KeyModule.class,
+        _com_pevplugshare_ui_quicklocation_PhotoGalleryEditorActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_quicklocation_QuickLocationActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_settings_SettingsActivity_GeneratedInjector.class,
         _com_pevplugshare_worker_AutoSyncWorker_HiltModule.class,

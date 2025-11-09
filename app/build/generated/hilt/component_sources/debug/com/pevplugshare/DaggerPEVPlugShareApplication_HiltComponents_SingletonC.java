@@ -57,6 +57,7 @@ import com.pevplugshare.ui.main.MainViewModel_HiltModules_KeyModule_ProvideFacto
 import com.pevplugshare.ui.photo.PhotoCaptureActivity;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.pevplugshare.ui.quicklocation.PhotoGalleryEditorActivity;
 import com.pevplugshare.ui.quicklocation.QuickLocationActivity;
 import com.pevplugshare.ui.quicklocation.QuickLocationActivity_MembersInjector;
 import com.pevplugshare.ui.settings.SettingsActivity;
@@ -443,6 +444,11 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     @Override
     public void injectPhotoCaptureActivity(PhotoCaptureActivity photoCaptureActivity) {
+    }
+
+    @Override
+    public void injectPhotoGalleryEditorActivity(
+        PhotoGalleryEditorActivity photoGalleryEditorActivity) {
     }
 
     @Override

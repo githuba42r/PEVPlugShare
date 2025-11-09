@@ -18,6 +18,7 @@ color transparent
 color white
 drawable category_badge_background
 drawable chip_background
+drawable focus_area_badge
 drawable ic_add
 drawable ic_arrow_back
 drawable ic_auto_fix
@@ -60,6 +61,7 @@ id apiKeyInput
 id apiKeyLayout
 id apiKeyStatusText
 id apiKeyValidSection
+id backButton
 id bottomButtons
 id buttonAcceptLocation
 id buttonCancel
@@ -137,11 +139,13 @@ id modelsRecyclerView
 id nameInput
 id navigateButton
 id newDescriptionText
+id nextButton
 id oldDescriptionText
 id openingHoursInput
 id openingHoursSpinner
 id passwordInput
 id passwordLayout
+id photoGalleryRecycler
 id photosButton
 id photosContainer
 id previewView
@@ -201,6 +205,7 @@ layout activity_import_locations
 layout activity_login
 layout activity_main
 layout activity_photo_capture
+layout activity_photo_gallery_editor
 layout activity_quick_location
 layout activity_settings
 layout activity_splash

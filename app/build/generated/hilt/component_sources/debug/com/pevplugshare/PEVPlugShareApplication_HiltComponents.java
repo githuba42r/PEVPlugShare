@@ -18,6 +18,7 @@ import com.pevplugshare.ui.main.MainActivity_GeneratedInjector;
 import com.pevplugshare.ui.main.MainViewModel_HiltModules;
 import com.pevplugshare.ui.photo.PhotoCaptureActivity_GeneratedInjector;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel_HiltModules;
+import com.pevplugshare.ui.quicklocation.PhotoGalleryEditorActivity_GeneratedInjector;
 import com.pevplugshare.ui.quicklocation.QuickLocationActivity_GeneratedInjector;
 import com.pevplugshare.ui.settings.SettingsActivity_GeneratedInjector;
 import com.pevplugshare.worker.AutoSyncWorker_HiltModule;
@@ -214,6 +215,7 @@ public final class PEVPlugShareApplication_HiltComponents {
       EditLocationActivity_GeneratedInjector,
       MainActivity_GeneratedInjector,
       PhotoCaptureActivity_GeneratedInjector,
+      PhotoGalleryEditorActivity_GeneratedInjector,
       QuickLocationActivity_GeneratedInjector,
       SettingsActivity_GeneratedInjector,
       ActivityComponent,

@@ -81,6 +81,11 @@
             android:name=".ui.quicklocation.QuickLocationActivity"
             android:exported="false" />
 
+        <!-- Photo Gallery Editor Activity -->
+        <activity
+            android:name=".ui.quicklocation.PhotoGalleryEditorActivity"
+            android:exported="false" />
+
         <!-- Intent filter for JSON file import -->
         <activity
             android:name=".ui.import.ImportLocationsActivity"
