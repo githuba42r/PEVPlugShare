@@ -288,12 +288,27 @@ class QuickLocationActivity : AppCompatActivity() {
             .show()
     }
 
+    private val photoEditorLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // Photos have been edited, proceed with workflow
+            val editedPhotoPaths = result.data?.getStringArrayListExtra("edited_photo_paths")
+            if (editedPhotoPaths != null) {
+                selectedPhotoPaths.clear()
+                selectedPhotoPaths.addAll(editedPhotoPaths)
+            }
+            proceedAfterPhotoEditing()
+        }
+    }
+
     private fun proceedToPhotoEditing() {
         currentStep = Step.EDIT_PHOTOS
-        // TODO: Launch photo editor
-        Toast.makeText(this, "Photo editing coming soon", Toast.LENGTH_SHORT).show()
-        // For now, proceed to AI or location
-        proceedAfterPhotoEditing()
+        val intent = Intent(this, PhotoGalleryEditorActivity::class.java).apply {
+            putStringArrayListExtra("photo_paths", ArrayList(selectedPhotoPaths))
+            // Pass focus areas if any exist
+            val focusBundle = Bundle()
+            putExtra("focus_areas", focusBundle)
+        }
+        photoEditorLauncher.launch(intent)
     }
 
     private fun proceedAfterPhotoEditing() {
