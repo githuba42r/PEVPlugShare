@@ -1,0 +1,86 @@
+[
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/dialog_ai_description.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/dialog_ai_description.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/item_fullscreen_image.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/item_fullscreen_image.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_settings.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_settings.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_photo_gallery_editor.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_photo_gallery_editor.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_main.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_location_picker_map.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_location_picker_map.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/dialog_model_selection.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/dialog_model_selection.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/dialog_category_selection.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/dialog_category_selection.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_image_editor.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_image_editor.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_quick_location.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_quick_location.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/modal_map_location_picker.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/modal_map_location_picker.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/item_model_selection.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/item_model_selection.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_login.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_edit_location.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_edit_location.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_splash.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/item_location.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/item_location.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/modal_image_gallery.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/modal_image_gallery.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_add_location.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_add_location.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_photo_capture.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_photo_capture.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/activity_import_locations.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/activity_import_locations.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeReleaseResources-60:/layout/item_photo_thumbnail.xml",
+        "source": "com.pevplugshare.app-main-62:/layout/item_photo_thumbnail.xml"
+    }
+]

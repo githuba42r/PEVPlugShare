@@ -89,7 +89,15 @@ class AuthRepositoryImpl(
     }
     
     override suspend fun hasSessionToken(): Boolean {
-        return tokenManager.isLoggedIn()
+        // Check if we have valid session cookies from OSMAnd
+        val hasCookies = cookieManager.hasCookies("osmand.net")
+        Log.d(TAG, "Checking session token - has cookies: $hasCookies")
+        
+        // Also check access token for backward compatibility with OAuth
+        val hasAccessToken = tokenManager.isLoggedIn()
+        Log.d(TAG, "Checking session token - has access token: $hasAccessToken")
+        
+        return hasCookies || hasAccessToken
     }
 
     override suspend fun autoLogin(): Result<String> {

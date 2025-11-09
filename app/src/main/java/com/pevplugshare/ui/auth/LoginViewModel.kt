@@ -39,11 +39,17 @@ class LoginViewModel @Inject constructor(
                 val result = authRepository.autoLogin()
                 
                 result.onSuccess {
-                    // Test fetching categories after successful login
-                    android.util.Log.d("LoginViewModel", "Auto-login successful, fetching favorites categories...")
-                    authRepository.getFavoritesCategories()
+                    // Verify login by fetching categories
+                    android.util.Log.d("LoginViewModel", "Auto-login successful, verifying session...")
+                    val verifyResult = authRepository.getFavoritesCategories()
                     
-                    _loginState.value = LoginState.Success
+                    if (verifyResult.isSuccess) {
+                        android.util.Log.d("LoginViewModel", "Session verified, proceeding to main activity")
+                        _loginState.value = LoginState.Success
+                    } else {
+                        android.util.Log.e("LoginViewModel", "Failed to verify session: ${verifyResult.exceptionOrNull()?.message}")
+                        _loginState.value = LoginState.Error("Failed to verify session")
+                    }
                 }.onFailure { error ->
                     _loginState.value = LoginState.Error(error.message ?: "Auto-login failed")
                 }
@@ -60,11 +66,17 @@ class LoginViewModel @Inject constructor(
                 val result = authRepository.loginWithWebApi(username, password, rememberMe)
                 
                 result.onSuccess {
-                    // Test fetching categories after successful login
-                    android.util.Log.d("LoginViewModel", "Login successful, fetching favorites categories...")
-                    authRepository.getFavoritesCategories()
+                    // Verify login by fetching categories
+                    android.util.Log.d("LoginViewModel", "Login successful, verifying session...")
+                    val verifyResult = authRepository.getFavoritesCategories()
                     
-                    _loginState.value = LoginState.Success
+                    if (verifyResult.isSuccess) {
+                        android.util.Log.d("LoginViewModel", "Session verified, proceeding to main activity")
+                        _loginState.value = LoginState.Success
+                    } else {
+                        android.util.Log.e("LoginViewModel", "Failed to verify session: ${verifyResult.exceptionOrNull()?.message}")
+                        _loginState.value = LoginState.Error("Failed to verify session")
+                    }
                 }.onFailure { error ->
                     _loginState.value = LoginState.Error(error.message ?: "Login failed")
                 }

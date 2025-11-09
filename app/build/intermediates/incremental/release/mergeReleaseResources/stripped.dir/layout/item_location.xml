@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Header Row: Name + Info Button + Navigation Icon (right aligned) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/locationName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Location Name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical" />
+
+            <ImageButton
+                android:id="@+id/infoButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Show description"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_info"
+                app:tint="?attr/colorPrimary" />
+
+            <ImageButton
+                android:id="@+id/navigateButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Navigate with OSMAnd"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_navigation" />
+        </LinearLayout>
+
+        <!-- Action Buttons Row: Map, Favourite, Gallery + Distance (right) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Action Buttons on left -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/mapButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Show map"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_map" />
+
+                <ImageButton
+                    android:id="@+id/favouriteButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Favourite"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_favourite_outline" />
+
+                <ImageButton
+                    android:id="@+id/photosButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="View photos"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_image_gallery"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Distance on right -->
+            <TextView
+                android:id="@+id/locationDistance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1.2 km away"
+                android:textSize="12sp"
+                android:textAlignment="textEnd"
+                android:gravity="end" />
+        </LinearLayout>
+
+        <!-- Always Visible Badges: GPO + Public/Private + Fee + Hours -->
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:singleLine="false">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/locationGpoCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 GPO"
+                android:textSize="11sp"
+                android:clickable="false"
+                style="@style/Widget.MaterialComponents.Chip.Action" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/publicPrivateBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌍 Public"
+                android:textSize="11sp"
+                android:clickable="false"
+                style="@style/Widget.MaterialComponents.Chip.Action" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/feeIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Free"
+                android:textSize="11sp"
+                android:clickable="false"
+                style="@style/Widget.MaterialComponents.Chip.Action" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/locationOpeningHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏰ 24/7"
+                android:textSize="11sp"
+                android:clickable="false"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.Chip.Action" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Info Section (Hidden by default) -->
+        <LinearLayout
+            android:id="@+id/infoSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/locationDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location description"
+                android:textSize="12sp" />
+
+            <!-- Additional Info Text -->
+            <TextView
+                android:id="@+id/locationAdditionalInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Map WebView (Hidden by default) -->
+        <WebView
+            android:id="@+id/locationMapView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

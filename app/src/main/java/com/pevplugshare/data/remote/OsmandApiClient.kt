@@ -103,6 +103,21 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): ApiResult<T> {
         try {
             val errorBody = e.response()?.errorBody()?.string()
             android.util.Log.e("OsmAndAuth", "Error body: $errorBody")
+            
+            // Handle plain string error responses (like "error_email")
+            if (errorBody != null && !errorBody.startsWith("{")) {
+                // Plain string error response
+                val message = when (errorBody.trim()) {
+                    "error_email" -> "Email address not found. Please check your email and try again."
+                    "error_password" -> "Incorrect password. Please try again."
+                    "error" -> "Login failed. Please check your credentials."
+                    else -> errorBody.trim()
+                }
+                android.util.Log.e("OsmAndAuth", "Interpreted plain error: $message")
+                return ApiResult.Error(e.code(), message)
+            }
+            
+            // Try to parse as JSON error response
             val errorResponse = Gson().fromJson(errorBody, OsmandErrorResponse::class.java)
             val message = errorResponse.error_description
                 ?: errorResponse.message
@@ -112,12 +127,20 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): ApiResult<T> {
             ApiResult.Error(e.code(), message)
         } catch (ex: Exception) {
             android.util.Log.e("OsmAndAuth", "Failed to parse error response: ${ex.message}")
-            ApiResult.Error(e.code(), e.message() ?: "Unknown error")
+            val fallbackMessage = when (e.code()) {
+                400 -> "Invalid credentials. Please check your email and password."
+                401 -> "Unauthorized. Please log in again."
+                403 -> "Access denied. Please contact support."
+                404 -> "Resource not found. Please contact support."
+                500 -> "Server error. Please try again later."
+                else -> e.message() ?: "Unknown error"
+            }
+            ApiResult.Error(e.code(), fallbackMessage)
         }
     } catch (e: java.net.SocketTimeoutException) {
         android.util.Log.e("OsmAndAuth", "❌ Timeout Error: ${e.message}")
         android.util.Log.e("OsmAndAuth", "Request took longer than 5 seconds")
-        ApiResult.Error(0, "Request timeout: ${e.message}")
+        ApiResult.Error(0, "Request timeout: The server took too long to respond. Please check your internet connection and try again.")
     } catch (e: IOException) {
         android.util.Log.e("OsmAndAuth", "❌ Network Error: ${e.message}")
         android.util.Log.e("OsmAndAuth", "IOException type: ${e.javaClass.simpleName}")
