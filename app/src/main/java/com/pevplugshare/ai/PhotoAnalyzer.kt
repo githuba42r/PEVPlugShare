@@ -34,6 +34,23 @@ class PhotoAnalyzer @Inject constructor(
 ) {
     private val okHttpClient = OkHttpClient()
     
+    private fun buildAnalysisPrompt(hasFocusAreas: Boolean): String {
+        val baseFocusInstruction = if (hasFocusAreas) {
+            """
+            
+IMPORTANT - FOCUS AREAS PROVIDED:
+The user has highlighted specific areas in the images with golden rectangles to help guide your analysis.
+Please pay special attention to the areas marked with golden rectangles as these contain the sockets/outlets
+the user wants analyzed. If a focus area is provided, prioritize analyzing that region while still considering
+the full context of the image.
+            """
+        } else {
+            ""
+        }
+        
+        return ANALYSIS_PROMPT + baseFocusInstruction
+    }
+
     companion object {
         private const val TAG = "PhotoAnalyzer"
         private const val API_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -137,7 +154,8 @@ Image showing multiple outlets in a food court:
 
     suspend fun analyzePhotos(
         imageFiles: List<File>,
-        apiKey: String
+        apiKey: String,
+        focusAreas: Map<String, android.graphics.RectF> = emptyMap()
     ): Result<PhotoAnalysisResult> = withContext(Dispatchers.IO) {
         try {
             if (imageFiles.isEmpty()) {
@@ -145,6 +163,9 @@ Image showing multiple outlets in a food court:
             }
             
             val modelId = tokenManager.getSelectedAiModel() ?: "google/gemini-flash-1.5"
+            
+            // Build dynamic prompt based on whether focus areas are provided
+            val prompt = buildAnalysisPrompt(focusAreas.isNotEmpty())
 
             // Build message content with text and images
             val contentParts = JSONArray()
@@ -152,7 +173,7 @@ Image showing multiple outlets in a food court:
             // Add text prompt
             contentParts.put(JSONObject().apply {
                 put("type", "text")
-                put("text", ANALYSIS_PROMPT)
+                put("text", prompt)
             })
             
             // Add images as base64

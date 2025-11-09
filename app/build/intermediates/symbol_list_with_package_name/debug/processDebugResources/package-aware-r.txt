@@ -3426,6 +3426,7 @@ id checkbox
 id checked
 id chronometer
 id circle_center
+id clearFocusButton
 id clearSearchButton
 id clear_text
 id clip_horizontal
@@ -3447,6 +3448,7 @@ id coordinator
 id cos
 id counterclockwise
 id cradle
+id cropButton
 id currentState
 id custom
 id customPanel
@@ -3521,6 +3523,7 @@ id fitXY
 id fixed
 id flip
 id floating
+id focusIndicator
 id forever
 id formContainer
 id fragment_container_view_tag
@@ -3558,6 +3561,7 @@ id ignoreRequest
 id image
 id imageCounter
 id imageGalleryOverlay
+id imageView
 id imageViewPager
 id immediateStop
 id included
@@ -3769,6 +3773,7 @@ id right_side
 id rounded
 id row_index_key
 id rtl
+id saveButton
 id saveSettingsButton
 id save_non_transition_alpha
 id save_overlay_view
@@ -3891,6 +3896,7 @@ id titleDividerNoCustom
 id titleText
 id title_template
 id toggle
+id toggleFocusButton
 id toolbar
 id top
 id topPanel
@@ -3930,8 +3936,10 @@ id wrap_content
 id wrap_content_constrained
 id x_left
 id x_right
+id zoomInButton
 id zoomLevelSlider
 id zoomLevelValue
+id zoomOutButton
 integer abc_config_activityDefaultDur
 integer abc_config_activityShortDur
 integer app_bar_elevation_anim_duration
@@ -4051,6 +4059,7 @@ layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_add_location
 layout activity_edit_location
+layout activity_image_editor
 layout activity_import_locations
 layout activity_login
 layout activity_main

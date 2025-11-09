@@ -78,8 +78,10 @@ id categoryRecyclerView
 id chargingCostsInput
 id chatInput
 id chatInputContainer
+id clearFocusButton
 id clearSearchButton
 id contentScrollView
+id cropButton
 id descriptionInput
 id emptyState
 id emptyText
@@ -88,6 +90,7 @@ id favouriteButton
 id feeCheckbox
 id feeDetailsSection
 id feeIndicator
+id focusIndicator
 id formContainer
 id freeOnlyCheckbox
 id fullscreenImage
@@ -97,6 +100,7 @@ id getLocationButton
 id gpoCountInput
 id imageCounter
 id imageGalleryOverlay
+id imageView
 id imageViewPager
 id infoButton
 id infoSection
@@ -153,6 +157,7 @@ id rememberMeCheckbox
 id removePhotoButton
 id resetApiKeyButton
 id resetButton
+id saveButton
 id saveSettingsButton
 id searchInput
 id selectButton
@@ -175,14 +180,18 @@ id swipeRefreshLayout
 id thumbnailContainer
 id thumbnailImage
 id titleText
+id toggleFocusButton
 id toolbar
 id usernameInput
 id usernameLayout
 id validateSaveButton
+id zoomInButton
 id zoomLevelSlider
 id zoomLevelValue
+id zoomOutButton
 layout activity_add_location
 layout activity_edit_location
+layout activity_image_editor
 layout activity_import_locations
 layout activity_login
 layout activity_main

@@ -20,14 +20,19 @@ public final class ItemPhotoThumbnailBinding implements ViewBinding {
   private final MaterialCardView rootView;
 
   @NonNull
+  public final ImageView focusIndicator;
+
+  @NonNull
   public final ImageView removePhotoButton;
 
   @NonNull
   public final ImageView thumbnailImage;
 
   private ItemPhotoThumbnailBinding(@NonNull MaterialCardView rootView,
-      @NonNull ImageView removePhotoButton, @NonNull ImageView thumbnailImage) {
+      @NonNull ImageView focusIndicator, @NonNull ImageView removePhotoButton,
+      @NonNull ImageView thumbnailImage) {
     this.rootView = rootView;
+    this.focusIndicator = focusIndicator;
     this.removePhotoButton = removePhotoButton;
     this.thumbnailImage = thumbnailImage;
   }
@@ -59,6 +64,12 @@ public final class ItemPhotoThumbnailBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.focusIndicator;
+      ImageView focusIndicator = ViewBindings.findChildViewById(rootView, id);
+      if (focusIndicator == null) {
+        break missingId;
+      }
+
       id = R.id.removePhotoButton;
       ImageView removePhotoButton = ViewBindings.findChildViewById(rootView, id);
       if (removePhotoButton == null) {
@@ -71,8 +82,8 @@ public final class ItemPhotoThumbnailBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemPhotoThumbnailBinding((MaterialCardView) rootView, removePhotoButton,
-          thumbnailImage);
+      return new ItemPhotoThumbnailBinding((MaterialCardView) rootView, focusIndicator,
+          removePhotoButton, thumbnailImage);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
