@@ -3174,6 +3174,7 @@ drawable ic_public
 drawable ic_refresh
 drawable ic_search_black_24
 drawable ic_search_document
+drawable ic_star
 drawable ic_sync_pending
 drawable m3_avd_hide_password
 drawable m3_avd_show_password

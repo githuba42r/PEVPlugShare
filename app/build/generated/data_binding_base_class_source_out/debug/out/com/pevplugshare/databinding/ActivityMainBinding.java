@@ -61,7 +61,7 @@ public final class ActivityMainBinding implements ViewBinding {
   public final ImageButton menuButton;
 
   @NonNull
-  public final ImageButton quickLocationButton;
+  public final FloatingActionButton quickLocationButton;
 
   @NonNull
   public final SwipeRefreshLayout swipeRefreshLayout;
@@ -75,7 +75,7 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull TextView imageCounter, @NonNull LinearLayout imageGalleryOverlay,
       @NonNull ViewPager2 imageViewPager, @NonNull ProgressBar loadingProgressBar,
       @NonNull TextView locationDescription, @NonNull RecyclerView locationRecyclerView,
-      @NonNull ImageButton menuButton, @NonNull ImageButton quickLocationButton,
+      @NonNull ImageButton menuButton, @NonNull FloatingActionButton quickLocationButton,
       @NonNull SwipeRefreshLayout swipeRefreshLayout, @NonNull LinearLayout thumbnailContainer) {
     this.rootView = rootView;
     this.addLocationFab = addLocationFab;
@@ -188,7 +188,7 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       id = R.id.quickLocationButton;
-      ImageButton quickLocationButton = ViewBindings.findChildViewById(rootView, id);
+      FloatingActionButton quickLocationButton = ViewBindings.findChildViewById(rootView, id);
       if (quickLocationButton == null) {
         break missingId;
       }

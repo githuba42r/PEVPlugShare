@@ -43,6 +43,7 @@ drawable ic_private
 drawable ic_public
 drawable ic_refresh
 drawable ic_search_document
+drawable ic_star
 drawable ic_sync_pending
 id acceptButton
 id accessTypeIcon

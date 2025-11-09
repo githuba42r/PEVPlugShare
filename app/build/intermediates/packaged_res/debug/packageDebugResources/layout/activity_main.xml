@@ -103,17 +103,16 @@
         android:src="@drawable/ic_add"
         app:fabSize="normal" />
 
-    <!-- Quick Location Button (Lower Left) - Icon Button -->
-    <ImageButton
+    <!-- Quick Location Button (Lower Left) - Star FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/quickLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Quick Location"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_add" />
+        android:src="@drawable/ic_star"
+        app:fabSize="normal"
+        android:contentDescription="Quick Location" />
 
     <!-- Image Gallery Modal - directly embedded -->
     <LinearLayout
