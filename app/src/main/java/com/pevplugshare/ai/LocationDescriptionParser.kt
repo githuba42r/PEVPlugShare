@@ -119,7 +119,7 @@ Return only the JSON response, no additional text."""
                 })
             })
             put("temperature", 0.1) // Low temperature for consistent extraction
-            put("max_tokens", 1000) // Increased from 500 to ensure complete response
+            put("max_tokens", 2000) // Increased from 500 to ensure complete response
         }
 
         return json.toString().toRequestBody("application/json".toMediaType())
