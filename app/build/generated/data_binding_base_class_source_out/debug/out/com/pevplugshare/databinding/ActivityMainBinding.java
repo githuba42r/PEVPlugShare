@@ -4,15 +4,20 @@ package com.pevplugshare.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
+import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pevplugshare.R;
 import java.lang.NullPointerException;
@@ -27,13 +32,28 @@ public final class ActivityMainBinding implements ViewBinding {
   public final FloatingActionButton addLocationFab;
 
   @NonNull
-  public final TextView categoryName;
+  public final TextView categoryBadge;
 
   @NonNull
   public final TextView emptyState;
 
   @NonNull
+  public final MaterialToolbar galleryToolbar;
+
+  @NonNull
+  public final TextView imageCounter;
+
+  @NonNull
+  public final FrameLayout imageGalleryOverlay;
+
+  @NonNull
+  public final ViewPager2 imageViewPager;
+
+  @NonNull
   public final ProgressBar loadingProgressBar;
+
+  @NonNull
+  public final TextView locationDescription;
 
   @NonNull
   public final RecyclerView locationRecyclerView;
@@ -42,25 +62,33 @@ public final class ActivityMainBinding implements ViewBinding {
   public final ImageButton menuButton;
 
   @NonNull
-  public final TextView offlineIndicator;
+  public final SwipeRefreshLayout swipeRefreshLayout;
 
   @NonNull
-  public final ImageButton refreshButton;
+  public final LinearLayout thumbnailContainer;
 
   private ActivityMainBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull FloatingActionButton addLocationFab, @NonNull TextView categoryName,
-      @NonNull TextView emptyState, @NonNull ProgressBar loadingProgressBar,
-      @NonNull RecyclerView locationRecyclerView, @NonNull ImageButton menuButton,
-      @NonNull TextView offlineIndicator, @NonNull ImageButton refreshButton) {
+      @NonNull FloatingActionButton addLocationFab, @NonNull TextView categoryBadge,
+      @NonNull TextView emptyState, @NonNull MaterialToolbar galleryToolbar,
+      @NonNull TextView imageCounter, @NonNull FrameLayout imageGalleryOverlay,
+      @NonNull ViewPager2 imageViewPager, @NonNull ProgressBar loadingProgressBar,
+      @NonNull TextView locationDescription, @NonNull RecyclerView locationRecyclerView,
+      @NonNull ImageButton menuButton, @NonNull SwipeRefreshLayout swipeRefreshLayout,
+      @NonNull LinearLayout thumbnailContainer) {
     this.rootView = rootView;
     this.addLocationFab = addLocationFab;
-    this.categoryName = categoryName;
+    this.categoryBadge = categoryBadge;
     this.emptyState = emptyState;
+    this.galleryToolbar = galleryToolbar;
+    this.imageCounter = imageCounter;
+    this.imageGalleryOverlay = imageGalleryOverlay;
+    this.imageViewPager = imageViewPager;
     this.loadingProgressBar = loadingProgressBar;
+    this.locationDescription = locationDescription;
     this.locationRecyclerView = locationRecyclerView;
     this.menuButton = menuButton;
-    this.offlineIndicator = offlineIndicator;
-    this.refreshButton = refreshButton;
+    this.swipeRefreshLayout = swipeRefreshLayout;
+    this.thumbnailContainer = thumbnailContainer;
   }
 
   @Override
@@ -96,9 +124,9 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.categoryName;
-      TextView categoryName = ViewBindings.findChildViewById(rootView, id);
-      if (categoryName == null) {
+      id = R.id.categoryBadge;
+      TextView categoryBadge = ViewBindings.findChildViewById(rootView, id);
+      if (categoryBadge == null) {
         break missingId;
       }
 
@@ -108,9 +136,39 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.galleryToolbar;
+      MaterialToolbar galleryToolbar = ViewBindings.findChildViewById(rootView, id);
+      if (galleryToolbar == null) {
+        break missingId;
+      }
+
+      id = R.id.imageCounter;
+      TextView imageCounter = ViewBindings.findChildViewById(rootView, id);
+      if (imageCounter == null) {
+        break missingId;
+      }
+
+      id = R.id.imageGalleryOverlay;
+      FrameLayout imageGalleryOverlay = ViewBindings.findChildViewById(rootView, id);
+      if (imageGalleryOverlay == null) {
+        break missingId;
+      }
+
+      id = R.id.imageViewPager;
+      ViewPager2 imageViewPager = ViewBindings.findChildViewById(rootView, id);
+      if (imageViewPager == null) {
+        break missingId;
+      }
+
       id = R.id.loadingProgressBar;
       ProgressBar loadingProgressBar = ViewBindings.findChildViewById(rootView, id);
       if (loadingProgressBar == null) {
+        break missingId;
+      }
+
+      id = R.id.locationDescription;
+      TextView locationDescription = ViewBindings.findChildViewById(rootView, id);
+      if (locationDescription == null) {
         break missingId;
       }
 
@@ -126,21 +184,22 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.offlineIndicator;
-      TextView offlineIndicator = ViewBindings.findChildViewById(rootView, id);
-      if (offlineIndicator == null) {
+      id = R.id.swipeRefreshLayout;
+      SwipeRefreshLayout swipeRefreshLayout = ViewBindings.findChildViewById(rootView, id);
+      if (swipeRefreshLayout == null) {
         break missingId;
       }
 
-      id = R.id.refreshButton;
-      ImageButton refreshButton = ViewBindings.findChildViewById(rootView, id);
-      if (refreshButton == null) {
+      id = R.id.thumbnailContainer;
+      LinearLayout thumbnailContainer = ViewBindings.findChildViewById(rootView, id);
+      if (thumbnailContainer == null) {
         break missingId;
       }
 
-      return new ActivityMainBinding((CoordinatorLayout) rootView, addLocationFab, categoryName,
-          emptyState, loadingProgressBar, locationRecyclerView, menuButton, offlineIndicator,
-          refreshButton);
+      return new ActivityMainBinding((CoordinatorLayout) rootView, addLocationFab, categoryBadge,
+          emptyState, galleryToolbar, imageCounter, imageGalleryOverlay, imageViewPager,
+          loadingProgressBar, locationDescription, locationRecyclerView, menuButton,
+          swipeRefreshLayout, thumbnailContainer);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

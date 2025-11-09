@@ -25,6 +25,7 @@
     <string name="add_button">Add</string>
     <string name="add_location_title">Add Charging Location</string>
     <string name="add_photo">Add Photo</string>
+    <string name="add_to_osmand">Add to OSMAnd Favorites</string>
     <string name="additional_info">Additional Information</string>
     <string name="app_name">PEVPlugShare</string>
     <string name="cancel_button">Cancel</string>
@@ -35,6 +36,7 @@
     <string name="error_duplicate_location">Duplicate location detected within 250m. Proceed anyway?</string>
     <string name="error_network">Network error. Please check your connection.</string>
     <string name="error_no_gps">GPS signal not available. Please try again.</string>
+    <string name="exit_app">Exit</string>
     <string name="filter_all">All</string>
     <string name="filter_capacity">Min Capacity (GPO)</string>
     <string name="filter_favourites">Favourites Only</string>
@@ -42,6 +44,7 @@
     <string name="gpo_count">Number of GPO (Power Points)</string>
     <string name="gpo_count_required">GPO count is required</string>
     <string name="has_fee">Charging Fee</string>
+    <string name="install_osmand">Install OSMAnd</string>
     <string name="location_name">Location Name</string>
     <string name="location_name_required">Location name is required</string>
     <string name="location_private">Private</string>
@@ -56,11 +59,15 @@
     <string name="menu_search">Search</string>
     <string name="menu_settings">Settings</string>
     <string name="navigate_button">Navigate</string>
+    <string name="navigate_osmand">Navigate (OSMAnd)</string>
     <string name="no">No</string>
     <string name="no_locations">No locations found</string>
     <string name="offline_indicator">🔴 Offline</string>
+    <string name="open_in_osmand">Open in OSMAnd</string>
     <string name="opening_hours">Opening Hours (Optional)</string>
     <string name="osmand_not_installed">OSMAnd not installed. Please install to navigate.</string>
+    <string name="osmand_required_message">PEVPlugShare requires OSMAnd to be installed on your device for navigation and mapping features.\n\nPlease install OSMAnd from the Play Store to continue.</string>
+    <string name="osmand_required_title">OSMAnd Required</string>
     <string name="other_info">Other Information (Optional)</string>
     <string name="photos">Photos (Optional)</string>
     <string name="provider_name">Provider Name (Optional)</string>
@@ -81,7 +88,7 @@
     <string name="success_synced">Locations synced</string>
     <string name="syncing_indicator">🔄 Syncing</string>
     <string name="yes">Yes</string>
-    <style name="Theme.PEVPlugShare" parent="Theme.MaterialComponents.Light">
+    <style name="Theme.PEVPlugShare" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorSecondary">@color/md_theme_secondary</item>
         <item name="colorError">@color/md_theme_error</item>

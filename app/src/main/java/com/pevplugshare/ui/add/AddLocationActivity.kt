@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import com.pevplugshare.R
 import com.pevplugshare.data.model.LocationAccessType
 import com.pevplugshare.data.model.SocketType
 import com.pevplugshare.databinding.ActivityAddLocationBinding
+import com.pevplugshare.util.DistanceCalculator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -101,7 +103,34 @@ class AddLocationActivity : AppCompatActivity() {
                     }
                     is AddLocationState.Success -> {
                         binding.progressBar.visibility = android.view.View.GONE
-                        Toast.makeText(this@AddLocationActivity, "Location added successfully!", Toast.LENGTH_SHORT).show()
+                        
+                        // Add to OSMAnd favorites
+                        state.location?.let { location ->
+                            val added = com.pevplugshare.util.OsmandIntentHelper.addFavorite(
+                                this@AddLocationActivity,
+                                location
+                            )
+                            if (added) {
+                                Toast.makeText(
+                                    this@AddLocationActivity, 
+                                    "Location added successfully and exported to OSMAnd!", 
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    this@AddLocationActivity, 
+                                    "Location added successfully!", 
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } ?: run {
+                            Toast.makeText(
+                                this@AddLocationActivity, 
+                                "Location added successfully!", 
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        
                         viewModel.resetForm()
                         finish()
                     }
@@ -114,14 +143,33 @@ class AddLocationActivity : AppCompatActivity() {
                         binding.submitButton.isEnabled = true
                         binding.progressBar.visibility = android.view.View.GONE
                     }
-                    is AddLocationState.Duplicate -> {
+                    is AddLocationState.NearbyLocationsFound -> {
                         binding.progressBar.visibility = android.view.View.GONE
                         binding.submitButton.isEnabled = true
-                        Toast.makeText(this@AddLocationActivity, "Similar location already exists nearby", Toast.LENGTH_LONG).show()
+                        showNearbyLocationsDialog(state.locations)
                     }
                 }
             }
         }
+    }
+    
+    private fun showNearbyLocationsDialog(nearbyLocations: List<Pair<com.pevplugshare.data.model.Location, Double>>) {
+        val locationsList = nearbyLocations.joinToString("\n\n") { (location, distance) ->
+            "• ${location.name}\n  Distance: ${DistanceCalculator.formatDistance(distance)}"
+        }
+        
+        AlertDialog.Builder(this)
+            .setTitle("Nearby Locations Found")
+            .setMessage("The following charging locations are within 250m:\n\n$locationsList\n\nDo you still want to add this location?")
+            .setPositiveButton("Yes, Add Anyway") { _, _ ->
+                viewModel.saveLocationAnyway()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                viewModel.resetForm()
+            }
+            .setCancelable(false)
+            .show()
     }
 
     private fun requestLocationAndPopulate() {

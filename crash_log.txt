@@ -1,0 +1,1248 @@
+--------- beginning of main
+11-09 13:27:41.427 E/EPDG -- SIM1 [EpdgHandler]( 5803): [RIL->EpdgSubscription]Current Cid : 9 / Rat : 33
+11-09 13:27:41.433 E/#IMSREGI( 5345): (1, Optus_AU) [LTE] LATCH(DataConnect changed) : 847324.086s
+11-09 13:27:41.433 E/#IMSCR  ( 5345): 11-09 13:27:41 0x3000000B:1
+11-09 13:27:41.434 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : use_usim_on_invalid_isim
+11-09 13:27:41.434 E/JAMES   (24898): null/null/null
+11-09 13:27:41.435 E/JAMES   (24898): null/null/null
+11-09 13:27:41.436 E/multiclientd( 7753): Passing -1 file descriptor as non-@nullable AIDL ParcelFileDescriptor
+11-09 13:27:41.436 E/rild    ( 7752): Could not close FD 536: Bad file descriptor
+11-09 13:27:41.437 E/#IMSCR  ( 5345): 11-09 13:27:41 0x30000009:1,18->13
+11-09 13:27:41.437 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : ss_domain_setting
+11-09 13:27:41.437 E/CapabilityUtil<1>( 5345): checkModuleReady: module is disabled
+11-09 13:27:41.437 E/CapabilityUtil<1>( 5345): checkModuleReady: module is disabled
+11-09 13:27:41.438 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:41.438 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:41.438 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : use_usim_on_invalid_isim
+11-09 13:27:41.438 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : ss_enable_in_roaming
+11-09 13:27:41.443 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : dual_rcs_policy
+11-09 13:27:41.444 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : dual_rcs_policy
+11-09 13:27:41.444 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : use_usim_on_invalid_isim
+11-09 13:27:41.444 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : use_usim_on_invalid_isim
+11-09 13:27:41.446 E/#IMSCR  ( 5345): 11-09 13:27:41 0x11020001:1,REGI:11:rat = 13(13), EPDG HO : W2L
+11-09 13:27:41.447 E/GlobalSettingsRepoBase( 5345): globalsettings No matched key : support_vowifi_deprioritize_nr5g
+11-09 13:27:41.447 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : support_vowifi_deprioritize_nr5g
+11-09 13:27:41.447 E/GlobalSettingsRepoBase( 5345): globalsettings No matched key : support_disable_vowifi_5gsa
+11-09 13:27:41.447 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : support_disable_vowifi_5gsa
+11-09 13:27:41.447 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : nr5g_mode_in_vowifi
+11-09 13:27:41.447 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : dual_rcs_policy
+11-09 13:27:41.447 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:41.447 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : ss_domain_setting
+11-09 13:27:41.448 E/CapabilityUtil<1>( 5345): checkModuleReady: module is disabled
+11-09 13:27:41.448 E/CapabilityUtil<1>( 5345): checkModuleReady: module is disabled
+11-09 13:27:41.448 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:41.448 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:41.448 E/#IMSCR  ( 5345): 11-09 13:27:41 0x11030000:1,REGI:REFRESH
+11-09 13:27:41.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658861
+11-09 13:27:41.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:42.031 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.031 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.032 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.032 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.033 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.033 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.034 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.034 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.043 E/#IMSCR  ( 5345): 11-09 13:27:42 0x11030002:1,REG EXP:7190
+11-09 13:27:42.047 E/#IMSCR  ( 5345): 11-09 13:27:42 0x11010000:1,REG OK:13:Optus_AU:ims:0x00000003
+11-09 13:27:42.051 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : show_vowifi_regi_icon
+11-09 13:27:42.051 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : show_volte_regi_icon
+11-09 13:27:42.051 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : remove_icon_nosvc
+11-09 13:27:42.051 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : hide_vowifi_icon_when_cs_call
+11-09 13:27:42.052 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : volte_regi_icon_id2
+11-09 13:27:42.052 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : show_rcs_regi_icon
+11-09 13:27:42.052 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : vowifi_operator_label
+11-09 13:27:42.061 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : sms_write_uicc
+11-09 13:27:42.061 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : voice_domain_pref_utran
+11-09 13:27:42.062 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : ss_domain_setting
+11-09 13:27:42.062 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : ussd_domain_setting
+11-09 13:27:42.062 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : emergency_domain_setting
+11-09 13:27:42.062 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : srvcc_version
+11-09 13:27:42.062 E/RegiMgr<1>( 5345): getImsProfile: found [OPS VoLTE] for [VOLTE]
+11-09 13:27:42.062 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : use_usim_on_invalid_isim
+11-09 13:27:42.063 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : use_usim_on_invalid_isim
+11-09 13:27:42.064 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:42.064 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:42.064 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:42.065 E/#IMSCR  ( 5345): 11-09 13:27:42 0x13000009:1,EC:0,CNT:0
+11-09 13:27:42.065 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : dual_rcs_policy
+11-09 13:27:42.065 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : ss_domain_setting
+11-09 13:27:42.065 E/CapabilityUtil<1>( 5345): checkModuleReady: module is disabled
+11-09 13:27:42.066 E/CapabilityUtil<1>( 5345): checkModuleReady: module is disabled
+11-09 13:27:42.066 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:42.066 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:42.066 E/#IMSCR  ( 5345): 11-09 13:27:42 0x3000000C:1
+11-09 13:27:42.066 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : allow_release_wfc_before_ho
+11-09 13:27:42.067 E/GlobalSettingsRepoBase( 5345): globalgcsettings No matched key : ss_domain_setting
+11-09 13:27:42.067 E/CapabilityUtil<1>( 5345): checkModuleReady: module is disabled
+11-09 13:27:42.067 E/CapabilityUtil<1>( 5345): checkModuleReady: module is disabled
+11-09 13:27:42.067 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:42.067 E/SecImsServiceConnector( 5345): connect to local SecImsService #1 attempt
+11-09 13:27:42.077 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.078 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.079 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.079 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.079 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.079 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.080 E/#IMSREGI( 5345): (1, OPS VoLTE) REGISTERED
+11-09 13:27:42.080 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.080 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:42.086 E/SatelliteController( 5262): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+11-09 13:27:42.089 E/SatelliteController( 5262): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+11-09 13:27:42.091 E/SatelliteController( 5262): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+11-09 13:27:42.093 E/SatelliteController( 5262): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+11-09 13:27:42.093 E/SatelliteController( 5262): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+11-09 13:27:42.096 E/SatelliteController( 5262): registerForSatelliteModemStateChanged: mSatelliteSessionController is not initialized yet
+11-09 13:27:42.435 E/JAMES   (24898): null/null/null
+11-09 13:27:42.435 E/JAMES   (24898): null/null/null
+11-09 13:27:42.903 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658862
+11-09 13:27:42.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:43.131 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:43.131 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:43.132 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:43.132 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:43.132 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:43.132 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:43.133 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:43.133 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:43.435 E/JAMES   (24898): null/null/null
+11-09 13:27:43.436 E/JAMES   (24898): null/null/null
+11-09 13:27:43.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658863
+11-09 13:27:43.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:44.405 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:27:44.436 E/JAMES   (24898): null/null/null
+11-09 13:27:44.436 E/JAMES   (24898): null/null/null
+11-09 13:27:44.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658864
+11-09 13:27:44.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:45.436 E/JAMES   (24898): null/null/null
+11-09 13:27:45.436 E/JAMES   (24898): null/null/null
+11-09 13:27:45.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658865
+11-09 13:27:45.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:46.436 E/JAMES   (24898): null/null/null
+11-09 13:27:46.437 E/JAMES   (24898): null/null/null
+11-09 13:27:46.903 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658866
+11-09 13:27:46.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:47.271 E/SDM     ( 2199): ScalarConfig::GetAIScaleSettingsInfo: AI Scaler Config for display 68 is not present
+11-09 13:27:47.344 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:47.364 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Task=7278#75334
+11-09 13:27:47.364 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - Task=7278#75334
+11-09 13:27:47.381 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.080 - Task=7278#75334
+11-09 13:27:47.383 E/NativeCustomFrequencyManager( 2302): [NativeCFMS] BpCustomFrequencyManager::acquire()
+11-09 13:27:47.413 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:27:47.508 E/ashmem  (15063): Pinning is deprecated since Android Q. Please use trim or other methods.
+11-09 13:27:47.513 E/Adreno-AppProfiles(15063): QSPM AIDL service doesn't exist
+11-09 13:27:47.545 E/om.pevplugshare(15063): Unable to open libpenguin.so: dlopen failed: library "libpenguin.so" not found.
+11-09 13:27:47.559 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:47.573 E/JAMES   (24898): null/null/null
+11-09 13:27:47.573 E/JAMES   (24898): null/null/null
+11-09 13:27:47.581 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Surface(name=13d7ad0 InputMethod)/@0x53cbcef - animation-leash of insets_animation#75347
+--------- beginning of system
+11-09 13:27:47.731 E/WindowManager( 2648): win=Window{8a7e083 u0 com.teslacoilsw.launcher/com.teslacoilsw.launcher.NovaLauncher} destroySurfaces: appStopped=true cleanupOnResume=false win.mWindowRemovalAllowed=false win.mRemoveOnExit=false win.mViewVisibility=8 caller=com.android.server.wm.ActivityRecord.destroySurfaces:25 com.android.server.wm.ActivityRecord.activityStopped:192 com.android.server.wm.ActivityClientController.activityStopped:97 android.app.IActivityClientController$Stub.onTransact:740 com.android.server.wm.ActivityClientController.onTransact:1 android.os.Binder.execTransactInternal:1462 android.os.Binder.execTransact:1401 
+11-09 13:27:47.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658867
+11-09 13:27:47.904 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:48.573 E/JAMES   (24898): null/null/null
+11-09 13:27:48.574 E/JAMES   (24898): null/null/null
+11-09 13:27:48.625 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:48.632 E/SDM     ( 2199): ScalarConfig::GetAIScaleSettingsInfo: AI Scaler Config for display 68 is not present
+11-09 13:27:48.672 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:48.680 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - ActivityRecord{8066203 u0 com.pevplugshare/.ui.auth.LoginActivity t7278}#75348
+11-09 13:27:48.680 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - DimTransitionLayer for Surface(name=ActivityRecord{8066203 u0 com.pevplugshare/.ui.auth.LoginActivity t7278})/@0x83f5f14#75355
+11-09 13:27:48.680 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 1.000 - ActivityRecord{8066203 u0 com.pevplugshare/.ui.auth.LoginActivity t7278}#75348
+11-09 13:27:48.680 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - DimTransitionLayer for Surface(name=ActivityRecord{8066203 u0 com.pevplugshare/.ui.auth.LoginActivity t7278})/@0x83f5f14#75355
+11-09 13:27:48.697 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.010 - DimTransitionLayer for Surface(name=ActivityRecord{8066203 u0 com.pevplugshare/.ui.auth.LoginActivity t7278})/@0x83f5f14#75355
+11-09 13:27:48.697 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Surface(name=13d7ad0 InputMethod)/@0x53cbcef - animation-leash of insets_animation#75356
+11-09 13:27:48.891 E/NativeCustomFrequencyManager( 2302): [NativeCFMS] BpCustomFrequencyManager::acquire()
+11-09 13:27:48.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658868
+11-09 13:27:48.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:49.573 E/JAMES   (24898): null/null/null
+11-09 13:27:49.574 E/JAMES   (24898): null/null/null
+11-09 13:27:49.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658869
+11-09 13:27:49.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): Could not instantiate com.pevplugshare.data.remote.SessionRefreshWorker
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): java.lang.NoSuchMethodException: com.pevplugshare.data.remote.SessionRefreshWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters]
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at java.lang.Class.getConstructor0(Class.java:3385)
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at java.lang.Class.getDeclaredConstructor(Class.java:3067)
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at androidx.work.WorkerFactory.createWorkerWithDefaultFallback(WorkerFactory.java:95)
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at androidx.work.impl.WorkerWrapper.runWorker(WorkerWrapper.java:243)
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at androidx.work.impl.WorkerWrapper.run(WorkerWrapper.java:145)
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at androidx.work.impl.utils.SerialExecutorImpl$Task.run(SerialExecutorImpl.java:96)
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+11-09 13:27:50.079 E/WM-WorkerFactory(15063): 	at java.lang.Thread.run(Thread.java:1119)
+11-09 13:27:50.079 E/WM-WorkerWrapper(15063): Could not create Worker com.pevplugshare.data.remote.SessionRefreshWorker
+11-09 13:27:50.383 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:50.422 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:27:50.429 E/sensors-hal( 2171): sendContextData:133, slocationcore h 193 m 23 s 55
+11-09 13:27:50.429 E/sensors-hal( 2171): create_send_context_data:64, slocationcore create_send_context_data
+11-09 13:27:50.429 E/sensors-hal( 2171): sendContextData:133, slocationcore h 193 m 23 s 55
+11-09 13:27:50.430 E/sensors-hal( 2171): create_send_context_data:64, slocationcore create_send_context_data
+11-09 13:27:50.431 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:27:50.431 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:27:50.431 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:27:50.431 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:27:50.432 E/sensors-hal( 2171): sendContextData:133, slocationcore h 193 m 23 s 55
+11-09 13:27:50.432 E/sensors-hal( 2171): create_send_context_data:64, slocationcore create_send_context_data
+11-09 13:27:50.433 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:27:50.435 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.435 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.436 E/sensors-hal( 2171): register_cb:315, all callbacks are null for new suid. no need to register it
+11-09 13:27:50.436 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:50.437 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.437 E/sensors-hal( 2171): sendContextData:133, slocationcore h 193 m 23 s 55
+11-09 13:27:50.437 E/sensors-hal( 2171): create_send_context_data:64, slocationcore create_send_context_data
+11-09 13:27:50.438 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.438 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - ActivityRecord{189649479 u0 com.pevplugshare/.ui.main.MainActivity t7278}#75357
+11-09 13:27:50.438 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - DimTransitionLayer for Surface(name=ActivityRecord{189649479 u0 com.pevplugshare/.ui.main.MainActivity t7278})/@0xd7a162d#75363
+11-09 13:27:50.438 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 1.000 - ActivityRecord{189649479 u0 com.pevplugshare/.ui.main.MainActivity t7278}#75357
+11-09 13:27:50.438 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - DimTransitionLayer for Surface(name=ActivityRecord{189649479 u0 com.pevplugshare/.ui.main.MainActivity t7278})/@0xd7a162d#75363
+11-09 13:27:50.438 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.438 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.438 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.438 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.438 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.439 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:27:50.441 E/NativeCustomFrequencyManager( 2302): [NativeCFMS] BpCustomFrequencyManager::acquire()
+11-09 13:27:50.442 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.442 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.443 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.443 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.444 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.444 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.444 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.444 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.444 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.444 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.444 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:50.444 E/RequestManager_FLP( 5914): [FusedLocationApi] Location remove adde296 from au.com.weatherzone.android.weatherzonefreeapp
+11-09 13:27:50.444 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.444 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.445 E/RequestManager_FLP( 5914): [FusedLocationApi] Location batching request 1875e17(PendingIntent) PRIORITY_HIGH_ACCURACY interval=3000ms from au.com.weatherzone.android.weatherzonefreeapp (10415_FINE_cached_false_background)
+11-09 13:27:50.445 E/RequestManager_FLP( 5914): [FusedLocationApi] Location remove 1875e17 from au.com.weatherzone.android.weatherzonefreeapp
+11-09 13:27:50.446 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.446 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.447 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.447 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.447 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.447 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.448 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.448 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:27:50.448 E/RequestManager_FLP( 5914): [FusedLocationApi] Location batching request 2184204(PendingIntent) PRIORITY_LOW_POWER interval=60000ms from au.com.weatherzone.android.weatherzonefreeapp (10415_FINE_cached_false_background)
+11-09 13:27:50.455 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.010 - DimTransitionLayer for Surface(name=ActivityRecord{189649479 u0 com.pevplugshare/.ui.main.MainActivity t7278})/@0xd7a162d#75363
+11-09 13:27:50.455 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Surface(name=13d7ad0 InputMethod)/@0x53cbcef - animation-leash of insets_animation#75365
+11-09 13:27:50.560 E/Pageboost( 2648): ioinfo read failed
+11-09 13:27:50.574 E/JAMES   (24898): null/null/null
+11-09 13:27:50.574 E/JAMES   (24898): null/null/null
+11-09 13:27:50.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658870
+11-09 13:27:50.903 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:51.289 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:27:51.309 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:27:51.309 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:27:51.310 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:27:51.310 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:27:51.572 E/SDM     ( 2199): ScalarConfig::GetAIScaleSettingsInfo: AI Scaler Config for display 68 is not present
+11-09 13:27:51.575 E/JAMES   (24898): null/null/null
+11-09 13:27:51.576 E/JAMES   (24898): null/null/null
+11-09 13:27:51.670 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:51.693 E/TransactionExecutor(15063): Failed to execute the transaction: tId:533791574 ClientTransaction{
+11-09 13:27:51.693 E/TransactionExecutor(15063): tId:533791574   transactionItems=[
+11-09 13:27:51.693 E/TransactionExecutor(15063): tId:533791574     LaunchActivityItem{activityToken=android.os.BinderProxy@51af725,intent=Intent { xflg=0x4 cmp=com.pevplugshare/.ui.edit.EditLocationActivity (has extras) },ident=216567357,info=ActivityInfo{d3b70f8 com.pevplugshare.ui.edit.EditLocationActivity},curConfig={1.0 505mcc2mnc [en_AU] ldltr sw360dp w360dp h735dp 480dpi nrml long hdr widecg port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2340) mAppBounds=Rect(0, 91 - 1080, 2295) mMaxBounds=Rect(0, 0 - 1080, 2340) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0 mStageConfig=undefined mEmbedActivityMode=undefined mPopOver=off mOverlappingWithCutout=false} s.69638 fontWeightAdjustment=0 ff=0 bf=-1 bts=0 cst=1.0 nightDim=0 themeSeq=0},overrideConfig={1.0 505mcc2mnc [en_AU] ldltr sw360dp w360dp h735dp 480dpi nrml long hdr widecg port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2340) mAppBounds=Rect(0, 91 - 1080, 2295) mMaxBounds=Rect(0, 0 - 1080, 2340) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0 mStageConfig=undefined mEmbedActivityMode=undefined mPopOver=off mOverlappingWithCutout=false} s.2 fontWeightAdjustment=0 ff=0 bf=-1 bts=0 cst=1.0 nightDim=0 themeSeq=0},deviceId=0,referrer=com.pevplugshare,procState=2,state=null,persistentState=null,pendingResults=null,pendingNewIntents=null,sceneTransitionInfo=null,profilerInfo=null,assistToken=android.os.BinderProxy@54ebd55,shareableActivityToken=android.os.BinderProxy@4f4b36a,activityWindowInfo=ActivityWindowInfo{isEmbedded=false, taskBounds=Rect(0, 0 - 1080, 2340), taskFragmentBounds=Rect(0, 0 - 1080, 2340)}}
+11-09 13:27:51.693 E/TransactionExecutor(15063): tId:533791574     ResumeActivityItem{mActivityToken=android.os.BinderProxy@51af725,procState=-1,isForward=true,shouldSendCompatFakeFocus=false}
+11-09 13:27:51.693 E/TransactionExecutor(15063): tId:533791574     Target activity: com.pevplugshare.ui.edit.EditLocationActivity
+11-09 13:27:51.693 E/TransactionExecutor(15063): tId:533791574   ]
+11-09 13:27:51.693 E/TransactionExecutor(15063): tId:533791574 }
+--------- beginning of crash
+11-09 13:27:51.693 E/AndroidRuntime(15063): FATAL EXCEPTION: main
+11-09 13:27:51.693 E/AndroidRuntime(15063): Process: com.pevplugshare, PID: 15063
+11-09 13:27:51.693 E/AndroidRuntime(15063): java.lang.RuntimeException: Unable to start activity ComponentInfo{com.pevplugshare/com.pevplugshare.ui.edit.EditLocationActivity}: android.view.InflateException: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Error inflating class TextView
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4710)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4941)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:222)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:133)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:103)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:80)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:3150)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.os.Looper.loopOnce(Looper.java:273)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.os.Looper.loop(Looper.java:363)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.app.ActivityThread.main(ActivityThread.java:10060)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at java.lang.reflect.Method.invoke(Native Method)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:632)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+11-09 13:27:51.693 E/AndroidRuntime(15063): Caused by: android.view.InflateException: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Error inflating class TextView
+11-09 13:27:51.693 E/AndroidRuntime(15063): Caused by: android.view.InflateException: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Error inflating class TextView
+11-09 13:27:51.693 E/AndroidRuntime(15063): Caused by: java.lang.UnsupportedOperationException: Failed to resolve attribute at index 5: TypedValue{t=0x2/d=0x7f03010e a=-1}, theme={InheritanceMap=[id=0x7f110271com.pevplugshare:style/Theme.PEVPlugShare, id=0x7f11026dcom.pevplugshare:style/Theme.MaterialComponents.Light.NoActionBar, id=0x7f11025fcom.pevplugshare:style/Theme.MaterialComponents.Light, id=0x7f11006ecom.pevplugshare:style/Base.Theme.MaterialComponents.Light, id=0x7f1100a7com.pevplugshare:style/Base.V21.Theme.MaterialComponents.Light, id=0x7f110095com.pevplugshare:style/Base.V14.Theme.MaterialComponents.Light, id=0x7f110096com.pevplugshare:style/Base.V14.Theme.MaterialComponents.Light.Bridge, id=0x7f11013acom.pevplugshare:style/Platform.MaterialComponents.Light, id=0x7f110219com.pevplugshare:style/Theme.AppCompat.Light, id=0x7f110052com.pevplugshare:style/Base.Theme.AppCompat.Light, id=0x7f1100b9com.pevplugshare:style/Base.V28.Theme.AppCompat.Light, id=0x7f1100b6com.pevplugshare:style/Base.V26.Theme.AppCompat.Light, id=0x7f1100b0com.pevplugshare:style/Base.V23.Theme.AppCompat.Light, id=0x7f1100aecom.pevplugshare:style/Base.V22.Theme.AppCompat.Light, id=0x7f1100a3com.pevplugshare:style/Base.V21.Theme.AppCompat.Light, id=0x7f1100bccom.pevplugshare:style/Base.V7.Theme.AppCompat.Light, id=0x7f110137com.pevplugshare:style/Platform.AppCompat.Light, id=0x7f110142com.pevplugshare:style/Platform.V25.AppCompat.Light, id=0x1030241android:style/Theme.Material.Light.NoActionBar, id=0x1030237android:style/Theme.Material.Light, id=0x103000candroid:style/Theme.Light, id=0x1030005android:style/Theme], Themes=[com.pevplugshare:style/Theme.PEVPlugShare, forced, com.pevplugshare:style/Theme.AppCompat.Empty, forced, android:style/Theme.DeviceDefault.Light.DarkActionBar, forced]}
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.content.res.TypedArray.getColorStateList(TypedArray.java:608)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.widget.TextView.readTextAppearance(TextView.java:4692)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.widget.TextView.<init>(TextView.java:1540)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at android.widget.TextView.<init>(TextView.java:1411)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at androidx.appcompat.widget.AppCompatTextView.<init>(AppCompatTextView.java:113)
+11-09 13:27:51.693 E/AndroidRuntime(15063): 	at com.google.android.material.textview.MaterialTextView.<init>(MaterialTextView.java:92)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at com.google.android.material.textview.MaterialTextView.<init>(MaterialTextView.java:87)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at com.google.android.material.theme.MaterialComponentsViewInflater.createTextView(MaterialComponentsViewInflater.java:61)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at androidx.appcompat.app.AppCompatViewInflater.createView(AppCompatViewInflater.java:148)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at androidx.appcompat.app.AppCompatDelegateImpl.createView(AppCompatDelegateImpl.java:1678)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at androidx.appcompat.app.AppCompatDelegateImpl.onCreateView(AppCompatDelegateImpl.java:1729)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.tryCreateView(LayoutInflater.java:966)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.createViewFromTag(LayoutInflater.java:902)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.createViewFromTag(LayoutInflater.java:866)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.rInflate(LayoutInflater.java:1028)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.rInflateChildren(LayoutInflater.java:989)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.rInflate(LayoutInflater.java:1031)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.rInflateChildren(LayoutInflater.java:989)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.rInflate(LayoutInflater.java:1031)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.rInflateChildren(LayoutInflater.java:989)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.inflate(LayoutInflater.java:577)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.view.LayoutInflater.inflate(LayoutInflater.java:468)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at com.pevplugshare.databinding.ActivityEditLocationBinding.inflate(ActivityEditLocationBinding.java:168)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at com.pevplugshare.databinding.ActivityEditLocationBinding.inflate(ActivityEditLocationBinding.java:162)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at com.pevplugshare.ui.edit.EditLocationActivity.onCreate(EditLocationActivity.kt:42)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.Activity.performCreate(Activity.java:9519)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.Activity.performCreate(Activity.java:9488)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1524)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4692)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4941)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:222)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:133)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:103)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:80)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:3150)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.os.Looper.loopOnce(Looper.java:273)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.os.Looper.loop(Looper.java:363)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at android.app.ActivityThread.main(ActivityThread.java:10060)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at java.lang.reflect.Method.invoke(Native Method)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:632)
+11-09 13:27:51.694 E/AndroidRuntime(15063): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+11-09 13:27:51.708 E/ActivityManager( 2648): Sending non-protected broadcast com.sec.android.intent.action.APP_HQM_SEND_REQ from system 8947:com.sec.android.diagmonagent/1000 pkg com.sec.android.diagmonagent
+11-09 13:27:51.708 E/ActivityManager( 2648): java.lang.Throwable
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:252)
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:344)
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:18)
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:149)
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at android.app.IActivityManager$Stub.onTransact$broadcastIntentWithFeature$(IActivityManager.java:12378)
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:3197)
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at com.android.server.am.ActivityManagerService.onTransact(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:425)
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at android.os.Binder.execTransactInternal(Binder.java:1462)
+11-09 13:27:51.708 E/ActivityManager( 2648): 	at android.os.Binder.execTransact(Binder.java:1401)
+11-09 13:27:51.722 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15081 0
+11-09 13:27:51.722 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15081
+11-09 13:27:51.722 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemovePendingRequest() 426: Failed to reset optimization [3, 52]
+11-09 13:27:51.722 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15063 0
+11-09 13:27:51.723 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15063
+11-09 13:27:51.723 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemovePendingRequest() 426: Failed to reset optimization [3, 52]
+11-09 13:27:51.723 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15087 0
+11-09 13:27:51.723 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15087
+11-09 13:27:51.723 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemovePendingRequest() 426: Failed to reset optimization [3, 52]
+11-09 13:27:51.723 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15086 0
+11-09 13:27:51.723 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15086
+11-09 13:27:51.723 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemovePendingRequest() 426: Failed to reset optimization [3, 52]
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15086, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15087, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15063, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15081, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15086, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15087, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15063, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15081, err = -1
+11-09 13:27:51.723 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15081 0
+11-09 13:27:51.723 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15081
+11-09 13:27:51.723 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemoveAndApply() 354: Failed to reset optimization [3, 52]
+11-09 13:27:51.723 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15063 0
+11-09 13:27:51.723 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15063
+11-09 13:27:51.723 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemoveAndApply() 354: Failed to reset optimization [3, 52]
+11-09 13:27:51.723 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15087 0
+11-09 13:27:51.723 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15087
+11-09 13:27:51.723 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemoveAndApply() 354: Failed to reset optimization [3, 52]
+11-09 13:27:51.723 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15086 0
+11-09 13:27:51.723 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15086
+11-09 13:27:51.723 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemoveAndApply() 354: Failed to reset optimization [3, 52]
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15086, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15087, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15063, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15081, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15086, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15087, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15063, err = -1
+11-09 13:27:51.723 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15081, err = -1
+11-09 13:27:51.746 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Task=7053#58461
+11-09 13:27:51.746 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - Task=7053#58461
+11-09 13:27:51.746 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - Task=7053#58461
+11-09 13:27:51.771 E/SurfaceFlinger( 2302): alpha changed 0.096 -> 0.000 - Task=7278#75334
+11-09 13:27:51.812 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.002 - Task=7053#58461
+11-09 13:27:51.829 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Surface(name=13d7ad0 InputMethod)/@0x53cbcef - animation-leash of insets_animation#75371
+11-09 13:27:51.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658871
+11-09 13:27:51.904 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:52.255 E/IPCThreadState( 2648): Binder transaction failure. id: 338219105, BR_*: 29189, error: -22 (Invalid argument)
+11-09 13:27:52.262 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 1.000 - Task=7278#75334
+11-09 13:27:52.279 E/BpTransactionCompletedListener( 2302): Failed to transact (-32)
+11-09 13:27:52.575 E/JAMES   (24898): null/null/null
+11-09 13:27:52.576 E/JAMES   (24898): null/null/null
+11-09 13:27:52.855 E/TaskPersister( 2648): File error accessing recents directory (directory doesn't exist?).
+11-09 13:27:52.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658872
+11-09 13:27:52.904 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:53.429 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:27:53.436 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:53.436 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:53.436 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:53.436 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:53.436 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:27:53.575 E/JAMES   (24898): null/null/null
+11-09 13:27:53.576 E/JAMES   (24898): null/null/null
+11-09 13:27:53.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658873
+11-09 13:27:53.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:54.576 E/JAMES   (24898): null/null/null
+11-09 13:27:54.577 E/JAMES   (24898): null/null/null
+11-09 13:27:54.749 E/SDM     ( 2199): ScalarConfig::GetAIScaleSettingsInfo: AI Scaler Config for display 68 is not present
+11-09 13:27:54.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658874
+11-09 13:27:54.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:55.576 E/JAMES   (24898): null/null/null
+11-09 13:27:55.577 E/JAMES   (24898): null/null/null
+11-09 13:27:55.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658875
+11-09 13:27:55.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:56.416 E/SDM     ( 2199): ScalarConfig::GetAIScaleSettingsInfo: AI Scaler Config for display 68 is not present
+11-09 13:27:56.441 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:27:56.492 E/e:iwhInfService(15224): Not starting debugger since process cannot load the jdwp agent.
+11-09 13:27:56.514 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:56.536 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Task=7279#75373
+11-09 13:27:56.536 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - Task=7279#75373
+11-09 13:27:56.553 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.080 - Task=7279#75373
+11-09 13:27:56.555 E/NativeCustomFrequencyManager( 2302): [NativeCFMS] BpCustomFrequencyManager::acquire()
+11-09 13:27:56.680 E/ashmem  (15249): Pinning is deprecated since Android Q. Please use trim or other methods.
+11-09 13:27:56.684 E/Adreno-AppProfiles(15249): QSPM AIDL service doesn't exist
+11-09 13:27:56.722 E/om.pevplugshare(15249): Unable to open libpenguin.so: dlopen failed: library "libpenguin.so" not found.
+11-09 13:27:56.732 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:56.751 E/JAMES   (24898): null/null/null
+11-09 13:27:56.752 E/JAMES   (24898): null/null/null
+11-09 13:27:56.761 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Surface(name=13d7ad0 InputMethod)/@0x53cbcef - animation-leash of insets_animation#75386
+11-09 13:27:56.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658876
+11-09 13:27:56.904 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:56.911 E/WindowManager( 2648): win=Window{8a7e083 u0 com.teslacoilsw.launcher/com.teslacoilsw.launcher.NovaLauncher} destroySurfaces: appStopped=true cleanupOnResume=false win.mWindowRemovalAllowed=false win.mRemoveOnExit=false win.mViewVisibility=8 caller=com.android.server.wm.ActivityRecord.destroySurfaces:25 com.android.server.wm.ActivityRecord.activityStopped:192 com.android.server.wm.ActivityClientController.activityStopped:97 android.app.IActivityClientController$Stub.onTransact:740 com.android.server.wm.ActivityClientController.onTransact:1 android.os.Binder.execTransactInternal:1462 android.os.Binder.execTransact:1401 
+11-09 13:27:57.751 E/JAMES   (24898): null/null/null
+11-09 13:27:57.751 E/JAMES   (24898): null/null/null
+11-09 13:27:57.798 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:57.803 E/SDM     ( 2199): ScalarConfig::GetAIScaleSettingsInfo: AI Scaler Config for display 68 is not present
+11-09 13:27:57.844 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:57.852 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - ActivityRecord{135276439 u0 com.pevplugshare/.ui.auth.LoginActivity t7279}#75387
+11-09 13:27:57.852 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - DimTransitionLayer for Surface(name=ActivityRecord{135276439 u0 com.pevplugshare/.ui.auth.LoginActivity t7279})/@0xac93190#75394
+11-09 13:27:57.852 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 1.000 - ActivityRecord{135276439 u0 com.pevplugshare/.ui.auth.LoginActivity t7279}#75387
+11-09 13:27:57.852 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - DimTransitionLayer for Surface(name=ActivityRecord{135276439 u0 com.pevplugshare/.ui.auth.LoginActivity t7279})/@0xac93190#75394
+11-09 13:27:57.869 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.010 - DimTransitionLayer for Surface(name=ActivityRecord{135276439 u0 com.pevplugshare/.ui.auth.LoginActivity t7279})/@0xac93190#75394
+11-09 13:27:57.869 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Surface(name=13d7ad0 InputMethod)/@0x53cbcef - animation-leash of insets_animation#75395
+11-09 13:27:57.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658877
+11-09 13:27:57.903 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:58.063 E/NativeCustomFrequencyManager( 2302): [NativeCFMS] BpCustomFrequencyManager::acquire()
+11-09 13:27:58.751 E/JAMES   (24898): null/null/null
+11-09 13:27:58.751 E/JAMES   (24898): null/null/null
+11-09 13:27:58.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658878
+11-09 13:27:58.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): Could not instantiate com.pevplugshare.data.remote.SessionRefreshWorker
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): java.lang.NoSuchMethodException: com.pevplugshare.data.remote.SessionRefreshWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters]
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at java.lang.Class.getConstructor0(Class.java:3385)
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at java.lang.Class.getDeclaredConstructor(Class.java:3067)
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at androidx.work.WorkerFactory.createWorkerWithDefaultFallback(WorkerFactory.java:95)
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at androidx.work.impl.WorkerWrapper.runWorker(WorkerWrapper.java:243)
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at androidx.work.impl.WorkerWrapper.run(WorkerWrapper.java:145)
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at androidx.work.impl.utils.SerialExecutorImpl$Task.run(SerialExecutorImpl.java:96)
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1156)
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:651)
+11-09 13:27:59.218 E/WM-WorkerFactory(15249): 	at java.lang.Thread.run(Thread.java:1119)
+11-09 13:27:59.218 E/WM-WorkerWrapper(15249): Could not create Worker com.pevplugshare.data.remote.SessionRefreshWorker
+11-09 13:27:59.449 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:27:59.522 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:59.584 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:27:59.594 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - ActivityRecord{205427926 u0 com.pevplugshare/.ui.main.MainActivity t7279}#75396
+11-09 13:27:59.594 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - DimTransitionLayer for Surface(name=ActivityRecord{205427926 u0 com.pevplugshare/.ui.main.MainActivity t7279})/@0x2efc7f9#75402
+11-09 13:27:59.594 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 1.000 - ActivityRecord{205427926 u0 com.pevplugshare/.ui.main.MainActivity t7279}#75396
+11-09 13:27:59.594 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - DimTransitionLayer for Surface(name=ActivityRecord{205427926 u0 com.pevplugshare/.ui.main.MainActivity t7279})/@0x2efc7f9#75402
+11-09 13:27:59.596 E/NativeCustomFrequencyManager( 2302): [NativeCFMS] BpCustomFrequencyManager::acquire()
+11-09 13:27:59.610 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Surface(name=13d7ad0 InputMethod)/@0x53cbcef - animation-leash of insets_animation#75404
+11-09 13:27:59.610 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.010 - DimTransitionLayer for Surface(name=ActivityRecord{205427926 u0 com.pevplugshare/.ui.main.MainActivity t7279})/@0x2efc7f9#75402
+11-09 13:27:59.733 E/Pageboost( 2648): ioinfo read failed
+11-09 13:27:59.751 E/JAMES   (24898): null/null/null
+11-09 13:27:59.752 E/JAMES   (24898): null/null/null
+11-09 13:27:59.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658879
+11-09 13:27:59.903 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:00.502 E/SDM     ( 2199): ScalarConfig::GetAIScaleSettingsInfo: AI Scaler Config for display 68 is not present
+11-09 13:28:00.573 E/pageboostd( 6004): Received HALT command code 2
+11-09 13:28:00.595 E/TransactionExecutor(15249): Failed to execute the transaction: tId:-1509588041 ClientTransaction{
+11-09 13:28:00.595 E/TransactionExecutor(15249): tId:-1509588041   transactionItems=[
+11-09 13:28:00.595 E/TransactionExecutor(15249): tId:-1509588041     LaunchActivityItem{activityToken=android.os.BinderProxy@f66b0fa,intent=Intent { xflg=0x4 cmp=com.pevplugshare/.ui.edit.EditLocationActivity (has extras) },ident=119548106,info=ActivityInfo{68ad9d1 com.pevplugshare.ui.edit.EditLocationActivity},curConfig={1.0 505mcc2mnc [en_AU] ldltr sw360dp w360dp h735dp 480dpi nrml long hdr widecg port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2340) mAppBounds=Rect(0, 91 - 1080, 2295) mMaxBounds=Rect(0, 0 - 1080, 2340) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0 mStageConfig=undefined mEmbedActivityMode=undefined mPopOver=off mOverlappingWithCutout=false} s.69638 fontWeightAdjustment=0 ff=0 bf=-1 bts=0 cst=1.0 nightDim=0 themeSeq=0},overrideConfig={1.0 505mcc2mnc [en_AU] ldltr sw360dp w360dp h735dp 480dpi nrml long hdr widecg port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2340) mAppBounds=Rect(0, 91 - 1080, 2295) mMaxBounds=Rect(0, 0 - 1080, 2340) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0 mStageConfig=undefined mEmbedActivityMode=undefined mPopOver=off mOverlappingWithCutout=false} s.2 fontWeightAdjustment=0 ff=0 bf=-1 bts=0 cst=1.0 nightDim=0 themeSeq=0},deviceId=0,referrer=com.pevplugshare,procState=2,state=null,persistentState=null,pendingResults=null,pendingNewIntents=null,sceneTransitionInfo=null,profilerInfo=null,assistToken=android.os.BinderProxy@4f4b36a,shareableActivityToken=android.os.BinderProxy@8d6e05b,activityWindowInfo=ActivityWindowInfo{isEmbedded=false, taskBounds=Rect(0, 0 - 1080, 2340), taskFragmentBounds=Rect(0, 0 - 1080, 2340)}}
+11-09 13:28:00.595 E/TransactionExecutor(15249): tId:-1509588041     ResumeActivityItem{mActivityToken=android.os.BinderProxy@f66b0fa,procState=-1,isForward=true,shouldSendCompatFakeFocus=false}
+11-09 13:28:00.595 E/TransactionExecutor(15249): tId:-1509588041     Target activity: com.pevplugshare.ui.edit.EditLocationActivity
+11-09 13:28:00.595 E/TransactionExecutor(15249): tId:-1509588041   ]
+11-09 13:28:00.595 E/TransactionExecutor(15249): tId:-1509588041 }
+11-09 13:28:00.595 E/AndroidRuntime(15249): FATAL EXCEPTION: main
+11-09 13:28:00.595 E/AndroidRuntime(15249): Process: com.pevplugshare, PID: 15249
+11-09 13:28:00.595 E/AndroidRuntime(15249): java.lang.RuntimeException: Unable to start activity ComponentInfo{com.pevplugshare/com.pevplugshare.ui.edit.EditLocationActivity}: android.view.InflateException: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Error inflating class TextView
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4710)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4941)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:222)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:133)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:103)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:80)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:3150)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.os.Looper.loopOnce(Looper.java:273)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.os.Looper.loop(Looper.java:363)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.ActivityThread.main(ActivityThread.java:10060)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at java.lang.reflect.Method.invoke(Native Method)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:632)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+11-09 13:28:00.595 E/AndroidRuntime(15249): Caused by: android.view.InflateException: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Error inflating class TextView
+11-09 13:28:00.595 E/AndroidRuntime(15249): Caused by: android.view.InflateException: Binary XML file line #276 in com.pevplugshare:layout/activity_edit_location: Error inflating class TextView
+11-09 13:28:00.595 E/AndroidRuntime(15249): Caused by: java.lang.UnsupportedOperationException: Failed to resolve attribute at index 5: TypedValue{t=0x2/d=0x7f03010e a=-1}, theme={InheritanceMap=[id=0x7f110271com.pevplugshare:style/Theme.PEVPlugShare, id=0x7f11026dcom.pevplugshare:style/Theme.MaterialComponents.Light.NoActionBar, id=0x7f11025fcom.pevplugshare:style/Theme.MaterialComponents.Light, id=0x7f11006ecom.pevplugshare:style/Base.Theme.MaterialComponents.Light, id=0x7f1100a7com.pevplugshare:style/Base.V21.Theme.MaterialComponents.Light, id=0x7f110095com.pevplugshare:style/Base.V14.Theme.MaterialComponents.Light, id=0x7f110096com.pevplugshare:style/Base.V14.Theme.MaterialComponents.Light.Bridge, id=0x7f11013acom.pevplugshare:style/Platform.MaterialComponents.Light, id=0x7f110219com.pevplugshare:style/Theme.AppCompat.Light, id=0x7f110052com.pevplugshare:style/Base.Theme.AppCompat.Light, id=0x7f1100b9com.pevplugshare:style/Base.V28.Theme.AppCompat.Light, id=0x7f1100b6com.pevplugshare:style/Base.V26.Theme.AppCompat.Light, id=0x7f1100b0com.pevplugshare:style/Base.V23.Theme.AppCompat.Light, id=0x7f1100aecom.pevplugshare:style/Base.V22.Theme.AppCompat.Light, id=0x7f1100a3com.pevplugshare:style/Base.V21.Theme.AppCompat.Light, id=0x7f1100bccom.pevplugshare:style/Base.V7.Theme.AppCompat.Light, id=0x7f110137com.pevplugshare:style/Platform.AppCompat.Light, id=0x7f110142com.pevplugshare:style/Platform.V25.AppCompat.Light, id=0x1030241android:style/Theme.Material.Light.NoActionBar, id=0x1030237android:style/Theme.Material.Light, id=0x103000candroid:style/Theme.Light, id=0x1030005android:style/Theme], Themes=[com.pevplugshare:style/Theme.PEVPlugShare, forced, com.pevplugshare:style/Theme.AppCompat.Empty, forced, android:style/Theme.DeviceDefault.Light.DarkActionBar, forced]}
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.content.res.TypedArray.getColorStateList(TypedArray.java:608)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.widget.TextView.readTextAppearance(TextView.java:4692)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.widget.TextView.<init>(TextView.java:1540)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.widget.TextView.<init>(TextView.java:1411)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at androidx.appcompat.widget.AppCompatTextView.<init>(AppCompatTextView.java:113)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.google.android.material.textview.MaterialTextView.<init>(MaterialTextView.java:92)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.google.android.material.textview.MaterialTextView.<init>(MaterialTextView.java:87)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.google.android.material.theme.MaterialComponentsViewInflater.createTextView(MaterialComponentsViewInflater.java:61)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at androidx.appcompat.app.AppCompatViewInflater.createView(AppCompatViewInflater.java:148)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at androidx.appcompat.app.AppCompatDelegateImpl.createView(AppCompatDelegateImpl.java:1678)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at androidx.appcompat.app.AppCompatDelegateImpl.onCreateView(AppCompatDelegateImpl.java:1729)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.tryCreateView(LayoutInflater.java:966)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.createViewFromTag(LayoutInflater.java:902)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.createViewFromTag(LayoutInflater.java:866)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.rInflate(LayoutInflater.java:1028)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.rInflateChildren(LayoutInflater.java:989)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.rInflate(LayoutInflater.java:1031)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.rInflateChildren(LayoutInflater.java:989)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.rInflate(LayoutInflater.java:1031)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.rInflateChildren(LayoutInflater.java:989)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.inflate(LayoutInflater.java:577)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.view.LayoutInflater.inflate(LayoutInflater.java:468)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.pevplugshare.databinding.ActivityEditLocationBinding.inflate(ActivityEditLocationBinding.java:168)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.pevplugshare.databinding.ActivityEditLocationBinding.inflate(ActivityEditLocationBinding.java:162)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.pevplugshare.ui.edit.EditLocationActivity.onCreate(EditLocationActivity.kt:42)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.Activity.performCreate(Activity.java:9519)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.Activity.performCreate(Activity.java:9488)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1524)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4692)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4941)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:222)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:133)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:103)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:80)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:3150)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.os.Looper.loopOnce(Looper.java:273)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.os.Looper.loop(Looper.java:363)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at android.app.ActivityThread.main(ActivityThread.java:10060)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at java.lang.reflect.Method.invoke(Native Method)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:632)
+11-09 13:28:00.595 E/AndroidRuntime(15249): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:975)
+11-09 13:28:00.610 E/ActivityManager( 2648): Sending non-protected broadcast com.sec.android.intent.action.APP_HQM_SEND_REQ from system 8947:com.sec.android.diagmonagent/1000 pkg com.sec.android.diagmonagent
+11-09 13:28:00.610 E/ActivityManager( 2648): java.lang.Throwable
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:252)
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:344)
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:18)
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:149)
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at android.app.IActivityManager$Stub.onTransact$broadcastIntentWithFeature$(IActivityManager.java:12378)
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:3197)
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at com.android.server.am.ActivityManagerService.onTransact(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:425)
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at android.os.Binder.execTransactInternal(Binder.java:1462)
+11-09 13:28:00.610 E/ActivityManager( 2648): 	at android.os.Binder.execTransact(Binder.java:1401)
+11-09 13:28:00.623 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15271 0
+11-09 13:28:00.623 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15271
+11-09 13:28:00.623 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemovePendingRequest() 426: Failed to reset optimization [3, 52]
+11-09 13:28:00.623 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15249 0
+11-09 13:28:00.623 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15249
+11-09 13:28:00.623 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemovePendingRequest() 426: Failed to reset optimization [3, 52]
+11-09 13:28:00.623 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15278 0
+11-09 13:28:00.623 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15278
+11-09 13:28:00.623 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemovePendingRequest() 426: Failed to reset optimization [3, 52]
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15277, err = -1
+11-09 13:28:00.623 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15277 0
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15278, err = -1
+11-09 13:28:00.623 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15277
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15249, err = -1
+11-09 13:28:00.623 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemovePendingRequest() 426: Failed to reset optimization [3, 52]
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15271, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15277, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15278, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15249, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15271, err = -1
+11-09 13:28:00.623 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15271 0
+11-09 13:28:00.623 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15271
+11-09 13:28:00.623 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemoveAndApply() 354: Failed to reset optimization [3, 52]
+11-09 13:28:00.623 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15249 0
+11-09 13:28:00.623 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15249
+11-09 13:28:00.623 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemoveAndApply() 354: Failed to reset optimization [3, 52]
+11-09 13:28:00.623 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15278 0
+11-09 13:28:00.623 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15278
+11-09 13:28:00.623 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemoveAndApply() 354: Failed to reset optimization [3, 52]
+11-09 13:28:00.623 E/PERFHAL-UTIL( 2206): PERFHAL-UTIL: change_node_val() 204: Failed to update node /proc/sys/walt/sched_low_latency with value 15277 0
+11-09 13:28:00.623 E/PERFHAL-OPTSHANDLER( 2206): PERFHAL-OPTSHANDLER: sched_reset_low_latency() 3800: can't reset low latency for tid 15277
+11-09 13:28:00.623 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: RemoveAndApply() 354: Failed to reset optimization [3, 52]
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15277, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15278, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15249, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15271, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15277, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15278, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15249, err = -1
+11-09 13:28:00.623 E/HYPER-HAL( 2183): [HandlerUClamp.cpp]set_uclamp_min(): sched_setattr failed for thread 15271, err = -1
+11-09 13:28:00.640 E/AppIconSolution(31450): Couldn't get theme package resources, package is null
+11-09 13:28:00.651 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Task=7053#58461
+11-09 13:28:00.651 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - Task=7053#58461
+11-09 13:28:00.651 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.000 - Task=7053#58461
+11-09 13:28:00.656 E/AppIconSolution(31450): Couldn't get theme package resources, package is null
+11-09 13:28:00.676 E/SurfaceFlinger( 2302): alpha changed 0.096 -> 0.000 - Task=7279#75373
+11-09 13:28:00.718 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 0.002 - Task=7053#58461
+11-09 13:28:00.735 E/SurfaceFlinger( 2302): alpha changed 1.000 -> 0.000 - Surface(name=13d7ad0 InputMethod)/@0x53cbcef - animation-leash of insets_animation#75410
+11-09 13:28:00.751 E/JAMES   (24898): null/null/null
+11-09 13:28:00.752 E/JAMES   (24898): null/null/null
+11-09 13:28:00.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658880
+11-09 13:28:00.903 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:01.153 E/IPCThreadState( 2648): Binder transaction failure. id: 338229429, BR_*: 29189, error: -22 (Invalid argument)
+11-09 13:28:01.160 E/SurfaceFlinger( 2302): alpha changed 0.000 -> 1.000 - Task=7279#75373
+11-09 13:28:01.176 E/BpTransactionCompletedListener( 2302): Failed to transact (-32)
+11-09 13:28:01.350 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:01.350 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:01.351 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:01.351 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:01.751 E/JAMES   (24898): null/null/null
+11-09 13:28:01.752 E/JAMES   (24898): null/null/null
+11-09 13:28:01.848 E/HwcComposer( 2302): getLuts failed Status(-129, EX_TRANSACTION_FAILED): 'UNKNOWN_TRANSACTION: '
+11-09 13:28:01.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658881
+11-09 13:28:01.904 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:02.023 E/TaskPersister( 2648): File error accessing recents directory (directory doesn't exist?).
+11-09 13:28:02.412 E/BatteryDump( 2257): !@new_battery_dump : 4162,-165,100,100,75,332,312,353,332,0,343,352,0,Discharging,NO_CHARGING,None,Good,NONE,0,Normal,0,0,9300,0x40000000,0x10000,0x0,0,0,470,v0002,0000,0000,00000000,0,0,0,0,122,4179,7512,991,0,
+11-09 13:28:02.462 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:02.479 E/Watchdog( 2648): !@Sync: 17744 heap(MB): 178 / 223 FD: 1453 [2025-11-09 13:28:02.479]
+11-09 13:28:02.752 E/JAMES   (24898): null/null/null
+11-09 13:28:02.752 E/JAMES   (24898): null/null/null
+11-09 13:28:02.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658882
+11-09 13:28:02.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:03.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:03.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:03.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:03.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:03.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:03.655 E/SDM     ( 2199): ScalarConfig::GetAIScaleSettingsInfo: AI Scaler Config for display 68 is not present
+11-09 13:28:03.752 E/JAMES   (24898): null/null/null
+11-09 13:28:03.753 E/JAMES   (24898): null/null/null
+11-09 13:28:03.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658883
+11-09 13:28:03.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:04.752 E/JAMES   (24898): null/null/null
+11-09 13:28:04.753 E/JAMES   (24898): null/null/null
+11-09 13:28:04.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658884
+11-09 13:28:04.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:05.475 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:05.753 E/JAMES   (24898): null/null/null
+11-09 13:28:05.754 E/JAMES   (24898): null/null/null
+11-09 13:28:05.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658885
+11-09 13:28:05.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:06.753 E/JAMES   (24898): null/null/null
+11-09 13:28:06.754 E/JAMES   (24898): null/null/null
+11-09 13:28:06.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658886
+11-09 13:28:06.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:07.754 E/JAMES   (24898): null/null/null
+11-09 13:28:07.755 E/JAMES   (24898): null/null/null
+11-09 13:28:07.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658887
+11-09 13:28:07.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:08.487 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:08.754 E/JAMES   (24898): null/null/null
+11-09 13:28:08.755 E/JAMES   (24898): null/null/null
+11-09 13:28:08.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658888
+11-09 13:28:08.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:09.041 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:09.613 E/ActivityManager( 2648): Sending non-protected broadcast com.sec.android.intent.action.RESPONSE_CREATE_URI_WIFIWPACONF from system 20454:com.android.settings/1000 pkg com.android.settings
+11-09 13:28:09.613 E/ActivityManager( 2648): java.lang.Throwable
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.checkBroadcastFromSystem(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:252)
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.broadcastIntentLockedTraced(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:344)
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at com.android.server.am.BroadcastController.broadcastIntentLocked(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:18)
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:149)
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at android.app.IActivityManager$Stub.onTransact$broadcastIntentWithFeature$(IActivityManager.java:12378)
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:3197)
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at com.android.server.am.ActivityManagerService.onTransact(qb/101824796 c20d526c55374ee2b8310c203c6bbf74253453684a363f71867e01be8db4fa74:425)
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at android.os.Binder.execTransactInternal(Binder.java:1462)
+11-09 13:28:09.613 E/ActivityManager( 2648): 	at android.os.Binder.execTransact(Binder.java:1401)
+11-09 13:28:09.754 E/JAMES   (24898): null/null/null
+11-09 13:28:09.755 E/JAMES   (24898): null/null/null
+11-09 13:28:09.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658889
+11-09 13:28:09.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:10.121 E/WifiAPCollectorBase( 5884): canRequestWifiPasswords true
+11-09 13:28:10.122 E/WifiAPCollector_FileProvider( 5884): getWifiCOnfigFromFile: is Exist? : true
+11-09 13:28:10.122 E/WifiAPCollector_FileProvider( 5884): wifiXmlParser
+11-09 13:28:10.122 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.122 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.122 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.123 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.123 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.123 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.124 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.124 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.124 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.124 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.124 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.124 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.125 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.126 E/WifiAPCollector_FileProvider( 5884): parseSsid
+11-09 13:28:10.126 E/WifiAPCollector_FileProvider( 5884): parsePasswords
+11-09 13:28:10.131 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.131 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.131 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.131 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.132 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.132 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.132 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.132 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.132 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.132 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.133 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.134 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.134 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.134 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.134 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.134 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.134 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.134 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.134 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.135 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.136 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.137 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.138 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.139 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.140 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.141 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.142 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.142 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.142 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.142 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.142 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.142 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.142 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.142 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.143 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.144 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.145 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.145 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.145 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.145 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.145 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.145 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.145 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.146 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.146 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.146 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.146 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.146 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.146 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.146 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.147 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.148 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.149 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.150 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.151 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.152 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 0
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : NONE
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : NONE
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 9
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.153 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.154 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.154 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.154 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 1
+11-09 13:28:10.154 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : WPA_PSK
+11-09 13:28:10.154 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : WPA_PSK
+11-09 13:28:10.154 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : allowedKeyMgmtIndex : 8
+11-09 13:28:10.154 E/WifiAPCollectorBase( 5884): keyMgmtConfig() : keySecurity : 8
+11-09 13:28:10.154 E/WifiAPCollectorBase( 5884): keyMgmtConfig : final Wifi KeyMgmt : 8
+11-09 13:28:10.155 E/WifiAPCollectorBase( 5884): Wifi networks settings changed = false
+11-09 13:28:10.155 E/WifiAPCollector_FileProvider( 5884): Wifi data has not been changed
+11-09 13:28:10.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.447 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.453 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.453 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.454 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.454 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.454 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:10.755 E/JAMES   (24898): null/null/null
+11-09 13:28:10.755 E/JAMES   (24898): null/null/null
+11-09 13:28:10.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658890
+11-09 13:28:10.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:11.391 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:11.391 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:11.394 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:11.394 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:11.499 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:11.755 E/JAMES   (24898): null/null/null
+11-09 13:28:11.756 E/JAMES   (24898): null/null/null
+11-09 13:28:11.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658891
+11-09 13:28:11.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:12.755 E/JAMES   (24898): null/null/null
+11-09 13:28:12.756 E/JAMES   (24898): null/null/null
+11-09 13:28:12.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658892
+11-09 13:28:12.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:13.756 E/JAMES   (24898): null/null/null
+11-09 13:28:13.757 E/JAMES   (24898): null/null/null
+11-09 13:28:13.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658893
+11-09 13:28:13.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:14.510 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:14.756 E/JAMES   (24898): null/null/null
+11-09 13:28:14.757 E/JAMES   (24898): null/null/null
+11-09 13:28:14.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658894
+11-09 13:28:14.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:15.757 E/JAMES   (24898): null/null/null
+11-09 13:28:15.757 E/JAMES   (24898): null/null/null
+11-09 13:28:15.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658895
+11-09 13:28:15.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:16.757 E/JAMES   (24898): null/null/null
+11-09 13:28:16.759 E/JAMES   (24898): null/null/null
+11-09 13:28:16.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658896
+11-09 13:28:16.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:17.522 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:17.757 E/JAMES   (24898): null/null/null
+11-09 13:28:17.759 E/JAMES   (24898): null/null/null
+11-09 13:28:17.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658897
+11-09 13:28:17.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:17.983 E/AppWidgetServiceImpl( 2648): getAppWidgetInfo() returns null because widget is null. appWidgetId=0 userId=0
+11-09 13:28:17.983 E/AppWidgetServiceImpl( 2648): widget is null = 0, 0
+11-09 13:28:17.983 E/AppWidgetManager(23845): App widget provider info is null. PackageName=com.sec.android.daemonapp appWidgetId-0
+11-09 13:28:17.984 E/AppWidgetServiceImpl( 2648): getAppWidgetInfo() returns null because widget is null. appWidgetId=0 userId=0
+11-09 13:28:17.984 E/AppWidgetServiceImpl( 2648): widget is null = 0, 0
+11-09 13:28:17.984 E/AppWidgetManager(23845): App widget provider info is null. PackageName=com.sec.android.daemonapp appWidgetId-0
+11-09 13:28:18.757 E/JAMES   (24898): null/null/null
+11-09 13:28:18.759 E/JAMES   (24898): null/null/null
+11-09 13:28:18.778 E/ActivityThread( 8770): Failed to find provider info for issuetracker_provider
+11-09 13:28:18.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658898
+11-09 13:28:18.904 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:19.757 E/JAMES   (24898): null/null/null
+11-09 13:28:19.759 E/JAMES   (24898): null/null/null
+11-09 13:28:19.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658899
+11-09 13:28:19.903 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:20.530 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:20.757 E/JAMES   (24898): null/null/null
+11-09 13:28:20.759 E/JAMES   (24898): null/null/null
+11-09 13:28:20.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658900
+11-09 13:28:20.903 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:21.424 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:21.424 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:21.425 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:21.425 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:21.525 E/ThemeUtils( 5019): View class com.airbnb.lottie.LottieAnimationView is an AppCompat widget that can only be used with a Theme.AppCompat theme (or descendant).
+11-09 13:28:21.757 E/JAMES   (24898): null/null/null
+11-09 13:28:21.759 E/JAMES   (24898): null/null/null
+11-09 13:28:21.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658901
+11-09 13:28:21.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:22.758 E/JAMES   (24898): null/null/null
+11-09 13:28:22.760 E/JAMES   (24898): null/null/null
+11-09 13:28:22.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658902
+11-09 13:28:22.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:23.543 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:23.732 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:23.759 E/JAMES   (24898): null/null/null
+11-09 13:28:23.761 E/JAMES   (24898): null/null/null
+11-09 13:28:23.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658903
+11-09 13:28:23.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:24.759 E/JAMES   (24898): null/null/null
+11-09 13:28:24.761 E/JAMES   (24898): null/null/null
+11-09 13:28:24.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658904
+11-09 13:28:24.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:25.760 E/JAMES   (24898): null/null/null
+11-09 13:28:25.761 E/JAMES   (24898): null/null/null
+11-09 13:28:25.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658905
+11-09 13:28:25.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:26.554 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:26.760 E/JAMES   (24898): null/null/null
+11-09 13:28:26.761 E/JAMES   (24898): null/null/null
+11-09 13:28:26.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658906
+11-09 13:28:26.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:27.761 E/JAMES   (24898): null/null/null
+11-09 13:28:27.762 E/JAMES   (24898): null/null/null
+11-09 13:28:27.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658907
+11-09 13:28:27.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:28.762 E/JAMES   (24898): null/null/null
+11-09 13:28:28.763 E/JAMES   (24898): null/null/null
+11-09 13:28:28.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658908
+11-09 13:28:28.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:29.565 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:29.763 E/JAMES   (24898): null/null/null
+11-09 13:28:29.763 E/JAMES   (24898): null/null/null
+11-09 13:28:29.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658909
+11-09 13:28:29.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:30.763 E/JAMES   (24898): null/null/null
+11-09 13:28:30.764 E/JAMES   (24898): null/null/null
+11-09 13:28:30.903 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658910
+11-09 13:28:30.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:31.465 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:31.465 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:31.467 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:31.467 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:31.763 E/JAMES   (24898): null/null/null
+11-09 13:28:31.764 E/JAMES   (24898): null/null/null
+11-09 13:28:31.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658911
+11-09 13:28:31.906 E/HwcComposer( 2302): getLuts failed Status(-129, EX_TRANSACTION_FAILED): 'UNKNOWN_TRANSACTION: '
+11-09 13:28:31.907 E/HeatmapThread( 2288): !@Entered the read from path function
+11-09 13:28:31.907 E/HeatmapThread( 2288): !@Read Extended_heatmap from efs is: 5850 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 855 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1017 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1007 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1082 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1175 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1201 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1133 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1162 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1325 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1220 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4661 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5735 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 9387 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6300 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3881 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1875 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 557 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 27 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+11-09 13:28:31.907 E/HeatmapThread( 2288): !@Write Extended Heatmap to efs is: 5850 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 855 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1017 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1007 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1082 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1175 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1201 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1133 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1162 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1325 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1220 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4661 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5735 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 9388 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6300 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3881 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1875 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 557 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 27 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+11-09 13:28:31.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:32.487 E/Watchdog( 2648): !@Sync: 17745 heap(MB): 209 / 223 FD: 1451 [2025-11-09 13:28:32.487]
+11-09 13:28:32.570 E/BatteryDump( 2257): !@new_battery_dump : 4165,-165,100,100,75,334,312,349,334,0,349,350,0,Discharging,NO_CHARGING,None,Good,NONE,0,Normal,0,0,9300,0x40000000,0x10000,0x0,0,0,276,v0002,0000,0000,00000000,0,0,0,0,122,4178,7507,991,0,
+11-09 13:28:32.575 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:32.764 E/JAMES   (24898): null/null/null
+11-09 13:28:32.765 E/JAMES   (24898): null/null/null
+11-09 13:28:32.903 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658912
+11-09 13:28:32.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:33.764 E/JAMES   (24898): null/null/null
+11-09 13:28:33.765 E/JAMES   (24898): null/null/null
+11-09 13:28:33.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658913
+11-09 13:28:33.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:34.764 E/JAMES   (24898): null/null/null
+11-09 13:28:34.766 E/JAMES   (24898): null/null/null
+11-09 13:28:34.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658914
+11-09 13:28:34.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:35.588 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:35.764 E/JAMES   (24898): null/null/null
+11-09 13:28:35.766 E/JAMES   (24898): null/null/null
+11-09 13:28:35.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658915
+11-09 13:28:35.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:36.765 E/JAMES   (24898): null/null/null
+11-09 13:28:36.766 E/JAMES   (24898): null/null/null
+11-09 13:28:36.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658916
+11-09 13:28:36.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:37.139 E/PERFHAL-RESOURCEQS( 2206): PERFHAL-RESOURCEQS: AddAndApply() 159: Failed to apply optimization [10, 9]
+11-09 13:28:37.765 E/JAMES   (24898): null/null/null
+11-09 13:28:37.766 E/JAMES   (24898): null/null/null
+11-09 13:28:37.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658917
+11-09 13:28:37.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:38.597 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:38.765 E/JAMES   (24898): null/null/null
+11-09 13:28:38.766 E/JAMES   (24898): null/null/null
+11-09 13:28:38.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658918
+11-09 13:28:38.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:39.765 E/JAMES   (24898): null/null/null
+11-09 13:28:39.767 E/JAMES   (24898): null/null/null
+11-09 13:28:39.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658919
+11-09 13:28:39.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:40.766 E/JAMES   (24898): null/null/null
+11-09 13:28:40.767 E/JAMES   (24898): null/null/null
+11-09 13:28:40.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658920
+11-09 13:28:40.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:41.517 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:41.517 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:41.518 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:41.519 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:41.612 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:41.766 E/JAMES   (24898): null/null/null
+11-09 13:28:41.768 E/JAMES   (24898): null/null/null
+11-09 13:28:41.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658921
+11-09 13:28:41.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:42.767 E/JAMES   (24898): null/null/null
+11-09 13:28:42.768 E/JAMES   (24898): null/null/null
+11-09 13:28:42.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658922
+11-09 13:28:42.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:43.768 E/JAMES   (24898): null/null/null
+11-09 13:28:43.769 E/JAMES   (24898): null/null/null
+11-09 13:28:43.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658923
+11-09 13:28:43.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:44.625 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:44.768 E/JAMES   (24898): null/null/null
+11-09 13:28:44.769 E/JAMES   (24898): null/null/null
+11-09 13:28:44.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658924
+11-09 13:28:44.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:45.768 E/JAMES   (24898): null/null/null
+11-09 13:28:45.769 E/JAMES   (24898): null/null/null
+11-09 13:28:45.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658925
+11-09 13:28:45.908 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:46.770 E/JAMES   (24898): null/null/null
+11-09 13:28:46.770 E/JAMES   (24898): null/null/null
+11-09 13:28:46.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658926
+11-09 13:28:46.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:47.641 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:47.770 E/JAMES   (24898): null/null/null
+11-09 13:28:47.770 E/JAMES   (24898): null/null/null
+11-09 13:28:47.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658927
+11-09 13:28:47.905 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:48.770 E/JAMES   (24898): null/null/null
+11-09 13:28:48.771 E/JAMES   (24898): null/null/null
+11-09 13:28:48.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658928
+11-09 13:28:48.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:49.770 E/JAMES   (24898): null/null/null
+11-09 13:28:49.771 E/JAMES   (24898): null/null/null
+11-09 13:28:49.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658929
+11-09 13:28:49.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:50.442 E/sensors-hal( 2171): sendContextData:133, slocationcore h 193 m 23 s 55
+11-09 13:28:50.442 E/sensors-hal( 2171): create_send_context_data:64, slocationcore create_send_context_data
+11-09 13:28:50.443 E/sensors-hal( 2171): sendContextData:133, slocationcore h 193 m 23 s 55
+11-09 13:28:50.443 E/sensors-hal( 2171): create_send_context_data:64, slocationcore create_send_context_data
+11-09 13:28:50.443 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:28:50.446 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:28:50.447 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:28:50.447 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:28:50.449 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.449 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.449 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.449 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.449 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.450 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.450 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.452 E/sensors-hal( 2171): register_cb:315, all callbacks are null for new suid. no need to register it
+11-09 13:28:50.453 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.453 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.454 E/sensors-hal( 2171): sendContextData:133, slocationcore h 193 m 23 s 55
+11-09 13:28:50.454 E/sensors-hal( 2171): create_send_context_data:64, slocationcore create_send_context_data
+11-09 13:28:50.456 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:28:50.456 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.456 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.456 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.456 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.456 E/JobScheduler.Background( 2648): Couldn't determine stopped state for unknown package: com.facebook.appmanager
+11-09 13:28:50.457 E/RequestManager_FLP( 5914): [FusedLocationApi] Location remove 2184204 from au.com.weatherzone.android.weatherzonefreeapp
+11-09 13:28:50.457 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.457 E/RequestManager_FLP( 5914): [FusedLocationApi] Location remove b8983ed from au.com.weatherzone.android.weatherzonefreeapp
+11-09 13:28:50.457 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.458 E/RequestManager_FLP( 5914): [FusedLocationApi] Location batching request 60d9222(PendingIntent) PRIORITY_HIGH_ACCURACY interval=3000ms from au.com.weatherzone.android.weatherzonefreeapp (10415_FINE_cached_false_background)
+11-09 13:28:50.458 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.458 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.458 E/RequestManager_FLP( 5914): [FusedLocationApi] Location batching request 60d9222(PendingIntent) PRIORITY_LOW_POWER interval=60000ms from au.com.weatherzone.android.weatherzonefreeapp (10415_FINE_cached_false_background)
+11-09 13:28:50.458 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.458 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.458 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.459 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.460 E/sensors-hal( 2171): sendContextData:133, slocationcore h 193 m 23 s 55
+11-09 13:28:50.460 E/sensors-hal( 2171): create_send_context_data:64, slocationcore create_send_context_data
+11-09 13:28:50.460 E/sensors-hal( 2171): handle_sns_client_event:78, slocationcore_event: msgid:1025
+11-09 13:28:50.461 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.461 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.461 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.461 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.461 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.461 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.462 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2238 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.462 E/minksocket( 2140): MinkIPC ERROR: ( 2140:2229 ) MinkIPC_preProcess:272 Client down, but cannot find corresponding minksession
+11-09 13:28:50.652 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:50.771 E/JAMES   (24898): null/null/null
+11-09 13:28:50.771 E/JAMES   (24898): null/null/null
+11-09 13:28:50.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658930
+11-09 13:28:50.907 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:51.560 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:51.561 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:51.563 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:51.563 E/ConversionHelperAidl( 2285): Function: parseAndSetVendorParameters Line: 94 Failed 
+11-09 13:28:51.771 E/JAMES   (24898): null/null/null
+11-09 13:28:51.771 E/JAMES   (24898): null/null/null
+11-09 13:28:51.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658931
+11-09 13:28:51.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:52.771 E/JAMES   (24898): null/null/null
+11-09 13:28:52.771 E/JAMES   (24898): null/null/null
+11-09 13:28:52.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658932
+11-09 13:28:52.908 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:53.663 E/WifiStaIfaceAidlImpl( 2648): getCachedScanData failed with service-specific exception: android.os.ServiceSpecificException:  (code 4)
+11-09 13:28:53.771 E/JAMES   (24898): null/null/null
+11-09 13:28:53.771 E/JAMES   (24898): null/null/null
+11-09 13:28:53.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658933
+11-09 13:28:53.903 E/HeatmapThread( 2288): !@ CAM New BSOH: 100
+11-09 13:28:54.771 E/JAMES   (24898): null/null/null
+11-09 13:28:54.772 E/JAMES   (24898): null/null/null
+11-09 13:28:54.902 E/HeatmapThread( 2288): ECT Thread time in milliseconds: 1762658934
+11-09 13:28:54.906 E/HeatmapThread( 2288): !@ CAM New BSOH: 100

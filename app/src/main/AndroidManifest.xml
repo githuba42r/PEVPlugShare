@@ -11,6 +11,12 @@
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
+    <!-- Package Visibility for OSMAnd (Required for Android 11+) -->
+    <queries>
+        <package android:name="net.osmand.plus" />
+        <package android:name="net.osmand" />
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -31,20 +37,6 @@
         </activity>
 
         <activity
-            android:name=".ui.auth.LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:host="auth"
-                    android:path="/callback"
-                    android:scheme="com.pevplugshare" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".ui.main.MainActivity"
             android:exported="false" />
 
@@ -55,6 +47,25 @@
         <activity
             android:name=".ui.photo.PhotoCaptureActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="true">
+            <!-- OAuth callback -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="com.pevplugshare"
+                    android:host="auth"
+                    android:path="/callback" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".ui.edit.EditLocationActivity"
@@ -78,6 +89,17 @@
                     android:mimeType="application/json" />
             </intent-filter>
         </activity>
+
+        <!-- FileProvider for camera images -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

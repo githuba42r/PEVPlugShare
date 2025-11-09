@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <TextView
+                android:id="@+id/modelName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GPT-4 Omni"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="?android:textColorPrimary" />
+
+            <TextView
+                android:id="@+id/modelProvider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Provider: OpenAI"
+                android:textSize="12sp"
+                android:paddingTop="4dp"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:id="@+id/modelCost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cost: $5-15/M tokens"
+                android:textSize="12sp"
+                android:paddingTop="2dp"
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:id="@+id/modelDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Context: 128K tokens"
+                android:textSize="12sp"
+                android:paddingTop="2dp"
+                android:textColor="?android:textColorSecondary"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/modelLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View on OpenRouter ↗"
+                android:textSize="11sp"
+                android:paddingTop="4dp"
+                android:textColor="@color/md_theme_primary"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

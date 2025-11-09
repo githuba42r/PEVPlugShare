@@ -20,6 +20,12 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <!-- Package Visibility for OSMAnd (Required for Android 11+) -->
+    <queries>
+        <package android:name="net.osmand.plus" />
+        <package android:name="net.osmand" />
+    </queries>
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -29,6 +35,24 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.pevplugshare.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true" />
+
+    <uses-feature
+        android:name="android.hardware.location.network"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
 
     <application
         android:name="com.pevplugshare.PEVPlugShareApplication"
@@ -52,8 +76,22 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.pevplugshare.ui.main.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.pevplugshare.ui.add.AddLocationActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.pevplugshare.ui.photo.PhotoCaptureActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.pevplugshare.ui.settings.SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name="com.pevplugshare.ui.auth.LoginActivity"
             android:exported="true" >
+
+            <!-- OAuth callback -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -66,15 +104,6 @@
                     android:scheme="com.pevplugshare" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.pevplugshare.ui.main.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.pevplugshare.ui.add.AddLocationActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.pevplugshare.ui.photo.PhotoCaptureActivity"
-            android:exported="false" />
         <activity
             android:name="com.pevplugshare.ui.edit.EditLocationActivity"
             android:exported="false" />
@@ -99,6 +128,17 @@
                     android:scheme="content" />
             </intent-filter>
         </activity>
+
+        <!-- FileProvider for camera images -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.pevplugshare.provider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <!--
         Service for holding metadata. Cannot be instantiated.
@@ -231,6 +271,13 @@
                 <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
             </intent-filter>
         </receiver>
+
+        <uses-library
+            android:name="androidx.window.extensions"
+            android:required="false" />
+        <uses-library
+            android:name="androidx.window.sidecar"
+            android:required="false" />
 
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"

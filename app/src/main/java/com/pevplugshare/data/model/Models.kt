@@ -3,6 +3,12 @@ package com.pevplugshare.data.model
 enum class SocketType(val displayName: String) {
     AS3112("AS3112 (AU GPO)"),
     TYPE2("Type2 EV"),
+    TESLA("Tesla Charger"),
+    CCS2("CCS2/Combo"),
+    CHADEMO("CHAdeMO"),
+    TYPE1("Type 1 (J1772)"),
+    WALL_SOCKET("Wall Socket (15A)"),
+    CARAVAN("Caravan Plug"),
     OTHER("Other EV Charger")
 }
 

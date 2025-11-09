@@ -12,6 +12,19 @@ class TokenManager(context: Context) {
         private const val KEY_TOKEN_EXPIRY = "token_expiry"
         private const val KEY_USER_ID = "user_id"
         private const val KEY_USERNAME = "username"
+        private const val KEY_PASSWORD = "password"
+        private const val KEY_AUTH_TYPE = "auth_type"
+        private const val KEY_REMEMBER_ME = "remember_me"
+        private const val KEY_SELECTED_CATEGORY = "selected_category"
+        private const val KEY_OPENROUTER_API_KEY = "openrouter_api_key"
+        private const val KEY_SELECTED_AI_MODEL = "selected_ai_model"
+        private const val KEY_MAP_ZOOM_LEVEL = "map_zoom_level"
+        private const val DEFAULT_MAP_ZOOM = 18.0f
+    }
+
+    enum class AuthType {
+        OAUTH,
+        WEB_API
     }
 
     private val masterKey = MasterKey.Builder(context)
@@ -48,6 +61,45 @@ class TokenManager(context: Context) {
         }
     }
 
+    fun saveWebApiCredentials(username: String, password: String, rememberMe: Boolean = false) {
+        encryptedPrefs.edit().apply {
+            putString(KEY_USERNAME, username)
+            if (rememberMe) {
+                putString(KEY_PASSWORD, password)
+                putBoolean(KEY_REMEMBER_ME, true)
+            } else {
+                remove(KEY_PASSWORD)
+                putBoolean(KEY_REMEMBER_ME, false)
+            }
+            putString(KEY_AUTH_TYPE, AuthType.WEB_API.name)
+            apply()
+        }
+    }
+
+    fun isRememberMeEnabled(): Boolean {
+        return encryptedPrefs.getBoolean(KEY_REMEMBER_ME, false)
+    }
+
+    fun hasStoredCredentials(): Boolean {
+        return !getUsername().isNullOrEmpty() && !getPassword().isNullOrEmpty()
+    }
+
+    fun clearStoredCredentials() {
+        encryptedPrefs.edit().apply {
+            remove(KEY_USERNAME)
+            remove(KEY_PASSWORD)
+            remove(KEY_REMEMBER_ME)
+            apply()
+        }
+    }
+
+    fun getPassword(): String? = encryptedPrefs.getString(KEY_PASSWORD, null)
+
+    fun getAuthType(): AuthType {
+        val type = encryptedPrefs.getString(KEY_AUTH_TYPE, AuthType.OAUTH.name)
+        return AuthType.valueOf(type ?: AuthType.OAUTH.name)
+    }
+
     fun getAccessToken(): String? = encryptedPrefs.getString(KEY_ACCESS_TOKEN, null)
 
     fun getRefreshToken(): String? = encryptedPrefs.getString(KEY_REFRESH_TOKEN, null)
@@ -65,6 +117,22 @@ class TokenManager(context: Context) {
         return !getAccessToken().isNullOrEmpty()
     }
 
+    fun saveOpenRouterApiKey(apiKey: String) {
+        encryptedPrefs.edit().putString(KEY_OPENROUTER_API_KEY, apiKey).apply()
+    }
+
+    fun getOpenRouterApiKey(): String? {
+        return encryptedPrefs.getString(KEY_OPENROUTER_API_KEY, null)
+    }
+    
+    fun saveSelectedAiModel(modelId: String) {
+        encryptedPrefs.edit().putString(KEY_SELECTED_AI_MODEL, modelId).apply()
+    }
+    
+    fun getSelectedAiModel(): String? {
+        return encryptedPrefs.getString(KEY_SELECTED_AI_MODEL, null)
+    }
+
     fun logout() {
         encryptedPrefs.edit().clear().apply()
     }
@@ -72,5 +140,21 @@ class TokenManager(context: Context) {
     fun getAuthHeader(): String? {
         val token = getAccessToken() ?: return null
         return "Bearer $token"
+    }
+
+    fun saveSelectedCategory(category: String) {
+        encryptedPrefs.edit().putString(KEY_SELECTED_CATEGORY, category).apply()
+    }
+
+    fun getSelectedCategory(): String? {
+        return encryptedPrefs.getString(KEY_SELECTED_CATEGORY, null)
+    }
+    
+    fun saveMapZoomLevel(zoomLevel: Float) {
+        encryptedPrefs.edit().putFloat(KEY_MAP_ZOOM_LEVEL, zoomLevel).apply()
+    }
+    
+    fun getMapZoomLevel(): Float {
+        return encryptedPrefs.getFloat(KEY_MAP_ZOOM_LEVEL, DEFAULT_MAP_ZOOM)
     }
 }

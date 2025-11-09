@@ -1,7 +1,6 @@
 package com.pevplugshare.di;
 
-import com.pevplugshare.data.remote.OsmandApiClient;
-import com.pevplugshare.data.remote.TokenManager;
+import com.pevplugshare.data.db.dao.LocationDao;
 import com.pevplugshare.domain.repository.LocationRepository;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -25,28 +24,23 @@ import javax.inject.Provider;
     "KotlinInternalInJava"
 })
 public final class NetworkModule_ProvideLocationRepositoryFactory implements Factory<LocationRepository> {
-  private final Provider<OsmandApiClient> apiClientProvider;
+  private final Provider<LocationDao> locationDaoProvider;
 
-  private final Provider<TokenManager> tokenManagerProvider;
-
-  public NetworkModule_ProvideLocationRepositoryFactory(Provider<OsmandApiClient> apiClientProvider,
-      Provider<TokenManager> tokenManagerProvider) {
-    this.apiClientProvider = apiClientProvider;
-    this.tokenManagerProvider = tokenManagerProvider;
+  public NetworkModule_ProvideLocationRepositoryFactory(Provider<LocationDao> locationDaoProvider) {
+    this.locationDaoProvider = locationDaoProvider;
   }
 
   @Override
   public LocationRepository get() {
-    return provideLocationRepository(apiClientProvider.get(), tokenManagerProvider.get());
+    return provideLocationRepository(locationDaoProvider.get());
   }
 
   public static NetworkModule_ProvideLocationRepositoryFactory create(
-      Provider<OsmandApiClient> apiClientProvider, Provider<TokenManager> tokenManagerProvider) {
-    return new NetworkModule_ProvideLocationRepositoryFactory(apiClientProvider, tokenManagerProvider);
+      Provider<LocationDao> locationDaoProvider) {
+    return new NetworkModule_ProvideLocationRepositoryFactory(locationDaoProvider);
   }
 
-  public static LocationRepository provideLocationRepository(OsmandApiClient apiClient,
-      TokenManager tokenManager) {
-    return Preconditions.checkNotNullFromProvides(NetworkModule.INSTANCE.provideLocationRepository(apiClient, tokenManager));
+  public static LocationRepository provideLocationRepository(LocationDao locationDao) {
+    return Preconditions.checkNotNullFromProvides(NetworkModule.INSTANCE.provideLocationRepository(locationDao));
   }
 }

@@ -21,15 +21,47 @@ class SplashActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         lifecycleScope.launch {
-            // Small delay for splash screen visibility
-            kotlinx.coroutines.delay(1000)
-            
-            if (viewModel.isUserLoggedIn()) {
-                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-            } else {
-                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+            try {
+                // Small delay for splash screen visibility
+                kotlinx.coroutines.delay(1000)
+
+                // Check if activity is still valid and not finishing
+                if (isFinishing || isDestroyed) {
+                    return@launch
+                }
+
+                // Check if user has session cookies
+                val isLoggedIn = viewModel.isUserLoggedIn()
+                
+                if (isLoggedIn) {
+                    android.util.Log.d("SplashActivity", "Session found, validating...")
+                    
+                    // Validate the session by trying to load categories
+                    val isSessionValid = viewModel.validateSession()
+                    
+                    if (isSessionValid) {
+                        android.util.Log.d("SplashActivity", "Session valid, navigating to MainActivity")
+                        // Session is valid, go to main activity
+                        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                    } else {
+                        android.util.Log.d("SplashActivity", "Session invalid, navigating to LoginActivity")
+                        // Session expired or invalid, need to login again
+                        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                    }
+                } else {
+                    android.util.Log.d("SplashActivity", "No session found, navigating to LoginActivity")
+                    // No session, user needs to log in
+                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                }
+                finish()
+            } catch (e: Exception) {
+                android.util.Log.e("SplashActivity", "Error during splash screen: ${e.message}", e)
+                // Continue to login on error
+                if (!isFinishing && !isDestroyed) {
+                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                    finish()
+                }
             }
-            finish()
         }
     }
 }

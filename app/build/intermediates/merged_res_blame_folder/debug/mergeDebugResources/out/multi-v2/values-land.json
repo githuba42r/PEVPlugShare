@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.pevplugshare.app-mergeDebugResources-52:/values-land/values-land.xml",
+            "outputFile": "com.pevplugshare.app-mergeDebugResources-59:/values-land/values-land.xml",
             "map": [
                 {
                     "source": "/home/philg/.gradle/caches/transforms-4/972eb775f2be7b34a4928d037e74ef9d/transformed/appcompat-1.6.1/res/values-land/values-land.xml",

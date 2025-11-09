@@ -1,34 +1,74 @@
 [
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-53:/layout/activity_import_locations.xml",
-        "source": "com.pevplugshare.app-main-56:/layout/activity_import_locations.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/item_model_selection.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/item_model_selection.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-53:/layout/activity_edit_location.xml",
-        "source": "com.pevplugshare.app-main-56:/layout/activity_edit_location.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/item_location.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/item_location.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-53:/layout/activity_splash.xml",
-        "source": "com.pevplugshare.app-main-56:/layout/activity_splash.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_import_locations.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_import_locations.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-53:/layout/activity_photo_capture.xml",
-        "source": "com.pevplugshare.app-main-56:/layout/activity_photo_capture.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/modal_map_location_picker.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/modal_map_location_picker.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-53:/layout/item_location.xml",
-        "source": "com.pevplugshare.app-main-56:/layout/item_location.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_settings.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_settings.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-53:/layout/activity_add_location.xml",
-        "source": "com.pevplugshare.app-main-56:/layout/activity_add_location.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/item_photo_thumbnail.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/item_photo_thumbnail.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-53:/layout/activity_login.xml",
-        "source": "com.pevplugshare.app-main-56:/layout/activity_login.xml"
+        "merged": "com.pevplugshare.app-mergeDebugResources-60:/layout/item_location.xml",
+        "source": "com.pevplugshare.app-main-63:/layout/item_location.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-53:/layout/activity_main.xml",
-        "source": "com.pevplugshare.app-main-56:/layout/activity_main.xml"
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_photo_capture.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_photo_capture.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/item_fullscreen_image.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/item_fullscreen_image.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/dialog_category_selection.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/dialog_category_selection.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_splash.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/modal_image_gallery.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/modal_image_gallery.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_add_location.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_add_location.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_main.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_login.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_login.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/dialog_ai_description.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/dialog_ai_description.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/dialog_model_selection.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/dialog_model_selection.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_edit_location.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_edit_location.xml"
     }
 ]

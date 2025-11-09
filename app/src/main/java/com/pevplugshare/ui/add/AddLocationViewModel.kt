@@ -16,9 +16,9 @@ import javax.inject.Inject
 sealed class AddLocationState {
     object Idle : AddLocationState()
     object Loading : AddLocationState()
-    object Success : AddLocationState()
+    data class Success(val location: com.pevplugshare.data.model.Location? = null) : AddLocationState()
     data class Error(val message: String) : AddLocationState()
-    object Duplicate : AddLocationState()
+    data class NearbyLocationsFound(val locations: List<Pair<com.pevplugshare.data.model.Location, Double>>) : AddLocationState()
 }
 
 data class LocationFormData(
@@ -118,8 +118,46 @@ class AddLocationViewModel @Inject constructor(
             _addLocationState.value = AddLocationState.Loading
 
             try {
-                val location = Location(
-                    id = UUID.randomUUID().toString(),
+                // Check for nearby locations within 250m radius
+                val nearbyResult = locationRepository.findNearbyLocations(
+                    latitude = data.latitude,
+                    longitude = data.longitude,
+                    radiusMeters = 250.0,
+                    categoryName = "PEV Charging Stations"
+                )
+                
+                nearbyResult.onSuccess { nearbyLocations ->
+                    if (nearbyLocations.isNotEmpty()) {
+                        // Found nearby locations - notify user
+                        _addLocationState.value = AddLocationState.NearbyLocationsFound(nearbyLocations)
+                    } else {
+                        // No nearby locations - proceed with save
+                        saveLocation(data)
+                    }
+                }.onFailure { error ->
+                    // If duplicate check fails, proceed with save anyway
+                    saveLocation(data)
+                }
+            } catch (e: Exception) {
+                _addLocationState.value = AddLocationState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+    
+    /**
+     * Force save location even if duplicates exist (user confirmed)
+     */
+    fun saveLocationAnyway() {
+        saveLocation(_formData.value)
+    }
+    
+    private fun saveLocation(data: LocationFormData) {
+        viewModelScope.launch {
+            _addLocationState.value = AddLocationState.Loading
+            
+            try {
+                val location = com.pevplugshare.data.model.Location(
+                    id = java.util.UUID.randomUUID().toString(),
                     name = data.name,
                     description = data.description.ifBlank { null },
                     latitude = data.latitude,
@@ -140,8 +178,8 @@ class AddLocationViewModel @Inject constructor(
 
                 // Add to location repository (which handles OSMAnd sync)
                 locationRepository.addLocation(location, "PEV Charging Stations")
-                    .onSuccess {
-                        _addLocationState.value = AddLocationState.Success
+                    .onSuccess { savedLocation ->
+                        _addLocationState.value = AddLocationState.Success(savedLocation)
                     }
                     .onFailure { error ->
                         _addLocationState.value = AddLocationState.Error(

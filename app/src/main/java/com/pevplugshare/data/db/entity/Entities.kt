@@ -24,7 +24,10 @@ data class LocationEntity(
     val icon: String,
     val lastModified: Long,
     val isFavourite: Boolean = false,
-    val syncStatus: String = "SYNCED"
+    val syncStatus: String = "SYNCED",
+    val descriptionHash: String? = null,
+    val aiParsed: Boolean = false,
+    val aiParsedAt: Long? = null
 )
 
 @Entity(tableName = "location_photos")

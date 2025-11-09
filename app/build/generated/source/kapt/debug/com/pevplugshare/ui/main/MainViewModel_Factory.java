@@ -1,6 +1,7 @@
 package com.pevplugshare.ui.main;
 
 import com.pevplugshare.data.network.ConnectivityObserver;
+import com.pevplugshare.data.remote.TokenManager;
 import com.pevplugshare.data.repository.SyncManager;
 import com.pevplugshare.domain.repository.AuthRepository;
 import com.pevplugshare.domain.repository.LocationRepository;
@@ -33,32 +34,35 @@ public final class MainViewModel_Factory implements Factory<MainViewModel> {
 
   private final Provider<SyncManager> syncManagerProvider;
 
+  private final Provider<TokenManager> tokenManagerProvider;
+
   public MainViewModel_Factory(Provider<LocationRepository> locationRepositoryProvider,
       Provider<AuthRepository> authRepositoryProvider,
       Provider<ConnectivityObserver> connectivityObserverProvider,
-      Provider<SyncManager> syncManagerProvider) {
+      Provider<SyncManager> syncManagerProvider, Provider<TokenManager> tokenManagerProvider) {
     this.locationRepositoryProvider = locationRepositoryProvider;
     this.authRepositoryProvider = authRepositoryProvider;
     this.connectivityObserverProvider = connectivityObserverProvider;
     this.syncManagerProvider = syncManagerProvider;
+    this.tokenManagerProvider = tokenManagerProvider;
   }
 
   @Override
   public MainViewModel get() {
-    return newInstance(locationRepositoryProvider.get(), authRepositoryProvider.get(), connectivityObserverProvider.get(), syncManagerProvider.get());
+    return newInstance(locationRepositoryProvider.get(), authRepositoryProvider.get(), connectivityObserverProvider.get(), syncManagerProvider.get(), tokenManagerProvider.get());
   }
 
   public static MainViewModel_Factory create(
       Provider<LocationRepository> locationRepositoryProvider,
       Provider<AuthRepository> authRepositoryProvider,
       Provider<ConnectivityObserver> connectivityObserverProvider,
-      Provider<SyncManager> syncManagerProvider) {
-    return new MainViewModel_Factory(locationRepositoryProvider, authRepositoryProvider, connectivityObserverProvider, syncManagerProvider);
+      Provider<SyncManager> syncManagerProvider, Provider<TokenManager> tokenManagerProvider) {
+    return new MainViewModel_Factory(locationRepositoryProvider, authRepositoryProvider, connectivityObserverProvider, syncManagerProvider, tokenManagerProvider);
   }
 
   public static MainViewModel newInstance(LocationRepository locationRepository,
       AuthRepository authRepository, ConnectivityObserver connectivityObserver,
-      SyncManager syncManager) {
-    return new MainViewModel(locationRepository, authRepository, connectivityObserver, syncManager);
+      SyncManager syncManager, TokenManager tokenManager) {
+    return new MainViewModel(locationRepository, authRepository, connectivityObserver, syncManager, tokenManager);
   }
 }

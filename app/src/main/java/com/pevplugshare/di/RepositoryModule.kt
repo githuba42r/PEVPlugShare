@@ -19,4 +19,12 @@ object RepositoryModule {
     ): PendingOperationRepository {
         return PendingOperationRepository(pendingOperationDao)
     }
+    
+    @Singleton
+    @Provides
+    fun provideLocalLocationRepository(
+        locationDao: com.pevplugshare.data.db.dao.LocationDao
+    ): com.pevplugshare.data.repository.LocalLocationRepository {
+        return com.pevplugshare.data.repository.LocalLocationRepository(locationDao)
+    }
 }

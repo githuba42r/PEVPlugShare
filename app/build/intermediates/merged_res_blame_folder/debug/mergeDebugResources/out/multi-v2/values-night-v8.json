@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.pevplugshare.app-mergeDebugResources-52:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.pevplugshare.app-mergeDebugResources-59:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "/home/philg/.gradle/caches/transforms-4/e091f759ff6f0d7ba84b5748adc163f1/transformed/material-1.11.0/res/values-night-v8/values-night-v8.xml",

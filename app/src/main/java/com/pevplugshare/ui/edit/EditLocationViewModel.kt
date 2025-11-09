@@ -14,6 +14,7 @@ import javax.inject.Inject
 sealed class EditLocationState {
     object Loading : EditLocationState()
     data class Loaded(val location: Location) : EditLocationState()
+    object Ready : EditLocationState()  // For add mode - form ready for input
     object Updating : EditLocationState()
     object UpdateSuccess : EditLocationState()
     data class Error(val message: String) : EditLocationState()
@@ -32,12 +33,16 @@ data class EditLocationFormData(
     val additionalInfo: String = "",
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
-    val gpoCount: Int = 1
+    val gpoCount: Int = 1,
+    val isFavorite: Boolean = false
 )
 
 @HiltViewModel
 class EditLocationViewModel @Inject constructor(
-    private val locationRepository: com.pevplugshare.domain.repository.LocationRepository
+    private val locationRepository: com.pevplugshare.domain.repository.LocationRepository,
+    private val osmandSyncService: com.pevplugshare.data.repository.OsmandLocationSyncService,
+    private val tokenManager: com.pevplugshare.data.remote.TokenManager,
+    private val descriptionParser: com.pevplugshare.ai.LocationDescriptionParser
 ) : ViewModel() {
 
     private val _editState = MutableStateFlow<EditLocationState>(EditLocationState.Loading)
@@ -45,31 +50,56 @@ class EditLocationViewModel @Inject constructor(
 
     private val _formData = MutableStateFlow(EditLocationFormData())
     val formData: StateFlow<EditLocationFormData> = _formData
+    
+    private var originalLocation: Location? = null
+
+    fun initializeForAddMode() {
+        _editState.value = EditLocationState.Ready
+        // Set default values for new location
+        _formData.value = EditLocationFormData(
+            socketTypes = "AS3112",
+            accessType = "public",
+            openingHours = "24/7",
+            gpoCount = 1
+        )
+    }
 
     fun loadLocation(locationId: String) {
         viewModelScope.launch {
             _editState.value = EditLocationState.Loading
             try {
-                val location = Location(
-                    id = locationId,
-                    name = "",
-                    description = "",
-                    latitude = 0.0,
-                    longitude = 0.0,
-                    socketTypes = emptyList(),
-                    publicPrivate = com.pevplugshare.data.model.LocationAccessType.PUBLIC,
-                    hasFee = false,
-                    providerName = "",
-                    providerWebsite = "",
-                    chargingCosts = "",
-                    openingHours = "",
-                    additionalInfo = "",
-                    color = "#1f6b2a",
-                    icon = "place",
-                    lastModified = System.currentTimeMillis(),
-                    gpoCount = 1
-                )
-                _editState.value = EditLocationState.Loaded(location)
+                // Get selected category
+                val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+                
+                // Load locations from repository
+                val result = locationRepository.getLocationsByCategory(category)
+                result.onSuccess { locations ->
+                    val location = locations.find { it.id == locationId }
+                    if (location != null) {
+                        originalLocation = location
+                        _formData.value = EditLocationFormData(
+                            name = location.name,
+                            socketTypes = location.socketTypes.firstOrNull()?.name ?: "AS3112",
+                            accessType = location.publicPrivate.name.lowercase(),
+                            hasFee = location.hasFee,
+                            providerName = location.providerName ?: "",
+                            providerWebsite = location.providerWebsite ?: "",
+                            chargingCosts = location.chargingCosts ?: "",
+                            description = location.description ?: "",
+                            openingHours = location.openingHours ?: "",
+                            additionalInfo = location.additionalInfo ?: "",
+                            latitude = location.latitude,
+                            longitude = location.longitude,
+                            gpoCount = location.gpoCount,
+                            isFavorite = location.isFavourite
+                        )
+                        _editState.value = EditLocationState.Loaded(location)
+                    } else {
+                        _editState.value = EditLocationState.Error("Location not found")
+                    }
+                }.onFailure { e ->
+                    _editState.value = EditLocationState.Error(e.message ?: "Failed to load location")
+                }
             } catch (e: Exception) {
                 _editState.value = EditLocationState.Error(e.message ?: "Failed to load location")
             }
@@ -126,6 +156,70 @@ class EditLocationViewModel @Inject constructor(
         _formData.value = _formData.value.copy(latitude = latitude, longitude = longitude)
     }
 
+    fun updateFavorite(isFavorite: Boolean) {
+        _formData.value = _formData.value.copy(isFavorite = isFavorite)
+    }
+
+    fun addLocation() {
+        val data = _formData.value
+
+        if (data.name.isBlank()) {
+            _editState.value = EditLocationState.Error("Location name is required")
+            return
+        }
+
+        if (data.gpoCount < 1 || data.gpoCount > 11) {
+            _editState.value = EditLocationState.Error("GPO count must be between 1 and 10+")
+            return
+        }
+        
+        if (data.latitude == 0.0 && data.longitude == 0.0) {
+            _editState.value = EditLocationState.Error("Location coordinates required")
+            return
+        }
+
+        viewModelScope.launch {
+            _editState.value = EditLocationState.Updating
+
+            try {
+                // Create new location
+                val newLocation = Location(
+                    id = java.util.UUID.randomUUID().toString(),
+                    name = data.name,
+                    socketTypes = listOf(com.pevplugshare.data.model.SocketType.valueOf(data.socketTypes)),
+                    publicPrivate = com.pevplugshare.data.model.LocationAccessType.valueOf(data.accessType.uppercase()),
+                    hasFee = data.hasFee,
+                    providerName = data.providerName.ifBlank { null },
+                    providerWebsite = data.providerWebsite.ifBlank { null },
+                    chargingCosts = data.chargingCosts.ifBlank { null },
+                    description = data.description.ifBlank { null },
+                    openingHours = data.openingHours.ifBlank { null },
+                    additionalInfo = data.additionalInfo.ifBlank { null },
+                    latitude = data.latitude,
+                    longitude = data.longitude,
+                    gpoCount = data.gpoCount,
+                    isFavourite = data.isFavorite,
+                    color = "#1f6b2a",
+                    icon = "place",
+                    lastModified = System.currentTimeMillis(),
+                    syncStatus = com.pevplugshare.data.model.SyncStatus.PENDING
+                )
+                
+                val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+                
+                // Add to local database
+                locationRepository.addLocation(newLocation, category)
+                
+                // Mark as pending sync
+                osmandSyncService.markLocationPendingSync(newLocation, category)
+                
+                _editState.value = EditLocationState.UpdateSuccess
+            } catch (e: Exception) {
+                _editState.value = EditLocationState.Error(e.message ?: "Add failed")
+            }
+        }
+    }
+
     fun submitUpdates(locationId: String) {
         val data = _formData.value
 
@@ -143,9 +237,98 @@ class EditLocationViewModel @Inject constructor(
             _editState.value = EditLocationState.Updating
 
             try {
+                val original = originalLocation ?: run {
+                    _editState.value = EditLocationState.Error("Original location not found")
+                    return@launch
+                }
+                
+                // Create updated location
+                val updatedLocation = original.copy(
+                    name = data.name,
+                    socketTypes = listOf(com.pevplugshare.data.model.SocketType.valueOf(data.socketTypes)),
+                    publicPrivate = com.pevplugshare.data.model.LocationAccessType.valueOf(data.accessType.uppercase()),
+                    hasFee = data.hasFee,
+                    providerName = data.providerName.ifBlank { null },
+                    providerWebsite = data.providerWebsite.ifBlank { null },
+                    chargingCosts = data.chargingCosts.ifBlank { null },
+                    description = data.description.ifBlank { null },
+                    openingHours = data.openingHours.ifBlank { null },
+                    additionalInfo = data.additionalInfo.ifBlank { null },
+                    latitude = data.latitude,
+                    longitude = data.longitude,
+                    gpoCount = data.gpoCount,
+                    isFavourite = data.isFavorite,
+                    lastModified = System.currentTimeMillis(),
+                    syncStatus = com.pevplugshare.data.model.SyncStatus.PENDING
+                )
+                
+                val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+                
+                // Update in local database
+                locationRepository.updateLocation(updatedLocation, category)
+                
+                // Mark as pending sync
+                osmandSyncService.markLocationPendingSync(updatedLocation, category)
+                
                 _editState.value = EditLocationState.UpdateSuccess
             } catch (e: Exception) {
                 _editState.value = EditLocationState.Error(e.message ?: "Update failed")
+            }
+        }
+    }
+    
+    fun syncToOsmand(locationId: String) {
+        viewModelScope.launch {
+            try {
+                val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+                val result = locationRepository.getLocationsByCategory(category)
+                
+                result.onSuccess { locations ->
+                    val location = locations.find { it.id == locationId }
+                    if (location != null) {
+                        osmandSyncService.updateLocationToOsmand(location, category, 0)
+                            .onSuccess {
+                                _editState.value = EditLocationState.UpdateSuccess
+                            }
+                            .onFailure { e ->
+                                _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                            }
+                    }
+                }
+            } catch (e: Exception) {
+                _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+            }
+        }
+    }
+
+    fun parseDescription(description: String, onResult: (com.pevplugshare.ai.ParsedLocationData?) -> Unit) {
+        if (description.isBlank()) {
+            onResult(null)
+            return
+        }
+        
+        viewModelScope.launch {
+            try {
+                val result = descriptionParser.parseDescription(description)
+                result.onSuccess { parsed ->
+                    // Update form data with parsed values, defaulting opening hours to 24/7 if not found
+                    val hours = parsed.openingHours ?: "24/7"
+                    updateOpeningHours(hours)
+                    
+                    if (parsed.chargingPoints != null) {
+                        updateGpoCount(parsed.chargingPoints)
+                    }
+                    if (parsed.capacity != null) {
+                        updateChargingCosts(parsed.capacity)
+                    }
+                    updateHasFee(parsed.hasFee)
+                    
+                    onResult(parsed)
+                }.onFailure { e ->
+                    onResult(null)
+                }
+            } catch (e: Exception) {
+                onResult(null)
             }
         }
     }

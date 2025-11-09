@@ -19,6 +19,7 @@ import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_andro
 import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_components_SingletonComponent;
 import hilt_aggregated_deps._androidx_hilt_work_HiltWrapper_WorkerFactoryModule;
 import hilt_aggregated_deps._com_pevplugshare_PEVPlugShareApplication_GeneratedInjector;
+import hilt_aggregated_deps._com_pevplugshare_data_remote_SessionRefreshWorker_HiltModule;
 import hilt_aggregated_deps._com_pevplugshare_di_DatabaseModule;
 import hilt_aggregated_deps._com_pevplugshare_di_NetworkModule;
 import hilt_aggregated_deps._com_pevplugshare_di_RepositoryModule;
@@ -31,6 +32,7 @@ import hilt_aggregated_deps._com_pevplugshare_ui_auth_LoginViewModel_HiltModules
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_auth_SplashViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_edit_AiDescriptionDialogFragment_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_edit_EditLocationActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_edit_EditLocationViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_edit_EditLocationViewModel_HiltModules_KeyModule;
@@ -40,6 +42,7 @@ import hilt_aggregated_deps._com_pevplugshare_ui_main_MainViewModel_HiltModules_
 import hilt_aggregated_deps._com_pevplugshare_ui_photo_PhotoCaptureActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_ui_photo_PhotoCaptureViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_pevplugshare_ui_photo_PhotoCaptureViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_pevplugshare_ui_settings_SettingsActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_pevplugshare_worker_AutoSyncWorker_HiltModule;
 import hilt_aggregated_deps._dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint;
 import hilt_aggregated_deps._dagger_hilt_android_flags_HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule;
@@ -83,6 +86,7 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
     aggregatedDeps = {
         _androidx_hilt_work_HiltWrapper_WorkerFactoryModule.class,
         _com_pevplugshare_PEVPlugShareApplication_GeneratedInjector.class,
+        _com_pevplugshare_data_remote_SessionRefreshWorker_HiltModule.class,
         _com_pevplugshare_di_DatabaseModule.class,
         _com_pevplugshare_di_NetworkModule.class,
         _com_pevplugshare_di_RepositoryModule.class,
@@ -95,6 +99,7 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_pevplugshare_ui_auth_SplashActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_auth_SplashViewModel_HiltModules_BindsModule.class,
         _com_pevplugshare_ui_auth_SplashViewModel_HiltModules_KeyModule.class,
+        _com_pevplugshare_ui_edit_AiDescriptionDialogFragment_GeneratedInjector.class,
         _com_pevplugshare_ui_edit_EditLocationActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_edit_EditLocationViewModel_HiltModules_BindsModule.class,
         _com_pevplugshare_ui_edit_EditLocationViewModel_HiltModules_KeyModule.class,
@@ -104,6 +109,7 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_pevplugshare_ui_photo_PhotoCaptureActivity_GeneratedInjector.class,
         _com_pevplugshare_ui_photo_PhotoCaptureViewModel_HiltModules_BindsModule.class,
         _com_pevplugshare_ui_photo_PhotoCaptureViewModel_HiltModules_KeyModule.class,
+        _com_pevplugshare_ui_settings_SettingsActivity_GeneratedInjector.class,
         _com_pevplugshare_worker_AutoSyncWorker_HiltModule.class,
         _dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint.class,
         _dagger_hilt_android_flags_HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,

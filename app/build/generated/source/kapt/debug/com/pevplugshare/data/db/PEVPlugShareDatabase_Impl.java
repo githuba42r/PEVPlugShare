@@ -54,17 +54,17 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(3) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS `locations` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `socketTypes` TEXT NOT NULL, `publicPrivate` TEXT NOT NULL, `hasFee` INTEGER NOT NULL, `gpoCount` INTEGER NOT NULL, `openingHours` TEXT, `additionalInfo` TEXT, `providerName` TEXT, `providerWebsite` TEXT, `chargingCosts` TEXT, `color` TEXT NOT NULL, `icon` TEXT NOT NULL, `lastModified` INTEGER NOT NULL, `isFavourite` INTEGER NOT NULL, `syncStatus` TEXT NOT NULL, PRIMARY KEY(`id`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `locations` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `socketTypes` TEXT NOT NULL, `publicPrivate` TEXT NOT NULL, `hasFee` INTEGER NOT NULL, `gpoCount` INTEGER NOT NULL, `openingHours` TEXT, `additionalInfo` TEXT, `providerName` TEXT, `providerWebsite` TEXT, `chargingCosts` TEXT, `color` TEXT NOT NULL, `icon` TEXT NOT NULL, `lastModified` INTEGER NOT NULL, `isFavourite` INTEGER NOT NULL, `syncStatus` TEXT NOT NULL, `descriptionHash` TEXT, `aiParsed` INTEGER NOT NULL, `aiParsedAt` INTEGER, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `location_photos` (`id` TEXT NOT NULL, `locationId` TEXT NOT NULL, `filePath` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `exifMetadata` TEXT, `gpxData` TEXT, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `sync_state` (`id` TEXT NOT NULL, `lastSyncTime` INTEGER NOT NULL, `syncStatus` TEXT NOT NULL, `pendingCount` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `user_preferences` (`id` TEXT NOT NULL, `selectedCategory` TEXT, `syncFrequencyHours` INTEGER NOT NULL, `osmandAccount` TEXT, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `pending_locations` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `socketTypes` TEXT NOT NULL, `publicPrivate` TEXT NOT NULL, `hasFee` INTEGER NOT NULL, `gpoCount` INTEGER NOT NULL, `openingHours` TEXT, `additionalInfo` TEXT, `providerName` TEXT, `providerWebsite` TEXT, `chargingCosts` TEXT, `createdAt` INTEGER NOT NULL, `syncAttempts` INTEGER NOT NULL, `lastSyncAttempt` INTEGER, PRIMARY KEY(`id`))");
         db.execSQL("CREATE TABLE IF NOT EXISTS `pending_operations` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `locationId` TEXT NOT NULL, `operationType` TEXT NOT NULL, `operationData` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `retryCount` INTEGER NOT NULL, `maxRetries` INTEGER NOT NULL, `lastRetryTime` INTEGER, `errorMessage` TEXT, FOREIGN KEY(`locationId`) REFERENCES `locations`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e6d0757eadbec041bbb1b53f7979625')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '825e2deb440a83bcd12d29d97863cc52')");
       }
 
       @Override
@@ -119,7 +119,7 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
       @NonNull
       public RoomOpenHelper.ValidationResult onValidateSchema(
           @NonNull final SupportSQLiteDatabase db) {
-        final HashMap<String, TableInfo.Column> _columnsLocations = new HashMap<String, TableInfo.Column>(19);
+        final HashMap<String, TableInfo.Column> _columnsLocations = new HashMap<String, TableInfo.Column>(22);
         _columnsLocations.put("id", new TableInfo.Column("id", "TEXT", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsLocations.put("name", new TableInfo.Column("name", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsLocations.put("description", new TableInfo.Column("description", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -139,6 +139,9 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
         _columnsLocations.put("lastModified", new TableInfo.Column("lastModified", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsLocations.put("isFavourite", new TableInfo.Column("isFavourite", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsLocations.put("syncStatus", new TableInfo.Column("syncStatus", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsLocations.put("descriptionHash", new TableInfo.Column("descriptionHash", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsLocations.put("aiParsed", new TableInfo.Column("aiParsed", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsLocations.put("aiParsedAt", new TableInfo.Column("aiParsedAt", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysLocations = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesLocations = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoLocations = new TableInfo("locations", _columnsLocations, _foreignKeysLocations, _indicesLocations);
@@ -241,7 +244,7 @@ public final class PEVPlugShareDatabase_Impl extends PEVPlugShareDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "6e6d0757eadbec041bbb1b53f7979625", "c89159abc57cdd8f0319359ad7a02679");
+    }, "825e2deb440a83bcd12d29d97863cc52", "b46718495328bdb790f610b9d2f039f5");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;

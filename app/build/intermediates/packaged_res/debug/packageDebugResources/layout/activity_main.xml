@@ -28,84 +28,69 @@
                 android:src="@drawable/ic_menu" />
 
             <TextView
-                android:id="@+id/offlineIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="🟢 Online"
+                android:text="PEV PlugShare"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
-
-            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/categoryName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select Category"
-                android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
-        </LinearLayout>
 
-        <!-- Category Selector (optional collapsible) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/md_theme_primary_variant"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp">
-
-            <ImageButton
-                android:id="@+id/refreshButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Refresh"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_refresh" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <TextView
+                android:id="@+id/categoryBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="Tap to refresh locations"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
+                android:background="@drawable/category_badge_background"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="Category"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
-        <!-- Location List -->
-        <FrameLayout
+        <!-- Location List with Pull to Refresh -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <ProgressBar
-                android:id="@+id/loadingProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/locationRecyclerView"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/emptyState"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:padding="32dp"
-                android:text="No locations loaded"
-                android:textAlignment="center"
-                android:textSize="16sp"
-                android:visibility="gone" />
-        </FrameLayout>
+                <ProgressBar
+                    android:id="@+id/loadingProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/locationRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/emptyState"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:padding="32dp"
+                    android:text="No locations loaded"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
     <!-- FAB -->
@@ -117,5 +102,86 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
         app:fabSize="normal" />
+
+    <!-- Image Gallery Modal - directly embedded -->
+    <FrameLayout
+        android:id="@+id/imageGalleryOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DD000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Top header with close button -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/galleryToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            app:navigationIcon="@drawable/ic_clear"
+            app:title="Location Photos"
+            app:titleTextColor="@android:color/white" />
+
+        <!-- Location description -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_marginBottom="130dp"
+            android:maxHeight="80dp">
+
+            <TextView
+                android:id="@+id/locationDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Location description here"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:background="#66000000" />
+        </ScrollView>
+
+        <!-- ViewPager for swiping -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/imageViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="120dp"
+            android:layout_marginBottom="80dp" />
+
+        <!-- Bottom controls -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="#AA000000">
+
+            <TextView
+                android:id="@+id/imageCounter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="1 / 5"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/thumbnailContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center" />
+            </HorizontalScrollView>
+        </LinearLayout>
+
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

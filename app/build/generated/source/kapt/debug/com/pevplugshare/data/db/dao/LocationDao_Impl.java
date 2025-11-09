@@ -16,6 +16,7 @@ import androidx.sqlite.db.SupportSQLiteStatement;
 import com.pevplugshare.data.db.entity.LocationEntity;
 import java.lang.Class;
 import java.lang.Exception;
+import java.lang.Long;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
@@ -50,7 +51,7 @@ public final class LocationDao_Impl implements LocationDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `locations` (`id`,`name`,`description`,`latitude`,`longitude`,`socketTypes`,`publicPrivate`,`hasFee`,`gpoCount`,`openingHours`,`additionalInfo`,`providerName`,`providerWebsite`,`chargingCosts`,`color`,`icon`,`lastModified`,`isFavourite`,`syncStatus`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        return "INSERT OR REPLACE INTO `locations` (`id`,`name`,`description`,`latitude`,`longitude`,`socketTypes`,`publicPrivate`,`hasFee`,`gpoCount`,`openingHours`,`additionalInfo`,`providerName`,`providerWebsite`,`chargingCosts`,`color`,`icon`,`lastModified`,`isFavourite`,`syncStatus`,`descriptionHash`,`aiParsed`,`aiParsedAt`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -128,6 +129,18 @@ public final class LocationDao_Impl implements LocationDao {
           statement.bindNull(19);
         } else {
           statement.bindString(19, entity.getSyncStatus());
+        }
+        if (entity.getDescriptionHash() == null) {
+          statement.bindNull(20);
+        } else {
+          statement.bindString(20, entity.getDescriptionHash());
+        }
+        final int _tmp_2 = entity.getAiParsed() ? 1 : 0;
+        statement.bindLong(21, _tmp_2);
+        if (entity.getAiParsedAt() == null) {
+          statement.bindNull(22);
+        } else {
+          statement.bindLong(22, entity.getAiParsedAt());
         }
       }
     };
@@ -152,7 +165,7 @@ public final class LocationDao_Impl implements LocationDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "UPDATE OR ABORT `locations` SET `id` = ?,`name` = ?,`description` = ?,`latitude` = ?,`longitude` = ?,`socketTypes` = ?,`publicPrivate` = ?,`hasFee` = ?,`gpoCount` = ?,`openingHours` = ?,`additionalInfo` = ?,`providerName` = ?,`providerWebsite` = ?,`chargingCosts` = ?,`color` = ?,`icon` = ?,`lastModified` = ?,`isFavourite` = ?,`syncStatus` = ? WHERE `id` = ?";
+        return "UPDATE OR ABORT `locations` SET `id` = ?,`name` = ?,`description` = ?,`latitude` = ?,`longitude` = ?,`socketTypes` = ?,`publicPrivate` = ?,`hasFee` = ?,`gpoCount` = ?,`openingHours` = ?,`additionalInfo` = ?,`providerName` = ?,`providerWebsite` = ?,`chargingCosts` = ?,`color` = ?,`icon` = ?,`lastModified` = ?,`isFavourite` = ?,`syncStatus` = ?,`descriptionHash` = ?,`aiParsed` = ?,`aiParsedAt` = ? WHERE `id` = ?";
       }
 
       @Override
@@ -231,10 +244,22 @@ public final class LocationDao_Impl implements LocationDao {
         } else {
           statement.bindString(19, entity.getSyncStatus());
         }
-        if (entity.getId() == null) {
+        if (entity.getDescriptionHash() == null) {
           statement.bindNull(20);
         } else {
-          statement.bindString(20, entity.getId());
+          statement.bindString(20, entity.getDescriptionHash());
+        }
+        final int _tmp_2 = entity.getAiParsed() ? 1 : 0;
+        statement.bindLong(21, _tmp_2);
+        if (entity.getAiParsedAt() == null) {
+          statement.bindNull(22);
+        } else {
+          statement.bindLong(22, entity.getAiParsedAt());
+        }
+        if (entity.getId() == null) {
+          statement.bindNull(23);
+        } else {
+          statement.bindString(23, entity.getId());
         }
       }
     };
@@ -421,6 +446,9 @@ public final class LocationDao_Impl implements LocationDao {
           final int _cursorIndexOfLastModified = CursorUtil.getColumnIndexOrThrow(_cursor, "lastModified");
           final int _cursorIndexOfIsFavourite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavourite");
           final int _cursorIndexOfSyncStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "syncStatus");
+          final int _cursorIndexOfDescriptionHash = CursorUtil.getColumnIndexOrThrow(_cursor, "descriptionHash");
+          final int _cursorIndexOfAiParsed = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsed");
+          final int _cursorIndexOfAiParsedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsedAt");
           final LocationEntity _result;
           if (_cursor.moveToFirst()) {
             final String _tmpId;
@@ -517,7 +545,23 @@ public final class LocationDao_Impl implements LocationDao {
             } else {
               _tmpSyncStatus = _cursor.getString(_cursorIndexOfSyncStatus);
             }
-            _result = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus);
+            final String _tmpDescriptionHash;
+            if (_cursor.isNull(_cursorIndexOfDescriptionHash)) {
+              _tmpDescriptionHash = null;
+            } else {
+              _tmpDescriptionHash = _cursor.getString(_cursorIndexOfDescriptionHash);
+            }
+            final boolean _tmpAiParsed;
+            final int _tmp_2;
+            _tmp_2 = _cursor.getInt(_cursorIndexOfAiParsed);
+            _tmpAiParsed = _tmp_2 != 0;
+            final Long _tmpAiParsedAt;
+            if (_cursor.isNull(_cursorIndexOfAiParsedAt)) {
+              _tmpAiParsedAt = null;
+            } else {
+              _tmpAiParsedAt = _cursor.getLong(_cursorIndexOfAiParsedAt);
+            }
+            _result = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus,_tmpDescriptionHash,_tmpAiParsed,_tmpAiParsedAt);
           } else {
             _result = null;
           }
@@ -559,6 +603,9 @@ public final class LocationDao_Impl implements LocationDao {
           final int _cursorIndexOfLastModified = CursorUtil.getColumnIndexOrThrow(_cursor, "lastModified");
           final int _cursorIndexOfIsFavourite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavourite");
           final int _cursorIndexOfSyncStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "syncStatus");
+          final int _cursorIndexOfDescriptionHash = CursorUtil.getColumnIndexOrThrow(_cursor, "descriptionHash");
+          final int _cursorIndexOfAiParsed = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsed");
+          final int _cursorIndexOfAiParsedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsedAt");
           final List<LocationEntity> _result = new ArrayList<LocationEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final LocationEntity _item;
@@ -656,7 +703,23 @@ public final class LocationDao_Impl implements LocationDao {
             } else {
               _tmpSyncStatus = _cursor.getString(_cursorIndexOfSyncStatus);
             }
-            _item = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus);
+            final String _tmpDescriptionHash;
+            if (_cursor.isNull(_cursorIndexOfDescriptionHash)) {
+              _tmpDescriptionHash = null;
+            } else {
+              _tmpDescriptionHash = _cursor.getString(_cursorIndexOfDescriptionHash);
+            }
+            final boolean _tmpAiParsed;
+            final int _tmp_2;
+            _tmp_2 = _cursor.getInt(_cursorIndexOfAiParsed);
+            _tmpAiParsed = _tmp_2 != 0;
+            final Long _tmpAiParsedAt;
+            if (_cursor.isNull(_cursorIndexOfAiParsedAt)) {
+              _tmpAiParsedAt = null;
+            } else {
+              _tmpAiParsedAt = _cursor.getLong(_cursorIndexOfAiParsedAt);
+            }
+            _item = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus,_tmpDescriptionHash,_tmpAiParsed,_tmpAiParsedAt);
             _result.add(_item);
           }
           return _result;
@@ -701,6 +764,9 @@ public final class LocationDao_Impl implements LocationDao {
           final int _cursorIndexOfLastModified = CursorUtil.getColumnIndexOrThrow(_cursor, "lastModified");
           final int _cursorIndexOfIsFavourite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavourite");
           final int _cursorIndexOfSyncStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "syncStatus");
+          final int _cursorIndexOfDescriptionHash = CursorUtil.getColumnIndexOrThrow(_cursor, "descriptionHash");
+          final int _cursorIndexOfAiParsed = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsed");
+          final int _cursorIndexOfAiParsedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsedAt");
           final List<LocationEntity> _result = new ArrayList<LocationEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final LocationEntity _item;
@@ -798,7 +864,23 @@ public final class LocationDao_Impl implements LocationDao {
             } else {
               _tmpSyncStatus = _cursor.getString(_cursorIndexOfSyncStatus);
             }
-            _item = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus);
+            final String _tmpDescriptionHash;
+            if (_cursor.isNull(_cursorIndexOfDescriptionHash)) {
+              _tmpDescriptionHash = null;
+            } else {
+              _tmpDescriptionHash = _cursor.getString(_cursorIndexOfDescriptionHash);
+            }
+            final boolean _tmpAiParsed;
+            final int _tmp_2;
+            _tmp_2 = _cursor.getInt(_cursorIndexOfAiParsed);
+            _tmpAiParsed = _tmp_2 != 0;
+            final Long _tmpAiParsedAt;
+            if (_cursor.isNull(_cursorIndexOfAiParsedAt)) {
+              _tmpAiParsedAt = null;
+            } else {
+              _tmpAiParsedAt = _cursor.getLong(_cursorIndexOfAiParsedAt);
+            }
+            _item = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus,_tmpDescriptionHash,_tmpAiParsed,_tmpAiParsedAt);
             _result.add(_item);
           }
           return _result;
@@ -849,6 +931,9 @@ public final class LocationDao_Impl implements LocationDao {
           final int _cursorIndexOfLastModified = CursorUtil.getColumnIndexOrThrow(_cursor, "lastModified");
           final int _cursorIndexOfIsFavourite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavourite");
           final int _cursorIndexOfSyncStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "syncStatus");
+          final int _cursorIndexOfDescriptionHash = CursorUtil.getColumnIndexOrThrow(_cursor, "descriptionHash");
+          final int _cursorIndexOfAiParsed = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsed");
+          final int _cursorIndexOfAiParsedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsedAt");
           final List<LocationEntity> _result = new ArrayList<LocationEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final LocationEntity _item;
@@ -946,7 +1031,23 @@ public final class LocationDao_Impl implements LocationDao {
             } else {
               _tmpSyncStatus = _cursor.getString(_cursorIndexOfSyncStatus);
             }
-            _item = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus);
+            final String _tmpDescriptionHash;
+            if (_cursor.isNull(_cursorIndexOfDescriptionHash)) {
+              _tmpDescriptionHash = null;
+            } else {
+              _tmpDescriptionHash = _cursor.getString(_cursorIndexOfDescriptionHash);
+            }
+            final boolean _tmpAiParsed;
+            final int _tmp_2;
+            _tmp_2 = _cursor.getInt(_cursorIndexOfAiParsed);
+            _tmpAiParsed = _tmp_2 != 0;
+            final Long _tmpAiParsedAt;
+            if (_cursor.isNull(_cursorIndexOfAiParsedAt)) {
+              _tmpAiParsedAt = null;
+            } else {
+              _tmpAiParsedAt = _cursor.getLong(_cursorIndexOfAiParsedAt);
+            }
+            _item = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus,_tmpDescriptionHash,_tmpAiParsed,_tmpAiParsedAt);
             _result.add(_item);
           }
           return _result;
@@ -1004,6 +1105,9 @@ public final class LocationDao_Impl implements LocationDao {
           final int _cursorIndexOfLastModified = CursorUtil.getColumnIndexOrThrow(_cursor, "lastModified");
           final int _cursorIndexOfIsFavourite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavourite");
           final int _cursorIndexOfSyncStatus = CursorUtil.getColumnIndexOrThrow(_cursor, "syncStatus");
+          final int _cursorIndexOfDescriptionHash = CursorUtil.getColumnIndexOrThrow(_cursor, "descriptionHash");
+          final int _cursorIndexOfAiParsed = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsed");
+          final int _cursorIndexOfAiParsedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "aiParsedAt");
           final List<LocationEntity> _result = new ArrayList<LocationEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final LocationEntity _item;
@@ -1101,7 +1205,23 @@ public final class LocationDao_Impl implements LocationDao {
             } else {
               _tmpSyncStatus = _cursor.getString(_cursorIndexOfSyncStatus);
             }
-            _item = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus);
+            final String _tmpDescriptionHash;
+            if (_cursor.isNull(_cursorIndexOfDescriptionHash)) {
+              _tmpDescriptionHash = null;
+            } else {
+              _tmpDescriptionHash = _cursor.getString(_cursorIndexOfDescriptionHash);
+            }
+            final boolean _tmpAiParsed;
+            final int _tmp_2;
+            _tmp_2 = _cursor.getInt(_cursorIndexOfAiParsed);
+            _tmpAiParsed = _tmp_2 != 0;
+            final Long _tmpAiParsedAt;
+            if (_cursor.isNull(_cursorIndexOfAiParsedAt)) {
+              _tmpAiParsedAt = null;
+            } else {
+              _tmpAiParsedAt = _cursor.getLong(_cursorIndexOfAiParsedAt);
+            }
+            _item = new LocationEntity(_tmpId,_tmpName,_tmpDescription,_tmpLatitude,_tmpLongitude,_tmpSocketTypes,_tmpPublicPrivate,_tmpHasFee,_tmpGpoCount,_tmpOpeningHours,_tmpAdditionalInfo,_tmpProviderName,_tmpProviderWebsite,_tmpChargingCosts,_tmpColor,_tmpIcon,_tmpLastModified,_tmpIsFavourite,_tmpSyncStatus,_tmpDescriptionHash,_tmpAiParsed,_tmpAiParsedAt);
             _result.add(_item);
           }
           return _result;

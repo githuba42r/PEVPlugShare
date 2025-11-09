@@ -1,6 +1,7 @@
 package com.pevplugshare;
 
 import androidx.hilt.work.HiltWrapper_WorkerFactoryModule;
+import com.pevplugshare.data.remote.SessionRefreshWorker_HiltModule;
 import com.pevplugshare.di.DatabaseModule;
 import com.pevplugshare.di.NetworkModule;
 import com.pevplugshare.di.RepositoryModule;
@@ -10,12 +11,14 @@ import com.pevplugshare.ui.auth.LoginActivity_GeneratedInjector;
 import com.pevplugshare.ui.auth.LoginViewModel_HiltModules;
 import com.pevplugshare.ui.auth.SplashActivity_GeneratedInjector;
 import com.pevplugshare.ui.auth.SplashViewModel_HiltModules;
+import com.pevplugshare.ui.edit.AiDescriptionDialogFragment_GeneratedInjector;
 import com.pevplugshare.ui.edit.EditLocationActivity_GeneratedInjector;
 import com.pevplugshare.ui.edit.EditLocationViewModel_HiltModules;
 import com.pevplugshare.ui.main.MainActivity_GeneratedInjector;
 import com.pevplugshare.ui.main.MainViewModel_HiltModules;
 import com.pevplugshare.ui.photo.PhotoCaptureActivity_GeneratedInjector;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel_HiltModules;
+import com.pevplugshare.ui.settings.SettingsActivity_GeneratedInjector;
 import com.pevplugshare.worker.AutoSyncWorker_HiltModule;
 import dagger.Binds;
 import dagger.Component;
@@ -149,7 +152,8 @@ public final class PEVPlugShareApplication_HiltComponents {
           NetworkModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
-          RepositoryModule.class
+          RepositoryModule.class,
+          SessionRefreshWorker_HiltModule.class
       }
   )
   @Singleton
@@ -209,6 +213,7 @@ public final class PEVPlugShareApplication_HiltComponents {
       EditLocationActivity_GeneratedInjector,
       MainActivity_GeneratedInjector,
       PhotoCaptureActivity_GeneratedInjector,
+      SettingsActivity_GeneratedInjector,
       ActivityComponent,
       DefaultViewModelFactories.ActivityEntryPoint,
       HiltWrapper_HiltViewModelFactory_ActivityCreatorEntryPoint,
@@ -253,7 +258,8 @@ public final class PEVPlugShareApplication_HiltComponents {
       modules = ViewWithFragmentCBuilderModule.class
   )
   @FragmentScoped
-  public abstract static class FragmentC implements FragmentComponent,
+  public abstract static class FragmentC implements AiDescriptionDialogFragment_GeneratedInjector,
+      FragmentComponent,
       DefaultViewModelFactories.FragmentEntryPoint,
       ViewComponentManager.ViewWithFragmentComponentBuilderEntryPoint,
       GeneratedComponent {

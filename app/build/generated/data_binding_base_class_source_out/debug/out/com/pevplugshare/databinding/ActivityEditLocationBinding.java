@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -16,8 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.card.MaterialCardView;
 import com.pevplugshare.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -25,22 +27,43 @@ import java.lang.String;
 
 public final class ActivityEditLocationBinding implements ViewBinding {
   @NonNull
-  private final FrameLayout rootView;
+  private final LinearLayout rootView;
+
+  @NonNull
+  public final ImageView accessTypeIcon;
+
+  @NonNull
+  public final TextView accessTypeText;
 
   @NonNull
   public final MaterialButtonToggleGroup accessTypeToggle;
 
   @NonNull
+  public final LinearLayout accessTypeToggleLayout;
+
+  @NonNull
+  public final MaterialCardView addPhotoButton;
+
+  @NonNull
   public final EditText additionalInfoInput;
+
+  @NonNull
+  public final ImageView analyzePhotosButton;
 
   @NonNull
   public final MaterialButton buttonCancel;
 
   @NonNull
-  public final MaterialButton buttonGetLocation;
+  public final ImageView buttonGenerateDescription;
+
+  @NonNull
+  public final ImageView buttonParseDescription;
 
   @NonNull
   public final MaterialButton buttonSubmit;
+
+  @NonNull
+  public final MaterialButton buttonSyncToOsmand;
 
   @NonNull
   public final EditText chargingCostsInput;
@@ -49,25 +72,31 @@ public final class ActivityEditLocationBinding implements ViewBinding {
   public final EditText descriptionInput;
 
   @NonNull
+  public final ImageView favoriteIndicator;
+
+  @NonNull
   public final CheckBox feeCheckbox;
 
   @NonNull
   public final LinearLayout feeDetailsSection;
 
   @NonNull
+  public final ImageView feeIndicator;
+
+  @NonNull
   public final ScrollView formContainer;
 
   @NonNull
-  public final EditText gpoCountInput;
-
-  @NonNull
-  public final TextView locationCoordinates;
+  public final ImageView mapLocationButton;
 
   @NonNull
   public final EditText nameInput;
 
   @NonNull
-  public final EditText openingHoursInput;
+  public final Spinner openingHoursSpinner;
+
+  @NonNull
+  public final LinearLayout photosContainer;
 
   @NonNull
   public final MaterialButton privateButton;
@@ -85,45 +114,86 @@ public final class ActivityEditLocationBinding implements ViewBinding {
   public final MaterialButton publicButton;
 
   @NonNull
+  public final MaterialButton socket10Button;
+
+  @NonNull
+  public final MaterialButton socket10PlusButton;
+
+  @NonNull
+  public final MaterialButton socket1Button;
+
+  @NonNull
+  public final MaterialButton socket2Button;
+
+  @NonNull
+  public final MaterialButton socket4Button;
+
+  @NonNull
   public final Spinner socketTypeSpinner;
 
-  private ActivityEditLocationBinding(@NonNull FrameLayout rootView,
-      @NonNull MaterialButtonToggleGroup accessTypeToggle, @NonNull EditText additionalInfoInput,
-      @NonNull MaterialButton buttonCancel, @NonNull MaterialButton buttonGetLocation,
-      @NonNull MaterialButton buttonSubmit, @NonNull EditText chargingCostsInput,
-      @NonNull EditText descriptionInput, @NonNull CheckBox feeCheckbox,
-      @NonNull LinearLayout feeDetailsSection, @NonNull ScrollView formContainer,
-      @NonNull EditText gpoCountInput, @NonNull TextView locationCoordinates,
-      @NonNull EditText nameInput, @NonNull EditText openingHoursInput,
+  @NonNull
+  public final MaterialToolbar toolbar;
+
+  private ActivityEditLocationBinding(@NonNull LinearLayout rootView,
+      @NonNull ImageView accessTypeIcon, @NonNull TextView accessTypeText,
+      @NonNull MaterialButtonToggleGroup accessTypeToggle,
+      @NonNull LinearLayout accessTypeToggleLayout, @NonNull MaterialCardView addPhotoButton,
+      @NonNull EditText additionalInfoInput, @NonNull ImageView analyzePhotosButton,
+      @NonNull MaterialButton buttonCancel, @NonNull ImageView buttonGenerateDescription,
+      @NonNull ImageView buttonParseDescription, @NonNull MaterialButton buttonSubmit,
+      @NonNull MaterialButton buttonSyncToOsmand, @NonNull EditText chargingCostsInput,
+      @NonNull EditText descriptionInput, @NonNull ImageView favoriteIndicator,
+      @NonNull CheckBox feeCheckbox, @NonNull LinearLayout feeDetailsSection,
+      @NonNull ImageView feeIndicator, @NonNull ScrollView formContainer,
+      @NonNull ImageView mapLocationButton, @NonNull EditText nameInput,
+      @NonNull Spinner openingHoursSpinner, @NonNull LinearLayout photosContainer,
       @NonNull MaterialButton privateButton, @NonNull ProgressBar progressBar,
       @NonNull EditText providerNameInput, @NonNull EditText providerWebsiteInput,
-      @NonNull MaterialButton publicButton, @NonNull Spinner socketTypeSpinner) {
+      @NonNull MaterialButton publicButton, @NonNull MaterialButton socket10Button,
+      @NonNull MaterialButton socket10PlusButton, @NonNull MaterialButton socket1Button,
+      @NonNull MaterialButton socket2Button, @NonNull MaterialButton socket4Button,
+      @NonNull Spinner socketTypeSpinner, @NonNull MaterialToolbar toolbar) {
     this.rootView = rootView;
+    this.accessTypeIcon = accessTypeIcon;
+    this.accessTypeText = accessTypeText;
     this.accessTypeToggle = accessTypeToggle;
+    this.accessTypeToggleLayout = accessTypeToggleLayout;
+    this.addPhotoButton = addPhotoButton;
     this.additionalInfoInput = additionalInfoInput;
+    this.analyzePhotosButton = analyzePhotosButton;
     this.buttonCancel = buttonCancel;
-    this.buttonGetLocation = buttonGetLocation;
+    this.buttonGenerateDescription = buttonGenerateDescription;
+    this.buttonParseDescription = buttonParseDescription;
     this.buttonSubmit = buttonSubmit;
+    this.buttonSyncToOsmand = buttonSyncToOsmand;
     this.chargingCostsInput = chargingCostsInput;
     this.descriptionInput = descriptionInput;
+    this.favoriteIndicator = favoriteIndicator;
     this.feeCheckbox = feeCheckbox;
     this.feeDetailsSection = feeDetailsSection;
+    this.feeIndicator = feeIndicator;
     this.formContainer = formContainer;
-    this.gpoCountInput = gpoCountInput;
-    this.locationCoordinates = locationCoordinates;
+    this.mapLocationButton = mapLocationButton;
     this.nameInput = nameInput;
-    this.openingHoursInput = openingHoursInput;
+    this.openingHoursSpinner = openingHoursSpinner;
+    this.photosContainer = photosContainer;
     this.privateButton = privateButton;
     this.progressBar = progressBar;
     this.providerNameInput = providerNameInput;
     this.providerWebsiteInput = providerWebsiteInput;
     this.publicButton = publicButton;
+    this.socket10Button = socket10Button;
+    this.socket10PlusButton = socket10PlusButton;
+    this.socket1Button = socket1Button;
+    this.socket2Button = socket2Button;
+    this.socket4Button = socket4Button;
     this.socketTypeSpinner = socketTypeSpinner;
+    this.toolbar = toolbar;
   }
 
   @Override
   @NonNull
-  public FrameLayout getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -148,9 +218,33 @@ public final class ActivityEditLocationBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.accessTypeIcon;
+      ImageView accessTypeIcon = ViewBindings.findChildViewById(rootView, id);
+      if (accessTypeIcon == null) {
+        break missingId;
+      }
+
+      id = R.id.accessTypeText;
+      TextView accessTypeText = ViewBindings.findChildViewById(rootView, id);
+      if (accessTypeText == null) {
+        break missingId;
+      }
+
       id = R.id.accessTypeToggle;
       MaterialButtonToggleGroup accessTypeToggle = ViewBindings.findChildViewById(rootView, id);
       if (accessTypeToggle == null) {
+        break missingId;
+      }
+
+      id = R.id.accessTypeToggleLayout;
+      LinearLayout accessTypeToggleLayout = ViewBindings.findChildViewById(rootView, id);
+      if (accessTypeToggleLayout == null) {
+        break missingId;
+      }
+
+      id = R.id.addPhotoButton;
+      MaterialCardView addPhotoButton = ViewBindings.findChildViewById(rootView, id);
+      if (addPhotoButton == null) {
         break missingId;
       }
 
@@ -160,21 +254,39 @@ public final class ActivityEditLocationBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.analyzePhotosButton;
+      ImageView analyzePhotosButton = ViewBindings.findChildViewById(rootView, id);
+      if (analyzePhotosButton == null) {
+        break missingId;
+      }
+
       id = R.id.buttonCancel;
       MaterialButton buttonCancel = ViewBindings.findChildViewById(rootView, id);
       if (buttonCancel == null) {
         break missingId;
       }
 
-      id = R.id.buttonGetLocation;
-      MaterialButton buttonGetLocation = ViewBindings.findChildViewById(rootView, id);
-      if (buttonGetLocation == null) {
+      id = R.id.buttonGenerateDescription;
+      ImageView buttonGenerateDescription = ViewBindings.findChildViewById(rootView, id);
+      if (buttonGenerateDescription == null) {
+        break missingId;
+      }
+
+      id = R.id.buttonParseDescription;
+      ImageView buttonParseDescription = ViewBindings.findChildViewById(rootView, id);
+      if (buttonParseDescription == null) {
         break missingId;
       }
 
       id = R.id.buttonSubmit;
       MaterialButton buttonSubmit = ViewBindings.findChildViewById(rootView, id);
       if (buttonSubmit == null) {
+        break missingId;
+      }
+
+      id = R.id.buttonSyncToOsmand;
+      MaterialButton buttonSyncToOsmand = ViewBindings.findChildViewById(rootView, id);
+      if (buttonSyncToOsmand == null) {
         break missingId;
       }
 
@@ -190,6 +302,12 @@ public final class ActivityEditLocationBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.favoriteIndicator;
+      ImageView favoriteIndicator = ViewBindings.findChildViewById(rootView, id);
+      if (favoriteIndicator == null) {
+        break missingId;
+      }
+
       id = R.id.feeCheckbox;
       CheckBox feeCheckbox = ViewBindings.findChildViewById(rootView, id);
       if (feeCheckbox == null) {
@@ -202,21 +320,21 @@ public final class ActivityEditLocationBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.feeIndicator;
+      ImageView feeIndicator = ViewBindings.findChildViewById(rootView, id);
+      if (feeIndicator == null) {
+        break missingId;
+      }
+
       id = R.id.formContainer;
       ScrollView formContainer = ViewBindings.findChildViewById(rootView, id);
       if (formContainer == null) {
         break missingId;
       }
 
-      id = R.id.gpoCountInput;
-      EditText gpoCountInput = ViewBindings.findChildViewById(rootView, id);
-      if (gpoCountInput == null) {
-        break missingId;
-      }
-
-      id = R.id.locationCoordinates;
-      TextView locationCoordinates = ViewBindings.findChildViewById(rootView, id);
-      if (locationCoordinates == null) {
+      id = R.id.mapLocationButton;
+      ImageView mapLocationButton = ViewBindings.findChildViewById(rootView, id);
+      if (mapLocationButton == null) {
         break missingId;
       }
 
@@ -226,9 +344,15 @@ public final class ActivityEditLocationBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.openingHoursInput;
-      EditText openingHoursInput = ViewBindings.findChildViewById(rootView, id);
-      if (openingHoursInput == null) {
+      id = R.id.openingHoursSpinner;
+      Spinner openingHoursSpinner = ViewBindings.findChildViewById(rootView, id);
+      if (openingHoursSpinner == null) {
+        break missingId;
+      }
+
+      id = R.id.photosContainer;
+      LinearLayout photosContainer = ViewBindings.findChildViewById(rootView, id);
+      if (photosContainer == null) {
         break missingId;
       }
 
@@ -262,17 +386,57 @@ public final class ActivityEditLocationBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.socket10Button;
+      MaterialButton socket10Button = ViewBindings.findChildViewById(rootView, id);
+      if (socket10Button == null) {
+        break missingId;
+      }
+
+      id = R.id.socket10PlusButton;
+      MaterialButton socket10PlusButton = ViewBindings.findChildViewById(rootView, id);
+      if (socket10PlusButton == null) {
+        break missingId;
+      }
+
+      id = R.id.socket1Button;
+      MaterialButton socket1Button = ViewBindings.findChildViewById(rootView, id);
+      if (socket1Button == null) {
+        break missingId;
+      }
+
+      id = R.id.socket2Button;
+      MaterialButton socket2Button = ViewBindings.findChildViewById(rootView, id);
+      if (socket2Button == null) {
+        break missingId;
+      }
+
+      id = R.id.socket4Button;
+      MaterialButton socket4Button = ViewBindings.findChildViewById(rootView, id);
+      if (socket4Button == null) {
+        break missingId;
+      }
+
       id = R.id.socketTypeSpinner;
       Spinner socketTypeSpinner = ViewBindings.findChildViewById(rootView, id);
       if (socketTypeSpinner == null) {
         break missingId;
       }
 
-      return new ActivityEditLocationBinding((FrameLayout) rootView, accessTypeToggle,
-          additionalInfoInput, buttonCancel, buttonGetLocation, buttonSubmit, chargingCostsInput,
-          descriptionInput, feeCheckbox, feeDetailsSection, formContainer, gpoCountInput,
-          locationCoordinates, nameInput, openingHoursInput, privateButton, progressBar,
-          providerNameInput, providerWebsiteInput, publicButton, socketTypeSpinner);
+      id = R.id.toolbar;
+      MaterialToolbar toolbar = ViewBindings.findChildViewById(rootView, id);
+      if (toolbar == null) {
+        break missingId;
+      }
+
+      return new ActivityEditLocationBinding((LinearLayout) rootView, accessTypeIcon,
+          accessTypeText, accessTypeToggle, accessTypeToggleLayout, addPhotoButton,
+          additionalInfoInput, analyzePhotosButton, buttonCancel, buttonGenerateDescription,
+          buttonParseDescription, buttonSubmit, buttonSyncToOsmand, chargingCostsInput,
+          descriptionInput, favoriteIndicator, feeCheckbox, feeDetailsSection, feeIndicator,
+          formContainer, mapLocationButton, nameInput, openingHoursSpinner, photosContainer,
+          privateButton, progressBar, providerNameInput, providerWebsiteInput, publicButton,
+          socket10Button, socket10PlusButton, socket1Button, socket2Button, socket4Button,
+          socketTypeSpinner, toolbar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

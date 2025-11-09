@@ -5,12 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.pevplugshare.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -24,13 +28,40 @@ public final class ActivityLoginBinding implements ViewBinding {
   public final Button loginButton;
 
   @NonNull
+  public final TextInputEditText passwordInput;
+
+  @NonNull
+  public final TextInputLayout passwordLayout;
+
+  @NonNull
   public final ProgressBar progressBar;
 
+  @NonNull
+  public final CheckBox rememberMeCheckbox;
+
+  @NonNull
+  public final TextView statusText;
+
+  @NonNull
+  public final TextInputEditText usernameInput;
+
+  @NonNull
+  public final TextInputLayout usernameLayout;
+
   private ActivityLoginBinding(@NonNull LinearLayout rootView, @NonNull Button loginButton,
-      @NonNull ProgressBar progressBar) {
+      @NonNull TextInputEditText passwordInput, @NonNull TextInputLayout passwordLayout,
+      @NonNull ProgressBar progressBar, @NonNull CheckBox rememberMeCheckbox,
+      @NonNull TextView statusText, @NonNull TextInputEditText usernameInput,
+      @NonNull TextInputLayout usernameLayout) {
     this.rootView = rootView;
     this.loginButton = loginButton;
+    this.passwordInput = passwordInput;
+    this.passwordLayout = passwordLayout;
     this.progressBar = progressBar;
+    this.rememberMeCheckbox = rememberMeCheckbox;
+    this.statusText = statusText;
+    this.usernameInput = usernameInput;
+    this.usernameLayout = usernameLayout;
   }
 
   @Override
@@ -66,13 +97,51 @@ public final class ActivityLoginBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.passwordInput;
+      TextInputEditText passwordInput = ViewBindings.findChildViewById(rootView, id);
+      if (passwordInput == null) {
+        break missingId;
+      }
+
+      id = R.id.passwordLayout;
+      TextInputLayout passwordLayout = ViewBindings.findChildViewById(rootView, id);
+      if (passwordLayout == null) {
+        break missingId;
+      }
+
       id = R.id.progressBar;
       ProgressBar progressBar = ViewBindings.findChildViewById(rootView, id);
       if (progressBar == null) {
         break missingId;
       }
 
-      return new ActivityLoginBinding((LinearLayout) rootView, loginButton, progressBar);
+      id = R.id.rememberMeCheckbox;
+      CheckBox rememberMeCheckbox = ViewBindings.findChildViewById(rootView, id);
+      if (rememberMeCheckbox == null) {
+        break missingId;
+      }
+
+      id = R.id.statusText;
+      TextView statusText = ViewBindings.findChildViewById(rootView, id);
+      if (statusText == null) {
+        break missingId;
+      }
+
+      id = R.id.usernameInput;
+      TextInputEditText usernameInput = ViewBindings.findChildViewById(rootView, id);
+      if (usernameInput == null) {
+        break missingId;
+      }
+
+      id = R.id.usernameLayout;
+      TextInputLayout usernameLayout = ViewBindings.findChildViewById(rootView, id);
+      if (usernameLayout == null) {
+        break missingId;
+      }
+
+      return new ActivityLoginBinding((LinearLayout) rootView, loginButton, passwordInput,
+          passwordLayout, progressBar, rememberMeCheckbox, statusText, usernameInput,
+          usernameLayout);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

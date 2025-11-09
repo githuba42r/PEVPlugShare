@@ -1,9 +1,20 @@
 -- Merging decision tree log ---
+provider#androidx.core.content.FileProvider
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:94:9-102:20
+	android:grantUriPermissions
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:98:13-47
+	android:authorities
+		INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:96:13-60
+	android:exported
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:97:13-37
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:95:13-62
 manifest
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-84:12
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-84:12
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-84:12
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-84:12
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-106:12
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-106:12
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-106:12
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-106:12
 MERGED from [androidx.databinding:viewbinding:8.4.0] /home/philg/.gradle/caches/transforms-4/831a7c985b3987597772fd9f8b93a6ff/transformed/jetified-viewbinding-8.4.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.material:material:1.11.0] /home/philg/.gradle/caches/transforms-4/e091f759ff6f0d7ba84b5748adc163f1/transformed/material-1.11.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/philg/.gradle/caches/transforms-4/d888538de00e4bbf1dae17de56c43022/transformed/constraintlayout-2.1.4/AndroidManifest.xml:2:1-11:12
@@ -13,32 +24,39 @@ MERGED from [androidx.camera:camera-lifecycle:1.3.4] /home/philg/.gradle/caches/
 MERGED from [androidx.camera:camera-camera2:1.3.4] /home/philg/.gradle/caches/transforms-4/6fba946b613f7397c63678c4baf6dc26/transformed/jetified-camera-camera2-1.3.4/AndroidManifest.xml:17:1-36:12
 MERGED from [androidx.camera:camera-view:1.3.4] /home/philg/.gradle/caches/transforms-4/f7c9a2ed3e0d848ed30b9612c34b4c67/transformed/jetified-camera-view-1.3.4/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/philg/.gradle/caches/transforms-4/46a4c0f906f91df3d93881e629ce9303/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.preference:preference-ktx:1.2.1] /home/philg/.gradle/caches/transforms-4/96812b764cb7ff8507abb16f7201dfb2/transformed/jetified-preference-ktx-1.2.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.preference:preference:1.2.1] /home/philg/.gradle/caches/transforms-4/37efdf2ca5381c253ae86479ce6f9622/transformed/preference-1.2.1/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.appcompat:appcompat:1.6.1] /home/philg/.gradle/caches/transforms-4/972eb775f2be7b34a4928d037e74ef9d/transformed/appcompat-1.6.1/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.hilt:hilt-work:1.1.0] /home/philg/.gradle/caches/transforms-4/a59f14a4e6075241edc5a0cd5a0809ce/transformed/jetified-hilt-work-1.1.0/AndroidManifest.xml:17:1-22:12
 MERGED from [com.google.dagger:hilt-android:2.50] /home/philg/.gradle/caches/transforms-4/0eb06dfe77edc916a00a2533d7daa88e/transformed/jetified-hilt-android-2.50/AndroidManifest.xml:16:1-19:12
+MERGED from [com.github.bumptech.glide:glide:4.16.0] /home/philg/.gradle/caches/transforms-4/9cdedb2a7d12ed4ccadfb9d3cb0b9d47/transformed/jetified-glide-4.16.0/AndroidManifest.xml:2:1-9:12
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] /home/philg/.gradle/caches/transforms-4/ec8bf712d074ef8c9cd3468d44ec4e24/transformed/jetified-viewpager2-1.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.gms:play-services-location:21.1.0] /home/philg/.gradle/caches/transforms-4/97d8e2b750849c3cc3816141839d4c63/transformed/jetified-play-services-location-21.1.0/AndroidManifest.xml:2:1-9:12
 MERGED from [com.google.android.gms:play-services-base:18.1.0] /home/philg/.gradle/caches/transforms-4/3dedfe8167fa6311361b3c669c20929c/transformed/jetified-play-services-base-18.1.0/AndroidManifest.xml:16:1-24:12
 MERGED from [com.google.android.gms:play-services-tasks:18.0.2] /home/philg/.gradle/caches/transforms-4/52e15b14750a4b503d95719706cc03d5/transformed/jetified-play-services-tasks-18.0.2/AndroidManifest.xml:2:1-6:12
 MERGED from [com.google.android.gms:play-services-basement:18.1.0] /home/philg/.gradle/caches/transforms-4/9beed8c4d942274c362ae9ac02f97395/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:16:1-26:12
+MERGED from [androidx.fragment:fragment-ktx:1.3.6] /home/philg/.gradle/caches/transforms-4/897c71d75516763575cb064c47f8b17f/transformed/jetified-fragment-ktx-1.3.6/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.fragment:fragment:1.5.1] /home/philg/.gradle/caches/transforms-4/12fd8b463c4c785b3a45934a4897953f/transformed/fragment-1.5.1/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.activity:activity:1.8.0] /home/philg/.gradle/caches/transforms-4/53dac2f2bc52d732191b2228841f96b2/transformed/jetified-activity-1.8.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.activity:activity-ktx:1.8.0] /home/philg/.gradle/caches/transforms-4/fb2dc26e0a0f414b324005130a49c97d/transformed/jetified-activity-ktx-1.8.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] /home/philg/.gradle/caches/transforms-4/fbceb9b9dfbf360b65fbbe703abc7a73/transformed/swiperefreshlayout-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] /home/philg/.gradle/caches/transforms-4/804a406a622ebfdc6783b65cd2a94c4f/transformed/jetified-emoji2-views-helper-1.2.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/a486ca00ba5f2d944132acc1bd219caf/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:17:1-35:12
 MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] /home/philg/.gradle/caches/transforms-4/400bc64ee9c83b0c5fd9271249b25452/transformed/drawerlayout-1.1.1/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] /home/philg/.gradle/caches/transforms-4/e5f1e58d1bcbbc752b3286e2e9a47f25/transformed/coordinatorlayout-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] /home/philg/.gradle/caches/transforms-4/ecc4c16f7127262c219c26bbf2ea9dd1/transformed/dynamicanimation-1.0.0/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.transition:transition:1.2.0] /home/philg/.gradle/caches/transforms-4/91391eae747fcf410df616c247d5029c/transformed/transition-1.2.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/philg/.gradle/caches/transforms-4/e63ce34d1815330f0dc9092801ffbb8b/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /home/philg/.gradle/caches/transforms-4/3028ef7efe10eb8c1bb0442f21051bcd/transformed/vectordrawable-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.work:work-runtime-ktx:2.8.1] /home/philg/.gradle/caches/transforms-4/a50ab4ac28eb0b8ff23a99b3b62b9797/transformed/work-runtime-ktx-2.8.1/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/fa3331292667160d18a4d937c905194b/transformed/work-runtime-2.8.1/AndroidManifest.xml:17:1-145:12
 MERGED from [androidx.recyclerview:recyclerview:1.1.0] /home/philg/.gradle/caches/transforms-4/8b6904a646dd113ced3ef6a02f5fc81c/transformed/recyclerview-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.viewpager:viewpager:1.0.0] /home/philg/.gradle/caches/transforms-4/61f4c94c8511b0b3d0ebc6e3d69890ee/transformed/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.2.0] /home/philg/.gradle/caches/transforms-4/06ed8cad4c0540ef46ce882b34d00797/transformed/slidingpanelayout-1.2.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.customview:customview:1.1.0] /home/philg/.gradle/caches/transforms-4/5953f2add6f2cf191b5546866e985794/transformed/customview-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /home/philg/.gradle/caches/transforms-4/548d33ce185271a3e8400b2a5ead882a/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.loader:loader:1.0.0] /home/philg/.gradle/caches/transforms-4/b6ead1f717714c79294f67bc9212bd7b/transformed/loader-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.transition:transition:1.4.1] /home/philg/.gradle/caches/transforms-4/355e59d3fe3706586de83b68a8a1c757/transformed/transition-1.4.1/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:17:1-33:12
 MERGED from [androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/0986b1812f49971f87fc62e679b16005/transformed/core-1.13.0/AndroidManifest.xml:17:1-30:12
 MERGED from [androidx.lifecycle:lifecycle-service:2.7.0] /home/philg/.gradle/caches/transforms-4/c33e962004478df95d933443307d3973/transformed/jetified-lifecycle-service-2.7.0/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.7.0] /home/philg/.gradle/caches/transforms-4/1c34dc9351b0345ea8da4e1385f3c68d/transformed/lifecycle-livedata-core-2.7.0/AndroidManifest.xml:17:1-22:12
@@ -63,16 +81,18 @@ MERGED from [androidx.annotation:annotation-experimental:1.4.0] /home/philg/.gra
 MERGED from [androidx.exifinterface:exifinterface:1.3.6] /home/philg/.gradle/caches/transforms-4/85a7bd1f2bcb28696bd0df6290e840ef/transformed/exifinterface-1.3.6/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /home/philg/.gradle/caches/transforms-4/24cb4449348b58a8fe512716503bbb15/transformed/cursoradapter-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.cardview:cardview:1.0.0] /home/philg/.gradle/caches/transforms-4/a2a48036eec0f2522758b2a1a7a2da98/transformed/cardview-1.0.0/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/philg/.gradle/caches/transforms-4/e95f8dcb1c5bcd1f0ef49033e4782ed5/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /home/philg/.gradle/caches/transforms-4/3e2a58585bf4b224bbb5779aebd87743/transformed/jetified-security-crypto-1.1.0-alpha06/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.interpolator:interpolator:1.0.0] /home/philg/.gradle/caches/transforms-4/669dd24ff36185537fdbcdb07bd64873/transformed/interpolator-1.0.0/AndroidManifest.xml:17:1-22:12
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/philg/.gradle/caches/transforms-4/e95f8dcb1c5bcd1f0ef49033e4782ed5/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [com.github.bumptech.glide:gifdecoder:4.16.0] /home/philg/.gradle/caches/transforms-4/ecd7daabb062274ab97b1f394bfb92f3/transformed/jetified-gifdecoder-4.16.0/AndroidManifest.xml:2:1-9:12
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/dbac343ab8b3c903548bc216e9864a18/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:17:1-55:12
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/philg/.gradle/caches/transforms-4/fe821e729eb8133dbbc5265db89998b0/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:17:1-33:12
 MERGED from [androidx.tracing:tracing:1.0.0] /home/philg/.gradle/caches/transforms-4/0bfd854f8f11066f41cb3c6893042e53/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /home/philg/.gradle/caches/transforms-4/3e2a58585bf4b224bbb5779aebd87743/transformed/jetified-security-crypto-1.1.0-alpha06/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:17:1-27:12
 MERGED from [androidx.documentfile:documentfile:1.0.0] /home/philg/.gradle/caches/transforms-4/4d79a950276498c04c067732209c0000/transformed/documentfile-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /home/philg/.gradle/caches/transforms-4/3f763a172ab49d153769cfad8b2101cd/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.print:print:1.0.0] /home/philg/.gradle/caches/transforms-4/d3c31ff025370c014d63d51bf58d6c96/transformed/print-1.0.0/AndroidManifest.xml:17:1-22:12
+MERGED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:2:1-27:12
 MERGED from [com.google.dagger:dagger-lint-aar:2.50] /home/philg/.gradle/caches/transforms-4/71dbac9f865037fd00d874ccf78e1c40/transformed/jetified-dagger-lint-aar-2.50/AndroidManifest.xml:16:1-19:12
 	package
 		INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml
@@ -114,9 +134,19 @@ ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/Andro
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:12:58-82
 	android:name
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:12:19-57
+queries
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:15:5-18:15
+package#net.osmand.plus
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:16:9-51
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:16:18-48
+package#net.osmand
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:17:9-46
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:17:18-43
 application
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:14:5-82:19
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:14:5-82:19
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:20:5-104:19
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:20:5-104:19
 MERGED from [com.google.android.material:material:1.11.0] /home/philg/.gradle/caches/transforms-4/e091f759ff6f0d7ba84b5748adc163f1/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] /home/philg/.gradle/caches/transforms-4/e091f759ff6f0d7ba84b5748adc163f1/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/philg/.gradle/caches/transforms-4/d888538de00e4bbf1dae17de56c43022/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
@@ -137,118 +167,132 @@ MERGED from [androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms
 MERGED from [androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/a486ca00ba5f2d944132acc1bd219caf/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/fa3331292667160d18a4d937c905194b/transformed/work-runtime-2.8.1/AndroidManifest.xml:28:5-143:19
 MERGED from [androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/fa3331292667160d18a4d937c905194b/transformed/work-runtime-2.8.1/AndroidManifest.xml:28:5-143:19
+MERGED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:24:5-31:19
+MERGED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:24:5-31:19
 MERGED from [androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/0986b1812f49971f87fc62e679b16005/transformed/core-1.13.0/AndroidManifest.xml:28:5-89
 MERGED from [androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/0986b1812f49971f87fc62e679b16005/transformed/core-1.13.0/AndroidManifest.xml:28:5-89
 MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] /home/philg/.gradle/caches/transforms-4/78edf932a4c2c2aaf206b23f5fde75c3/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.lifecycle:lifecycle-process:2.7.0] /home/philg/.gradle/caches/transforms-4/78edf932a4c2c2aaf206b23f5fde75c3/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.room:room-runtime:2.6.1] /home/philg/.gradle/caches/transforms-4/bd38e3dc397d75194bcd8b5d0e6343ed/transformed/room-runtime-2.6.1/AndroidManifest.xml:23:5-29:19
 MERGED from [androidx.room:room-runtime:2.6.1] /home/philg/.gradle/caches/transforms-4/bd38e3dc397d75194bcd8b5d0e6343ed/transformed/room-runtime-2.6.1/AndroidManifest.xml:23:5-29:19
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/dbac343ab8b3c903548bc216e9864a18/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:23:5-53:19
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/dbac343ab8b3c903548bc216e9864a18/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:23:5-53:19
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/philg/.gradle/caches/transforms-4/fe821e729eb8133dbbc5265db89998b0/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/philg/.gradle/caches/transforms-4/fe821e729eb8133dbbc5265db89998b0/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:24:5-25:19
 	android:extractNativeLibs
 		INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/0986b1812f49971f87fc62e679b16005/transformed/core-1.13.0/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:20:9-35
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:26:9-35
 	android:label
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:19:9-41
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:25:9-41
 	android:fullBackupContent
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:17:9-54
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:23:9-54
 	android:icon
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:18:9-43
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:24:9-43
 	android:allowBackup
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:15:9-35
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:21:9-35
 	android:theme
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:21:9-50
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:27:9-50
 	android:dataExtractionRules
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:16:9-65
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:22:9-65
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:22:9-48
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:28:9-48
 activity#com.pevplugshare.ui.auth.SplashActivity
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:24:9-31:20
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:30:9-37:20
 	android:exported
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:26:13-36
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:32:13-36
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:25:13-51
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:31:13-51
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:27:13-30:29
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:33:13-36:29
 action#android.intent.action.MAIN
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:28:17-69
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:34:17-69
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:28:25-66
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:34:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:29:17-77
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:35:17-77
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:29:27-74
-activity#com.pevplugshare.ui.auth.LoginActivity
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:33:9-45:20
-	android:exported
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:35:13-36
-	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:34:13-50
-intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:auth+data:path:/callback+data:scheme:com.pevplugshare
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:36:13-44:29
-action#android.intent.action.VIEW
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:37:17-69
-	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:37:25-66
-category#android.intent.category.DEFAULT
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:38:17-76
-	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:38:27-73
-category#android.intent.category.BROWSABLE
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:39:17-78
-	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:39:27-75
-data
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:40:17-43:57
-	android:path
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:42:21-45
-	android:host
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:41:21-40
-	android:scheme
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:43:21-54
-	android:pathPattern
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:74:21-52
-	android:mimeType
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:75:21-56
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:35:27-74
 activity#com.pevplugshare.ui.main.MainActivity
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:39:9-41:40
+	android:exported
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:41:13-37
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:40:13-49
+activity#com.pevplugshare.ui.add.AddLocationActivity
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:43:9-45:40
+	android:exported
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:45:13-37
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:44:13-55
+activity#com.pevplugshare.ui.photo.PhotoCaptureActivity
 ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:47:9-49:40
 	android:exported
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:49:13-37
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:48:13-49
-activity#com.pevplugshare.ui.add.AddLocationActivity
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:48:13-58
+activity#com.pevplugshare.ui.settings.SettingsActivity
 ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:51:9-53:40
 	android:exported
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:53:13-37
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:52:13-55
-activity#com.pevplugshare.ui.photo.PhotoCaptureActivity
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:55:9-57:40
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:52:13-57
+activity#com.pevplugshare.ui.auth.LoginActivity
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:55:9-68:20
 	android:exported
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:57:13-37
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:57:13-36
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:56:13-58
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:56:13-50
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:auth+data:path:/callback+data:scheme:com.pevplugshare
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:59:13-67:29
+action#android.intent.action.VIEW
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:60:17-69
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:60:25-66
+category#android.intent.category.DEFAULT
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:61:17-76
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:61:27-73
+category#android.intent.category.BROWSABLE
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:62:17-78
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:62:27-75
+data
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:63:17-66:48
+	android:path
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:66:21-45
+	android:host
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:65:21-40
+	android:scheme
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:64:21-54
+	android:pathPattern
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:85:21-52
+	android:mimeType
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:86:21-56
 activity#com.pevplugshare.ui.edit.EditLocationActivity
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:59:9-61:40
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:70:9-72:40
 	android:exported
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:61:13-37
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:72:13-37
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:60:13-57
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:71:13-57
 activity#com.pevplugshare.ui.import.ImportLocationsActivity
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:64:9-80:20
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:75:9-91:20
 	android:exported
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:66:13-36
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:77:13-36
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:65:13-62
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:76:13-62
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:*+data:mimeType:application/json+data:mimeType:application/json+data:pathPattern:.*\\.json+data:scheme:content+data:scheme:file
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:67:13-79:29
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:78:13-90:29
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:99:13-101:54
+	android:resource
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:101:17-51
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:100:17-67
 uses-sdk
 INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml
@@ -271,12 +315,18 @@ MERGED from [androidx.camera:camera-view:1.3.4] /home/philg/.gradle/caches/trans
 MERGED from [androidx.camera:camera-view:1.3.4] /home/philg/.gradle/caches/transforms-4/f7c9a2ed3e0d848ed30b9612c34b4c67/transformed/jetified-camera-view-1.3.4/AndroidManifest.xml:5:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/philg/.gradle/caches/transforms-4/46a4c0f906f91df3d93881e629ce9303/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] /home/philg/.gradle/caches/transforms-4/46a4c0f906f91df3d93881e629ce9303/transformed/jetified-appcompat-resources-1.6.1/AndroidManifest.xml:20:5-44
+MERGED from [androidx.preference:preference-ktx:1.2.1] /home/philg/.gradle/caches/transforms-4/96812b764cb7ff8507abb16f7201dfb2/transformed/jetified-preference-ktx-1.2.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.preference:preference-ktx:1.2.1] /home/philg/.gradle/caches/transforms-4/96812b764cb7ff8507abb16f7201dfb2/transformed/jetified-preference-ktx-1.2.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.preference:preference:1.2.1] /home/philg/.gradle/caches/transforms-4/37efdf2ca5381c253ae86479ce6f9622/transformed/preference-1.2.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.preference:preference:1.2.1] /home/philg/.gradle/caches/transforms-4/37efdf2ca5381c253ae86479ce6f9622/transformed/preference-1.2.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.appcompat:appcompat:1.6.1] /home/philg/.gradle/caches/transforms-4/972eb775f2be7b34a4928d037e74ef9d/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.6.1] /home/philg/.gradle/caches/transforms-4/972eb775f2be7b34a4928d037e74ef9d/transformed/appcompat-1.6.1/AndroidManifest.xml:20:5-44
 MERGED from [androidx.hilt:hilt-work:1.1.0] /home/philg/.gradle/caches/transforms-4/a59f14a4e6075241edc5a0cd5a0809ce/transformed/jetified-hilt-work-1.1.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.hilt:hilt-work:1.1.0] /home/philg/.gradle/caches/transforms-4/a59f14a4e6075241edc5a0cd5a0809ce/transformed/jetified-hilt-work-1.1.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.dagger:hilt-android:2.50] /home/philg/.gradle/caches/transforms-4/0eb06dfe77edc916a00a2533d7daa88e/transformed/jetified-hilt-android-2.50/AndroidManifest.xml:18:3-42
 MERGED from [com.google.dagger:hilt-android:2.50] /home/philg/.gradle/caches/transforms-4/0eb06dfe77edc916a00a2533d7daa88e/transformed/jetified-hilt-android-2.50/AndroidManifest.xml:18:3-42
+MERGED from [com.github.bumptech.glide:glide:4.16.0] /home/philg/.gradle/caches/transforms-4/9cdedb2a7d12ed4ccadfb9d3cb0b9d47/transformed/jetified-glide-4.16.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.github.bumptech.glide:glide:4.16.0] /home/philg/.gradle/caches/transforms-4/9cdedb2a7d12ed4ccadfb9d3cb0b9d47/transformed/jetified-glide-4.16.0/AndroidManifest.xml:5:5-7:41
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] /home/philg/.gradle/caches/transforms-4/ec8bf712d074ef8c9cd3468d44ec4e24/transformed/jetified-viewpager2-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] /home/philg/.gradle/caches/transforms-4/ec8bf712d074ef8c9cd3468d44ec4e24/transformed/jetified-viewpager2-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [com.google.android.gms:play-services-location:21.1.0] /home/philg/.gradle/caches/transforms-4/97d8e2b750849c3cc3816141839d4c63/transformed/jetified-play-services-location-21.1.0/AndroidManifest.xml:5:5-44
@@ -287,12 +337,16 @@ MERGED from [com.google.android.gms:play-services-tasks:18.0.2] /home/philg/.gra
 MERGED from [com.google.android.gms:play-services-tasks:18.0.2] /home/philg/.gradle/caches/transforms-4/52e15b14750a4b503d95719706cc03d5/transformed/jetified-play-services-tasks-18.0.2/AndroidManifest.xml:4:5-43
 MERGED from [com.google.android.gms:play-services-basement:18.1.0] /home/philg/.gradle/caches/transforms-4/9beed8c4d942274c362ae9ac02f97395/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:18:5-43
 MERGED from [com.google.android.gms:play-services-basement:18.1.0] /home/philg/.gradle/caches/transforms-4/9beed8c4d942274c362ae9ac02f97395/transformed/jetified-play-services-basement-18.1.0/AndroidManifest.xml:18:5-43
+MERGED from [androidx.fragment:fragment-ktx:1.3.6] /home/philg/.gradle/caches/transforms-4/897c71d75516763575cb064c47f8b17f/transformed/jetified-fragment-ktx-1.3.6/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment-ktx:1.3.6] /home/philg/.gradle/caches/transforms-4/897c71d75516763575cb064c47f8b17f/transformed/jetified-fragment-ktx-1.3.6/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.fragment:fragment:1.5.1] /home/philg/.gradle/caches/transforms-4/12fd8b463c4c785b3a45934a4897953f/transformed/fragment-1.5.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.fragment:fragment:1.5.1] /home/philg/.gradle/caches/transforms-4/12fd8b463c4c785b3a45934a4897953f/transformed/fragment-1.5.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.activity:activity:1.8.0] /home/philg/.gradle/caches/transforms-4/53dac2f2bc52d732191b2228841f96b2/transformed/jetified-activity-1.8.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.activity:activity:1.8.0] /home/philg/.gradle/caches/transforms-4/53dac2f2bc52d732191b2228841f96b2/transformed/jetified-activity-1.8.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.activity:activity-ktx:1.8.0] /home/philg/.gradle/caches/transforms-4/fb2dc26e0a0f414b324005130a49c97d/transformed/jetified-activity-ktx-1.8.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.activity:activity-ktx:1.8.0] /home/philg/.gradle/caches/transforms-4/fb2dc26e0a0f414b324005130a49c97d/transformed/jetified-activity-ktx-1.8.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] /home/philg/.gradle/caches/transforms-4/fbceb9b9dfbf360b65fbbe703abc7a73/transformed/swiperefreshlayout-1.1.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] /home/philg/.gradle/caches/transforms-4/fbceb9b9dfbf360b65fbbe703abc7a73/transformed/swiperefreshlayout-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] /home/philg/.gradle/caches/transforms-4/804a406a622ebfdc6783b65cd2a94c4f/transformed/jetified-emoji2-views-helper-1.2.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.emoji2:emoji2-views-helper:1.2.0] /home/philg/.gradle/caches/transforms-4/804a406a622ebfdc6783b65cd2a94c4f/transformed/jetified-emoji2-views-helper-1.2.0/AndroidManifest.xml:5:5-44
 MERGED from [androidx.emoji2:emoji2:1.2.0] /home/philg/.gradle/caches/transforms-4/a486ca00ba5f2d944132acc1bd219caf/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:21:5-44
@@ -303,8 +357,6 @@ MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] /home/philg/.gr
 MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.1.0] /home/philg/.gradle/caches/transforms-4/e5f1e58d1bcbbc752b3286e2e9a47f25/transformed/coordinatorlayout-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] /home/philg/.gradle/caches/transforms-4/ecc4c16f7127262c219c26bbf2ea9dd1/transformed/dynamicanimation-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] /home/philg/.gradle/caches/transforms-4/ecc4c16f7127262c219c26bbf2ea9dd1/transformed/dynamicanimation-1.0.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.transition:transition:1.2.0] /home/philg/.gradle/caches/transforms-4/91391eae747fcf410df616c247d5029c/transformed/transition-1.2.0/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.transition:transition:1.2.0] /home/philg/.gradle/caches/transforms-4/91391eae747fcf410df616c247d5029c/transformed/transition-1.2.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/philg/.gradle/caches/transforms-4/e63ce34d1815330f0dc9092801ffbb8b/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] /home/philg/.gradle/caches/transforms-4/e63ce34d1815330f0dc9092801ffbb8b/transformed/vectordrawable-animated-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] /home/philg/.gradle/caches/transforms-4/3028ef7efe10eb8c1bb0442f21051bcd/transformed/vectordrawable-1.1.0/AndroidManifest.xml:20:5-22:41
@@ -317,12 +369,18 @@ MERGED from [androidx.recyclerview:recyclerview:1.1.0] /home/philg/.gradle/cache
 MERGED from [androidx.recyclerview:recyclerview:1.1.0] /home/philg/.gradle/caches/transforms-4/8b6904a646dd113ced3ef6a02f5fc81c/transformed/recyclerview-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.viewpager:viewpager:1.0.0] /home/philg/.gradle/caches/transforms-4/61f4c94c8511b0b3d0ebc6e3d69890ee/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.viewpager:viewpager:1.0.0] /home/philg/.gradle/caches/transforms-4/61f4c94c8511b0b3d0ebc6e3d69890ee/transformed/viewpager-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.2.0] /home/philg/.gradle/caches/transforms-4/06ed8cad4c0540ef46ce882b34d00797/transformed/slidingpanelayout-1.2.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.2.0] /home/philg/.gradle/caches/transforms-4/06ed8cad4c0540ef46ce882b34d00797/transformed/slidingpanelayout-1.2.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.customview:customview:1.1.0] /home/philg/.gradle/caches/transforms-4/5953f2add6f2cf191b5546866e985794/transformed/customview-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.customview:customview:1.1.0] /home/philg/.gradle/caches/transforms-4/5953f2add6f2cf191b5546866e985794/transformed/customview-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /home/philg/.gradle/caches/transforms-4/548d33ce185271a3e8400b2a5ead882a/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /home/philg/.gradle/caches/transforms-4/548d33ce185271a3e8400b2a5ead882a/transformed/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.loader:loader:1.0.0] /home/philg/.gradle/caches/transforms-4/b6ead1f717714c79294f67bc9212bd7b/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.loader:loader:1.0.0] /home/philg/.gradle/caches/transforms-4/b6ead1f717714c79294f67bc9212bd7b/transformed/loader-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.transition:transition:1.4.1] /home/philg/.gradle/caches/transforms-4/355e59d3fe3706586de83b68a8a1c757/transformed/transition-1.4.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.transition:transition:1.4.1] /home/philg/.gradle/caches/transforms-4/355e59d3fe3706586de83b68a8a1c757/transformed/transition-1.4.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/0986b1812f49971f87fc62e679b16005/transformed/core-1.13.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/0986b1812f49971f87fc62e679b16005/transformed/core-1.13.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-service:2.7.0] /home/philg/.gradle/caches/transforms-4/c33e962004478df95d933443307d3973/transformed/jetified-lifecycle-service-2.7.0/AndroidManifest.xml:5:5-44
@@ -371,26 +429,30 @@ MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /home/philg/.gradle/cac
 MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] /home/philg/.gradle/caches/transforms-4/24cb4449348b58a8fe512716503bbb15/transformed/cursoradapter-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.cardview:cardview:1.0.0] /home/philg/.gradle/caches/transforms-4/a2a48036eec0f2522758b2a1a7a2da98/transformed/cardview-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.cardview:cardview:1.0.0] /home/philg/.gradle/caches/transforms-4/a2a48036eec0f2522758b2a1a7a2da98/transformed/cardview-1.0.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/philg/.gradle/caches/transforms-4/e95f8dcb1c5bcd1f0ef49033e4782ed5/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/philg/.gradle/caches/transforms-4/e95f8dcb1c5bcd1f0ef49033e4782ed5/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /home/philg/.gradle/caches/transforms-4/3e2a58585bf4b224bbb5779aebd87743/transformed/jetified-security-crypto-1.1.0-alpha06/AndroidManifest.xml:20:5-44
-MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /home/philg/.gradle/caches/transforms-4/3e2a58585bf4b224bbb5779aebd87743/transformed/jetified-security-crypto-1.1.0-alpha06/AndroidManifest.xml:20:5-44
 MERGED from [androidx.interpolator:interpolator:1.0.0] /home/philg/.gradle/caches/transforms-4/669dd24ff36185537fdbcdb07bd64873/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.interpolator:interpolator:1.0.0] /home/philg/.gradle/caches/transforms-4/669dd24ff36185537fdbcdb07bd64873/transformed/interpolator-1.0.0/AndroidManifest.xml:20:5-44
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/philg/.gradle/caches/transforms-4/e95f8dcb1c5bcd1f0ef49033e4782ed5/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/philg/.gradle/caches/transforms-4/e95f8dcb1c5bcd1f0ef49033e4782ed5/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [com.github.bumptech.glide:gifdecoder:4.16.0] /home/philg/.gradle/caches/transforms-4/ecd7daabb062274ab97b1f394bfb92f3/transformed/jetified-gifdecoder-4.16.0/AndroidManifest.xml:5:5-7:41
+MERGED from [com.github.bumptech.glide:gifdecoder:4.16.0] /home/philg/.gradle/caches/transforms-4/ecd7daabb062274ab97b1f394bfb92f3/transformed/jetified-gifdecoder-4.16.0/AndroidManifest.xml:5:5-7:41
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/dbac343ab8b3c903548bc216e9864a18/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:21:5-44
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/dbac343ab8b3c903548bc216e9864a18/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:21:5-44
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/philg/.gradle/caches/transforms-4/fe821e729eb8133dbbc5265db89998b0/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
 MERGED from [androidx.startup:startup-runtime:1.1.1] /home/philg/.gradle/caches/transforms-4/fe821e729eb8133dbbc5265db89998b0/transformed/jetified-startup-runtime-1.1.1/AndroidManifest.xml:21:5-23:41
 MERGED from [androidx.tracing:tracing:1.0.0] /home/philg/.gradle/caches/transforms-4/0bfd854f8f11066f41cb3c6893042e53/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.tracing:tracing:1.0.0] /home/philg/.gradle/caches/transforms-4/0bfd854f8f11066f41cb3c6893042e53/transformed/jetified-tracing-1.0.0/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /home/philg/.gradle/caches/transforms-4/3e2a58585bf4b224bbb5779aebd87743/transformed/jetified-security-crypto-1.1.0-alpha06/AndroidManifest.xml:20:5-44
+MERGED from [androidx.security:security-crypto:1.1.0-alpha06] /home/philg/.gradle/caches/transforms-4/3e2a58585bf4b224bbb5779aebd87743/transformed/jetified-security-crypto-1.1.0-alpha06/AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /home/philg/.gradle/caches/transforms-4/2fdfcbc18b82ad8da6660960ac6678e4/transformed/versionedparcelable-1.1.1/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.documentfile:documentfile:1.0.0] /home/philg/.gradle/caches/transforms-4/4d79a950276498c04c067732209c0000/transformed/documentfile-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.documentfile:documentfile:1.0.0] /home/philg/.gradle/caches/transforms-4/4d79a950276498c04c067732209c0000/transformed/documentfile-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /home/philg/.gradle/caches/transforms-4/3f763a172ab49d153769cfad8b2101cd/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] /home/philg/.gradle/caches/transforms-4/3f763a172ab49d153769cfad8b2101cd/transformed/localbroadcastmanager-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.print:print:1.0.0] /home/philg/.gradle/caches/transforms-4/d3c31ff025370c014d63d51bf58d6c96/transformed/print-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.print:print:1.0.0] /home/philg/.gradle/caches/transforms-4/d3c31ff025370c014d63d51bf58d6c96/transformed/print-1.0.0/AndroidManifest.xml:20:5-44
+MERGED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:5:5-7:41
+MERGED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:5:5-7:41
 MERGED from [com.google.dagger:dagger-lint-aar:2.50] /home/philg/.gradle/caches/transforms-4/71dbac9f865037fd00d874ccf78e1c40/transformed/jetified-dagger-lint-aar-2.50/AndroidManifest.xml:18:3-42
 MERGED from [com.google.dagger:dagger-lint-aar:2.50] /home/philg/.gradle/caches/transforms-4/71dbac9f865037fd00d874ccf78e1c40/transformed/jetified-dagger-lint-aar-2.50/AndroidManifest.xml:18:3-42
 	android:targetSdkVersion
@@ -673,6 +735,18 @@ action#androidx.work.diagnostics.REQUEST_DIAGNOSTICS
 ADDED from [androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/fa3331292667160d18a4d937c905194b/transformed/work-runtime-2.8.1/AndroidManifest.xml:140:17-88
 	android:name
 		ADDED from [androidx.work:work-runtime:2.8.1] /home/philg/.gradle/caches/transforms-4/fa3331292667160d18a4d937c905194b/transformed/work-runtime-2.8.1/AndroidManifest.xml:140:25-85
+uses-library#androidx.window.extensions
+ADDED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:25:9-27:40
+	android:required
+		ADDED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:26:13-54
+uses-library#androidx.window.sidecar
+ADDED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:28:9-30:40
+	android:required
+		ADDED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:30:13-37
+	android:name
+		ADDED from [androidx.window:window:1.0.0] /home/philg/.gradle/caches/transforms-4/0dbee15601c199a329ccff16d8fb82c2/transformed/jetified-window-1.0.0/AndroidManifest.xml:29:13-51
 permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.13.0] /home/philg/.gradle/caches/transforms-4/0986b1812f49971f87fc62e679b16005/transformed/core-1.13.0/AndroidManifest.xml:22:5-24:47
 	android:protectionLevel
@@ -751,3 +825,35 @@ action#androidx.profileinstaller.action.BENCHMARK_OPERATION
 ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/dbac343ab8b3c903548bc216e9864a18/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:50:17-95
 	android:name
 		ADDED from [androidx.profileinstaller:profileinstaller:1.3.0] /home/philg/.gradle/caches/transforms-4/dbac343ab8b3c903548bc216e9864a18/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:50:25-92
+supports-screens
+ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:9:5-12:40
+	android:largeScreens
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:11:9-36
+	android:normalScreens
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:12:9-37
+	android:anyDensity
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:10:9-34
+uses-feature#android.hardware.location.network
+ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:14:5-16:36
+	android:required
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:16:9-33
+	android:name
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:15:9-57
+uses-feature#android.hardware.location.gps
+ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:17:5-19:36
+	android:required
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:19:9-33
+	android:name
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:18:9-53
+uses-feature#android.hardware.telephony
+ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:20:5-22:36
+	android:required
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:22:9-33
+	android:name
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:21:9-50
+uses-feature#android.hardware.wifi
+ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:23:5-25:36
+	android:required
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:25:9-33
+	android:name
+		ADDED from [org.osmdroid:osmdroid-android:6.1.18] /home/philg/.gradle/caches/transforms-4/7917926c7a9b419220c500112d35dce3/transformed/jetified-osmdroid-android-6.1.18/AndroidManifest.xml:24:9-45

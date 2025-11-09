@@ -40,6 +40,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        aidl = true
     }
 
     packagingOptions {
@@ -55,6 +56,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -85,8 +87,17 @@ dependencies {
     // Location Services
     implementation(libs.play.services.location)
 
+    // Map
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
+    
+    // Preferences
+    implementation("androidx.preference:preference-ktx:1.2.1")
+
     // Photo/EXIF
     implementation(libs.androidx.exifinterface)
+    
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
     // Security/Encryption
     implementation(libs.androidx.security.crypto.ktx)

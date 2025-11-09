@@ -26,7 +26,7 @@ import com.pevplugshare.data.db.entity.UserPreferencesEntity
         PendingLocationEntity::class,
         PendingOperationEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class PEVPlugShareDatabase : RoomDatabase() {

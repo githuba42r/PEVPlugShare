@@ -6,22 +6,33 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.pevplugshare.ai.LocationDescriptionGenerator;
+import com.pevplugshare.ai.LocationDescriptionParser;
+import com.pevplugshare.ai.PhotoAnalyzer;
 import com.pevplugshare.data.db.PEVPlugShareDatabase;
+import com.pevplugshare.data.db.dao.LocationDao;
 import com.pevplugshare.data.db.dao.PendingOperationDao;
 import com.pevplugshare.data.network.ConnectivityObserver;
+import com.pevplugshare.data.remote.CookieManager;
 import com.pevplugshare.data.remote.OsmandApiClient;
 import com.pevplugshare.data.remote.TokenManager;
+import com.pevplugshare.data.repository.LocalLocationRepository;
+import com.pevplugshare.data.repository.OsmandLocationSyncService;
 import com.pevplugshare.data.repository.PendingOperationRepository;
 import com.pevplugshare.data.repository.SyncManager;
 import com.pevplugshare.data.storage.PhotoStorageManager;
 import com.pevplugshare.di.DatabaseModule_ProvideDatabaseFactory;
+import com.pevplugshare.di.DatabaseModule_ProvideLocationDaoFactory;
 import com.pevplugshare.di.DatabaseModule_ProvidePendingOperationDaoFactory;
 import com.pevplugshare.di.NetworkModule_ProvideAuthRepositoryFactory;
 import com.pevplugshare.di.NetworkModule_ProvideConnectivityObserverFactory;
+import com.pevplugshare.di.NetworkModule_ProvideCookieManagerFactory;
 import com.pevplugshare.di.NetworkModule_ProvideLocationRepositoryFactory;
 import com.pevplugshare.di.NetworkModule_ProvideOsmandApiClientFactory;
 import com.pevplugshare.di.NetworkModule_ProvidePhotoStorageManagerFactory;
 import com.pevplugshare.di.NetworkModule_ProvideTokenManagerFactory;
+import com.pevplugshare.di.RepositoryModule_ProvideLocalLocationRepositoryFactory;
 import com.pevplugshare.di.RepositoryModule_ProvidePendingOperationRepositoryFactory;
 import com.pevplugshare.domain.repository.AuthRepository;
 import com.pevplugshare.domain.repository.LocationRepository;
@@ -34,7 +45,10 @@ import com.pevplugshare.ui.auth.LoginViewModel_HiltModules_KeyModule_ProvideFact
 import com.pevplugshare.ui.auth.SplashActivity;
 import com.pevplugshare.ui.auth.SplashViewModel;
 import com.pevplugshare.ui.auth.SplashViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.pevplugshare.ui.edit.AiDescriptionDialogFragment;
+import com.pevplugshare.ui.edit.AiDescriptionDialogFragment_MembersInjector;
 import com.pevplugshare.ui.edit.EditLocationActivity;
+import com.pevplugshare.ui.edit.EditLocationActivity_MembersInjector;
 import com.pevplugshare.ui.edit.EditLocationViewModel;
 import com.pevplugshare.ui.edit.EditLocationViewModel_HiltModules_KeyModule_ProvideFactory;
 import com.pevplugshare.ui.main.MainActivity;
@@ -43,6 +57,8 @@ import com.pevplugshare.ui.main.MainViewModel_HiltModules_KeyModule_ProvideFacto
 import com.pevplugshare.ui.photo.PhotoCaptureActivity;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.pevplugshare.ui.settings.SettingsActivity;
+import com.pevplugshare.ui.settings.SettingsActivity_MembersInjector;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -345,6 +361,12 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     }
 
     @Override
+    public void injectAiDescriptionDialogFragment(
+        AiDescriptionDialogFragment aiDescriptionDialogFragment) {
+      injectAiDescriptionDialogFragment2(aiDescriptionDialogFragment);
+    }
+
+    @Override
     public DefaultViewModelFactories.InternalFactoryFactory getHiltInternalFactoryFactory() {
       return activityCImpl.getHiltInternalFactoryFactory();
     }
@@ -352,6 +374,13 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     @Override
     public ViewWithFragmentComponentBuilder viewWithFragmentComponentBuilder() {
       return new ViewWithFragmentCBuilder(singletonCImpl, activityRetainedCImpl, activityCImpl, fragmentCImpl);
+    }
+
+    @CanIgnoreReturnValue
+    private AiDescriptionDialogFragment injectAiDescriptionDialogFragment2(
+        AiDescriptionDialogFragment instance) {
+      AiDescriptionDialogFragment_MembersInjector.injectDescriptionGenerator(instance, singletonCImpl.locationDescriptionGeneratorProvider.get());
+      return instance;
     }
   }
 
@@ -403,6 +432,7 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     @Override
     public void injectEditLocationActivity(EditLocationActivity editLocationActivity) {
+      injectEditLocationActivity2(editLocationActivity);
     }
 
     @Override
@@ -411,6 +441,11 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     @Override
     public void injectPhotoCaptureActivity(PhotoCaptureActivity photoCaptureActivity) {
+    }
+
+    @Override
+    public void injectSettingsActivity(SettingsActivity settingsActivity) {
+      injectSettingsActivity2(settingsActivity);
     }
 
     @Override
@@ -436,6 +471,19 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     @Override
     public ViewComponentBuilder viewComponentBuilder() {
       return new ViewCBuilder(singletonCImpl, activityRetainedCImpl, activityCImpl);
+    }
+
+    @CanIgnoreReturnValue
+    private EditLocationActivity injectEditLocationActivity2(EditLocationActivity instance) {
+      EditLocationActivity_MembersInjector.injectTokenManager(instance, singletonCImpl.provideTokenManagerProvider.get());
+      EditLocationActivity_MembersInjector.injectPhotoAnalyzer(instance, singletonCImpl.photoAnalyzerProvider.get());
+      return instance;
+    }
+
+    @CanIgnoreReturnValue
+    private SettingsActivity injectSettingsActivity2(SettingsActivity instance) {
+      SettingsActivity_MembersInjector.injectTokenManager(instance, singletonCImpl.provideTokenManagerProvider.get());
+      return instance;
     }
   }
 
@@ -514,13 +562,13 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
           return (T) new AddLocationViewModel(singletonCImpl.provideLocationRepositoryProvider.get());
 
           case 1: // com.pevplugshare.ui.edit.EditLocationViewModel 
-          return (T) new EditLocationViewModel(singletonCImpl.provideLocationRepositoryProvider.get());
+          return (T) new EditLocationViewModel(singletonCImpl.provideLocationRepositoryProvider.get(), singletonCImpl.osmandLocationSyncServiceProvider.get(), singletonCImpl.provideTokenManagerProvider.get(), singletonCImpl.locationDescriptionParserProvider.get());
 
           case 2: // com.pevplugshare.ui.auth.LoginViewModel 
           return (T) new LoginViewModel(singletonCImpl.provideAuthRepositoryProvider.get());
 
           case 3: // com.pevplugshare.ui.main.MainViewModel 
-          return (T) new MainViewModel(singletonCImpl.provideLocationRepositoryProvider.get(), singletonCImpl.provideAuthRepositoryProvider.get(), singletonCImpl.provideConnectivityObserverProvider.get(), singletonCImpl.syncManagerProvider.get());
+          return (T) new MainViewModel(singletonCImpl.provideLocationRepositoryProvider.get(), singletonCImpl.provideAuthRepositoryProvider.get(), singletonCImpl.provideConnectivityObserverProvider.get(), singletonCImpl.syncManagerProvider.get(), singletonCImpl.provideTokenManagerProvider.get());
 
           case 4: // com.pevplugshare.ui.photo.PhotoCaptureViewModel 
           return (T) new PhotoCaptureViewModel(singletonCImpl.providePhotoStorageManagerProvider.get());
@@ -610,15 +658,29 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     private Provider<TokenManager> provideTokenManagerProvider;
 
-    private Provider<OsmandApiClient> provideOsmandApiClientProvider;
+    private Provider<PhotoAnalyzer> photoAnalyzerProvider;
+
+    private Provider<LocationDescriptionGenerator> locationDescriptionGeneratorProvider;
+
+    private Provider<PEVPlugShareDatabase> provideDatabaseProvider;
+
+    private Provider<LocationDao> provideLocationDaoProvider;
 
     private Provider<LocationRepository> provideLocationRepositoryProvider;
+
+    private Provider<CookieManager> provideCookieManagerProvider;
+
+    private Provider<OsmandApiClient> provideOsmandApiClientProvider;
+
+    private Provider<LocalLocationRepository> provideLocalLocationRepositoryProvider;
+
+    private Provider<OsmandLocationSyncService> osmandLocationSyncServiceProvider;
+
+    private Provider<LocationDescriptionParser> locationDescriptionParserProvider;
 
     private Provider<AuthRepository> provideAuthRepositoryProvider;
 
     private Provider<ConnectivityObserver> provideConnectivityObserverProvider;
-
-    private Provider<PEVPlugShareDatabase> provideDatabaseProvider;
 
     private Provider<PendingOperationDao> providePendingOperationDaoProvider;
 
@@ -636,16 +698,23 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
 
     @SuppressWarnings("unchecked")
     private void initialize(final ApplicationContextModule applicationContextModuleParam) {
-      this.provideTokenManagerProvider = DoubleCheck.provider(new SwitchingProvider<TokenManager>(singletonCImpl, 2));
-      this.provideOsmandApiClientProvider = DoubleCheck.provider(new SwitchingProvider<OsmandApiClient>(singletonCImpl, 1));
-      this.provideLocationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<LocationRepository>(singletonCImpl, 0));
-      this.provideAuthRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AuthRepository>(singletonCImpl, 3));
-      this.provideConnectivityObserverProvider = DoubleCheck.provider(new SwitchingProvider<ConnectivityObserver>(singletonCImpl, 4));
-      this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<PEVPlugShareDatabase>(singletonCImpl, 8));
-      this.providePendingOperationDaoProvider = DoubleCheck.provider(new SwitchingProvider<PendingOperationDao>(singletonCImpl, 7));
-      this.providePendingOperationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<PendingOperationRepository>(singletonCImpl, 6));
-      this.syncManagerProvider = DoubleCheck.provider(new SwitchingProvider<SyncManager>(singletonCImpl, 5));
-      this.providePhotoStorageManagerProvider = DoubleCheck.provider(new SwitchingProvider<PhotoStorageManager>(singletonCImpl, 9));
+      this.provideTokenManagerProvider = DoubleCheck.provider(new SwitchingProvider<TokenManager>(singletonCImpl, 0));
+      this.photoAnalyzerProvider = DoubleCheck.provider(new SwitchingProvider<PhotoAnalyzer>(singletonCImpl, 1));
+      this.locationDescriptionGeneratorProvider = DoubleCheck.provider(new SwitchingProvider<LocationDescriptionGenerator>(singletonCImpl, 2));
+      this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<PEVPlugShareDatabase>(singletonCImpl, 5));
+      this.provideLocationDaoProvider = DoubleCheck.provider(new SwitchingProvider<LocationDao>(singletonCImpl, 4));
+      this.provideLocationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<LocationRepository>(singletonCImpl, 3));
+      this.provideCookieManagerProvider = DoubleCheck.provider(new SwitchingProvider<CookieManager>(singletonCImpl, 8));
+      this.provideOsmandApiClientProvider = DoubleCheck.provider(new SwitchingProvider<OsmandApiClient>(singletonCImpl, 7));
+      this.provideLocalLocationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<LocalLocationRepository>(singletonCImpl, 9));
+      this.osmandLocationSyncServiceProvider = DoubleCheck.provider(new SwitchingProvider<OsmandLocationSyncService>(singletonCImpl, 6));
+      this.locationDescriptionParserProvider = DoubleCheck.provider(new SwitchingProvider<LocationDescriptionParser>(singletonCImpl, 10));
+      this.provideAuthRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<AuthRepository>(singletonCImpl, 11));
+      this.provideConnectivityObserverProvider = DoubleCheck.provider(new SwitchingProvider<ConnectivityObserver>(singletonCImpl, 12));
+      this.providePendingOperationDaoProvider = DoubleCheck.provider(new SwitchingProvider<PendingOperationDao>(singletonCImpl, 15));
+      this.providePendingOperationRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<PendingOperationRepository>(singletonCImpl, 14));
+      this.syncManagerProvider = DoubleCheck.provider(new SwitchingProvider<SyncManager>(singletonCImpl, 13));
+      this.providePhotoStorageManagerProvider = DoubleCheck.provider(new SwitchingProvider<PhotoStorageManager>(singletonCImpl, 16));
     }
 
     @Override
@@ -681,34 +750,55 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.pevplugshare.domain.repository.LocationRepository 
-          return (T) NetworkModule_ProvideLocationRepositoryFactory.provideLocationRepository(singletonCImpl.provideOsmandApiClientProvider.get(), singletonCImpl.provideTokenManagerProvider.get());
-
-          case 1: // com.pevplugshare.data.remote.OsmandApiClient 
-          return (T) NetworkModule_ProvideOsmandApiClientFactory.provideOsmandApiClient(singletonCImpl.provideTokenManagerProvider.get());
-
-          case 2: // com.pevplugshare.data.remote.TokenManager 
+          case 0: // com.pevplugshare.data.remote.TokenManager 
           return (T) NetworkModule_ProvideTokenManagerFactory.provideTokenManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 3: // com.pevplugshare.domain.repository.AuthRepository 
-          return (T) NetworkModule_ProvideAuthRepositoryFactory.provideAuthRepository(singletonCImpl.provideOsmandApiClientProvider.get(), singletonCImpl.provideTokenManagerProvider.get());
+          case 1: // com.pevplugshare.ai.PhotoAnalyzer 
+          return (T) new PhotoAnalyzer(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideTokenManagerProvider.get());
 
-          case 4: // com.pevplugshare.data.network.ConnectivityObserver 
-          return (T) NetworkModule_ProvideConnectivityObserverFactory.provideConnectivityObserver(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+          case 2: // com.pevplugshare.ai.LocationDescriptionGenerator 
+          return (T) new LocationDescriptionGenerator(singletonCImpl.provideTokenManagerProvider.get());
 
-          case 5: // com.pevplugshare.data.repository.SyncManager 
-          return (T) new SyncManager(singletonCImpl.providePendingOperationRepositoryProvider.get(), singletonCImpl.provideLocationRepositoryProvider.get());
+          case 3: // com.pevplugshare.domain.repository.LocationRepository 
+          return (T) NetworkModule_ProvideLocationRepositoryFactory.provideLocationRepository(singletonCImpl.provideLocationDaoProvider.get());
 
-          case 6: // com.pevplugshare.data.repository.PendingOperationRepository 
-          return (T) RepositoryModule_ProvidePendingOperationRepositoryFactory.providePendingOperationRepository(singletonCImpl.providePendingOperationDaoProvider.get());
+          case 4: // com.pevplugshare.data.db.dao.LocationDao 
+          return (T) DatabaseModule_ProvideLocationDaoFactory.provideLocationDao(singletonCImpl.provideDatabaseProvider.get());
 
-          case 7: // com.pevplugshare.data.db.dao.PendingOperationDao 
-          return (T) DatabaseModule_ProvidePendingOperationDaoFactory.providePendingOperationDao(singletonCImpl.provideDatabaseProvider.get());
-
-          case 8: // com.pevplugshare.data.db.PEVPlugShareDatabase 
+          case 5: // com.pevplugshare.data.db.PEVPlugShareDatabase 
           return (T) DatabaseModule_ProvideDatabaseFactory.provideDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 9: // com.pevplugshare.data.storage.PhotoStorageManager 
+          case 6: // com.pevplugshare.data.repository.OsmandLocationSyncService 
+          return (T) new OsmandLocationSyncService(singletonCImpl.provideOsmandApiClientProvider.get(), singletonCImpl.provideTokenManagerProvider.get(), singletonCImpl.provideLocalLocationRepositoryProvider.get());
+
+          case 7: // com.pevplugshare.data.remote.OsmandApiClient 
+          return (T) NetworkModule_ProvideOsmandApiClientFactory.provideOsmandApiClient(singletonCImpl.provideTokenManagerProvider.get(), singletonCImpl.provideCookieManagerProvider.get());
+
+          case 8: // com.pevplugshare.data.remote.CookieManager 
+          return (T) NetworkModule_ProvideCookieManagerFactory.provideCookieManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 9: // com.pevplugshare.data.repository.LocalLocationRepository 
+          return (T) RepositoryModule_ProvideLocalLocationRepositoryFactory.provideLocalLocationRepository(singletonCImpl.provideLocationDaoProvider.get());
+
+          case 10: // com.pevplugshare.ai.LocationDescriptionParser 
+          return (T) new LocationDescriptionParser(singletonCImpl.provideTokenManagerProvider.get());
+
+          case 11: // com.pevplugshare.domain.repository.AuthRepository 
+          return (T) NetworkModule_ProvideAuthRepositoryFactory.provideAuthRepository(singletonCImpl.provideOsmandApiClientProvider.get(), singletonCImpl.provideTokenManagerProvider.get(), ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideCookieManagerProvider.get());
+
+          case 12: // com.pevplugshare.data.network.ConnectivityObserver 
+          return (T) NetworkModule_ProvideConnectivityObserverFactory.provideConnectivityObserver(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 13: // com.pevplugshare.data.repository.SyncManager 
+          return (T) new SyncManager(singletonCImpl.providePendingOperationRepositoryProvider.get(), singletonCImpl.provideLocationRepositoryProvider.get());
+
+          case 14: // com.pevplugshare.data.repository.PendingOperationRepository 
+          return (T) RepositoryModule_ProvidePendingOperationRepositoryFactory.providePendingOperationRepository(singletonCImpl.providePendingOperationDaoProvider.get());
+
+          case 15: // com.pevplugshare.data.db.dao.PendingOperationDao 
+          return (T) DatabaseModule_ProvidePendingOperationDaoFactory.providePendingOperationDao(singletonCImpl.provideDatabaseProvider.get());
+
+          case 16: // com.pevplugshare.data.storage.PhotoStorageManager 
           return (T) NetworkModule_ProvidePhotoStorageManagerFactory.providePhotoStorageManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
