@@ -57,6 +57,8 @@ import com.pevplugshare.ui.main.MainViewModel_HiltModules_KeyModule_ProvideFacto
 import com.pevplugshare.ui.photo.PhotoCaptureActivity;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel;
 import com.pevplugshare.ui.photo.PhotoCaptureViewModel_HiltModules_KeyModule_ProvideFactory;
+import com.pevplugshare.ui.quicklocation.QuickLocationActivity;
+import com.pevplugshare.ui.quicklocation.QuickLocationActivity_MembersInjector;
 import com.pevplugshare.ui.settings.SettingsActivity;
 import com.pevplugshare.ui.settings.SettingsActivity_MembersInjector;
 import dagger.hilt.android.ActivityRetainedLifecycle;
@@ -444,6 +446,11 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     }
 
     @Override
+    public void injectQuickLocationActivity(QuickLocationActivity quickLocationActivity) {
+      injectQuickLocationActivity2(quickLocationActivity);
+    }
+
+    @Override
     public void injectSettingsActivity(SettingsActivity settingsActivity) {
       injectSettingsActivity2(settingsActivity);
     }
@@ -477,6 +484,12 @@ public final class DaggerPEVPlugShareApplication_HiltComponents_SingletonC {
     private EditLocationActivity injectEditLocationActivity2(EditLocationActivity instance) {
       EditLocationActivity_MembersInjector.injectTokenManager(instance, singletonCImpl.provideTokenManagerProvider.get());
       EditLocationActivity_MembersInjector.injectPhotoAnalyzer(instance, singletonCImpl.photoAnalyzerProvider.get());
+      return instance;
+    }
+
+    @CanIgnoreReturnValue
+    private QuickLocationActivity injectQuickLocationActivity2(QuickLocationActivity instance) {
+      QuickLocationActivity_MembersInjector.injectTokenManager(instance, singletonCImpl.provideTokenManagerProvider.get());
       return instance;
     }
 

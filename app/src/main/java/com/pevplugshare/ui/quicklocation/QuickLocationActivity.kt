@@ -14,9 +14,12 @@ import androidx.core.content.FileProvider
 import com.pevplugshare.R
 import com.pevplugshare.databinding.ActivityQuickLocationBinding
 import com.pevplugshare.data.model.PhotoMetadata
+import com.pevplugshare.data.remote.TokenManager
 import com.pevplugshare.ui.edit.EditLocationActivity
 import com.pevplugshare.util.PhotoUtils
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import javax.inject.Inject
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,6 +27,7 @@ import java.util.*
 /**
  * Quick location workflow: select/take photos, extract metadata, optionally edit, run AI analysis, then go to add location
  */
+@AndroidEntryPoint
 class QuickLocationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuickLocationBinding
     private val selectedPhotoPaths = mutableListOf<String>()
@@ -32,6 +36,9 @@ class QuickLocationActivity : AppCompatActivity() {
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Main + job)
     private var currentPhotoUri: Uri? = null
+
+    @Inject
+    lateinit var tokenManager: TokenManager
 
     enum class Step {
         SELECT_PHOTOS,
@@ -183,19 +190,27 @@ class QuickLocationActivity : AppCompatActivity() {
             }
         }
         
-        AlertDialog.Builder(this)
+        val isAiEnabled = tokenManager.isAiAnalysisEnabled()
+        
+        val dialogBuilder = AlertDialog.Builder(this)
             .setTitle("${selectedPhotoPaths.size} Photos Selected")
             .setMessage(locationInfo.toString().ifEmpty { "No metadata found in photos" })
-            .setNegativeButton("Edit Photos") { _, _ ->
-                Toast.makeText(this, "Photo editing coming soon", Toast.LENGTH_SHORT).show()
-            }
-            .setNeutralButton("AI Analysis") { _, _ ->
-                Toast.makeText(this, "AI analysis coming soon", Toast.LENGTH_SHORT).show()
-            }
             .setPositiveButton("Add Location") { _, _ ->
                 goToAddLocation()
             }
-            .show()
+
+        // Only show AI-related options if AI is configured
+        if (isAiEnabled) {
+            dialogBuilder
+                .setNegativeButton("Edit Photos") { _, _ ->
+                    Toast.makeText(this, "Photo editing coming soon", Toast.LENGTH_SHORT).show()
+                }
+                .setNeutralButton("AI Analysis") { _, _ ->
+                    Toast.makeText(this, "AI analysis coming soon", Toast.LENGTH_SHORT).show()
+                }
+        }
+
+        dialogBuilder.show()
     }
 
     private fun goToAddLocation() {
