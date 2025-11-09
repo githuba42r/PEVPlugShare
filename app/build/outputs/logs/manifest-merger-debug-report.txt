@@ -1,20 +1,20 @@
 -- Merging decision tree log ---
 provider#androidx.core.content.FileProvider
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:99:9-107:20
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:104:9-112:20
 	android:grantUriPermissions
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:103:13-47
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:108:13-47
 	android:authorities
 		INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:101:13-60
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:106:13-60
 	android:exported
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:102:13-37
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:107:13-37
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:100:13-62
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:105:13-62
 manifest
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-111:12
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-111:12
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-111:12
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-111:12
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-116:12
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-116:12
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-116:12
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:2:1-116:12
 MERGED from [androidx.databinding:viewbinding:8.4.0] /home/philg/.gradle/caches/transforms-4/831a7c985b3987597772fd9f8b93a6ff/transformed/jetified-viewbinding-8.4.0/AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.material:material:1.11.0] /home/philg/.gradle/caches/transforms-4/e091f759ff6f0d7ba84b5748adc163f1/transformed/material-1.11.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/philg/.gradle/caches/transforms-4/d888538de00e4bbf1dae17de56c43022/transformed/constraintlayout-2.1.4/AndroidManifest.xml:2:1-11:12
@@ -145,8 +145,8 @@ ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/Andro
 	android:name
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:17:18-43
 application
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:20:5-109:19
-INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:20:5-109:19
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:20:5-114:19
+INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:20:5-114:19
 MERGED from [com.google.android.material:material:1.11.0] /home/philg/.gradle/caches/transforms-4/e091f759ff6f0d7ba84b5748adc163f1/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] /home/philg/.gradle/caches/transforms-4/e091f759ff6f0d7ba84b5748adc163f1/transformed/material-1.11.0/AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] /home/philg/.gradle/caches/transforms-4/d888538de00e4bbf1dae17de56c43022/transformed/constraintlayout-2.1.4/AndroidManifest.xml:9:5-20
@@ -270,9 +270,9 @@ ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/Andro
 	android:scheme
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:64:21-54
 	android:pathPattern
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:90:21-52
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:95:21-52
 	android:mimeType
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:91:21-56
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:96:21-56
 activity#com.pevplugshare.ui.edit.EditLocationActivity
 ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:70:9-72:40
 	android:exported
@@ -285,20 +285,26 @@ ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/Andro
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:77:13-37
 	android:name
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:76:13-56
-activity#com.pevplugshare.ui.import.ImportLocationsActivity
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:80:9-96:20
+activity#com.pevplugshare.ui.quicklocation.QuickLocationActivity
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:80:9-82:40
 	android:exported
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:82:13-36
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:82:13-37
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:81:13-62
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:81:13-67
+activity#com.pevplugshare.ui.import.ImportLocationsActivity
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:85:9-101:20
+	android:exported
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:87:13-36
+	android:name
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:86:13-62
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:*+data:mimeType:application/json+data:mimeType:application/json+data:pathPattern:.*\\.json+data:scheme:content+data:scheme:file
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:83:13-95:29
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:88:13-100:29
 meta-data#android.support.FILE_PROVIDER_PATHS
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:104:13-106:54
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:109:13-111:54
 	android:resource
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:106:17-51
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:111:17-51
 	android:name
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:105:17-67
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:110:17-67
 uses-sdk
 INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml

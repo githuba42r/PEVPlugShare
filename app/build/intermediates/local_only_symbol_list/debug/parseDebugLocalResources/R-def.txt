@@ -104,6 +104,7 @@ id imageView
 id imageViewPager
 id infoButton
 id infoSection
+id loadingContainer
 id loadingProgressBar
 id locationAdditionalInfo
 id locationCoordinates
@@ -152,6 +153,7 @@ id providerWebsiteInput
 id publicButton
 id publicPrivateBadge
 id public_button
+id quickLocationButton
 id radioButton
 id rememberMeCheckbox
 id removePhotoButton
@@ -161,6 +163,7 @@ id saveButton
 id saveSettingsButton
 id searchInput
 id selectButton
+id selectPhotosButton
 id selectedModelCard
 id selectedModelContext
 id selectedModelCost
@@ -177,6 +180,7 @@ id statusMessage
 id statusText
 id submitButton
 id swipeRefreshLayout
+id takePhotosButton
 id thumbnailContainer
 id thumbnailImage
 id titleText
@@ -196,6 +200,7 @@ layout activity_import_locations
 layout activity_login
 layout activity_main
 layout activity_photo_capture
+layout activity_quick_location
 layout activity_settings
 layout activity_splash
 layout dialog_ai_description

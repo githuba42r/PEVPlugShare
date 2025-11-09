@@ -3586,6 +3586,7 @@ id line3
 id linear
 id listMode
 id list_item
+id loadingContainer
 id loadingProgressBar
 id locale
 id locationAdditionalInfo
@@ -3755,6 +3756,7 @@ id providerWebsiteInput
 id publicButton
 id publicPrivateBadge
 id public_button
+id quickLocationButton
 id radio
 id radioButton
 id ratio
@@ -3799,6 +3801,7 @@ id search_voice_btn
 id seekbar
 id seekbar_value
 id selectButton
+id selectPhotosButton
 id select_dialog_listview
 id selected
 id selectedModelCard
@@ -3872,6 +3875,7 @@ id tag_transition_group
 id tag_unhandled_key_event_manager
 id tag_unhandled_key_listeners
 id tag_window_insets_animation_callback
+id takePhotosButton
 id text
 id text2
 id textEnd
@@ -4064,6 +4068,7 @@ layout activity_import_locations
 layout activity_login
 layout activity_main
 layout activity_photo_capture
+layout activity_quick_location
 layout activity_settings
 layout activity_splash
 layout bonuspack_bubble

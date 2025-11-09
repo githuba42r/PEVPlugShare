@@ -4,6 +4,7 @@ package com.pevplugshare.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -61,6 +62,9 @@ public final class ActivityMainBinding implements ViewBinding {
   public final ImageButton menuButton;
 
   @NonNull
+  public final Button quickLocationButton;
+
+  @NonNull
   public final SwipeRefreshLayout swipeRefreshLayout;
 
   @NonNull
@@ -72,8 +76,8 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull TextView imageCounter, @NonNull LinearLayout imageGalleryOverlay,
       @NonNull ViewPager2 imageViewPager, @NonNull ProgressBar loadingProgressBar,
       @NonNull TextView locationDescription, @NonNull RecyclerView locationRecyclerView,
-      @NonNull ImageButton menuButton, @NonNull SwipeRefreshLayout swipeRefreshLayout,
-      @NonNull LinearLayout thumbnailContainer) {
+      @NonNull ImageButton menuButton, @NonNull Button quickLocationButton,
+      @NonNull SwipeRefreshLayout swipeRefreshLayout, @NonNull LinearLayout thumbnailContainer) {
     this.rootView = rootView;
     this.addLocationFab = addLocationFab;
     this.categoryBadge = categoryBadge;
@@ -86,6 +90,7 @@ public final class ActivityMainBinding implements ViewBinding {
     this.locationDescription = locationDescription;
     this.locationRecyclerView = locationRecyclerView;
     this.menuButton = menuButton;
+    this.quickLocationButton = quickLocationButton;
     this.swipeRefreshLayout = swipeRefreshLayout;
     this.thumbnailContainer = thumbnailContainer;
   }
@@ -183,6 +188,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.quickLocationButton;
+      Button quickLocationButton = ViewBindings.findChildViewById(rootView, id);
+      if (quickLocationButton == null) {
+        break missingId;
+      }
+
       id = R.id.swipeRefreshLayout;
       SwipeRefreshLayout swipeRefreshLayout = ViewBindings.findChildViewById(rootView, id);
       if (swipeRefreshLayout == null) {
@@ -198,7 +209,7 @@ public final class ActivityMainBinding implements ViewBinding {
       return new ActivityMainBinding((CoordinatorLayout) rootView, addLocationFab, categoryBadge,
           emptyState, galleryToolbar, imageCounter, imageGalleryOverlay, imageViewPager,
           loadingProgressBar, locationDescription, locationRecyclerView, menuButton,
-          swipeRefreshLayout, thumbnailContainer);
+          quickLocationButton, swipeRefreshLayout, thumbnailContainer);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

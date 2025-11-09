@@ -67,6 +67,10 @@ class MainActivity : AppCompatActivity() {
                 // Launch EditLocationActivity in add mode (no location_id)
                 startActivity(Intent(this@MainActivity, EditLocationActivity::class.java))
             }
+            quickLocationButton.setOnClickListener {
+                // Launch QuickLocationActivity
+                startActivity(Intent(this@MainActivity, com.pevplugshare.ui.quicklocation.QuickLocationActivity::class.java))
+            }
             swipeRefreshLayout.setOnRefreshListener {
                 viewModel.syncLocations()
             }
