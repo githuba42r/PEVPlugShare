@@ -11,25 +11,35 @@ import com.pevplugshare.databinding.ActivityLoginBinding
 import com.pevplugshare.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
     private var rememberMeConfirmed = false
+    private var authErrorDialog: AlertDialog? = null
+    private var authErrorDismissTimer: kotlinx.coroutines.Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Check if we should show auth error modal from splash screen
+        if (intent?.getBooleanExtra("showAuthErrorModal", false) == true) {
+            showBackgroundAuthenticationFailedModal()
+        }
+
         // Check for existing session token
         lifecycleScope.launch {
             if (viewModel.hasValidSessionToken()) {
                 // Skip login screen and go directly to MainActivity
                 // Validation will happen in background
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                finish()
+                if (!isFinishing && !isDestroyed) {
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish()
+                }
                 return@launch
             }
             
@@ -89,8 +99,10 @@ class LoginActivity : AppCompatActivity() {
                     is LoginState.Success -> {
                         binding.progressBar.visibility = android.view.View.GONE
                         binding.statusText.visibility = android.view.View.GONE
-                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                        finish()
+                        if (!isFinishing && !isDestroyed) {
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            finish()
+                        }
                     }
                     is LoginState.Error -> {
                         binding.loginButton.isEnabled = true
@@ -115,6 +127,12 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        authErrorDismissTimer?.cancel()
+        authErrorDialog?.dismiss()
     }
 
     private fun showRememberMeWarning() {
@@ -164,6 +182,28 @@ class LoginActivity : AppCompatActivity() {
             maxLines = Int.MAX_VALUE
             setVerticalScrollBarEnabled(true)
             movementMethod = android.text.method.ScrollingMovementMethod()
+        }
+    }
+
+    private fun showBackgroundAuthenticationFailedModal() {
+        authErrorDialog = AlertDialog.Builder(this)
+            .setTitle("Authentication Failed")
+            .setMessage("Background authentication failed. Please log in again.")
+            .setPositiveButton("Close") { dialog, _ ->
+                dialog.dismiss()
+                authErrorDismissTimer?.cancel()
+            }
+            .setCancelable(false)
+            .create()
+        
+        authErrorDialog?.show()
+        
+        authErrorDismissTimer = lifecycleScope.launch {
+            delay(15000)
+            if (!isFinishing && !isDestroyed && authErrorDialog?.isShowing == true) {
+                authErrorDialog?.dismiss()
+                showLoginForm()
+            }
         }
     }
 

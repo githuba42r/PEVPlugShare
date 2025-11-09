@@ -31,29 +31,61 @@ class SplashActivity : AppCompatActivity() {
                 }
 
                 // Check if user has session cookies
-                val isLoggedIn = viewModel.isUserLoggedIn()
+                val hasSessionCookie = viewModel.hasSessionCookie()
                 
-                if (isLoggedIn) {
-                    android.util.Log.d("SplashActivity", "Session found, validating...")
+                if (hasSessionCookie) {
+                    android.util.Log.d("SplashActivity", "Session cookie found, validating in background...")
                     
-                    // Validate the session by trying to load categories
-                    val isSessionValid = viewModel.validateSession()
+                    // Validate the session by trying to load categories in background
+                    val isSessionValid = viewModel.validateSessionInBackground()
                     
                     if (isSessionValid) {
                         android.util.Log.d("SplashActivity", "Session valid, navigating to MainActivity")
                         // Session is valid, go to main activity
-                        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                        if (!isFinishing && !isDestroyed) {
+                            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                            finish()
+                        }
                     } else {
-                        android.util.Log.d("SplashActivity", "Session invalid, navigating to LoginActivity")
-                        // Session expired or invalid, need to login again
-                        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                        android.util.Log.d("SplashActivity", "Session invalid, checking for stored credentials")
+                        
+                        // Session invalid - check if we have stored credentials for auto-retry
+                        val hasStoredCredentials = viewModel.hasStoredCredentials()
+                        if (hasStoredCredentials) {
+                            android.util.Log.d("SplashActivity", "Found stored credentials, attempting auto-login...")
+                            // Try to auto-login with stored credentials
+                            val autoLoginSuccess = viewModel.attemptAutoLoginInBackground()
+                            if (autoLoginSuccess) {
+                                android.util.Log.d("SplashActivity", "Auto-login successful, navigating to MainActivity")
+                                if (!isFinishing && !isDestroyed) {
+                                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                                    finish()
+                                }
+                            } else {
+                                android.util.Log.d("SplashActivity", "Auto-login failed, navigating to LoginActivity")
+                                if (!isFinishing && !isDestroyed) {
+                                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java).apply {
+                                        putExtra("showAuthErrorModal", true)
+                                    })
+                                    finish()
+                                }
+                            }
+                        } else {
+                            android.util.Log.d("SplashActivity", "No stored credentials, navigating to LoginActivity")
+                            if (!isFinishing && !isDestroyed) {
+                                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                finish()
+                            }
+                        }
                     }
                 } else {
-                    android.util.Log.d("SplashActivity", "No session found, navigating to LoginActivity")
+                    android.util.Log.d("SplashActivity", "No session cookie found, navigating to LoginActivity")
                     // No session, user needs to log in
-                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                    if (!isFinishing && !isDestroyed) {
+                        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                        finish()
+                    }
                 }
-                finish()
             } catch (e: Exception) {
                 android.util.Log.e("SplashActivity", "Error during splash screen: ${e.message}", e)
                 // Continue to login on error

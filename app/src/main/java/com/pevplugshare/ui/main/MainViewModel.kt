@@ -162,9 +162,27 @@ class MainViewModel @Inject constructor(
                 
                 // Load data for selected category
                 val savedCategory = tokenManager.getSelectedCategory()
-                if (savedCategory != null && categoryList.contains(savedCategory)) {
-                    _selectedCategory.value = savedCategory
-                    loadLocations(savedCategory)
+                android.util.Log.d("MainViewModel", "Saved category: $savedCategory")
+                
+                if (categoryList.isNotEmpty()) {
+                    if (savedCategory != null && categoryList.contains(savedCategory)) {
+                        // Saved category is valid, use it
+                        android.util.Log.d("MainViewModel", "Using saved category: $savedCategory")
+                        _selectedCategory.value = savedCategory
+                        loadLocations(savedCategory)
+                    } else {
+                        // Saved category doesn't exist or is null, show empty state and prompt user
+                        android.util.Log.d("MainViewModel", "No valid saved category, setting to empty and prompting user to select")
+                        _locationListState.value = LocationListState.Empty
+                        _needsCategorySelection.value = true
+                    }
+                } else {
+                    // Empty category list, try default
+                    val defaultCategory = "Charging Stations"
+                    _selectedCategory.value = defaultCategory
+                    _categories.value = listOf(defaultCategory)
+                    tokenManager.saveSelectedCategory(defaultCategory)
+                    loadLocations(defaultCategory)
                 }
             }.onFailure { error ->
                 android.util.Log.e("MainViewModel", "Session validation failed: ${error.message}")
