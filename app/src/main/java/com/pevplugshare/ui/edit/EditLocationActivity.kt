@@ -1093,15 +1093,20 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun editPhoto(index: Int, file: File) {
-        editingPhotoIndex = index
-        val intent = android.content.Intent(this, ImageEditorActivity::class.java).apply {
-            putExtra(ImageEditorActivity.EXTRA_IMAGE_PATH, file.absolutePath)
-            
-            // Use temp file for output to preserve original
-            val editOutputFile = File.createTempFile("edited_", ".jpg", cacheDir)
-            putExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH, editOutputFile.absolutePath)
+        try {
+            editingPhotoIndex = index
+            val intent = android.content.Intent(this, ImageEditorActivity::class.java).apply {
+                putExtra(ImageEditorActivity.EXTRA_IMAGE_PATH, file.absolutePath)
+                
+                // Use temp file for output to preserve original
+                val editOutputFile = File.createTempFile("edited_", ".jpg", cacheDir)
+                putExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH, editOutputFile.absolutePath)
+            }
+            imageEditor.launch(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error opening image editor: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("EditLocationActivity", "Error launching image editor", e)
         }
-        imageEditor.launch(intent)
     }
     
     private fun checkLocationUpdate(metadata: com.pevplugshare.data.model.PhotoMetadata) {

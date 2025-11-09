@@ -7,9 +7,11 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.Toast
@@ -55,10 +57,25 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun loadImage(imagePath: String) {
-        val file = File(imagePath)
-        originalBitmap = MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(file))
-        editBitmap = originalBitmap.copy(originalBitmap.config, true)
-        binding.imageView.setImageBitmap(editBitmap)
+        try {
+            val file = File(imagePath)
+            if (!file.exists()) {
+                throw Exception("Image file does not exist: $imagePath")
+            }
+            
+            val bitmap = BitmapFactory.decodeFile(imagePath)
+            if (bitmap == null) {
+                throw Exception("Failed to decode image: $imagePath")
+            }
+            
+            originalBitmap = bitmap
+            editBitmap = originalBitmap.copy(originalBitmap.config, true)
+            binding.imageView.setImageBitmap(editBitmap)
+        } catch (e: Exception) {
+            Log.e("ImageEditorActivity", "Error loading image", e)
+            Toast.makeText(this, "Error loading image: ${e.message}", Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
 
     private fun setupUI() {
