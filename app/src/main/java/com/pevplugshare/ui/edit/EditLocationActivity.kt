@@ -897,6 +897,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     viewModel.updateAccessType(if (parsed.isPublic) "public" else "private")
                 }
                 
+                // Add additional info if found
+                if (parsed.additionalInfo != null) {
+                    extractedInfo.add("Additional details: ${parsed.additionalInfo}")
+                }
+                
                 val message = if (extractedInfo.isNotEmpty()) {
                     "✅ Extracted:\n" + extractedInfo.joinToString("\n")
                 } else {

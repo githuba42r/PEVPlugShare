@@ -3790,10 +3790,10 @@
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/auth/LoginActivity.kt"
             line="217"
             column="36"
-            startOffset="9612"
+            startOffset="9600"
             endLine="217"
             endColumn="49"
-            endOffset="9625"/>
+            endOffset="9613"/>
     </incident>
 
     <incident
@@ -3998,12 +3998,12 @@
         message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/LocationAdapter.kt"
-            line="74"
+            line="84"
             column="41"
-            startOffset="3044"
-            endLine="74"
+            startOffset="3549"
+            endLine="84"
             endColumn="67"
-            endOffset="3070"/>
+            endOffset="3575"/>
     </incident>
 
     <incident
@@ -4012,12 +4012,12 @@
         message="String literal in `setText` can not be translated. Use Android resources instead.">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/LocationAdapter.kt"
-            line="74"
+            line="84"
             column="62"
-            startOffset="3065"
-            endLine="74"
+            startOffset="3570"
+            endLine="84"
             endColumn="66"
-            endOffset="3069"/>
+            endOffset="3574"/>
     </incident>
 
     <incident
@@ -4026,12 +4026,12 @@
         message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/LocationAdapter.kt"
-            line="81"
+            line="91"
             column="49"
-            startOffset="3470"
-            endLine="81"
+            startOffset="3975"
+            endLine="91"
             endColumn="77"
-            endOffset="3498"/>
+            endOffset="4003"/>
     </incident>
 
     <incident
@@ -4040,12 +4040,12 @@
         message="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into your application, review carefully">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/LocationAdapter.kt"
-            line="199"
+            line="209"
             column="17"
-            startOffset="9030"
-            endLine="199"
+            startOffset="9535"
+            endLine="209"
             endColumn="41"
-            endOffset="9054"/>
+            endOffset="9559"/>
     </incident>
 
     <incident
@@ -4056,10 +4056,10 @@
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/MainActivity.kt"
             line="118"
             column="51"
-            startOffset="5511"
+            startOffset="5495"
             endLine="118"
             endColumn="161"
-            endOffset="5621"/>
+            endOffset="5605"/>
     </incident>
 
     <incident
@@ -4070,10 +4070,10 @@
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/MainActivity.kt"
             line="118"
             column="52"
-            startOffset="5512"
+            startOffset="5496"
             endLine="118"
             endColumn="80"
-            endOffset="5540"/>
+            endOffset="5524"/>
     </incident>
 
     <incident
@@ -4084,10 +4084,10 @@
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/MainActivity.kt"
             line="118"
             column="84"
-            startOffset="5544"
+            startOffset="5528"
             endLine="118"
             endColumn="160"
-            endOffset="5620"/>
+            endOffset="5604"/>
     </incident>
 
     <incident
@@ -4098,10 +4098,10 @@
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/MainActivity.kt"
             line="125"
             column="51"
-            startOffset="6076"
+            startOffset="6060"
             endLine="125"
             endColumn="76"
-            endOffset="6101"/>
+            endOffset="6085"/>
     </incident>
 
     <incident
@@ -4112,10 +4112,10 @@
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/MainActivity.kt"
             line="125"
             column="52"
-            startOffset="6077"
+            startOffset="6061"
             endLine="125"
             endColumn="59"
-            endOffset="6084"/>
+            endOffset="6068"/>
     </incident>
 
     <incident
@@ -4124,12 +4124,12 @@
         message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/MainActivity.kt"
-            line="484"
+            line="508"
             column="30"
-            startOffset="20847"
-            endLine="484"
+            startOffset="22227"
+            endLine="508"
             endColumn="54"
-            endOffset="20871"/>
+            endOffset="22251"/>
     </incident>
 
     <incident
@@ -4138,12 +4138,12 @@
         message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/MainActivity.kt"
-            line="491"
+            line="515"
             column="38"
-            startOffset="21309"
-            endLine="491"
+            startOffset="22689"
+            endLine="515"
             endColumn="76"
-            endOffset="21347"/>
+            endOffset="22727"/>
     </incident>
 
     <incident
@@ -4152,12 +4152,12 @@
         message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/pevplugshare/ui/main/MainActivity.kt"
-            line="491"
+            line="515"
             column="41"
-            startOffset="21312"
-            endLine="491"
+            startOffset="22692"
+            endLine="515"
             endColumn="53"
-            endOffset="21324"/>
+            endOffset="22704"/>
     </incident>
 
     <incident
@@ -4690,13 +4690,13 @@
         severity="warning"
         message="Use version catalog instead">
         <fix-composite
-            description="Replace with new library catalog declaration for androidx-swiperefreshlayout"
+            description="Replace with new library catalog declaration for swiperefreshlayout"
             robot="true">
             <fix-replace
-                description="Replace with swiperefreshlayout = &quot;1.1.0&quot;..."
+                description="Replace with swiperefreshlayoutVersion = &quot;1.1.0&quot;..."
                 robot="true"
                 oldString="_lint_insert_begin_"
-                replacement="swiperefreshlayout = &quot;1.1.0&quot;&#xA;"
+                replacement="swiperefreshlayoutVersion = &quot;1.1.0&quot;&#xA;"
                 priority="0">
                 <range
                     file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
@@ -4704,20 +4704,20 @@
                     endOffset="277"/>
             </fix-replace>
             <fix-replace
-                description="Replace with androidx-swiperefreshlayout = { module = &quot;androidx.swiperefreshlayout:swiperefreshlayout&quot;, version.ref = &quot;swiperefreshlayout&quot; }..."
+                description="Replace with swiperefreshlayout = { module = &quot;androidx.swiperefreshlayout:swiperefreshlayout&quot;, version.ref = &quot;swiperefreshlayoutVersion&quot; }..."
                 robot="true"
                 oldString="_lint_insert_begin_"
-                replacement="androidx-swiperefreshlayout = { module = &quot;androidx.swiperefreshlayout:swiperefreshlayout&quot;, version.ref = &quot;swiperefreshlayout&quot; }&#xA;"
+                replacement="swiperefreshlayout = { module = &quot;androidx.swiperefreshlayout:swiperefreshlayout&quot;, version.ref = &quot;swiperefreshlayoutVersion&quot; }&#xA;"
                 priority="0">
                 <range
                     file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-                    startOffset="597"
-                    endOffset="597"/>
+                    startOffset="3602"
+                    endOffset="3602"/>
             </fix-replace>
             <fix-replace
-                description="Replace with libs.androidx.swiperefreshlayout"
+                description="Replace with libs.swiperefreshlayout"
                 robot="true"
-                replacement="libs.androidx.swiperefreshlayout"
+                replacement="libs.swiperefreshlayout"
                 priority="0">
                 <range
                     file="${:app*projectDir}/build.gradle.kts"
@@ -4757,13 +4757,13 @@
         severity="warning"
         message="Use version catalog instead">
         <fix-composite
-            description="Replace with new library catalog declaration for osmdroid-android"
+            description="Replace with new library catalog declaration for osmdroid-osmdroid-android"
             robot="true">
             <fix-replace
-                description="Replace with osmdroidAndroid = &quot;6.1.18&quot;..."
+                description="Replace with osmdroidAndroidVersion = &quot;6.1.18&quot;..."
                 robot="true"
                 oldString="_lint_insert_begin_"
-                replacement="osmdroidAndroid = &quot;6.1.18&quot;&#xA;"
+                replacement="osmdroidAndroidVersion = &quot;6.1.18&quot;&#xA;"
                 priority="0">
                 <range
                     file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
@@ -4771,10 +4771,10 @@
                     endOffset="212"/>
             </fix-replace>
             <fix-replace
-                description="Replace with osmdroid-android = { module = &quot;org.osmdroid:osmdroid-android&quot;, version.ref = &quot;osmdroidAndroid&quot; }..."
+                description="Replace with osmdroid-osmdroid-android = { module = &quot;org.osmdroid:osmdroid-android&quot;, version.ref = &quot;osmdroidAndroidVersion&quot; }..."
                 robot="true"
                 oldString="_lint_insert_begin_"
-                replacement="osmdroid-android = { module = &quot;org.osmdroid:osmdroid-android&quot;, version.ref = &quot;osmdroidAndroid&quot; }&#xA;"
+                replacement="osmdroid-osmdroid-android = { module = &quot;org.osmdroid:osmdroid-android&quot;, version.ref = &quot;osmdroidAndroidVersion&quot; }&#xA;"
                 priority="0">
                 <range
                     file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
@@ -4782,9 +4782,9 @@
                     endOffset="1926"/>
             </fix-replace>
             <fix-replace
-                description="Replace with libs.osmdroid.android"
+                description="Replace with libs.osmdroid.osmdroid.android"
                 robot="true"
-                replacement="libs.osmdroid.android"
+                replacement="libs.osmdroid.osmdroid.android"
                 priority="0">
                 <range
                     file="${:app*projectDir}/build.gradle.kts"
@@ -4807,13 +4807,13 @@
         severity="warning"
         message="Use version catalog instead">
         <fix-composite
-            description="Replace with new library catalog declaration for androidx-preference-ktx"
+            description="Replace with new library catalog declaration for preference-ktx"
             robot="true">
             <fix-replace
-                description="Replace with preferenceKtx = &quot;1.2.1&quot;..."
+                description="Replace with preferenceKtxVersion = &quot;1.2.1&quot;..."
                 robot="true"
                 oldString="_lint_insert_begin_"
-                replacement="preferenceKtx = &quot;1.2.1&quot;&#xA;"
+                replacement="preferenceKtxVersion = &quot;1.2.1&quot;&#xA;"
                 priority="0">
                 <range
                     file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
@@ -4821,20 +4821,20 @@
                     endOffset="212"/>
             </fix-replace>
             <fix-replace
-                description="Replace with androidx-preference-ktx = { module = &quot;androidx.preference:preference-ktx&quot;, version.ref = &quot;preferenceKtx&quot; }..."
+                description="Replace with preference-ktx = { module = &quot;androidx.preference:preference-ktx&quot;, version.ref = &quot;preferenceKtxVersion&quot; }..."
                 robot="true"
                 oldString="_lint_insert_begin_"
-                replacement="androidx-preference-ktx = { module = &quot;androidx.preference:preference-ktx&quot;, version.ref = &quot;preferenceKtx&quot; }&#xA;"
+                replacement="preference-ktx = { module = &quot;androidx.preference:preference-ktx&quot;, version.ref = &quot;preferenceKtxVersion&quot; }&#xA;"
                 priority="0">
                 <range
                     file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
-                    startOffset="597"
-                    endOffset="597"/>
+                    startOffset="1926"
+                    endOffset="1926"/>
             </fix-replace>
             <fix-replace
-                description="Replace with libs.androidx.preference.ktx"
+                description="Replace with libs.preference.ktx"
                 robot="true"
-                replacement="libs.androidx.preference.ktx"
+                replacement="libs.preference.ktx"
                 priority="0">
                 <range
                     file="${:app*projectDir}/build.gradle.kts"
@@ -4857,13 +4857,13 @@
         severity="warning"
         message="Use version catalog instead">
         <fix-composite
-            description="Replace with new library catalog declaration for glide"
+            description="Replace with new library catalog declaration for github-glide"
             robot="true">
             <fix-replace
-                description="Replace with glide = &quot;4.16.0&quot;..."
+                description="Replace with glideVersion = &quot;4.16.0&quot;..."
                 robot="true"
                 oldString="_lint_insert_begin_"
-                replacement="glide = &quot;4.16.0&quot;&#xA;"
+                replacement="glideVersion = &quot;4.16.0&quot;&#xA;"
                 priority="0">
                 <range
                     file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
@@ -4871,10 +4871,10 @@
                     endOffset="25"/>
             </fix-replace>
             <fix-replace
-                description="Replace with glide = { module = &quot;com.github.bumptech.glide:glide&quot;, version.ref = &quot;glide&quot; }..."
+                description="Replace with github-glide = { module = &quot;com.github.bumptech.glide:glide&quot;, version.ref = &quot;glideVersion&quot; }..."
                 robot="true"
                 oldString="_lint_insert_begin_"
-                replacement="glide = { module = &quot;com.github.bumptech.glide:glide&quot;, version.ref = &quot;glide&quot; }&#xA;"
+                replacement="github-glide = { module = &quot;com.github.bumptech.glide:glide&quot;, version.ref = &quot;glideVersion&quot; }&#xA;"
                 priority="0">
                 <range
                     file="$HOME/src/AndroidStudioProjects/PEVPlugShare/gradle/libs.versions.toml"
@@ -4882,9 +4882,9 @@
                     endOffset="597"/>
             </fix-replace>
             <fix-replace
-                description="Replace with libs.glide"
+                description="Replace with libs.github.glide"
                 robot="true"
-                replacement="libs.glide"
+                replacement="libs.github.glide"
                 priority="0">
                 <range
                     file="${:app*projectDir}/build.gradle.kts"
@@ -5393,6 +5393,22 @@
     </incident>
 
     <incident
+        id="IconLocation"
+        severity="warning"
+        message="Found bitmap drawable `res/drawable/ic_generate_description.png` in densityless folder">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_generate_description.png"/>
+    </incident>
+
+    <incident
+        id="IconLocation"
+        severity="warning"
+        message="Found bitmap drawable `res/drawable/ic_parse_description.png` in densityless folder">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_parse_description.png"/>
+    </incident>
+
+    <incident
         id="Overdraw"
         severity="warning"
         message="Possible overdraw: Root element paints background `@android:color/black` with a theme that also paints a background (inferred theme is `@style/Theme.PEVPlugShare`)">
@@ -5488,22 +5504,6 @@
             endLine="7"
             endColumn="35"
             endOffset="320"/>
-    </incident>
-
-    <incident
-        id="IconLocation"
-        severity="warning"
-        message="Found bitmap drawable `res/drawable/ic_generate_description.png` in densityless folder">
-        <location
-            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_generate_description.png"/>
-    </incident>
-
-    <incident
-        id="IconLocation"
-        severity="warning"
-        message="Found bitmap drawable `res/drawable/ic_parse_description.png` in densityless folder">
-        <location
-            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_parse_description.png"/>
     </incident>
 
 </incidents>

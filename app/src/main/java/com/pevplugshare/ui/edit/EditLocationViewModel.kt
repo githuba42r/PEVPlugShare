@@ -321,6 +321,9 @@ class EditLocationViewModel @Inject constructor(
                     if (parsed.capacity != null) {
                         updateChargingCosts(parsed.capacity)
                     }
+                    if (parsed.additionalInfo != null) {
+                        updateAdditionalInfo(parsed.additionalInfo)
+                    }
                     updateHasFee(parsed.hasFee)
                     
                     onResult(parsed, null)

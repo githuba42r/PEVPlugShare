@@ -179,7 +179,7 @@ document.getElementById(id).style.display = 'none';
     <div class="mdl-layout__header-row">
       <span class="mdl-layout-title">Lint Report: 5 errors and 438 warnings</span>
       <div class="mdl-layout-spacer"></div>
-      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Sun Nov 09 20:07:21 AEST 2025 by AGP (8.4.0)</nav>
+      <nav class="mdl-navigation mdl-layout--large-screen-only">Check performed at Sun Nov 09 20:53:09 AEST 2025 by AGP (8.4.0)</nav>
     </div>
   </header>
   <div class="mdl-layout__drawer">
@@ -1619,14 +1619,14 @@ Dismiss</button>            </div>
               <div class="mdl-card__supporting-text">
 <div class="issue">
 <div class="warningslist">
-<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:199</span>: <span class="message">Using <code>setJavaScriptEnabled</code> can introduce XSS vulnerabilities into your application, review carefully</span><br /><pre class="errorlines">
-<span class="lineno"> 196 </span>       
-<span class="lineno"> 197 </span>       private <span class="keyword">fun</span> loadMapInWebView(location: Location, webView: android.webkit.WebView) {
-<span class="lineno"> 198 </span>           webView.settings.apply {
-<span class="caretline"><span class="lineno"> 199 </span>               <span class="warning">javaScriptEnabled = <span class="keyword">true</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 200 </span>               loadWithOverviewMode = <span class="keyword">true</span>
-<span class="lineno"> 201 </span>               useWideViewPort = <span class="keyword">true</span>
-<span class="lineno"> 202 </span>           }
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:209</span>: <span class="message">Using <code>setJavaScriptEnabled</code> can introduce XSS vulnerabilities into your application, review carefully</span><br /><pre class="errorlines">
+<span class="lineno"> 206 </span>       
+<span class="lineno"> 207 </span>       private <span class="keyword">fun</span> loadMapInWebView(location: Location, webView: android.webkit.WebView) {
+<span class="lineno"> 208 </span>           webView.settings.apply {
+<span class="caretline"><span class="lineno"> 209 </span>               <span class="warning">javaScriptEnabled = <span class="keyword">true</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 210 </span>               loadWithOverviewMode = <span class="keyword">true</span>
+<span class="lineno"> 211 </span>               useWideViewPort = <span class="keyword">true</span>
+<span class="lineno"> 212 </span>           }
 </pre>
 
 </div>
@@ -3206,32 +3206,32 @@ Dismiss</button>            </div>
 <span class="lineno"> 253 </span>            imageView.scaleX = <span class="number">1f</span>
 <span class="lineno"> 254 </span>            imageView.scaleY = <span class="number">1f</span></pre>
 
-<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:74</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
-<span class="lineno">  71 </span>  locationDistance.text = LocationUtils.formatDistance(distance)
-<span class="lineno">  72 </span>  
-<span class="lineno">  73 </span>  <span class="comment">// Always visible badges</span>
-<span class="caretline"><span class="lineno">  74 </span>  locationGpoCount.text = <span class="warning"><span class="string">"${</span>location.gpoCount<span class="string">} GPO"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  75 </span>  publicPrivateBadge.text = <span class="keyword">if</span> (location.publicPrivate.displayName == <span class="string">"Public"</span>) <span class="string">"🌍 Public"</span> <span class="keyword">else</span> <span class="string">"🔒 Private"</span>
-<span class="lineno">  76 </span>  
-<span class="lineno">  77 </span>  feeIndicator.text = <span class="keyword">if</span> (location.hasFee) <span class="string">"💰 Paid"</span> <span class="keyword">else</span> <span class="string">"Free"</span></pre>
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:84</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
+<span class="lineno">  81 </span>  }
+<span class="lineno">  82 </span>  
+<span class="lineno">  83 </span>  <span class="comment">// Always visible badges</span>
+<span class="caretline"><span class="lineno">  84 </span>  locationGpoCount.text = <span class="warning"><span class="string">"${</span>location.gpoCount<span class="string">} GPO"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  85 </span>  publicPrivateBadge.text = <span class="keyword">if</span> (location.publicPrivate.displayName == <span class="string">"Public"</span>) <span class="string">"🌍 Public"</span> <span class="keyword">else</span> <span class="string">"🔒 Private"</span>
+<span class="lineno">  86 </span>  
+<span class="lineno">  87 </span>  feeIndicator.text = <span class="keyword">if</span> (location.hasFee) <span class="string">"💰 Paid"</span> <span class="keyword">else</span> <span class="string">"Free"</span></pre>
 
-<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:74</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
-<span class="lineno">  71 </span>  locationDistance.text = LocationUtils.formatDistance(distance)
-<span class="lineno">  72 </span>  
-<span class="lineno">  73 </span>  <span class="comment">// Always visible badges</span>
-<span class="caretline"><span class="lineno">  74 </span>  locationGpoCount.text = <span class="string">"${</span>location.gpoCount<span class="string">}</span><span class="warning"><span class="string"> GPO</span></span><span class="string">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  75 </span>  publicPrivateBadge.text = <span class="keyword">if</span> (location.publicPrivate.displayName == <span class="string">"Public"</span>) <span class="string">"🌍 Public"</span> <span class="keyword">else</span> <span class="string">"🔒 Private"</span>
-<span class="lineno">  76 </span>  
-<span class="lineno">  77 </span>  feeIndicator.text = <span class="keyword">if</span> (location.hasFee) <span class="string">"💰 Paid"</span> <span class="keyword">else</span> <span class="string">"Free"</span></pre>
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:84</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
+<span class="lineno">  81 </span>  }
+<span class="lineno">  82 </span>  
+<span class="lineno">  83 </span>  <span class="comment">// Always visible badges</span>
+<span class="caretline"><span class="lineno">  84 </span>  locationGpoCount.text = <span class="string">"${</span>location.gpoCount<span class="string">}</span><span class="warning"><span class="string"> GPO</span></span><span class="string">"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  85 </span>  publicPrivateBadge.text = <span class="keyword">if</span> (location.publicPrivate.displayName == <span class="string">"Public"</span>) <span class="string">"🌍 Public"</span> <span class="keyword">else</span> <span class="string">"🔒 Private"</span>
+<span class="lineno">  86 </span>  
+<span class="lineno">  87 </span>  feeIndicator.text = <span class="keyword">if</span> (location.hasFee) <span class="string">"💰 Paid"</span> <span class="keyword">else</span> <span class="string">"Free"</span></pre>
 
-<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:81</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
-<span class="lineno">  78 </span>                
-<span class="lineno">  79 </span>                <span class="comment">// Opening hours badge</span>
-<span class="lineno">  80 </span>                <span class="keyword">val</span> isOpen = <span class="keyword">if</span> (!location.openingHours.isNullOrEmpty()) {
-<span class="caretline"><span class="lineno">  81 </span>                    locationOpeningHours.text = <span class="warning"><span class="string">"⏰ ${</span>location.openingHours<span class="string">}"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno">  82 </span>                    locationOpeningHours.visibility = android.view.View.VISIBLE
-<span class="lineno">  83 </span>                    isLocationOpen(location.openingHours)
-<span class="lineno">  84 </span>                } <span class="keyword">else</span> {
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt">../../src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt</a>:91</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
+<span class="lineno">  88 </span>                
+<span class="lineno">  89 </span>                <span class="comment">// Opening hours badge</span>
+<span class="lineno">  90 </span>                <span class="keyword">val</span> isOpen = <span class="keyword">if</span> (!location.openingHours.isNullOrEmpty()) {
+<span class="caretline"><span class="lineno">  91 </span>                    locationOpeningHours.text = <span class="warning"><span class="string">"⏰ ${</span>location.openingHours<span class="string">}"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno">  92 </span>                    locationOpeningHours.visibility = android.view.View.VISIBLE
+<span class="lineno">  93 </span>                    isLocationOpen(location.openingHours)
+<span class="lineno">  94 </span>                } <span class="keyword">else</span> {
 </pre>
 
 <span class="location"><a href="../../src/main/java/com/pevplugshare/ui/auth/LoginActivity.kt">../../src/main/java/com/pevplugshare/ui/auth/LoginActivity.kt</a>:217</span>: <span class="message">String literal in <code>setText</code> can not be translated. Use Android resources instead.</span><br /><pre class="errorlines">
@@ -3294,33 +3294,33 @@ Dismiss</button>            </div>
 <span class="lineno"> 128 </span>          }
 </pre>
 
-<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:484</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
-<span class="lineno"> 481 </span>        galleryToolbar?.title = location.name
-<span class="lineno"> 482 </span>        
-<span class="lineno"> 483 </span>        <span class="comment">// Update counter</span>
-<span class="caretline"><span class="lineno"> 484 </span>        imageCounter?.text = <span class="warning"><span class="string">"1 / ${</span>imagePaths.size<span class="string">}"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 485 </span>        
-<span class="lineno"> 486 </span>        android.util.Log.d(<span class="string">"PhotoGallery"</span>, <span class="string">"Setting up page change listener"</span>)
-<span class="lineno"> 487 </span>        <span class="comment">// Handle page changes</span></pre>
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:508</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
+<span class="lineno"> 505 </span>        galleryToolbar?.title = location.name
+<span class="lineno"> 506 </span>        
+<span class="lineno"> 507 </span>        <span class="comment">// Update counter</span>
+<span class="caretline"><span class="lineno"> 508 </span>        imageCounter?.text = <span class="warning"><span class="string">"1 / ${</span>imagePaths.size<span class="string">}"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 509 </span>        
+<span class="lineno"> 510 </span>        android.util.Log.d(<span class="string">"PhotoGallery"</span>, <span class="string">"Setting up page change listener"</span>)
+<span class="lineno"> 511 </span>        <span class="comment">// Handle page changes</span></pre>
 
-<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:491</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
-<span class="lineno"> 488 </span>  viewPager.registerOnPageChangeCallback(<span class="keyword">object</span> : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
-<span class="lineno"> 489 </span>      override <span class="keyword">fun</span> onPageSelected(position: Int) {
-<span class="lineno"> 490 </span>          android.util.Log.d(<span class="string">"PhotoGallery"</span>, <span class="string">"Page selected: ${</span>position + <span class="number">1</span><span class="string">} / ${</span>imagePaths.size<span class="string">}"</span>)
-<span class="caretline"><span class="lineno"> 491 </span>          imageCounter?.text = <span class="warning"><span class="string">"${</span>position + <span class="number">1</span><span class="string">} / ${</span>imagePaths.size<span class="string">}"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 492 </span>      }
-<span class="lineno"> 493 </span>  })
-<span class="lineno"> 494 </span>  
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:515</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
+<span class="lineno"> 512 </span>  viewPager.registerOnPageChangeCallback(<span class="keyword">object</span> : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+<span class="lineno"> 513 </span>      override <span class="keyword">fun</span> onPageSelected(position: Int) {
+<span class="lineno"> 514 </span>          android.util.Log.d(<span class="string">"PhotoGallery"</span>, <span class="string">"Page selected: ${</span>position + <span class="number">1</span><span class="string">} / ${</span>imagePaths.size<span class="string">}"</span>)
+<span class="caretline"><span class="lineno"> 515 </span>          imageCounter?.text = <span class="warning"><span class="string">"${</span>position + <span class="number">1</span><span class="string">} / ${</span>imagePaths.size<span class="string">}"</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 516 </span>      }
+<span class="lineno"> 517 </span>  })
+<span class="lineno"> 518 </span>  
 </pre>
 
-<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:491</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
-<span class="lineno"> 488 </span>  viewPager.registerOnPageChangeCallback(<span class="keyword">object</span> : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
-<span class="lineno"> 489 </span>      override <span class="keyword">fun</span> onPageSelected(position: Int) {
-<span class="lineno"> 490 </span>          android.util.Log.d(<span class="string">"PhotoGallery"</span>, <span class="string">"Page selected: ${</span>position + <span class="number">1</span><span class="string">} / ${</span>imagePaths.size<span class="string">}"</span>)
-<span class="caretline"><span class="lineno"> 491 </span>          imageCounter?.text = <span class="string">"${</span><span class="warning">position + <span class="number">1</span></span><span class="string">} / ${</span>imagePaths.size<span class="string">}"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<span class="lineno"> 492 </span>      }
-<span class="lineno"> 493 </span>  })
-<span class="lineno"> 494 </span>  
+<span class="location"><a href="../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt">../../src/main/java/com/pevplugshare/ui/main/MainActivity.kt</a>:515</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">
+<span class="lineno"> 512 </span>  viewPager.registerOnPageChangeCallback(<span class="keyword">object</span> : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
+<span class="lineno"> 513 </span>      override <span class="keyword">fun</span> onPageSelected(position: Int) {
+<span class="lineno"> 514 </span>          android.util.Log.d(<span class="string">"PhotoGallery"</span>, <span class="string">"Page selected: ${</span>position + <span class="number">1</span><span class="string">} / ${</span>imagePaths.size<span class="string">}"</span>)
+<span class="caretline"><span class="lineno"> 515 </span>          imageCounter?.text = <span class="string">"${</span><span class="warning">position + <span class="number">1</span></span><span class="string">} / ${</span>imagePaths.size<span class="string">}"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+<span class="lineno"> 516 </span>      }
+<span class="lineno"> 517 </span>  })
+<span class="lineno"> 518 </span>  
 </pre>
 
 <span class="location"><a href="../../src/main/java/com/pevplugshare/ui/settings/model/ModelSelectionAdapter.kt">../../src/main/java/com/pevplugshare/ui/settings/model/ModelSelectionAdapter.kt</a>:39</span>: <span class="message">Do not concatenate text displayed with <code>setText</code>. Use resource string with placeholders.</span><br /><pre class="errorlines">

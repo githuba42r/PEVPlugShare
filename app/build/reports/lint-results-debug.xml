@@ -1770,7 +1770,7 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt"
-            line="199"
+            line="209"
             column="17"/>
     </issue>
 
@@ -4232,7 +4232,7 @@
         errorLine2="                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt"
-            line="74"
+            line="84"
             column="41"/>
     </issue>
 
@@ -4250,7 +4250,7 @@
         errorLine2="                                                             ~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt"
-            line="74"
+            line="84"
             column="62"/>
     </issue>
 
@@ -4268,7 +4268,7 @@
         errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt"
-            line="81"
+            line="91"
             column="49"/>
     </issue>
 
@@ -4394,7 +4394,7 @@
         errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt"
-            line="484"
+            line="508"
             column="30"/>
     </issue>
 
@@ -4412,7 +4412,7 @@
         errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt"
-            line="491"
+            line="515"
             column="38"/>
     </issue>
 
@@ -4430,7 +4430,7 @@
         errorLine2="                                        ~~~~~~~~~~~~">
         <location
             file="/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt"
-            line="491"
+            line="515"
             column="41"/>
     </issue>
 

@@ -449,7 +449,7 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
    Identifier: androidx.appcompat
    Feedback: https://issuetracker.google.com/issues/new?component=460343
 
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:199: Warning: Using setJavaScriptEnabled can introduce XSS vulnerabilities into your application, review carefully [SetJavaScriptEnabled]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:209: Warning: Using setJavaScriptEnabled can introduce XSS vulnerabilities into your application, review carefully [SetJavaScriptEnabled]
                 javaScriptEnabled = true
                 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1073,13 +1073,13 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/edit/ImageEditorActivity.kt:251: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             toggleFocusButton.text = "Add Focus Area"
                                       ~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:74: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:84: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                 locationGpoCount.text = "${location.gpoCount} GPO"
                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:74: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:84: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                 locationGpoCount.text = "${location.gpoCount} GPO"
                                                              ~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:81: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/LocationAdapter.kt:91: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                     locationOpeningHours.text = "⏰ ${location.openingHours}"
                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/auth/LoginActivity.kt:217: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
@@ -1100,13 +1100,13 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version = "5.2.1"
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:125: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                         binding.emptyState.text = "Error: ${state.message}"
                                                    ~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:484: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:508: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
         imageCounter?.text = "1 / ${imagePaths.size}"
                              ~~~~~~~~~~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:491: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:515: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                 imageCounter?.text = "${position + 1} / ${imagePaths.size}"
                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:491: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/main/MainActivity.kt:515: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                 imageCounter?.text = "${position + 1} / ${imagePaths.size}"
                                         ~~~~~~~~~~~~
 /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/java/com/pevplugshare/ui/settings/model/ModelSelectionAdapter.kt:39: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]

@@ -295,6 +295,7 @@ string success_location_updated
 string success_synced
 string syncing_indicator
 string yes
+style CustomOutlinedButton
 style Theme.PEVPlugShare
 xml backup_rules
 xml data_extraction_rules
