@@ -245,34 +245,32 @@ class QuickLocationActivity : AppCompatActivity() {
         }
     }
 
+    private val locationPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val resultBundle = result.data?.getBundleExtra("result")
+            if (resultBundle != null) {
+                selectedLatitude = resultBundle.getDouble("latitude")
+                selectedLongitude = resultBundle.getDouble("longitude")
+                selectedBearing = resultBundle.getFloat("bearing")
+                Log.d("QuickLocationActivity", "Location selected: $selectedLatitude, $selectedLongitude")
+            }
+            proceedAfterLocationPicker()
+        }
+    }
+
     private fun showLocationPickerDialog() {
-        // TODO: Implement map location picker dialog
-        // For now, proceed to next step
-        proceedAfterLocationPicker()
+        val intent = Intent(this, LocationPickerMapActivity::class.java).apply {
+            putExtra("latitude", selectedLatitude ?: -33.8688)
+            putExtra("longitude", selectedLongitude ?: 151.2093)
+            putExtra("bearing", selectedBearing ?: 0f)
+        }
+        locationPickerLauncher.launch(intent)
     }
 
     private fun proceedAfterLocationPicker() {
-        // Smart workflow: only show prompts where multiple options exist
-        val isAiEnabled = tokenManager.isAiAnalysisEnabled()
-        
-        // Check available next steps
-        val canEdit = true // Always available
-        val canAnalyze = isAiEnabled // Only if AI is configured
-        
-        when {
-            // Both editing and AI analysis available: show dialog
-            canEdit && canAnalyze -> {
-                showPhotoProgressDialog()
-            }
-            // Only editing available: skip to photo editor
-            canEdit && !canAnalyze -> {
-                proceedToPhotoEditing()
-            }
-            // This shouldn't happen but proceed to location
-            else -> {
-                proceedToAddLocation()
-            }
-        }
+        // After location is selected, proceed directly to photo editing
+        // (Skip the choice dialog - workflow order is: photos → location → editing → AI)
+        proceedToPhotoEditing()
     }
 
     private fun showPhotoProgressDialog() {
