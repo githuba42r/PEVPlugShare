@@ -70,9 +70,6 @@ class LocationAdapter(
                 )
                 locationDistance.text = LocationUtils.formatDistance(distance)
                 
-                // Pending sync indicator - always hidden
-                pendingSyncIcon.visibility = android.view.View.GONE
-
                 // Always visible badges
                 locationGpoCount.text = "${location.gpoCount} GPO"
                 publicPrivateBadge.text = if (location.publicPrivate.displayName == "Public") "🌍 Public" else "🔒 Private"
