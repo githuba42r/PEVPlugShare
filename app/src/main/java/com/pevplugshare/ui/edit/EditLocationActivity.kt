@@ -900,6 +900,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 // Add additional info if found
                 if (parsed.additionalInfo != null) {
                     extractedInfo.add("Additional details: ${parsed.additionalInfo}")
+                    binding.additionalInfoInput.setText(parsed.additionalInfo)
                 }
                 
                 val message = if (extractedInfo.isNotEmpty()) {
