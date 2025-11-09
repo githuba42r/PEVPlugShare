@@ -36,6 +36,7 @@ class ImageEditorActivity : AppCompatActivity() {
         const val EXTRA_IMAGE_PATH = "image_path"
         const val EXTRA_OUTPUT_PATH = "output_path"
         const val EXTRA_FOCUS_RECT = "focus_rect"
+        const val EXTRA_METADATA = "metadata"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -230,8 +231,13 @@ class ImageEditorActivity : AppCompatActivity() {
                 editBitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos)
             }
 
-            // Return focus rect as data
+            // Extract metadata from original image
+            val imagePath = intent.getStringExtra(EXTRA_IMAGE_PATH) ?: ""
+            val metadata = com.pevplugshare.util.PhotoUtils.getPhotoMetadata(imagePath)
+
+            // Return focus rect and metadata
             intent.putExtra(EXTRA_FOCUS_RECT, focusRect)
+            intent.putExtra(EXTRA_METADATA, metadata)
             setResult(RESULT_OK, intent)
 
             Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show()

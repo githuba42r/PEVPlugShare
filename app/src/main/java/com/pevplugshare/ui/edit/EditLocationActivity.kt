@@ -10,6 +10,7 @@ import android.hardware.SensorManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.Toast
@@ -64,6 +65,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     // Photo related fields
     private val photoUris = mutableListOf<String>()
     private val photoFocusAreas = mutableMapOf<String, android.graphics.RectF>() // filePath -> focusRect
+    private val photoMetadata = mutableMapOf<String, com.pevplugshare.data.model.PhotoMetadata>() // filePath -> metadata
     private val maxPhotos = 5
     private var currentPhotoUri: Uri? = null
     private var tempPhotoFile: File? = null
@@ -109,11 +111,32 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private val imageEditor = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val focusRect = result.data?.getParcelableExtra<android.graphics.RectF>(ImageEditorActivity.EXTRA_FOCUS_RECT)
+            val metadata = result.data?.getParcelableExtra<com.pevplugshare.data.model.PhotoMetadata>(ImageEditorActivity.EXTRA_METADATA)
+            
             if (editingPhotoIndex >= 0 && editingPhotoIndex < photoUris.size) {
                 val photoPath = photoUris[editingPhotoIndex]
+                
                 if (focusRect != null) {
                     photoFocusAreas[photoPath] = focusRect
                     Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
+                }
+                
+                if (metadata != null) {
+                    photoMetadata[photoPath] = metadata
+                    
+                    // Check if metadata location differs significantly from current location
+                    if (metadata.hasGpsData) {
+                        checkLocationUpdate(metadata)
+                    }
+                    
+                    // Show bearing info if available
+                    if (metadata.hasBearingData) {
+                        Toast.makeText(
+                            this,
+                            "Direction detected: ${metadata.getBearingString()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }
@@ -1061,6 +1084,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             val path = photoUris[index]
             File(path).delete()
             photoFocusAreas.remove(path)
+            photoMetadata.remove(path)
             photoUris.removeAt(index)
             refreshPhotoThumbnails()
             updateAnalyzeButtonVisibility()
@@ -1078,6 +1102,82 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             putExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH, editOutputFile.absolutePath)
         }
         imageEditor.launch(intent)
+    }
+    
+    private fun checkLocationUpdate(metadata: com.pevplugshare.data.model.PhotoMetadata) {
+        // Check if photo location differs significantly from current location
+        if (metadata.latitude == null || metadata.longitude == null) {
+            return
+        }
+        
+        val photoLat = metadata.latitude!!
+        val photoLon = metadata.longitude!!
+        
+        // Calculate distance from current location
+        val distance = com.pevplugshare.util.DistanceCalculator.calculateDistance(
+            selectedLatitude, selectedLongitude,
+            photoLat, photoLon
+        )
+        
+        // If more than 50 meters different, ask user
+        if (distance > 50) {
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Update Location from Photo GPS?")
+                .setMessage(
+                    "Photo GPS location differs by ${String.format("%.0f", distance)}m:\n" +
+                    "Current: $selectedLatitude, $selectedLongitude\n" +
+                    "Photo: $photoLat, $photoLon\n\n" +
+                    "Update location to photo GPS coordinates?"
+                )
+                .setPositiveButton("Update") { _, _ ->
+                    updateLocationFromPhoto(photoLat, photoLon, metadata)
+                }
+                .setNegativeButton("Keep Current", null)
+                .show()
+        }
+    }
+    
+    private fun updateLocationFromPhoto(
+        photoLat: Double,
+        photoLon: Double,
+        metadata: com.pevplugshare.data.model.PhotoMetadata
+    ) {
+        selectedLatitude = photoLat
+        selectedLongitude = photoLon
+        
+        // Update UI fields if they exist
+        try {
+            // Try to update latitude/longitude fields if visible
+            val latField = binding.root.findViewWithTag<android.widget.EditText>("latitude_field")
+            val lonField = binding.root.findViewWithTag<android.widget.EditText>("longitude_field")
+            latField?.setText(String.format("%.6f", photoLat))
+            lonField?.setText(String.format("%.6f", photoLon))
+        } catch (e: Exception) {
+            Log.d("EditLocationActivity", "Could not update coordinate fields: ${e.message}")
+        }
+        
+        // Add bearing/direction to additional notes if available
+        if (metadata.hasBearingData && metadata.bearing != null) {
+            try {
+                val notesField = binding.root.findViewWithTag<android.widget.EditText>("notes_field")
+                val currentNotes = notesField?.text?.toString() ?: ""
+                val bearingNote = "Direction when photo taken: ${metadata.getBearingString()}"
+                val updatedNotes = if (currentNotes.isEmpty()) {
+                    bearingNote
+                } else {
+                    "$currentNotes\n$bearingNote"
+                }
+                notesField?.setText(updatedNotes)
+            } catch (e: Exception) {
+                Log.d("EditLocationActivity", "Could not update notes field: ${e.message}")
+            }
+        }
+        
+        Toast.makeText(
+            this,
+            "Location updated to GPS coordinates from photo",
+            Toast.LENGTH_SHORT
+        ).show()
     }
     
     private fun refreshPhotoThumbnails() {
