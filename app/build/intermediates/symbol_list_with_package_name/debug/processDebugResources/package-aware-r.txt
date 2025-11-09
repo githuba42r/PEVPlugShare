@@ -3439,6 +3439,7 @@ id closest
 id collapseActionView
 id compatible
 id compress
+id confirmButton
 id confirm_button
 id constraint
 id container
@@ -3602,6 +3603,7 @@ id locationName
 id locationNameInput
 id locationOpeningHours
 id locationRecyclerView
+id locationSearch
 id loginButton
 id ltr
 id m3_side_sheet
@@ -4070,6 +4072,7 @@ layout activity_add_location
 layout activity_edit_location
 layout activity_image_editor
 layout activity_import_locations
+layout activity_location_picker_map
 layout activity_login
 layout activity_main
 layout activity_photo_capture

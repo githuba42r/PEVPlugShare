@@ -123,6 +123,11 @@
             android:name="com.pevplugshare.ui.quicklocation.PhotoGalleryEditorActivity"
             android:exported="false" />
 
+        <!-- Location Picker Map Activity -->
+        <activity
+            android:name="com.pevplugshare.ui.quicklocation.LocationPickerMapActivity"
+            android:exported="false" />
+
         <!-- Intent filter for JSON file import -->
         <activity
             android:name="com.pevplugshare.ui.import.ImportLocationsActivity"

@@ -8,8 +8,16 @@
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/item_model_selection.xml"
     },
     {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_location_picker_map.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_location_picker_map.xml"
+    },
+    {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/item_location.xml",
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/item_location.xml"
+    },
+    {
+        "merged": "com.pevplugshare.app-mergeDebugResources-60:/layout/activity_location_picker_map.xml",
+        "source": "com.pevplugshare.app-main-63:/layout/activity_location_picker_map.xml"
     },
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_import_locations.xml",
@@ -26,6 +34,10 @@
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/item_photo_thumbnail.xml",
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/item_photo_thumbnail.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_photo_gallery_editor.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_photo_gallery_editor.xml"
     },
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_photo_capture.xml",
@@ -50,10 +62,6 @@
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_add_location.xml",
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_add_location.xml"
-    },
-    {
-        "merged": "com.pevplugshare.app-mergeDebugResources-60:/layout/activity_photo_gallery_editor.xml",
-        "source": "com.pevplugshare.app-main-63:/layout/activity_photo_gallery_editor.xml"
     },
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_main.xml",

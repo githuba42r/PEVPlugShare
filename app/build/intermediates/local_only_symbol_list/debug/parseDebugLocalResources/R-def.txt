@@ -83,6 +83,7 @@ id chatInput
 id chatInputContainer
 id clearFocusButton
 id clearSearchButton
+id confirmButton
 id contentScrollView
 id cropButton
 id descriptionInput
@@ -119,6 +120,7 @@ id locationName
 id locationNameInput
 id locationOpeningHours
 id locationRecyclerView
+id locationSearch
 id loginButton
 id mapButton
 id mapLocationButton
@@ -202,6 +204,7 @@ layout activity_add_location
 layout activity_edit_location
 layout activity_image_editor
 layout activity_import_locations
+layout activity_location_picker_map
 layout activity_login
 layout activity_main
 layout activity_photo_capture
