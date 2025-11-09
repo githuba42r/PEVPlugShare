@@ -94,6 +94,8 @@ IMAGE ANALYSIS TIPS:
 - Check for outlets in different areas of the same location
 - Some outlets might be partially visible or at angles
 
+**IMPORTANT: Return ONLY valid JSON, no markdown code blocks, no extra text. Start with { and end with }**
+
 Return your analysis in this JSON format:
 {
   "socketCount": number or null,
@@ -154,38 +156,43 @@ Image showing multiple outlets in a food court:
             })
             
             // Add images as base64
-            imageFiles.forEach { file ->
-                val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                    ?: throw Exception("Failed to decode image: ${file.name}")
-                
-                // Resize if too large
-                val maxDimension = 768
-                val resizedBitmap = if (bitmap.width > maxDimension || bitmap.height > maxDimension) {
-                    val scale = maxDimension.toFloat() / maxOf(bitmap.width, bitmap.height)
-                    Bitmap.createScaledBitmap(
-                        bitmap,
-                        (bitmap.width * scale).toInt(),
-                        (bitmap.height * scale).toInt(),
-                        true
-                    )
-                } else {
-                    bitmap
-                }
-                
-                // Convert to base64
-                val outputStream = ByteArrayOutputStream()
-                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
-                val base64Image = Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
-                
-                contentParts.put(JSONObject().apply {
-                    put("type", "image_url")
-                    put("image_url", JSONObject().apply {
-                        put("url", "data:image/jpeg;base64,$base64Image")
+            for (file in imageFiles) {
+                try {
+                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                        ?: throw Exception("Failed to decode image: ${file.name}")
+                    
+                    // Resize if too large
+                    val maxDimension = 768
+                    val resizedBitmap = if (bitmap.width > maxDimension || bitmap.height > maxDimension) {
+                        val scale = maxDimension.toFloat() / maxOf(bitmap.width, bitmap.height)
+                        Bitmap.createScaledBitmap(
+                            bitmap,
+                            (bitmap.width * scale).toInt(),
+                            (bitmap.height * scale).toInt(),
+                            true
+                        )
+                    } else {
+                        bitmap
+                    }
+                    
+                    // Convert to base64
+                    val outputStream = ByteArrayOutputStream()
+                    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
+                    val base64Image = Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
+                    
+                    contentParts.put(JSONObject().apply {
+                        put("type", "image_url")
+                        put("image_url", JSONObject().apply {
+                            put("url", "data:image/jpeg;base64,$base64Image")
+                        })
                     })
-                })
-                
-                resizedBitmap.recycle()
-                bitmap.recycle()
+                    
+                    resizedBitmap.recycle()
+                    bitmap.recycle()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to process image: ${file.name}", e)
+                    throw Exception("Failed to process image ${file.name}: ${e.message}")
+                }
             }
 
             // Build OpenRouter request
@@ -199,8 +206,9 @@ Image showing multiple outlets in a food court:
                 put("model", modelId)
                 put("messages", messages)
             }
-
+            
             Log.d(TAG, "Analyzing ${imageFiles.size} images with model: $modelId")
+            Log.d(TAG, "Request body: ${requestBody.toString(2)}")
             
             val request = Request.Builder()
                 .url(API_URL)
@@ -214,17 +222,26 @@ Image showing multiple outlets in a food court:
             val response = okHttpClient.newCall(request).execute()
             val responseBody = response.body?.string() ?: throw Exception("Empty response")
             
+            Log.d(TAG, "API Response Code: ${response.code}")
+            Log.d(TAG, "API Response Headers: ${response.headers}")
+            Log.d(TAG, "API Response Body: $responseBody")
+            
             if (!response.isSuccessful) {
                 Log.e(TAG, "API error: ${response.code} - $responseBody")
-                throw Exception("API error: ${response.code} - $responseBody")
+                val errorMessage = try {
+                    val errorJson = JSONObject(responseBody)
+                    errorJson.optJSONObject("error")?.optString("message") ?: responseBody
+                } catch (e: Exception) {
+                    responseBody
+                }
+                throw Exception("API error ${response.code}: $errorMessage")
             }
             
-            Log.d(TAG, "API Response: $responseBody")
-            
             val jsonResponse = JSONObject(responseBody)
-            val choices = jsonResponse.getJSONArray("choices")
-            if (choices.length() == 0) {
-                throw Exception("No response from AI")
+            val choices = jsonResponse.optJSONArray("choices")
+            if (choices == null || choices.length() == 0) {
+                Log.e(TAG, "No choices in response: $responseBody")
+                throw Exception("No response from AI model")
             }
             
             val message = choices.getJSONObject(0).getJSONObject("message")
@@ -244,15 +261,23 @@ Image showing multiple outlets in a food court:
 
     private fun parseAnalysisResponse(jsonText: String): PhotoAnalysisResult {
         try {
-            // Extract JSON from response (might be wrapped in markdown code blocks)
-            val jsonString = jsonText
-                .substringAfter("```json", "")
-                .substringAfter("```", "")
-                .substringBefore("```")
-                .trim()
-                .let { if (it.isEmpty()) jsonText.trim() else it }
+            Log.d(TAG, "Raw response text: $jsonText")
+            
+            var jsonString = jsonText.trim()
+            
+            // Strip markdown code blocks if present (AI sometimes ignores instructions)
+            if (jsonString.startsWith("```")) {
+                Log.d(TAG, "Detected markdown code block, stripping...")
+                jsonString = jsonString
+                    .removePrefix("```json").removePrefix("```")
+                    .removeSuffix("```")
+                    .trim()
+                Log.d(TAG, "After stripping markdown: $jsonString")
+            }
             
             val json = org.json.JSONObject(jsonString)
+            
+            Log.d(TAG, "Successfully parsed JSON")
             
             val socketCount = if (json.has("socketCount") && !json.isNull("socketCount")) {
                 json.getInt("socketCount")
