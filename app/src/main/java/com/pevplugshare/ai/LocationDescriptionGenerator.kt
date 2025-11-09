@@ -139,9 +139,23 @@ Return ONLY the formatted description, no additional commentary."""
                     .post(requestBody)
                     .build()
                 
-                Log.d(TAG, "Generating description with OpenRouter AI for location: $locationName")
-                Log.d(TAG, "API URL: https://openrouter.ai/api/v1/chat/completions")
-                Log.d(TAG, "API Key (first 10 chars): ${apiKey.take(10)}...")
+                Log.d(TAG, "")
+                Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+                Log.d(TAG, "║                    GENERATING LOCATION DESCRIPTION                          ║")
+                Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+                Log.d(TAG, "Generating description for location: $locationName")
+                Log.d(TAG, "Using model: $modelId")
+                Log.d(TAG, "")
+                Log.d(TAG, "INPUT PARAMETERS:")
+                Log.d(TAG, "  - Location Name: $locationName")
+                Log.d(TAG, "  - Access Type: $accessType")
+                Log.d(TAG, "  - Cost: ${if (hasFee) "Paid" else "Free"}")
+                Log.d(TAG, "  - Charging Points: $chargingPoints")
+                Log.d(TAG, "  - Socket Types: $socketTypes")
+                Log.d(TAG, "  - Opening Hours: $openingHours")
+                Log.d(TAG, "  - Capacity: $capacity")
+                Log.d(TAG, "  - Additional Info: $additionalInfo")
+                Log.d(TAG, "")
                 
                 val response = okHttpClient.newCall(request).execute()
                 Log.d(TAG, "Response Code: ${response.code}")
@@ -168,9 +182,24 @@ Return ONLY the formatted description, no additional commentary."""
                 val responseBody = response.body?.string()
                     ?: return@withContext Result.failure(Exception("Empty response"))
                 
-                Log.d(TAG, "Received AI response")
+                Log.d(TAG, "")
+                Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+                Log.d(TAG, "║                         RAW API RESPONSE                                     ║")
+                Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+                Log.d(TAG, responseBody)
+                Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+                Log.d(TAG, "")
                 
                 val generatedDescription = parseAiResponse(responseBody)
+                
+                Log.d(TAG, "")
+                Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+                Log.d(TAG, "║                    GENERATED DESCRIPTION RESULT                              ║")
+                Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+                Log.d(TAG, generatedDescription)
+                Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+                Log.d(TAG, "")
+                
                 Result.success(generatedDescription)
             } catch (e: Exception) {
                 Log.e(TAG, "Error generating description with AI", e)
@@ -246,28 +275,45 @@ Return ONLY the formatted description, no additional commentary."""
         }
         
         val jsonString = json.toString()
-        Log.d(TAG, "--- REQUEST BODY ---")
+        
+        Log.d(TAG, "")
+        Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+        Log.d(TAG, "║                       REQUEST BODY FOR DESCRIPTION                           ║")
+        Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
         Log.d(TAG, jsonString)
-        Log.d(TAG, "--- END REQUEST BODY ---")
+        Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+        Log.d(TAG, "")
         
         return jsonString.toRequestBody("application/json".toMediaType())
     }
     
     private fun parseAiResponse(responseBody: String): String {
-        Log.d(TAG, "--- AI RESPONSE ---")
-        Log.d(TAG, responseBody)
-        Log.d(TAG, "--- END AI RESPONSE ---")
+        Log.d(TAG, "")
+        Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+        Log.d(TAG, "║                    PARSING AI RESPONSE                                        ║")
+        Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
         
         val json = JSONObject(responseBody)
+        
+        Log.d(TAG, "Response structure keys: ${json.keys().asSequence().toList()}")
+        
         val choices = json.getJSONArray("choices")
+        Log.d(TAG, "Number of choices: ${choices.length()}")
+        
         val firstChoice = choices.getJSONObject(0)
         val message = firstChoice.getJSONObject("message")
         val content = message.getString("content").trim()
         
-        Log.d(TAG, "--- PARSED AI CONTENT ---")
+        Log.d(TAG, "")
+        Log.d(TAG, "Raw AI generated content (length: ${content.length} characters):")
         Log.d(TAG, content)
-        Log.d(TAG, "--- END PARSED AI CONTENT ---")
-        Log.d(TAG, "=== END AI DESCRIPTION GENERATION DEBUG ===")
+        Log.d(TAG, "")
+        Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+        Log.d(TAG, "║                      FINAL GENERATED DESCRIPTION                              ║")
+        Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+        Log.d(TAG, content)
+        Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+        Log.d(TAG, "")
         
         return content
     }
