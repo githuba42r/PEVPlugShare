@@ -32,90 +32,22 @@ class LocationDescriptionParser @Inject constructor(
     companion object {
         private const val TAG = "LocationDescriptionParser"
 
-        private const val SYSTEM_PROMPT = """You are a specialized AI assistant that extracts structured information from charging location descriptions for electric vehicles and personal electric vehicles (PEVs).
+        private const val SYSTEM_PROMPT = """Extract charging location data from descriptions. Return ONLY valid JSON with no markdown, no backticks, no extra text. Response MUST start with { and end with }.
 
-Extract the following information from the description:
-1. Opening Hours - time/availability information
-2. Number of Charging Points/Sockets - count of available power outlets
-3. Capacity - power rating (Amps, Watts, or kW)
-4. Cost - whether free or paid
-5. Access Type - public or private/restricted
+JSON: {"openingHours": "string or null", "chargingPoints": "number or null", "capacity": "string or null", "isFree": "boolean", "isPublic": "boolean or null"}
 
-CRITICAL PARSING RULES:
+SOCKET COUNTING: "2x10A"=2 sockets, "3 GPO"=3, "dual"=2, "6-12 total"=6, "multiple"=null. Don't confuse capacity (10A) with count.
 
-SOCKET COUNTING:
-- Look for EXACT numbers: "2x10A", "3 GPO", "dual GPO" (=2), "multiple" (extract range if given)
-- Patterns like "2x10A GPO" means 2 sockets at 10A each
-- "6-12 in total" means uncertain count, use the LOW number (6)
-- "dual" = 2, "triple" = 3, "multiple" without number = 4
-- DO NOT confuse capacity (10A) with socket count!
-- Examples:
-  * "2x10A GPO" → chargingPoints: 2, capacity: "10A"
-  * "3 GPO 15A each" → chargingPoints: 3, capacity: "15A"
-  * "dual GPO" → chargingPoints: 2
-  * "6-12 in total" → chargingPoints: 6
-  * "multiple GPO" with no number → chargingPoints: null
+OPENING HOURS: Extract if stated. "not suitable for night"→"9AM-5PM (Weekdays)". No mention + no restrictions→null.
 
-OPENING HOURS - BE CONSERVATIVE:
-- ONLY extract if EXPLICITLY stated
-- If description mentions "not suitable for night" or "turned off" → LIMITED HOURS, not 24/7
-- "not suitable for night" → "Daylight Hours" or "9AM-5PM (Weekdays)"
-- "may be turned off" → indicates unreliable, still extract best guess
-- If NO hours mentioned AND no restrictions → return null (let system default to 24/7)
-- If restrictions mentioned → estimate reasonable hours
-- Examples:
-  * "not suitable for night" → "9AM-5PM (Weekdays)"
-  * "may be turned off during day" → "9AM-5PM (Weekdays)" (conservative)
-  * "24/7" → "24/7"
-  * No mention at all - 24/7
+ACCESS: "food court", "public"→true. "customers only", "members only"→false. Unclear→null.
 
-ACCESS TYPE:
-- "food court", "public area" → PUBLIC
-- "customers only", "members only", "patrons only" → PRIVATE (false)
-- In shopping centers, food courts, public spaces → PUBLIC
-- Behind buildings, restricted areas → PRIVATE
-- If unclear → PUBLIC
-
-COST:
-- Assume FREE unless price/fee explicitly mentioned
-- "$", "paid", "charge", "fee" → NOT FREE (isFree: false)
-- "free", "no charge", "complimentary" → FREE (isFree: true)
-- No mention → FREE (isFree: true)
-
-CAPACITY EXTRACTION:
-- Extract power rating with units: "10A", "15A", "3.6kW", "2.4kW"
-- Look for: "10A", "15A each", "3.6kW", etc.
-- If multiple capacities, list them: "10A/15A"
-
-CRITICAL INSTRUCTION - NO MARKDOWN:
-Return ONLY the JSON object with NO markdown code blocks, NO backticks, NO explanatory text.
-IMPORTANT: Do NOT wrap the JSON in ```json ``` or any markdown formatting.
-IMPORTANT: Do NOT add any text before or after the JSON.
-IMPORTANT: The response MUST start with { and end with } - nothing else.
-IMPORTANT: This is critical for parsing - any markdown will break the system.
-
-Return only valid JSON:
-{
-  "openingHours": "string or null",
-  "chargingPoints": number or null,
-  "capacity": "string or null",
-  "isFree": boolean,
-  "isPublic": boolean or null
-}
+COST: No mention="free" (isFree:true). "$", "paid", "fee"→isFree:false.
 
 EXAMPLES:
-
-Input: "In food court multiple dual GPO 6-12 in total multiple circuits, if some are not working try others"
-Response: {"openingHours": null, "chargingPoints": 6, "capacity": null, "isFree": true, "isPublic": true}
-
-Input: "2x10A GPO on post next to first tree on river bank. Tree lights get plugged into it so not suitable for night. may be turned off during the day. Other power points in the area"
-Response: {"openingHours": "9AM-5PM (Weekdays)", "chargingPoints": 2, "capacity": "10A", "isFree": true, "isPublic": true}
-
-Input: "Single 15A outlet behind building for customer use only. \$5 per hour."
-Response: {"openingHours": null, "chargingPoints": 1, "capacity": "15A", "isFree": false, "isPublic": false}
-
-Input: "3 GPO available 24/7 in parking area"
-Response: {"openingHours": "24/7", "chargingPoints": 3, "capacity": null, "isFree": true, "isPublic": true}"""
+"2x10A GPO, not suitable for night" → {"openingHours": "9AM-5PM (Weekdays)", "chargingPoints": 2, "capacity": "10A", "isFree": true, "isPublic": true}
+"3 GPO in food court, 24/7" → {"openingHours": "24/7", "chargingPoints": 3, "capacity": null, "isFree": true, "isPublic": true}
+"Single 15A, customers only, $5/hr" → {"openingHours": null, "chargingPoints": 1, "capacity": "15A", "isFree": false, "isPublic": false}"""
 
         private const val USER_PROMPT_TEMPLATE = """Extract charging location information from this description:
 
