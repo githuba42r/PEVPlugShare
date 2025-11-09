@@ -138,7 +138,6 @@ class LocationAdapter(
                 val hasPhotos = com.pevplugshare.util.ImageUtils.getLocationImages(binding.root.context, location.id).isNotEmpty()
                 photosButton.visibility = if (hasPhotos) android.view.View.VISIBLE else android.view.View.GONE
                 photosButton.setOnClickListener { 
-                    Toast.makeText(binding.root.context, "Opening photos for: ${location.name}", Toast.LENGTH_SHORT).show()
                     onPhotoClick(location) 
                 }
 

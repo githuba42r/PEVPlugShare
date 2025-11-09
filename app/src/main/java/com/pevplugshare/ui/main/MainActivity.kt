@@ -477,6 +477,9 @@ class MainActivity : AppCompatActivity() {
         // Set location description
         locationDescView?.text = location.description ?: "No description available"
         
+        // Set toolbar title to location name
+        galleryToolbar?.title = location.name
+        
         // Update counter
         imageCounter?.text = "1 / ${imagePaths.size}"
         
