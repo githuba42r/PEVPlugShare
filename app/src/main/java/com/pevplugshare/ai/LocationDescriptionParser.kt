@@ -210,20 +210,35 @@ Return only the JSON response, no additional text."""
             Log.d(TAG, "Message keys: ${message.keys().asSequence().toList()}")
             
             val content = message.getString("content")
-            Log.d(TAG, "Raw AI content from API:")
-            Log.d(TAG, "  Length: ${content.length} characters")
-            Log.d(TAG, "  Starts with: ${content.take(50)}")
-            Log.d(TAG, "  Ends with: ${content.takeLast(50)}")
-            Log.d(TAG, "  Full content:\n$content")
+            
+            Log.d(TAG, "")
+            Log.d(TAG, "╔══════════════════════════════════════════════════════════════╗")
+            Log.d(TAG, "║             RAW AI MODEL RESPONSE CONTENT                    ║")
+            Log.d(TAG, "╚══════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "Content length: ${content.length} characters")
+            Log.d(TAG, "---")
+            Log.d(TAG, content)
+            Log.d(TAG, "---")
+            Log.d(TAG, "First 100 chars: ${content.take(100)}")
+            Log.d(TAG, "Last 100 chars: ${content.takeLast(100)}")
+            Log.d(TAG, "╚══════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "")
 
             // Extract JSON from response (might be wrapped in markdown code blocks)
             val jsonContent = extractJson(content)
-            Log.d(TAG, "========== EXTRACTED JSON ==========")
-            Log.d(TAG, "Extracted content length: ${jsonContent.length} characters")
-            Log.d(TAG, "Extracted content:\n$jsonContent")
-            Log.d(TAG, "====================================")
+            Log.d(TAG, "")
+            Log.d(TAG, "╔══════════════════════════════════════════════════════════════╗")
+            Log.d(TAG, "║            EXTRACTED JSON AFTER MARKDOWN REMOVAL             ║")
+            Log.d(TAG, "╚══════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "Extracted length: ${jsonContent.length} characters")
+            Log.d(TAG, "---")
+            Log.d(TAG, jsonContent)
+            Log.d(TAG, "---")
+            Log.d(TAG, "╚══════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "")
 
             val data = JSONObject(jsonContent)
+            Log.d(TAG, "✓ Successfully parsed JSON")
             Log.d(TAG, "Parsed JSON keys: ${data.keys().asSequence().toList()}")
             Log.d(TAG, "Parsed data: openingHours=${data.optString("openingHours")}, chargingPoints=${data.optString("chargingPoints")}, capacity=${data.optString("capacity")}, isFree=${data.optBoolean("isFree")}, isPublic=${data.optString("isPublic")}")
 
@@ -251,27 +266,20 @@ Return only the JSON response, no additional text."""
         // Remove markdown code blocks if present and extract JSON
         val trimmed = content.trim()
         
-        Log.d(TAG, "========== EXTRACTING JSON ==========")
-        Log.d(TAG, "Input content length: ${trimmed.length}")
-        Log.d(TAG, "Input starts with: ${trimmed.take(30)}")
-        Log.d(TAG, "Input content:\n$trimmed")
-        
+        Log.d(TAG, "Markdown extraction: checking pattern...")
+
         // Try multiple markdown patterns
         val extracted = when {
             trimmed.startsWith("```json") -> {
-                Log.d(TAG, "Pattern matched: ```json markdown block")
-                val result = trimmed.substringAfter("```json").substringBefore("```").trim()
-                Log.d(TAG, "Extracted from ```json block: length=${result.length}")
-                result
+                Log.d(TAG, "  ✓ Detected: ```json markdown block")
+                trimmed.substringAfter("```json").substringBefore("```").trim()
             }
             trimmed.startsWith("```") -> {
-                Log.d(TAG, "Pattern matched: ``` markdown block")
-                val result = trimmed.substringAfter("```").substringBefore("```").trim()
-                Log.d(TAG, "Extracted from ``` block: length=${result.length}")
-                result
+                Log.d(TAG, "  ✓ Detected: ``` markdown block")
+                trimmed.substringAfter("```").substringBefore("```").trim()
             }
             trimmed.startsWith("{") -> {
-                Log.d(TAG, "Pattern matched: Direct JSON starting with {")
+                Log.d(TAG, "  ✓ Detected: Direct JSON (no markdown)")
                 // Already valid JSON, find the complete object
                 var braceCount = 0
                 var endIndex = -1
@@ -287,19 +295,15 @@ Return only the JSON response, no additional text."""
                         }
                     }
                 }
-                val result = if (endIndex > 0) trimmed.substring(0, endIndex) else trimmed
-                Log.d(TAG, "Extracted by brace counting: length=${result.length}, braceCount matched=${endIndex > 0}")
-                result
+                if (endIndex > 0) trimmed.substring(0, endIndex) else trimmed
             }
             else -> {
-                Log.d(TAG, "Pattern matched: No markdown, using as-is")
+                Log.d(TAG, "  ⚠ Unknown format: assuming as-is")
                 trimmed
             }
         }
 
-        Log.d(TAG, "Final extracted JSON length: ${extracted.length}")
-        Log.d(TAG, "Final extracted JSON:\n$extracted")
-        Log.d(TAG, "====================================")
+        Log.d(TAG, "  Extracted ${extracted.length} characters")
         return extracted
     }
 
