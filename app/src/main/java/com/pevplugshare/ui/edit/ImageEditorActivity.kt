@@ -168,27 +168,31 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun handleFocusDrawing(event: MotionEvent) {
+        // Convert touch coordinates to bitmap coordinates
+        val bitmapX = event.x / currentZoom
+        val bitmapY = event.y / currentZoom
+        
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                focusStartX = event.x
-                focusStartY = event.y
+                focusStartX = bitmapX
+                focusStartY = bitmapY
             }
             MotionEvent.ACTION_MOVE -> {
                 val rect = RectF(
-                    minOf(focusStartX, event.x),
-                    minOf(focusStartY, event.y),
-                    maxOf(focusStartX, event.x),
-                    maxOf(focusStartY, event.y)
+                    minOf(focusStartX, bitmapX),
+                    minOf(focusStartY, bitmapY),
+                    maxOf(focusStartX, bitmapX),
+                    maxOf(focusStartY, bitmapY)
                 )
                 focusRect = rect
                 refreshImageWithFocus()
             }
             MotionEvent.ACTION_UP -> {
                 val rect = RectF(
-                    minOf(focusStartX, event.x),
-                    minOf(focusStartY, event.y),
-                    maxOf(focusStartX, event.x),
-                    maxOf(focusStartY, event.y)
+                    minOf(focusStartX, bitmapX),
+                    minOf(focusStartY, bitmapY),
+                    maxOf(focusStartX, bitmapX),
+                    maxOf(focusStartY, bitmapY)
                 )
                 focusRect = rect
                 isDrawingFocus = false
