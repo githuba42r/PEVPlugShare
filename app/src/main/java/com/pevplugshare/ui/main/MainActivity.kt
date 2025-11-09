@@ -60,6 +60,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Refresh location list when returning from edit/add activities
+        // This ensures gallery icons and photo changes are reflected
+        viewModel.syncLocations()
+    }
+
     private fun setupUI() {
         binding.apply {
             menuButton.setOnClickListener { showMenu() }
@@ -95,20 +102,20 @@ class MainActivity : AppCompatActivity() {
                         binding.swipeRefreshLayout.isRefreshing = false
 
                         val userLoc = viewModel.userLocation.value ?: Pair(0.0, 0.0)
-                        if (adapter == null) {
-                            adapter = LocationAdapter(
-                                onItemClick = { location -> showLocationDetails(location) },
-                                onNavigateClick = { location -> navigateToLocation(location) },
-                                onFavouriteClick = { location -> viewModel.toggleFavourite(location) },
-                                onEditClick = { location -> editLocation(location) },
-                                onInfoClick = { location -> /* Info button handled internally */ },
-                                onMapClick = { location -> loadLocationMap(location) },
-                                onPhotoClick = { location -> showPhotoGallery(location) },
-                                userLatitude = userLoc.first,
-                                userLongitude = userLoc.second
-                            )
-                            binding.locationRecyclerView.adapter = adapter
-                        }
+                        
+                        // Always recreate adapter to use current user location
+                        adapter = LocationAdapter(
+                            onItemClick = { location -> showLocationDetails(location) },
+                            onNavigateClick = { location -> navigateToLocation(location) },
+                            onFavouriteClick = { location -> viewModel.toggleFavourite(location) },
+                            onEditClick = { location -> editLocation(location) },
+                            onInfoClick = { location -> /* Info button handled internally */ },
+                            onMapClick = { location -> loadLocationMap(location) },
+                            onPhotoClick = { location -> showPhotoGallery(location) },
+                            userLatitude = userLoc.first,
+                            userLongitude = userLoc.second
+                        )
+                        binding.locationRecyclerView.adapter = adapter
                         adapter?.submitList(state.locations)
                     }
                     is LocationListState.Empty -> {
@@ -124,6 +131,30 @@ class MainActivity : AppCompatActivity() {
                         binding.emptyState.visibility = android.view.View.VISIBLE
                         binding.emptyState.text = "Error: ${state.message}"
                         binding.swipeRefreshLayout.isRefreshing = false
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.userLocation.collect { userLoc ->
+                // When user location is updated, refresh the adapter if we have locations displayed
+                if (adapter != null && userLoc != null) {
+                    val state = viewModel.locationListState.value
+                    if (state is LocationListState.Success) {
+                        adapter = LocationAdapter(
+                            onItemClick = { location -> showLocationDetails(location) },
+                            onNavigateClick = { location -> navigateToLocation(location) },
+                            onFavouriteClick = { location -> viewModel.toggleFavourite(location) },
+                            onEditClick = { location -> editLocation(location) },
+                            onInfoClick = { location -> /* Info button handled internally */ },
+                            onMapClick = { location -> loadLocationMap(location) },
+                            onPhotoClick = { location -> showPhotoGallery(location) },
+                            userLatitude = userLoc.first,
+                            userLongitude = userLoc.second
+                        )
+                        binding.locationRecyclerView.adapter = adapter
+                        adapter?.submitList(state.locations)
                     }
                 }
             }

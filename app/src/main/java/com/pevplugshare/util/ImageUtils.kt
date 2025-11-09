@@ -31,6 +31,8 @@ object ImageUtils {
     
     fun resizeAndSaveImage(context: Context, sourceFile: File, locationId: String, imageIndex: Int): File? {
         try {
+            android.util.Log.d("ImageUtils", "resizeAndSaveImage: locationId=$locationId, imageIndex=$imageIndex, sourceFile=${sourceFile.name}")
+            
             // Read the image
             val bitmap = decodeSampledBitmap(sourceFile.absolutePath, MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION)
                 ?: return null
@@ -42,9 +44,14 @@ object ImageUtils {
             val outputDir = getLocationImageDirectory(context, locationId)
             val outputFile = File(outputDir, "image_$imageIndex.jpg")
             
+            android.util.Log.d("ImageUtils", "  - outputDir: ${outputDir.absolutePath}")
+            android.util.Log.d("ImageUtils", "  - outputFile: ${outputFile.absolutePath}")
+            
             FileOutputStream(outputFile).use { out ->
                 rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out)
             }
+            
+            android.util.Log.d("ImageUtils", "  - File saved successfully, size: ${outputFile.length()} bytes")
             
             if (rotatedBitmap != bitmap) {
                 rotatedBitmap.recycle()
@@ -53,6 +60,7 @@ object ImageUtils {
             
             return outputFile
         } catch (e: Exception) {
+            android.util.Log.e("ImageUtils", "Error saving image", e)
             e.printStackTrace()
             return null
         }
@@ -113,7 +121,12 @@ object ImageUtils {
     
     fun getLocationImages(context: Context, locationId: String): List<File> {
         val locationDir = getLocationImageDirectory(context, locationId)
-        return locationDir.listFiles()?.filter { it.extension == "jpg" }?.sortedBy { it.name } ?: emptyList()
+        val result = locationDir.listFiles()?.filter { it.extension == "jpg" }?.sortedBy { it.name } ?: emptyList()
+        android.util.Log.d("ImageUtils", "getLocationImages: locationId=$locationId, found ${result.size} images")
+        result.forEach { file ->
+            android.util.Log.d("ImageUtils", "  - ${file.name} (${file.length()} bytes)")
+        }
+        return result
     }
     
     fun deleteLocationImage(context: Context, locationId: String, imageIndex: Int): Boolean {

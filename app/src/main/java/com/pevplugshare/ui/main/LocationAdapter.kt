@@ -28,9 +28,13 @@ class LocationAdapter(
     private val userLongitude: Double
 ) : ListAdapter<Location, LocationAdapter.LocationViewHolder>(LocationDiffCallback()) {
 
+    private fun isValidUserLocation(): Boolean {
+        return !(userLatitude == 0.0 && userLongitude == 0.0)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val binding = ItemLocationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return LocationViewHolder(binding, onItemClick, onNavigateClick, onFavouriteClick, onEditClick, onInfoClick, onMapClick, onPhotoClick, userLatitude, userLongitude)
+        return LocationViewHolder(binding, onItemClick, onNavigateClick, onFavouriteClick, onEditClick, onInfoClick, onMapClick, onPhotoClick, userLatitude, userLongitude, ::isValidUserLocation)
     }
 
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
@@ -47,7 +51,8 @@ class LocationAdapter(
         private val onMapClick: (Location) -> Unit,
         private val onPhotoClick: (Location) -> Unit,
         private val userLatitude: Double,
-        private val userLongitude: Double
+        private val userLongitude: Double,
+        private val isValidUserLocation: () -> Boolean
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private var isDescriptionExpanded = false
@@ -63,12 +68,17 @@ class LocationAdapter(
                     true
                 }
 
-                // Calculate distance
-                val distance = LocationUtils.haversineDistance(
-                    userLatitude, userLongitude,
-                    location.latitude, location.longitude
-                )
-                locationDistance.text = LocationUtils.formatDistance(distance)
+                // Calculate distance - only display if user location is valid (not 0,0)
+                if (isValidUserLocation()) {
+                    val distance = LocationUtils.haversineDistance(
+                        userLatitude, userLongitude,
+                        location.latitude, location.longitude
+                    )
+                    locationDistance.text = LocationUtils.formatDistance(distance)
+                    locationDistance.visibility = android.view.View.VISIBLE
+                } else {
+                    locationDistance.visibility = android.view.View.GONE
+                }
                 
                 // Always visible badges
                 locationGpoCount.text = "${location.gpoCount} GPO"

@@ -30,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.sync.Mutex
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -70,6 +71,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private var currentPhotoUri: Uri? = null
     private var tempPhotoFile: File? = null
     private var editingPhotoIndex: Int = -1
+    private val photoSaveMutex = Mutex()  // Mutex for synchronized photo saving
+    private var photosBeingProcessed = 0  // Count of photos currently being processed/saved
     
     private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
@@ -80,9 +83,16 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private val pickImages = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+        Log.d("EditLocationActivity", "=== pickImages called with ${uris.size} uris ===")
+        uris.forEachIndexed { index, uri ->
+            Log.d("EditLocationActivity", "  uri[$index]: $uri")
+        }
+        
         if (uris.isNotEmpty()) {
             val remainingSlots = maxPhotos - photoUris.size
             val urisToProcess = uris.take(remainingSlots)
+            
+            Log.d("EditLocationActivity", "photoUris.size=${photoUris.size}, remainingSlots=$remainingSlots, urisToProcess.size=${urisToProcess.size}")
             
             if (uris.size > remainingSlots) {
                 Toast.makeText(
@@ -93,8 +103,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
             
             urisToProcess.forEach { uri ->
+                Log.d("EditLocationActivity", "Processing URI: $uri")
                 processAndSaveGalleryPhoto(uri)
             }
+            
+            Log.d("EditLocationActivity", "After loop: photosBeingProcessed=$photosBeingProcessed")
         }
     }
     
@@ -282,7 +295,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: android.text.Editable?) {
                     if (isAddMode) {
-                        buttonSubmit.isEnabled = !s.isNullOrBlank()
+                        // Check both name is not blank AND photos are not being processed
+                        val nameNotBlank = !s.isNullOrBlank()
+                        val isProcessingPhotos = photosBeingProcessed > 0
+                        binding.buttonSubmit.isEnabled = nameNotBlank && !isProcessingPhotos
+                        Log.d("EditLocationActivity", "TextWatcher: nameNotBlank=$nameNotBlank, isProcessingPhotos=$isProcessingPhotos, enabled=${binding.buttonSubmit.isEnabled}")
                     }
                     viewModel.updateName(s?.toString() ?: "")
                 }
@@ -462,7 +479,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     is EditLocationState.Loaded -> {
                         binding.progressBar.visibility = android.view.View.GONE
                         binding.formContainer.visibility = android.view.View.VISIBLE
-                        binding.buttonSubmit.isEnabled = true
+                        // Only enable button if not processing photos
+                        binding.buttonSubmit.isEnabled = photosBeingProcessed == 0
+                        Log.d("EditLocationActivity", "EditLocationState.Loaded: photosBeingProcessed=$photosBeingProcessed, buttonSubmit.isEnabled=${binding.buttonSubmit.isEnabled}")
                         populateFormFromLocation(state.location)
                         
                         // Show sync button if pending
@@ -703,10 +722,43 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun submitUpdates() {
+        if (photosBeingProcessed > 0) {
+            Toast.makeText(this, "Please wait for photos to finish processing", Toast.LENGTH_SHORT).show()
+            return
+        }
         if (isAddMode) {
             viewModel.addLocation()
         } else {
             viewModel.submitUpdates(locationId!!)
+        }
+    }
+    
+    private fun updateSubmitButtonState() {
+        Log.d("EditLocationActivity", "updateSubmitButtonState called: photosBeingProcessed=$photosBeingProcessed, isAddMode=$isAddMode")
+        
+        runOnUiThread {
+            binding.apply {
+                val isProcessingPhotos = photosBeingProcessed > 0
+                
+                // In add mode, also check that name is not blank
+                val shouldBeEnabled = if (isAddMode) {
+                    !isProcessingPhotos && !nameInput.text.isNullOrBlank()
+                } else {
+                    // In edit mode, only disable while processing photos
+                    !isProcessingPhotos
+                }
+                
+                Log.d("EditLocationActivity", "  isProcessingPhotos=$isProcessingPhotos, shouldBeEnabled=$shouldBeEnabled")
+                buttonSubmit.isEnabled = shouldBeEnabled
+                
+                if (isProcessingPhotos) {
+                    buttonSubmit.text = "Processing $photosBeingProcessed photo(s)..."
+                    Log.d("EditLocationActivity", "  Button text: '${buttonSubmit.text}' DISABLED")
+                } else {
+                    buttonSubmit.text = if (isAddMode) "Add Location" else "Update"
+                    Log.d("EditLocationActivity", "  Button text: '${buttonSubmit.text}' ENABLED")
+                }
+            }
         }
     }
     
@@ -908,7 +960,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> checkCameraPermissionAndLaunch()
-                    1 -> pickImages.launch("image/*")
+                    1 -> {
+                        // Add small delay to ensure photo picker is ready
+                        binding.root.postDelayed({
+                            pickImages.launch("image/*")
+                        }, 300)
+                    }
                 }
             }
             .show()
@@ -950,81 +1007,146 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun processAndSavePhoto() {
+        photosBeingProcessed++
+        updateSubmitButtonState()
+        Log.d("EditLocationActivity", "=== START processAndSavePhoto: photosBeingProcessed=$photosBeingProcessed ===")
+        
         lifecycleScope.launch(Dispatchers.IO) {
             tempPhotoFile?.let { sourceFile ->
                 val currentLocationId = locationId ?: "temp_${System.currentTimeMillis()}"
-                val resizedFile = ImageUtils.resizeAndSaveImage(
-                    this@EditLocationActivity,
-                    sourceFile,
-                    currentLocationId,
-                    photoUris.size
-                )
+                Log.d("EditLocationActivity", "Processing camera photo - locationId: $currentLocationId, isAddMode: $isAddMode")
                 
-                withContext(Dispatchers.Main) {
-                    resizedFile?.let {
-                        photoUris.add(it.absolutePath)
-                        addPhotoThumbnail(it)
-                        // Delete temp file
-                        sourceFile.delete()
-                        tempPhotoFile = null
-                        Toast.makeText(
-                            this@EditLocationActivity,
-                            "Photo added (${photoUris.size}/$maxPhotos)",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } ?: run {
-                        Toast.makeText(
-                            this@EditLocationActivity,
-                            "Failed to save photo",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                photoSaveMutex.lock()
+                try {
+                    // Find next available index INSIDE the mutex to prevent race condition
+                    val nextImageIndex = findNextImageIndex(currentLocationId)
+                    Log.d("EditLocationActivity", "Got nextImageIndex: $nextImageIndex (under mutex lock)")
+                    
+                    val resizedFile = ImageUtils.resizeAndSaveImage(
+                        this@EditLocationActivity,
+                        sourceFile,
+                        currentLocationId,
+                        nextImageIndex
+                    )
+                    Log.d("EditLocationActivity", "After resizeAndSaveImage: file=${ resizedFile?.absolutePath ?: "NULL"}")
+                    
+                    withContext(Dispatchers.Main) {
+                        resizedFile?.let {
+                            Log.d("EditLocationActivity", "✓ Camera photo saved successfully: ${it.absolutePath}")
+                            photoUris.add(it.absolutePath)
+                            addPhotoThumbnail(it)
+                            // Delete temp file
+                            sourceFile.delete()
+                            tempPhotoFile = null
+                            Toast.makeText(
+                                this@EditLocationActivity,
+                                "Photo added (${photoUris.size}/$maxPhotos)",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } ?: run {
+                            Log.e("EditLocationActivity", "✗ Failed to save camera photo")
+                            Toast.makeText(
+                                this@EditLocationActivity,
+                                "Failed to save photo",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        
+                        photosBeingProcessed--
+                        Log.d("EditLocationActivity", "✓ Camera photo complete: photosBeingProcessed=$photosBeingProcessed")
+                        updateSubmitButtonState()
                     }
+                } catch (e: Exception) {
+                    Log.e("EditLocationActivity", "Exception in processAndSavePhoto", e)
+                    withContext(Dispatchers.Main) {
+                        photosBeingProcessed--
+                        updateSubmitButtonState()
+                    }
+                } finally {
+                    photoSaveMutex.unlock()
+                    Log.d("EditLocationActivity", "=== END processAndSavePhoto: mutex unlocked ===")
                 }
             }
         }
     }
     
     private fun processAndSaveGalleryPhoto(uri: Uri) {
+        photosBeingProcessed++
+        updateSubmitButtonState()
+        Log.d("EditLocationActivity", "=== START processAndSaveGalleryPhoto: photosBeingProcessed=$photosBeingProcessed ===")
+        
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 // Copy URI content to temp file
                 val tempFile = File.createTempFile("gallery_", ".jpg", cacheDir)
+                Log.d("EditLocationActivity", "Created temp file: ${tempFile.absolutePath}")
+                
                 contentResolver.openInputStream(uri)?.use { input ->
                     tempFile.outputStream().use { output ->
                         input.copyTo(output)
                     }
                 }
+                Log.d("EditLocationActivity", "Copied gallery photo to temp file: ${tempFile.length()} bytes")
                 
                 val currentLocationId = locationId ?: "temp_${System.currentTimeMillis()}"
-                val resizedFile = ImageUtils.resizeAndSaveImage(
-                    this@EditLocationActivity,
-                    tempFile,
-                    currentLocationId,
-                    photoUris.size
-                )
+                Log.d("EditLocationActivity", "Processing gallery photo - locationId: $currentLocationId, isAddMode: $isAddMode")
                 
-                withContext(Dispatchers.Main) {
-                    resizedFile?.let {
-                        photoUris.add(it.absolutePath)
-                        addPhotoThumbnail(it)
-                        Toast.makeText(
-                            this@EditLocationActivity,
-                            "Photo added (${photoUris.size}/$maxPhotos)",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } ?: run {
-                        Toast.makeText(
-                            this@EditLocationActivity,
-                            "Failed to save photo",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                photoSaveMutex.lock()
+                try {
+                    // Find next available index INSIDE the mutex to prevent race condition
+                    val nextImageIndex = findNextImageIndex(currentLocationId)
+                    Log.d("EditLocationActivity", "Got nextImageIndex: $nextImageIndex (under mutex lock)")
+                    
+                    val resizedFile = ImageUtils.resizeAndSaveImage(
+                        this@EditLocationActivity,
+                        tempFile,
+                        currentLocationId,
+                        nextImageIndex
+                    )
+                    Log.d("EditLocationActivity", "After resizeAndSaveImage: file=${resizedFile?.absolutePath ?: "NULL"}")
+                    
+                    withContext(Dispatchers.Main) {
+                        resizedFile?.let {
+                            Log.d("EditLocationActivity", "✓ Gallery photo saved successfully: ${it.absolutePath}")
+                            photoUris.add(it.absolutePath)
+                            addPhotoThumbnail(it)
+                            Toast.makeText(
+                                this@EditLocationActivity,
+                                "Photo added (${photoUris.size}/$maxPhotos)",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } ?: run {
+                            Log.e("EditLocationActivity", "✗ Failed to save gallery photo")
+                            Toast.makeText(
+                                this@EditLocationActivity,
+                                "Failed to save photo",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        
+                        photosBeingProcessed--
+                        Log.d("EditLocationActivity", "✓ Gallery photo complete: photosBeingProcessed=$photosBeingProcessed")
+                        updateSubmitButtonState()
                     }
+                } catch (e: Exception) {
+                    Log.e("EditLocationActivity", "Exception while holding mutex in processAndSaveGalleryPhoto", e)
+                    withContext(Dispatchers.Main) {
+                        photosBeingProcessed--
+                        updateSubmitButtonState()
+                    }
+                } finally {
+                    photoSaveMutex.unlock()
+                    Log.d("EditLocationActivity", "=== END processAndSaveGalleryPhoto: mutex unlocked ===")
                 }
                 
                 // Delete temp file
                 tempFile.delete()
+                Log.d("EditLocationActivity", "Deleted temp file")
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    Log.e("EditLocationActivity", "Exception processing gallery photo", e)
+                    photosBeingProcessed--
+                    updateSubmitButtonState()
                     Toast.makeText(
                         this@EditLocationActivity,
                         "Failed to process photo: ${e.message}",
@@ -1082,13 +1204,33 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private fun removePhoto(index: Int) {
         if (index < photoUris.size) {
             val path = photoUris[index]
+            val locationId = this.locationId ?: return
+            
             File(path).delete()
             photoFocusAreas.remove(path)
             photoMetadata.remove(path)
             photoUris.removeAt(index)
+            
+            // Renumber remaining images to ensure continuous indexing
+            renumberPhotos(locationId)
+            
             refreshPhotoThumbnails()
             updateAnalyzeButtonVisibility()
             Toast.makeText(this, "Photo removed", Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    private fun renumberPhotos(locationId: String) {
+        val existingImages = ImageUtils.getLocationImages(this, locationId)
+        existingImages.forEachIndexed { index, file ->
+            val expectedName = "image_$index.jpg"
+            if (file.name != expectedName) {
+                val newFile = File(file.parent, expectedName)
+                file.renameTo(newFile)
+                // Update photoUris with new path
+                val oldPath = file.absolutePath
+                photoUris.replaceAll { if (it == oldPath) newFile.absolutePath else it }
+            }
         }
     }
     
@@ -1233,11 +1375,31 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private fun loadExistingPhotos() {
         locationId?.let { id ->
             val existingPhotos = ImageUtils.getLocationImages(this, id)
+            Log.d("EditLocationActivity", "Loading existing photos for location $id: found ${existingPhotos.size} photos")
             existingPhotos.forEach { file ->
+                Log.d("EditLocationActivity", "  - ${file.absolutePath}")
                 photoUris.add(file.absolutePath)
                 addPhotoThumbnail(file)
             }
         }
+    }
+    
+    private fun findNextImageIndex(locationId: String): Int {
+        val existingImages = ImageUtils.getLocationImages(this, locationId)
+        Log.d("EditLocationActivity", "findNextImageIndex for $locationId: found ${existingImages.size} existing images")
+        existingImages.forEach { img ->
+            Log.d("EditLocationActivity", "    existing: ${img.name}")
+        }
+        if (existingImages.isEmpty()) {
+            Log.d("EditLocationActivity", "  -> returning index 0 (no existing images)")
+            return 0
+        }
+        // Find the highest index and return next one
+        val highestIndex = existingImages.mapNotNull { file ->
+            file.name.removePrefix("image_").removeSuffix(".jpg").toIntOrNull()
+        }.maxOrNull() ?: -1
+        Log.d("EditLocationActivity", "  -> highestIndex: $highestIndex, returning: ${highestIndex + 1}")
+        return highestIndex + 1
     }
     
     private fun analyzePhotosWithAI() {
