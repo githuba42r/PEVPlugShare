@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -64,9 +63,6 @@ public final class ItemLocationBinding implements ViewBinding {
   public final ImageButton navigateButton;
 
   @NonNull
-  public final ImageView pendingSyncIcon;
-
-  @NonNull
   public final ImageButton photosButton;
 
   @NonNull
@@ -79,8 +75,8 @@ public final class ItemLocationBinding implements ViewBinding {
       @NonNull TextView locationDistance, @NonNull Chip locationGpoCount,
       @NonNull WebView locationMapView, @NonNull TextView locationName,
       @NonNull Chip locationOpeningHours, @NonNull ImageButton mapButton,
-      @NonNull ImageButton navigateButton, @NonNull ImageView pendingSyncIcon,
-      @NonNull ImageButton photosButton, @NonNull Chip publicPrivateBadge) {
+      @NonNull ImageButton navigateButton, @NonNull ImageButton photosButton,
+      @NonNull Chip publicPrivateBadge) {
     this.rootView = rootView;
     this.favouriteButton = favouriteButton;
     this.feeIndicator = feeIndicator;
@@ -95,7 +91,6 @@ public final class ItemLocationBinding implements ViewBinding {
     this.locationOpeningHours = locationOpeningHours;
     this.mapButton = mapButton;
     this.navigateButton = navigateButton;
-    this.pendingSyncIcon = pendingSyncIcon;
     this.photosButton = photosButton;
     this.publicPrivateBadge = publicPrivateBadge;
   }
@@ -205,12 +200,6 @@ public final class ItemLocationBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.pendingSyncIcon;
-      ImageView pendingSyncIcon = ViewBindings.findChildViewById(rootView, id);
-      if (pendingSyncIcon == null) {
-        break missingId;
-      }
-
       id = R.id.photosButton;
       ImageButton photosButton = ViewBindings.findChildViewById(rootView, id);
       if (photosButton == null) {
@@ -226,7 +215,7 @@ public final class ItemLocationBinding implements ViewBinding {
       return new ItemLocationBinding((MaterialCardView) rootView, favouriteButton, feeIndicator,
           infoButton, infoSection, locationAdditionalInfo, locationDescription, locationDistance,
           locationGpoCount, locationMapView, locationName, locationOpeningHours, mapButton,
-          navigateButton, pendingSyncIcon, photosButton, publicPrivateBadge);
+          navigateButton, photosButton, publicPrivateBadge);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

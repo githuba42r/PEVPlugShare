@@ -32,6 +32,7 @@ drawable ic_favourite_outline
 drawable ic_gallery
 drawable ic_generate_description
 drawable ic_gps_location
+drawable ic_image_gallery
 drawable ic_info
 drawable ic_launcher_foreground
 drawable ic_map
@@ -135,7 +136,6 @@ id openingHoursInput
 id openingHoursSpinner
 id passwordInput
 id passwordLayout
-id pendingSyncIcon
 id photosButton
 id photosContainer
 id previewView

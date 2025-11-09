@@ -3150,6 +3150,7 @@ drawable ic_favourite_outline
 drawable ic_gallery
 drawable ic_generate_description
 drawable ic_gps_location
+drawable ic_image_gallery
 drawable ic_info
 drawable ic_keyboard_black_24dp
 drawable ic_launcher_foreground
@@ -3727,7 +3728,6 @@ id password_toggle
 id path
 id pathRelative
 id peekHeight
-id pendingSyncIcon
 id percent
 id performance
 id photosButton

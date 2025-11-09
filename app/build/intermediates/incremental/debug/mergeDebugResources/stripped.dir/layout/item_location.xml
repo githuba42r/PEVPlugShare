@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <!-- Header Row: Name + Info Button + Icons -->
+        <!-- Header Row: Name + Info Button + Navigation Icon (right aligned) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,43 +41,6 @@
                 android:src="@drawable/ic_info"
                 app:tint="?attr/colorPrimary" />
 
-            <ImageView
-                android:id="@+id/pendingSyncIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/ic_sync_pending"
-                android:contentDescription="Pending sync"
-                android:visibility="gone" />
-
-            <ImageButton
-                android:id="@+id/photosButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="View photos"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_edit"
-                android:visibility="gone" />
-
-            <ImageButton
-                android:id="@+id/mapButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Show map"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_map" />
-
-            <ImageButton
-                android:id="@+id/favouriteButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Favourite"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_favourite_outline" />
-
             <ImageButton
                 android:id="@+id/navigateButton"
                 android:layout_width="40dp"
@@ -88,14 +51,60 @@
                 android:src="@drawable/ic_navigation" />
         </LinearLayout>
 
-        <!-- Distance Row -->
-        <TextView
-            android:id="@+id/locationDistance"
-            android:layout_width="wrap_content"
+        <!-- Action Buttons Row: Map, Favourite, Gallery + Distance (right) -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="1.2 km away"
-            android:textSize="12sp" />
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Action Buttons on left -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/mapButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Show map"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_map" />
+
+                <ImageButton
+                    android:id="@+id/favouriteButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Favourite"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_favourite_outline" />
+
+                <ImageButton
+                    android:id="@+id/photosButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="View photos"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_image_gallery"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Distance on right -->
+            <TextView
+                android:id="@+id/locationDistance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1.2 km away"
+                android:textSize="12sp"
+                android:textAlignment="textEnd"
+                android:gravity="end" />
+        </LinearLayout>
 
         <!-- Always Visible Badges: GPO + Public/Private + Fee + Hours -->
         <com.google.android.material.chip.ChipGroup

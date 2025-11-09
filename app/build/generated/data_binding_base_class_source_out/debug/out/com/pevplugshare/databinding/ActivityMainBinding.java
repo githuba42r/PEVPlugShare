@@ -4,7 +4,6 @@ package com.pevplugshare.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -44,7 +43,7 @@ public final class ActivityMainBinding implements ViewBinding {
   public final TextView imageCounter;
 
   @NonNull
-  public final FrameLayout imageGalleryOverlay;
+  public final LinearLayout imageGalleryOverlay;
 
   @NonNull
   public final ViewPager2 imageViewPager;
@@ -70,7 +69,7 @@ public final class ActivityMainBinding implements ViewBinding {
   private ActivityMainBinding(@NonNull CoordinatorLayout rootView,
       @NonNull FloatingActionButton addLocationFab, @NonNull TextView categoryBadge,
       @NonNull TextView emptyState, @NonNull MaterialToolbar galleryToolbar,
-      @NonNull TextView imageCounter, @NonNull FrameLayout imageGalleryOverlay,
+      @NonNull TextView imageCounter, @NonNull LinearLayout imageGalleryOverlay,
       @NonNull ViewPager2 imageViewPager, @NonNull ProgressBar loadingProgressBar,
       @NonNull TextView locationDescription, @NonNull RecyclerView locationRecyclerView,
       @NonNull ImageButton menuButton, @NonNull SwipeRefreshLayout swipeRefreshLayout,
@@ -149,7 +148,7 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       id = R.id.imageGalleryOverlay;
-      FrameLayout imageGalleryOverlay = ViewBindings.findChildViewById(rootView, id);
+      LinearLayout imageGalleryOverlay = ViewBindings.findChildViewById(rootView, id);
       if (imageGalleryOverlay == null) {
         break missingId;
       }
