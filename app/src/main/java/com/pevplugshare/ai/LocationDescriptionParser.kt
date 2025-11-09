@@ -168,8 +168,6 @@ Return only the JSON response, no additional text."""
             Log.d(TAG, "---")
             Log.d(TAG, content)
             Log.d(TAG, "---")
-            Log.d(TAG, "First 100 chars: ${content.take(100)}")
-            Log.d(TAG, "Last 100 chars: ${content.takeLast(100)}")
             Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
             Log.d(TAG, "")
 
