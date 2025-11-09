@@ -168,14 +168,31 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun handleFocusDrawing(event: MotionEvent) {
+        // Get ImageView dimensions and drawable area
+        val imageViewWidth = imageView.width.toFloat()
+        val imageViewHeight = imageView.height.toFloat()
+        
+        // Get the drawable area (where the actual image is displayed)
+        // For fitCenter, the image is centered
+        val displayedImageWidth = editBitmap.width.toFloat() * currentZoom
+        val displayedImageHeight = editBitmap.height.toFloat() * currentZoom
+        
+        // Calculate the offset for centered image
+        val offsetX = (imageViewWidth - displayedImageWidth) / 2f
+        val offsetY = (imageViewHeight - displayedImageHeight) / 2f
+        
         // Convert touch coordinates to bitmap coordinates
-        val bitmapX = event.x / currentZoom
-        val bitmapY = event.y / currentZoom
+        // 1. Remove the centering offset
+        // 2. Remove the zoom scaling
+        // 3. Clamp to bitmap bounds
+        val bitmapX = ((event.x - offsetX) / currentZoom).coerceIn(0f, editBitmap.width.toFloat())
+        val bitmapY = ((event.y - offsetY) / currentZoom).coerceIn(0f, editBitmap.height.toFloat())
         
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 focusStartX = bitmapX
                 focusStartY = bitmapY
+                Log.d("ImageEditor", "Focus start: ($bitmapX, $bitmapY) - touch: (${event.x}, ${event.y}) - offset: ($offsetX, $offsetY)")
             }
             MotionEvent.ACTION_MOVE -> {
                 val rect = RectF(
@@ -199,6 +216,7 @@ class ImageEditorActivity : AppCompatActivity() {
                 toggleFocusButton.text = "Add Focus Area"
                 toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
                 refreshImageWithFocus()
+                Log.d("ImageEditor", "Focus end: rect=$rect")
             }
         }
     }
