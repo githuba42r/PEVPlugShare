@@ -28,10 +28,10 @@ class LocationDescriptionParser @Inject constructor(
     private val tokenManager: TokenManager
 ) {
     private val okHttpClient = OkHttpClient()
-    
+
     companion object {
         private const val TAG = "LocationDescriptionParser"
-        
+
         private const val SYSTEM_PROMPT = """You are a specialized AI assistant that extracts structured information from charging location descriptions for electric vehicles and personal electric vehicles (PEVs).
 
 Extract the following information from the description:
@@ -47,7 +47,7 @@ SOCKET COUNTING:
 - Look for EXACT numbers: "2x10A", "3 GPO", "dual GPO" (=2), "multiple" (extract range if given)
 - Patterns like "2x10A GPO" means 2 sockets at 10A each
 - "6-12 in total" means uncertain count, use the LOW number (6)
-- "dual" = 2, "triple" = 3, "multiple" without number = null
+- "dual" = 2, "triple" = 3, "multiple" without number = 4
 - DO NOT confuse capacity (10A) with socket count!
 - Examples:
   * "2x10A GPO" → chargingPoints: 2, capacity: "10A"
@@ -61,21 +61,20 @@ OPENING HOURS - BE CONSERVATIVE:
 - If description mentions "not suitable for night" or "turned off" → LIMITED HOURS, not 24/7
 - "not suitable for night" → "Daylight Hours" or "9AM-5PM (Weekdays)"
 - "may be turned off" → indicates unreliable, still extract best guess
-- "Tree lights get plugged in" → indicates night usage restricted
 - If NO hours mentioned AND no restrictions → return null (let system default to 24/7)
 - If restrictions mentioned → estimate reasonable hours
 - Examples:
   * "not suitable for night" → "9AM-5PM (Weekdays)"
   * "may be turned off during day" → "9AM-5PM (Weekdays)" (conservative)
   * "24/7" → "24/7"
-  * No mention at all → null
+  * No mention at all - 24/7
 
 ACCESS TYPE:
 - "food court", "public area" → PUBLIC
 - "customers only", "members only", "patrons only" → PRIVATE (false)
 - In shopping centers, food courts, public spaces → PUBLIC
 - Behind buildings, restricted areas → PRIVATE
-- If unclear → null
+- If unclear → PUBLIC
 
 COST:
 - Assume FREE unless price/fee explicitly mentioned
@@ -124,7 +123,7 @@ Response: {"openingHours": "24/7", "chargingPoints": 3, "capacity": null, "isFre
 
 Return only the JSON response, no additional text."""
     }
-    
+
     suspend fun parseDescription(description: String): Result<ParsedLocationData> {
         return withContext(Dispatchers.IO) {
             try {
@@ -132,12 +131,12 @@ Return only the JSON response, no additional text."""
                 if (apiKey.isNullOrEmpty()) {
                     return@withContext Result.failure(Exception("No OpenRouter API key configured"))
                 }
-                
+
                 val modelId = tokenManager.getSelectedAiModel()
                 if (modelId.isNullOrEmpty()) {
                     return@withContext Result.failure(Exception("No AI model selected"))
                 }
-                
+
                 val requestBody = buildRequestBody(modelId, description)
                 val request = Request.Builder()
                     .url("https://openrouter.ai/api/v1/chat/completions")
@@ -145,21 +144,26 @@ Return only the JSON response, no additional text."""
                     .header("Content-Type", "application/json")
                     .post(requestBody)
                     .build()
-                
+
                 Log.d(TAG, "Sending request to OpenRouter AI for description parsing")
-                
+                Log.d(TAG, "Description to parse: $description")
+                Log.d(TAG, "Using model: $modelId")
+
                 val response = okHttpClient.newCall(request).execute()
                 if (!response.isSuccessful) {
                     val errorBody = response.body?.string()
                     Log.e(TAG, "API request failed: ${response.code} - $errorBody")
                     return@withContext Result.failure(Exception("API request failed: ${response.code}"))
                 }
-                
+
                 val responseBody = response.body?.string()
                     ?: return@withContext Result.failure(Exception("Empty response"))
-                
-                Log.d(TAG, "Received AI response: $responseBody")
-                
+
+                Log.d(TAG, "========== RAW API RESPONSE ==========")
+                Log.d(TAG, "Response length: ${responseBody.length} characters")
+                Log.d(TAG, "Full raw response:\n$responseBody")
+                Log.d(TAG, "======================================")
+
                 val parsedData = parseAiResponse(responseBody)
                 Result.success(parsedData)
             } catch (e: Exception) {
@@ -168,7 +172,7 @@ Return only the JSON response, no additional text."""
             }
         }
     }
-    
+
     private fun buildRequestBody(modelId: String, description: String): okhttp3.RequestBody {
         val json = JSONObject().apply {
             put("model", modelId)
@@ -185,58 +189,89 @@ Return only the JSON response, no additional text."""
             put("temperature", 0.1) // Low temperature for consistent extraction
             put("max_tokens", 500) // Small response
         }
-        
+
         return json.toString().toRequestBody("application/json".toMediaType())
     }
-    
+
     private fun parseAiResponse(responseBody: String): ParsedLocationData {
         try {
+            Log.d(TAG, "========== PARSING AI RESPONSE ==========")
             val json = JSONObject(responseBody)
+            
+            Log.d(TAG, "Response structure keys: ${json.keys().asSequence().toList()}")
+            
             val choices = json.getJSONArray("choices")
+            Log.d(TAG, "Number of choices: ${choices.length()}")
+            
             val firstChoice = choices.getJSONObject(0)
+            Log.d(TAG, "First choice keys: ${firstChoice.keys().asSequence().toList()}")
+            
             val message = firstChoice.getJSONObject("message")
+            Log.d(TAG, "Message keys: ${message.keys().asSequence().toList()}")
+            
             val content = message.getString("content")
-            
-            Log.d(TAG, "AI content: $content")
-            
+            Log.d(TAG, "Raw AI content from API:")
+            Log.d(TAG, "  Length: ${content.length} characters")
+            Log.d(TAG, "  Starts with: ${content.take(50)}")
+            Log.d(TAG, "  Ends with: ${content.takeLast(50)}")
+            Log.d(TAG, "  Full content:\n$content")
+
             // Extract JSON from response (might be wrapped in markdown code blocks)
             val jsonContent = extractJson(content)
-            Log.d(TAG, "Extracted JSON: $jsonContent")
-            
+            Log.d(TAG, "========== EXTRACTED JSON ==========")
+            Log.d(TAG, "Extracted content length: ${jsonContent.length} characters")
+            Log.d(TAG, "Extracted content:\n$jsonContent")
+            Log.d(TAG, "====================================")
+
             val data = JSONObject(jsonContent)
-            
+            Log.d(TAG, "Parsed JSON keys: ${data.keys().asSequence().toList()}")
+            Log.d(TAG, "Parsed data: openingHours=${data.optString("openingHours")}, chargingPoints=${data.optString("chargingPoints")}, capacity=${data.optString("capacity")}, isFree=${data.optBoolean("isFree")}, isPublic=${data.optString("isPublic")}")
+
             return ParsedLocationData(
                 openingHours = data.optString("openingHours").takeIf { it.isNotEmpty() && it != "null" },
-                chargingPoints = if (data.has("chargingPoints") && !data.isNull("chargingPoints")) 
+                chargingPoints = if (data.has("chargingPoints") && !data.isNull("chargingPoints"))
                     data.getInt("chargingPoints") else null,
                 capacity = data.optString("capacity").takeIf { it.isNotEmpty() && it != "null" },
                 isFree = data.optBoolean("isFree", true),
                 hasFee = !data.optBoolean("isFree", true),
-                isPublic = if (data.has("isPublic") && !data.isNull("isPublic")) 
+                isPublic = if (data.has("isPublic") && !data.isNull("isPublic"))
                     data.getBoolean("isPublic") else null
             )
         } catch (e: org.json.JSONException) {
             Log.e(TAG, "JSON parsing error: ${e.message}")
+            Log.e(TAG, "Error occurred at: ${e.stackTrace.firstOrNull()}")
             throw Exception("Invalid response format from AI: ${e.message}")
         } catch (e: Exception) {
             Log.e(TAG, "Error parsing AI response", e)
             throw Exception("Failed to parse AI response: ${e.message}")
         }
     }
-    
+
     private fun extractJson(content: String): String {
         // Remove markdown code blocks if present and extract JSON
         val trimmed = content.trim()
         
+        Log.d(TAG, "========== EXTRACTING JSON ==========")
+        Log.d(TAG, "Input content length: ${trimmed.length}")
+        Log.d(TAG, "Input starts with: ${trimmed.take(30)}")
+        Log.d(TAG, "Input content:\n$trimmed")
+        
         // Try multiple markdown patterns
         val extracted = when {
             trimmed.startsWith("```json") -> {
-                trimmed.substringAfter("```json").substringBefore("```").trim()
+                Log.d(TAG, "Pattern matched: ```json markdown block")
+                val result = trimmed.substringAfter("```json").substringBefore("```").trim()
+                Log.d(TAG, "Extracted from ```json block: length=${result.length}")
+                result
             }
             trimmed.startsWith("```") -> {
-                trimmed.substringAfter("```").substringBefore("```").trim()
+                Log.d(TAG, "Pattern matched: ``` markdown block")
+                val result = trimmed.substringAfter("```").substringBefore("```").trim()
+                Log.d(TAG, "Extracted from ``` block: length=${result.length}")
+                result
             }
             trimmed.startsWith("{") -> {
+                Log.d(TAG, "Pattern matched: Direct JSON starting with {")
                 // Already valid JSON, find the complete object
                 var braceCount = 0
                 var endIndex = -1
@@ -252,23 +287,30 @@ Return only the JSON response, no additional text."""
                         }
                     }
                 }
-                if (endIndex > 0) trimmed.substring(0, endIndex) else trimmed
+                val result = if (endIndex > 0) trimmed.substring(0, endIndex) else trimmed
+                Log.d(TAG, "Extracted by brace counting: length=${result.length}, braceCount matched=${endIndex > 0}")
+                result
             }
-            else -> trimmed
+            else -> {
+                Log.d(TAG, "Pattern matched: No markdown, using as-is")
+                trimmed
+            }
         }
-        
-        Log.d(TAG, "Extracted JSON from response: $extracted")
+
+        Log.d(TAG, "Final extracted JSON length: ${extracted.length}")
+        Log.d(TAG, "Final extracted JSON:\n$extracted")
+        Log.d(TAG, "====================================")
         return extracted
     }
-    
+
     fun calculateDescriptionHash(description: String?): String {
         if (description.isNullOrEmpty()) return ""
-        
+
         val bytes = MessageDigest.getInstance("SHA-1")
             .digest(description.toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }
     }
-    
+
     fun hasDescriptionChanged(oldHash: String?, newDescription: String?): Boolean {
         val newHash = calculateDescriptionHash(newDescription)
         return oldHash != newHash
