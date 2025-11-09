@@ -188,7 +188,7 @@
                         android:layout_marginEnd="4dp"
                         android:insetLeft="0dp"
                         android:insetRight="0dp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/socket2Button"
@@ -206,7 +206,7 @@
                         android:layout_marginEnd="4dp"
                         android:insetLeft="0dp"
                         android:insetRight="0dp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/socket4Button"
@@ -224,7 +224,7 @@
                         android:layout_marginEnd="4dp"
                         android:insetLeft="0dp"
                         android:insetRight="0dp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/socket10Button"
@@ -242,7 +242,7 @@
                         android:layout_marginEnd="4dp"
                         android:insetLeft="0dp"
                         android:insetRight="0dp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/socket10PlusButton"
@@ -259,7 +259,7 @@
                         android:paddingEnd="2dp"
                         android:insetLeft="0dp"
                         android:insetRight="0dp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -279,7 +279,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Public"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    style="@style/Widget.Material3.Button.OutlinedButton" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/private_button"
@@ -287,7 +287,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Private"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    style="@style/Widget.Material3.Button.OutlinedButton" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <CheckBox
@@ -527,7 +527,7 @@
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
                     android:text="Cancel"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    style="@style/Widget.Material3.Button.OutlinedButton" />
             </LinearLayout>
             
             <!-- Sync to OSMAnd Button (shown when pending sync) -->
@@ -539,7 +539,7 @@
                 android:text="Sync to OSMAnd"
                 android:icon="@drawable/ic_sync_pending"
                 android:visibility="gone"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                style="@style/Widget.Material3.Button.OutlinedButton" />
 
         </LinearLayout>
 
