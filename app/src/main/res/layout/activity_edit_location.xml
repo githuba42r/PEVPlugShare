@@ -529,7 +529,7 @@
                     android:layout_marginStart="4dp"
                     android:text="Cancel"
                     android:textSize="16sp"
-                    style="@style/Widget.Material3.Button.OutlinedButton" />
+                    style="@style/CustomOutlinedButton" />
             </LinearLayout>
             
             <!-- Sync to OSMAnd Button (shown when pending sync) -->
@@ -542,7 +542,7 @@
                 android:icon="@drawable/ic_sync_pending"
                 android:textSize="16sp"
                 android:visibility="gone"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
+                style="@style/CustomOutlinedButton" />
 
         </LinearLayout>
 
