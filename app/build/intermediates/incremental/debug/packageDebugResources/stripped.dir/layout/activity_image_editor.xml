@@ -9,12 +9,22 @@
     tools:context=".ui.edit.ImageEditorActivity">
 
     <!-- Toolbar -->
-    <MaterialToolbar
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        app:title="Edit Image"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        android:padding="12dp"
+        android:gravity="center_vertical">
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Edit Image"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <!-- Image Canvas -->
     <FrameLayout
@@ -45,81 +55,58 @@
             android:spacing="4dp">
 
             <!-- Zoom Controls -->
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/zoomInButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Zoom +"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
+                android:layout_margin="4dp" />
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/zoomOutButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Zoom -"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
-
-            <!-- Divider -->
-            <View
-                android:layout_width="1dp"
-                android:layout_height="40dp"
-                android:layout_margin="8dp"
-                android:background="?attr/colorOutline" />
+                android:layout_margin="4dp" />
 
             <!-- Focus Area Controls -->
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/toggleFocusButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Focus Area"
-                android:backgroundTint="@android:color/darker_gray"
-                style="@style/Widget.Material3.Button" />
+                android:text="Add Focus"
+                android:layout_margin="4dp" />
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/clearFocusButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Clear Focus"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
-
-            <!-- Divider -->
-            <View
-                android:layout_width="1dp"
-                android:layout_height="40dp"
-                android:layout_margin="8dp"
-                android:background="?attr/colorOutline" />
+                android:layout_margin="4dp" />
 
             <!-- Crop Button -->
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/cropButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Crop"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
+                android:layout_margin="4dp" />
 
             <!-- Reset Button -->
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/resetButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Reset"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
-
-            <!-- Divider -->
-            <View
-                android:layout_width="1dp"
-                android:layout_height="40dp"
-                android:layout_margin="8dp"
-                android:background="?attr/colorOutline" />
+                android:layout_margin="4dp" />
 
             <!-- Save Button -->
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Save"
-                android:backgroundTint="@android:color/holo_green_dark"
-                style="@style/Widget.Material3.Button" />
+                android:layout_margin="4dp" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -135,7 +122,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Focus Area: Draw a rectangle on the image to highlight the socket area for AI analysis"
+            android:text="Tap &amp; drag to draw focus area. Tap buttons to edit."
             android:textSize="12sp"
             android:textColor="?attr/colorOnSurface" />
 

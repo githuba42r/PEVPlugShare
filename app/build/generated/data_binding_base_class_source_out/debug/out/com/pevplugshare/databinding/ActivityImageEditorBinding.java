@@ -4,13 +4,13 @@ package com.pevplugshare.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
-import com.google.android.material.button.MaterialButton;
 import com.pevplugshare.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -21,34 +21,33 @@ public final class ActivityImageEditorBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final MaterialButton clearFocusButton;
+  public final Button clearFocusButton;
 
   @NonNull
-  public final MaterialButton cropButton;
+  public final Button cropButton;
 
   @NonNull
   public final ImageView imageView;
 
   @NonNull
-  public final MaterialButton resetButton;
+  public final Button resetButton;
 
   @NonNull
-  public final MaterialButton saveButton;
+  public final Button saveButton;
 
   @NonNull
-  public final MaterialButton toggleFocusButton;
+  public final Button toggleFocusButton;
 
   @NonNull
-  public final MaterialButton zoomInButton;
+  public final Button zoomInButton;
 
   @NonNull
-  public final MaterialButton zoomOutButton;
+  public final Button zoomOutButton;
 
   private ActivityImageEditorBinding(@NonNull LinearLayout rootView,
-      @NonNull MaterialButton clearFocusButton, @NonNull MaterialButton cropButton,
-      @NonNull ImageView imageView, @NonNull MaterialButton resetButton,
-      @NonNull MaterialButton saveButton, @NonNull MaterialButton toggleFocusButton,
-      @NonNull MaterialButton zoomInButton, @NonNull MaterialButton zoomOutButton) {
+      @NonNull Button clearFocusButton, @NonNull Button cropButton, @NonNull ImageView imageView,
+      @NonNull Button resetButton, @NonNull Button saveButton, @NonNull Button toggleFocusButton,
+      @NonNull Button zoomInButton, @NonNull Button zoomOutButton) {
     this.rootView = rootView;
     this.clearFocusButton = clearFocusButton;
     this.cropButton = cropButton;
@@ -88,13 +87,13 @@ public final class ActivityImageEditorBinding implements ViewBinding {
     int id;
     missingId: {
       id = R.id.clearFocusButton;
-      MaterialButton clearFocusButton = ViewBindings.findChildViewById(rootView, id);
+      Button clearFocusButton = ViewBindings.findChildViewById(rootView, id);
       if (clearFocusButton == null) {
         break missingId;
       }
 
       id = R.id.cropButton;
-      MaterialButton cropButton = ViewBindings.findChildViewById(rootView, id);
+      Button cropButton = ViewBindings.findChildViewById(rootView, id);
       if (cropButton == null) {
         break missingId;
       }
@@ -106,31 +105,31 @@ public final class ActivityImageEditorBinding implements ViewBinding {
       }
 
       id = R.id.resetButton;
-      MaterialButton resetButton = ViewBindings.findChildViewById(rootView, id);
+      Button resetButton = ViewBindings.findChildViewById(rootView, id);
       if (resetButton == null) {
         break missingId;
       }
 
       id = R.id.saveButton;
-      MaterialButton saveButton = ViewBindings.findChildViewById(rootView, id);
+      Button saveButton = ViewBindings.findChildViewById(rootView, id);
       if (saveButton == null) {
         break missingId;
       }
 
       id = R.id.toggleFocusButton;
-      MaterialButton toggleFocusButton = ViewBindings.findChildViewById(rootView, id);
+      Button toggleFocusButton = ViewBindings.findChildViewById(rootView, id);
       if (toggleFocusButton == null) {
         break missingId;
       }
 
       id = R.id.zoomInButton;
-      MaterialButton zoomInButton = ViewBindings.findChildViewById(rootView, id);
+      Button zoomInButton = ViewBindings.findChildViewById(rootView, id);
       if (zoomInButton == null) {
         break missingId;
       }
 
       id = R.id.zoomOutButton;
-      MaterialButton zoomOutButton = ViewBindings.findChildViewById(rootView, id);
+      Button zoomOutButton = ViewBindings.findChildViewById(rootView, id);
       if (zoomOutButton == null) {
         break missingId;
       }
