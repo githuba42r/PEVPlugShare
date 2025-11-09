@@ -103,19 +103,17 @@
         android:src="@drawable/ic_add"
         app:fabSize="normal" />
 
-    <!-- Quick Location Button (Lower Left) -->
-    <Button
+    <!-- Quick Location Button (Lower Left) - Icon Button -->
+    <ImageButton
         android:id="@+id/quickLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
-        android:text="Quick Location"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        android:textSize="14sp"
-        android:background="?attr/colorPrimary"
-        android:textColor="@android:color/white" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Quick Location"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_add" />
 
     <!-- Image Gallery Modal - directly embedded -->
     <LinearLayout

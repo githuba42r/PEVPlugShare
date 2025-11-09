@@ -4,7 +4,6 @@ package com.pevplugshare.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -62,7 +61,7 @@ public final class ActivityMainBinding implements ViewBinding {
   public final ImageButton menuButton;
 
   @NonNull
-  public final Button quickLocationButton;
+  public final ImageButton quickLocationButton;
 
   @NonNull
   public final SwipeRefreshLayout swipeRefreshLayout;
@@ -76,7 +75,7 @@ public final class ActivityMainBinding implements ViewBinding {
       @NonNull TextView imageCounter, @NonNull LinearLayout imageGalleryOverlay,
       @NonNull ViewPager2 imageViewPager, @NonNull ProgressBar loadingProgressBar,
       @NonNull TextView locationDescription, @NonNull RecyclerView locationRecyclerView,
-      @NonNull ImageButton menuButton, @NonNull Button quickLocationButton,
+      @NonNull ImageButton menuButton, @NonNull ImageButton quickLocationButton,
       @NonNull SwipeRefreshLayout swipeRefreshLayout, @NonNull LinearLayout thumbnailContainer) {
     this.rootView = rootView;
     this.addLocationFab = addLocationFab;
@@ -189,7 +188,7 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       id = R.id.quickLocationButton;
-      Button quickLocationButton = ViewBindings.findChildViewById(rootView, id);
+      ImageButton quickLocationButton = ViewBindings.findChildViewById(rootView, id);
       if (quickLocationButton == null) {
         break missingId;
       }

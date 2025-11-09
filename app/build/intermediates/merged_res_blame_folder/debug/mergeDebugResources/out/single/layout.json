@@ -16,10 +16,6 @@
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_import_locations.xml"
     },
     {
-        "merged": "com.pevplugshare.app-mergeDebugResources-60:/layout/activity_quick_location.xml",
-        "source": "com.pevplugshare.app-main-63:/layout/activity_quick_location.xml"
-    },
-    {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/modal_map_location_picker.xml",
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/modal_map_location_picker.xml"
     },
@@ -74,6 +70,10 @@
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/dialog_model_selection.xml",
         "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/dialog_model_selection.xml"
+    },
+    {
+        "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_quick_location.xml",
+        "source": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-main-63:/layout/activity_quick_location.xml"
     },
     {
         "merged": "/home/philg/.gradle/daemon/8.6/com.pevplugshare.app-mergeDebugResources-60:/layout/activity_edit_location.xml",

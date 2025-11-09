@@ -1,16 +1,20 @@
 package com.pevplugshare.ui.quicklocation
 
 import android.content.Intent
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.pevplugshare.R
 import com.pevplugshare.databinding.ActivityQuickLocationBinding
 import com.pevplugshare.data.model.PhotoMetadata
@@ -25,7 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Quick location workflow: select/take photos, extract metadata, optionally edit, run AI analysis, then go to add location
+ * Quick location workflow: select/take photos, pick location on map, edit photos, AI analysis, then add location
  */
 @AndroidEntryPoint
 class QuickLocationActivity : AppCompatActivity() {
@@ -36,6 +40,10 @@ class QuickLocationActivity : AppCompatActivity() {
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Main + job)
     private var currentPhotoUri: Uri? = null
+    private var selectedLatitude: Double? = null
+    private var selectedLongitude: Double? = null
+    private var selectedBearing: Float? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -43,6 +51,7 @@ class QuickLocationActivity : AppCompatActivity() {
     enum class Step {
         SELECT_PHOTOS,
         TAKE_PHOTOS,
+        PICK_LOCATION,
         EDIT_PHOTOS,
         AI_ANALYSIS,
         ADD_LOCATION
@@ -66,6 +75,8 @@ class QuickLocationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityQuickLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         binding.selectPhotosButton.setOnClickListener { 
             selectPhotos.launch("image/*")
@@ -121,7 +132,7 @@ class QuickLocationActivity : AppCompatActivity() {
             }
             .setPositiveButton("Done Taking Photos") { _, _ ->
                 if (selectedPhotoPaths.isNotEmpty()) {
-                    showPhotoSelectionDialog()
+                    proceedToLocationPicker()
                 } else {
                     finish()
                 }
@@ -151,7 +162,7 @@ class QuickLocationActivity : AppCompatActivity() {
                     if (currentStep == Step.TAKE_PHOTOS) {
                         showPhotoTakenDialog()
                     } else {
-                        showPhotoSelectionDialog()
+                        proceedToLocationPicker()
                     }
                 } else {
                     Toast.makeText(this@QuickLocationActivity, "Failed to load photos", Toast.LENGTH_SHORT).show()
@@ -179,53 +190,149 @@ class QuickLocationActivity : AppCompatActivity() {
         }
     }
 
-    private fun showPhotoSelectionDialog() {
-        val locationInfo = StringBuilder()
-        photoMetadata.values.forEach { metadata ->
-            if (metadata.hasGpsData) {
-                locationInfo.append("Location: ${metadata.getLocationString()}\n")
-            }
-            if (metadata.hasBearingData) {
-                locationInfo.append("Direction: ${metadata.getBearingString()}\n")
+    private fun proceedToLocationPicker() {
+        currentStep = Step.PICK_LOCATION
+        
+        // Extract location from first photo with GPS data (by order selected)
+        var photoLat: Double? = null
+        var photoLng: Double? = null
+        var photoBearing: Float? = null
+        
+        selectedPhotoPaths.forEach { path ->
+            val metadata = photoMetadata[path]
+            if (metadata?.hasGpsData == true) {
+                if (photoLat == null) {
+                    photoLat = metadata.latitude
+                    photoLng = metadata.longitude
+                    photoBearing = metadata.bearing
+                }
             }
         }
         
-        val isAiEnabled = tokenManager.isAiAnalysisEnabled()
+        selectedLatitude = photoLat
+        selectedLongitude = photoLng
+        selectedBearing = photoBearing
         
-        val dialogBuilder = AlertDialog.Builder(this)
-            .setTitle("${selectedPhotoPaths.size} Photos Selected")
-            .setMessage(locationInfo.toString().ifEmpty { "No metadata found in photos" })
-            .setPositiveButton("Add Location") { _, _ ->
-                goToAddLocation()
+        // If no GPS data in photos, get current location
+        if (selectedLatitude == null || selectedLongitude == null) {
+            getCurrentLocation { lat, lng ->
+                selectedLatitude = lat
+                selectedLongitude = lng
+                showLocationPickerDialog()
             }
-
-        // Only show AI-related options if AI is configured
-        if (isAiEnabled) {
-            dialogBuilder
-                .setNegativeButton("Edit Photos") { _, _ ->
-                    Toast.makeText(this, "Photo editing coming soon", Toast.LENGTH_SHORT).show()
-                }
-                .setNeutralButton("AI Analysis") { _, _ ->
-                    Toast.makeText(this, "AI analysis coming soon", Toast.LENGTH_SHORT).show()
-                }
+        } else {
+            showLocationPickerDialog()
         }
-
-        dialogBuilder.show()
     }
 
-    private fun goToAddLocation() {
-        // Extract location from metadata if available
-        val latitude = photoMetadata.values.mapNotNull { it.latitude }.firstOrNull()
-        val longitude = photoMetadata.values.mapNotNull { it.longitude }.firstOrNull()
-        val bearing = photoMetadata.values.mapNotNull { it.bearing }.firstOrNull()
-        
-        val intent = Intent(this, EditLocationActivity::class.java).apply {
-            if (latitude != null && longitude != null) {
-                putExtra("latitude", latitude)
-                putExtra("longitude", longitude)
+    private fun getCurrentLocation(callback: (lat: Double, lng: Double) -> Unit) {
+        try {
+            fusedLocationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                CancellationTokenSource().token
+            ).addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    callback(location.latitude, location.longitude)
+                } else {
+                    // Fallback to default location if can't get current
+                    callback(-33.8688, 151.2093) // Sydney, Australia
+                }
             }
-            if (bearing != null) {
-                putExtra("bearing", bearing)
+        } catch (e: Exception) {
+            Log.e("QuickLocationActivity", "Error getting current location", e)
+            // Fallback to default location
+            callback(-33.8688, 151.2093) // Sydney, Australia
+        }
+    }
+
+    private fun showLocationPickerDialog() {
+        // TODO: Implement map location picker dialog
+        // For now, proceed to next step
+        proceedAfterLocationPicker()
+    }
+
+    private fun proceedAfterLocationPicker() {
+        // Smart workflow: only show prompts where multiple options exist
+        val isAiEnabled = tokenManager.isAiAnalysisEnabled()
+        
+        // Check available next steps
+        val canEdit = true // Always available
+        val canAnalyze = isAiEnabled // Only if AI is configured
+        
+        when {
+            // Both editing and AI analysis available: show dialog
+            canEdit && canAnalyze -> {
+                showPhotoProgressDialog()
+            }
+            // Only editing available: skip to photo editor
+            canEdit && !canAnalyze -> {
+                proceedToPhotoEditing()
+            }
+            // This shouldn't happen but proceed to location
+            else -> {
+                proceedToAddLocation()
+            }
+        }
+    }
+
+    private fun showPhotoProgressDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Photos Loaded")
+            .setMessage("What would you like to do next?")
+            .setNegativeButton("Edit Photos") { _, _ ->
+                proceedToPhotoEditing()
+            }
+            .setPositiveButton("AI Analysis") { _, _ ->
+                proceedToAiAnalysis()
+            }
+            .show()
+    }
+
+    private fun proceedToPhotoEditing() {
+        currentStep = Step.EDIT_PHOTOS
+        // TODO: Launch photo editor
+        Toast.makeText(this, "Photo editing coming soon", Toast.LENGTH_SHORT).show()
+        // For now, proceed to AI or location
+        proceedAfterPhotoEditing()
+    }
+
+    private fun proceedAfterPhotoEditing() {
+        val isAiEnabled = tokenManager.isAiAnalysisEnabled()
+        
+        when {
+            isAiEnabled -> {
+                // Only AI analysis available: go directly to it
+                proceedToAiAnalysis()
+            }
+            else -> {
+                // Only location editing available: go to location form
+                proceedToAddLocation()
+            }
+        }
+    }
+
+    private fun proceedToAiAnalysis() {
+        currentStep = Step.AI_ANALYSIS
+        // TODO: Launch AI analysis
+        Toast.makeText(this, "AI analysis coming soon", Toast.LENGTH_SHORT).show()
+        // For now, proceed to location
+        proceedAfterAiAnalysis()
+    }
+
+    private fun proceedAfterAiAnalysis() {
+        // After AI analysis, always go to location form
+        proceedToAddLocation()
+    }
+
+    private fun proceedToAddLocation() {
+        currentStep = Step.ADD_LOCATION
+        val intent = Intent(this, EditLocationActivity::class.java).apply {
+            if (selectedLatitude != null && selectedLongitude != null) {
+                putExtra("latitude", selectedLatitude!!)
+                putExtra("longitude", selectedLongitude!!)
+            }
+            if (selectedBearing != null) {
+                putExtra("bearing", selectedBearing!!)
             }
             putStringArrayListExtra("photo_paths", ArrayList(selectedPhotoPaths))
         }
