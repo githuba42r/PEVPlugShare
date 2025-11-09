@@ -183,28 +183,38 @@ Return only the JSON response, no additional text."""
     }
     
     private fun parseAiResponse(responseBody: String): ParsedLocationData {
-        val json = JSONObject(responseBody)
-        val choices = json.getJSONArray("choices")
-        val firstChoice = choices.getJSONObject(0)
-        val message = firstChoice.getJSONObject("message")
-        val content = message.getString("content")
-        
-        Log.d(TAG, "AI content: $content")
-        
-        // Extract JSON from response (might be wrapped in markdown code blocks)
-        val jsonContent = extractJson(content)
-        val data = JSONObject(jsonContent)
-        
-        return ParsedLocationData(
-            openingHours = data.optString("openingHours").takeIf { it.isNotEmpty() && it != "null" },
-            chargingPoints = if (data.has("chargingPoints") && !data.isNull("chargingPoints")) 
-                data.getInt("chargingPoints") else null,
-            capacity = data.optString("capacity").takeIf { it.isNotEmpty() && it != "null" },
-            isFree = data.optBoolean("isFree", true),
-            hasFee = !data.optBoolean("isFree", true),
-            isPublic = if (data.has("isPublic") && !data.isNull("isPublic")) 
-                data.getBoolean("isPublic") else null
-        )
+        try {
+            val json = JSONObject(responseBody)
+            val choices = json.getJSONArray("choices")
+            val firstChoice = choices.getJSONObject(0)
+            val message = firstChoice.getJSONObject("message")
+            val content = message.getString("content")
+            
+            Log.d(TAG, "AI content: $content")
+            
+            // Extract JSON from response (might be wrapped in markdown code blocks)
+            val jsonContent = extractJson(content)
+            Log.d(TAG, "Extracted JSON: $jsonContent")
+            
+            val data = JSONObject(jsonContent)
+            
+            return ParsedLocationData(
+                openingHours = data.optString("openingHours").takeIf { it.isNotEmpty() && it != "null" },
+                chargingPoints = if (data.has("chargingPoints") && !data.isNull("chargingPoints")) 
+                    data.getInt("chargingPoints") else null,
+                capacity = data.optString("capacity").takeIf { it.isNotEmpty() && it != "null" },
+                isFree = data.optBoolean("isFree", true),
+                hasFee = !data.optBoolean("isFree", true),
+                isPublic = if (data.has("isPublic") && !data.isNull("isPublic")) 
+                    data.getBoolean("isPublic") else null
+            )
+        } catch (e: org.json.JSONException) {
+            Log.e(TAG, "JSON parsing error: ${e.message}")
+            throw Exception("Invalid response format from AI: ${e.message}")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parsing AI response", e)
+            throw Exception("Failed to parse AI response: ${e.message}")
+        }
     }
     
     private fun extractJson(content: String): String {

@@ -301,9 +301,9 @@ class EditLocationViewModel @Inject constructor(
         }
     }
 
-    fun parseDescription(description: String, onResult: (com.pevplugshare.ai.ParsedLocationData?) -> Unit) {
+    fun parseDescription(description: String, onResult: (com.pevplugshare.ai.ParsedLocationData?, String?) -> Unit) {
         if (description.isBlank()) {
-            onResult(null)
+            onResult(null, "Description is empty")
             return
         }
         
@@ -323,12 +323,12 @@ class EditLocationViewModel @Inject constructor(
                     }
                     updateHasFee(parsed.hasFee)
                     
-                    onResult(parsed)
+                    onResult(parsed, null)
                 }.onFailure { e ->
-                    onResult(null)
+                    onResult(null, e.message ?: "Failed to parse description")
                 }
             } catch (e: Exception) {
-                onResult(null)
+                onResult(null, e.message ?: "Unexpected error during parsing")
             }
         }
     }
