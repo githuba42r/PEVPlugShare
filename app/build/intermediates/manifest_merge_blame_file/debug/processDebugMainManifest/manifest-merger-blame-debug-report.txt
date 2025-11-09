@@ -141,11 +141,11 @@
 76            </intent-filter>
 77        </activity>
 78        <activity
-78-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:39:9-41:40
+78-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:39:9-41:39
 79            android:name="com.pevplugshare.ui.main.MainActivity"
 79-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:40:13-49
-80            android:exported="false" />
-80-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:41:13-37
+80            android:exported="true" />
+80-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:41:13-36
 81        <activity
 81-->/home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:43:9-45:40
 82            android:name="com.pevplugshare.ui.add.AddLocationActivity"

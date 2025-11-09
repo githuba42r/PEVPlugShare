@@ -465,6 +465,9 @@ class MainActivity : AppCompatActivity() {
         // Show gallery modal
         android.util.Log.d("PhotoGallery", "Setting modal visibility to VISIBLE")
         galleryOverlay.visibility = android.view.View.VISIBLE
+        // Hide FABs when gallery is shown
+        binding.addLocationFab.hide()
+        binding.quickLocationButton.hide()
         
         android.util.Log.d("PhotoGallery", "Creating adapter with ${imagePaths.size} images")
         val adapter = com.pevplugshare.ui.adapter.ImageGalleryAdapter(imagePaths)
@@ -491,12 +494,18 @@ class MainActivity : AppCompatActivity() {
         galleryToolbar?.setNavigationOnClickListener {
             android.util.Log.d("PhotoGallery", "Close button clicked")
             galleryOverlay.visibility = android.view.View.GONE
+            // Show FABs when gallery is closed
+            binding.addLocationFab.show()
+            binding.quickLocationButton.show()
         }
         
         // Also allow clicking overlay to close
         galleryOverlay.setOnClickListener {
             android.util.Log.d("PhotoGallery", "Overlay clicked to close")
             it.visibility = android.view.View.GONE
+            // Show FABs when gallery is closed
+            binding.addLocationFab.show()
+            binding.quickLocationButton.show()
         }
         
         android.util.Log.d("PhotoGallery", "=== Modal opened successfully ===")

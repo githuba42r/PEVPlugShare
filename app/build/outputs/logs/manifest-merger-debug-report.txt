@@ -218,9 +218,9 @@ ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/Andro
 	android:name
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:35:27-74
 activity#com.pevplugshare.ui.main.MainActivity
-ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:39:9-41:40
+ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:39:9-41:39
 	android:exported
-		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:41:13-37
+		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:41:13-36
 	android:name
 		ADDED from /home/philg/src/AndroidStudioProjects/PEVPlugShare/app/src/main/AndroidManifest.xml:40:13-49
 activity#com.pevplugshare.ui.add.AddLocationActivity
