@@ -195,52 +195,78 @@ Return only the JSON response, no additional text."""
 
     private fun parseAiResponse(responseBody: String): ParsedLocationData {
         try {
-            Log.d(TAG, "========== PARSING AI RESPONSE ==========")
+            Log.d(TAG, "")
+            Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+            Log.d(TAG, "║                      COMPLETE API RESPONSE STRUCTURE                          ║")
+            Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "Raw response body:")
+            Log.d(TAG, responseBody)
+            Log.d(TAG, "")
+            Log.d(TAG, "Parsing structure...")
+            
             val json = JSONObject(responseBody)
             
-            Log.d(TAG, "Response structure keys: ${json.keys().asSequence().toList()}")
+            Log.d(TAG, "")
+            Log.d(TAG, "Top-level keys in response: ${json.keys().asSequence().toList()}")
             
             val choices = json.getJSONArray("choices")
             Log.d(TAG, "Number of choices: ${choices.length()}")
             
             val firstChoice = choices.getJSONObject(0)
             Log.d(TAG, "First choice keys: ${firstChoice.keys().asSequence().toList()}")
+            Log.d(TAG, "First choice content (pretty-printed):")
+            Log.d(TAG, firstChoice.toString(2))
             
             val message = firstChoice.getJSONObject("message")
-            Log.d(TAG, "Message keys: ${message.keys().asSequence().toList()}")
+            Log.d(TAG, "")
+            Log.d(TAG, "Message object keys: ${message.keys().asSequence().toList()}")
+            Log.d(TAG, "Message content (pretty-printed):")
+            Log.d(TAG, message.toString(2))
             
             val content = message.getString("content")
             
             Log.d(TAG, "")
-            Log.d(TAG, "╔══════════════════════════════════════════════════════════════╗")
-            Log.d(TAG, "║             RAW AI MODEL RESPONSE CONTENT                    ║")
-            Log.d(TAG, "╚══════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+            Log.d(TAG, "║                    RAW AI MODEL RESPONSE CONTENT (from message.content)        ║")
+            Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
             Log.d(TAG, "Content length: ${content.length} characters")
             Log.d(TAG, "---")
             Log.d(TAG, content)
             Log.d(TAG, "---")
             Log.d(TAG, "First 100 chars: ${content.take(100)}")
             Log.d(TAG, "Last 100 chars: ${content.takeLast(100)}")
-            Log.d(TAG, "╚══════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
             Log.d(TAG, "")
 
             // Extract JSON from response (might be wrapped in markdown code blocks)
             val jsonContent = extractJson(content)
             Log.d(TAG, "")
-            Log.d(TAG, "╔══════════════════════════════════════════════════════════════╗")
-            Log.d(TAG, "║            EXTRACTED JSON AFTER MARKDOWN REMOVAL             ║")
-            Log.d(TAG, "╚══════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+            Log.d(TAG, "║                 EXTRACTED JSON AFTER MARKDOWN REMOVAL                         ║")
+            Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
             Log.d(TAG, "Extracted length: ${jsonContent.length} characters")
             Log.d(TAG, "---")
             Log.d(TAG, jsonContent)
             Log.d(TAG, "---")
-            Log.d(TAG, "╚══════════════════════════════════════════════════════════════╝")
+            Log.d(TAG, "Formatted JSON:")
+            try {
+                val jsonFormatted = JSONObject(jsonContent).toString(2)
+                Log.d(TAG, jsonFormatted)
+            } catch (e: Exception) {
+                Log.d(TAG, "Could not format as JSON: ${e.message}")
+            }
+            Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
             Log.d(TAG, "")
 
             val data = JSONObject(jsonContent)
             Log.d(TAG, "✓ Successfully parsed JSON")
             Log.d(TAG, "Parsed JSON keys: ${data.keys().asSequence().toList()}")
-            Log.d(TAG, "Parsed data: openingHours=${data.optString("openingHours")}, chargingPoints=${data.optString("chargingPoints")}, capacity=${data.optString("capacity")}, isFree=${data.optBoolean("isFree")}, isPublic=${data.optString("isPublic")}")
+            Log.d(TAG, "Parsed data:")
+            Log.d(TAG, "  - openingHours: ${data.optString("openingHours")}")
+            Log.d(TAG, "  - chargingPoints: ${data.optString("chargingPoints")}")
+            Log.d(TAG, "  - capacity: ${data.optString("capacity")}")
+            Log.d(TAG, "  - isFree: ${data.optBoolean("isFree")}")
+            Log.d(TAG, "  - isPublic: ${data.optString("isPublic")}")
 
             return ParsedLocationData(
                 openingHours = data.optString("openingHours").takeIf { it.isNotEmpty() && it != "null" },
