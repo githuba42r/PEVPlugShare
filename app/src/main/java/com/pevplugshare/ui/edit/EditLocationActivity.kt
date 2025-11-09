@@ -1094,18 +1094,41 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     
     private fun editPhoto(index: Int, file: File) {
         try {
+            Log.d("EditLocationActivity", "editPhoto called: index=$index, file=${file.absolutePath}")
+            
+            if (!file.exists()) {
+                Toast.makeText(this, "Photo file no longer exists", Toast.LENGTH_SHORT).show()
+                Log.e("EditLocationActivity", "Photo file does not exist: ${file.absolutePath}")
+                return
+            }
+            
+            // Create temp file first
+            val editOutputFile = try {
+                File.createTempFile("edited_", ".jpg", cacheDir)
+            } catch (e: Exception) {
+                Log.e("EditLocationActivity", "Error creating temp file", e)
+                Toast.makeText(this, "Error creating temp file: ${e.message}", Toast.LENGTH_SHORT).show()
+                return
+            }
+            
             editingPhotoIndex = index
             val intent = android.content.Intent(this, ImageEditorActivity::class.java).apply {
                 putExtra(ImageEditorActivity.EXTRA_IMAGE_PATH, file.absolutePath)
-                
-                // Use temp file for output to preserve original
-                val editOutputFile = File.createTempFile("edited_", ".jpg", cacheDir)
                 putExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH, editOutputFile.absolutePath)
             }
-            imageEditor.launch(intent)
+            
+            Log.d("EditLocationActivity", "Opening image editor with output: ${editOutputFile.absolutePath}")
+            
+            try {
+                imageEditor.launch(intent)
+                Log.d("EditLocationActivity", "Image editor launched successfully")
+            } catch (e: Exception) {
+                Log.e("EditLocationActivity", "Error launching image editor", e)
+                Toast.makeText(this, "Error opening image editor: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         } catch (e: Exception) {
             Toast.makeText(this, "Error opening image editor: ${e.message}", Toast.LENGTH_SHORT).show()
-            Log.e("EditLocationActivity", "Error launching image editor", e)
+            Log.e("EditLocationActivity", "Error in editPhoto", e)
         }
     }
     
