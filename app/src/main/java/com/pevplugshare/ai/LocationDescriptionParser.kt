@@ -88,7 +88,14 @@ CAPACITY EXTRACTION:
 - Look for: "10A", "15A each", "3.6kW", etc.
 - If multiple capacities, list them: "10A/15A"
 
-Return ONLY valid JSON:
+CRITICAL INSTRUCTION - NO MARKDOWN:
+Return ONLY the JSON object with NO markdown code blocks, NO backticks, NO explanatory text.
+IMPORTANT: Do NOT wrap the JSON in ```json ``` or any markdown formatting.
+IMPORTANT: Do NOT add any text before or after the JSON.
+IMPORTANT: The response MUST start with { and end with } - nothing else.
+IMPORTANT: This is critical for parsing - any markdown will break the system.
+
+Return only valid JSON:
 {
   "openingHours": "string or null",
   "chargingPoints": number or null,
@@ -218,17 +225,40 @@ Return only the JSON response, no additional text."""
     }
     
     private fun extractJson(content: String): String {
-        // Remove markdown code blocks if present
+        // Remove markdown code blocks if present and extract JSON
         val trimmed = content.trim()
-        return when {
+        
+        // Try multiple markdown patterns
+        val extracted = when {
             trimmed.startsWith("```json") -> {
                 trimmed.substringAfter("```json").substringBefore("```").trim()
             }
             trimmed.startsWith("```") -> {
                 trimmed.substringAfter("```").substringBefore("```").trim()
             }
+            trimmed.startsWith("{") -> {
+                // Already valid JSON, find the complete object
+                var braceCount = 0
+                var endIndex = -1
+                for (i in trimmed.indices) {
+                    when (trimmed[i]) {
+                        '{' -> braceCount++
+                        '}' -> {
+                            braceCount--
+                            if (braceCount == 0) {
+                                endIndex = i + 1
+                                break
+                            }
+                        }
+                    }
+                }
+                if (endIndex > 0) trimmed.substring(0, endIndex) else trimmed
+            }
             else -> trimmed
         }
+        
+        Log.d(TAG, "Extracted JSON from response: $extracted")
+        return extracted
     }
     
     fun calculateDescriptionHash(description: String?): String {
