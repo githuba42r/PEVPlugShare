@@ -187,7 +187,7 @@ Return only the JSON response, no additional text."""
                 })
             })
             put("temperature", 0.1) // Low temperature for consistent extraction
-            put("max_tokens", 500) // Small response
+            put("max_tokens", 1000) // Increased from 500 to ensure complete response
         }
 
         return json.toString().toRequestBody("application/json".toMediaType())
@@ -330,6 +330,13 @@ Return only the JSON response, no additional text."""
         }
 
         Log.d(TAG, "  Extracted ${extracted.length} characters")
+        
+        // Check if JSON appears incomplete
+        if (extracted.endsWith("\"") && !extracted.endsWith("}")) {
+            Log.w(TAG, "  ⚠ WARNING: JSON appears to be incomplete (ends with unterminated string)")
+            Log.w(TAG, "  Last 50 chars: ${extracted.takeLast(50)}")
+        }
+        
         return extracted
     }
 
