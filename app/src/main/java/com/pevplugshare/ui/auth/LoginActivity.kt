@@ -139,16 +139,22 @@ class LoginActivity : AppCompatActivity() {
         val dialog = AlertDialog.Builder(this)
             .setTitle("⚠️ Security Warning")
             .setMessage(
-                "You are about to save your login credentials on this device.\n\n" +
+                "IMPORTANT SECURITY NOTICE\n\n" +
+                "You have chosen to save your login credentials.\n\n" +
+                "What this means:\n" +
+                "• Your username and password will be stored on this device\n" +
+                "• The app will automatically log you in when opened\n" +
+                "• Credentials are encrypted using AES-256 encryption\n" +
+                "• Data is stored in secure Android storage\n\n" +
                 "SECURITY RISKS:\n" +
-                "• Unlocked devices can be accessed by others\n" +
-                "• Rooted/compromised devices are at risk\n" +
-                "• Use device lock screen protection\n\n" +
-                "IMPORTANT:\n" +
-                "• Credentials are AES-256 encrypted\n" +
-                "• Only enable on personal devices\n" +
-                "• Disable if device is lost\n\n" +
-                "Do you understand and wish to continue?"
+                "• If someone gains physical access to your unlocked device, they may be able to access your account\n" +
+                "• If your device is rooted or compromised, stored credentials may be at risk\n" +
+                "• You should only enable this on devices you personally control and trust\n\n" +
+                "RECOMMENDATIONS:\n" +
+                "• Use device lock screen protection (PIN/Pattern/Biometric)\n" +
+                "• Do not enable on shared or public devices\n" +
+                "• Disable if device is lost or stolen (change password)\n\n" +
+                "Do you understand the risks and wish to continue?"
             )
             .setPositiveButton("I Understand, Continue") { _, _ ->
                 // User confirmed, enable login button
@@ -173,7 +179,7 @@ class LoginActivity : AppCompatActivity() {
         
         dialog.show()
         dialog.findViewById<android.widget.TextView>(android.R.id.message)?.apply {
-            maxLines = 12
+            maxLines = 8
             setVerticalScrollBarEnabled(true)
             movementMethod = android.text.method.ScrollingMovementMethod()
         }
