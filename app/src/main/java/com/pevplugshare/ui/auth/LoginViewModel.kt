@@ -24,34 +24,67 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
 
-    fun exchangeCodeForToken(code: String) {
+    suspend fun hasStoredCredentials(): Boolean {
+        return authRepository.hasStoredCredentials()
+    }
+    
+    suspend fun hasValidSessionToken(): Boolean {
+        return authRepository.hasSessionToken()
+    }
+
+    fun attemptAutoLogin() {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
             try {
-                val clientId = "osmand"
-                val clientSecret = "" // OSMAnd public app doesn't require secret
-                val redirectUri = "com.pevplugshare://auth/callback"
-
-                val result = authRepository.getAccessTokenFromCode(
-                    code = code,
-                    clientId = clientId,
-                    clientSecret = clientSecret,
-                    redirectUri = redirectUri
-                )
-
-                result.onSuccess { token ->
-                    // Fetch user info to store username
-                    val userResult = authRepository.getUserInfo()
-                    userResult.onSuccess {
-                        _loginState.value = LoginState.Success
-                    }.onFailure { error ->
-                        _loginState.value = LoginState.Error(error.message ?: "Failed to get user info")
-                    }
+                val result = authRepository.autoLogin()
+                
+                result.onSuccess {
+                    // Test fetching categories after successful login
+                    android.util.Log.d("LoginViewModel", "Auto-login successful, fetching favorites categories...")
+                    authRepository.getFavoritesCategories()
+                    
+                    _loginState.value = LoginState.Success
                 }.onFailure { error ->
-                    _loginState.value = LoginState.Error(error.message ?: "Authentication failed")
+                    _loginState.value = LoginState.Error(error.message ?: "Auto-login failed")
+                }
+            } catch (e: Exception) {
+                _loginState.value = LoginState.Error(e.message ?: "Auto-login failed")
+            }
+        }
+    }
+
+    fun loginWithCredentials(username: String, password: String, rememberMe: Boolean) {
+        viewModelScope.launch {
+            _loginState.value = LoginState.Loading
+            try {
+                val result = authRepository.loginWithWebApi(username, password, rememberMe)
+                
+                result.onSuccess {
+                    // Test fetching categories after successful login
+                    android.util.Log.d("LoginViewModel", "Login successful, fetching favorites categories...")
+                    authRepository.getFavoritesCategories()
+                    
+                    _loginState.value = LoginState.Success
+                }.onFailure { error ->
+                    _loginState.value = LoginState.Error(error.message ?: "Login failed")
                 }
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun getFavoritesCategories(onResult: (List<String>) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val result = authRepository.getFavoritesCategories()
+                result.onSuccess { categories ->
+                    onResult(categories)
+                }.onFailure {
+                    onResult(emptyList())
+                }
+            } catch (e: Exception) {
+                onResult(emptyList())
             }
         }
     }

@@ -13,4 +13,10 @@ class SplashViewModel @Inject constructor(
     suspend fun isUserLoggedIn(): Boolean {
         return authRepository.isLoggedIn()
     }
+
+    suspend fun validateSession(): Boolean {
+        // Try to load categories to validate the session
+        val result = authRepository.getFavoritesCategories()
+        return result.isSuccess && result.getOrNull()?.isNotEmpty() == true
+    }
 }

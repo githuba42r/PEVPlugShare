@@ -13,28 +13,8 @@ import retrofit2.http.Query
 interface OsmandApiService {
     companion object {
         const val BASE_URL = "https://api.osmand.net/api/"
-        const val OAUTH_URL = "https://osmand.net/api/"
+        const val WEB_API_URL = "https://osmand.net/mapapi/"
     }
-
-    // OAuth2 Authentication
-    @FormUrlEncoded
-    @POST("token")
-    suspend fun getAccessToken(
-        @retrofit2.http.Field("grant_type") grantType: String = "authorization_code",
-        @retrofit2.http.Field("code") code: String,
-        @retrofit2.http.Field("client_id") clientId: String,
-        @retrofit2.http.Field("client_secret") clientSecret: String,
-        @retrofit2.http.Field("redirect_uri") redirectUri: String
-    ): OsmandAuthResponse
-
-    @FormUrlEncoded
-    @POST("token")
-    suspend fun refreshAccessToken(
-        @retrofit2.http.Field("grant_type") grantType: String = "refresh_token",
-        @retrofit2.http.Field("refresh_token") refreshToken: String,
-        @retrofit2.http.Field("client_id") clientId: String,
-        @retrofit2.http.Field("client_secret") clientSecret: String
-    ): OsmandAuthResponse
 
     // User Info
     @GET("me")
@@ -84,4 +64,38 @@ interface OsmandApiService {
     suspend fun getAllFavorites(
         @Header("Authorization") authorization: String
     ): OsmandMarkersResponse
+
+    // Web API - Login with username/password
+    @POST("auth/login")
+    suspend fun webLogin(
+        @Body loginRequest: OsmandLoginRequest
+    ): OsmandLoginResponse
+
+    // Web API - Get list of files including favorites
+    @GET("list-files")
+    suspend fun listFiles(): OsmandListFilesResponse
+
+    // Web API - Download favorites GPX file
+    @GET("download-file")
+    suspend fun downloadFile(
+        @Query("type") type: String,
+        @Query("name") name: String,
+        @Query("shared") shared: Boolean = false
+    ): okhttp3.ResponseBody
+    
+    // Web API - Update favorite waypoint
+    @POST("fav/update")
+    @FormUrlEncoded
+    suspend fun updateFavorite(
+        @retrofit2.http.Field("wptName") wptName: String,
+        @retrofit2.http.Field("oldGroupName") oldGroupName: String,
+        @retrofit2.http.Field("newGroupName") newGroupName: String,
+        @retrofit2.http.Field("oldGroupUpdatetime") oldGroupUpdatetime: Long,
+        @retrofit2.http.Field("newGroupUpdatetime") newGroupUpdatetime: Long,
+        @retrofit2.http.Field("ind") ind: Int,
+        @retrofit2.http.Field("lat") lat: Double? = null,
+        @retrofit2.http.Field("lon") lon: Double? = null,
+        @retrofit2.http.Field("desc") desc: String? = null,
+        @retrofit2.http.Field("color") color: String? = null
+    ): okhttp3.ResponseBody
 }

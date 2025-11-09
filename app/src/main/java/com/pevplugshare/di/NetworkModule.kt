@@ -1,11 +1,15 @@
 package com.pevplugshare.di
 
 import android.content.Context
+import com.pevplugshare.data.db.dao.LocationDao
+import com.pevplugshare.data.db.dao.PendingOperationDao
 import com.pevplugshare.data.network.ConnectivityObserver
+import com.pevplugshare.data.remote.CookieManager
 import com.pevplugshare.data.remote.OsmandApiClient
 import com.pevplugshare.data.remote.TokenManager
 import com.pevplugshare.data.repository.AuthRepositoryImpl
-import com.pevplugshare.data.repository.LocationRepositoryImpl
+import com.pevplugshare.data.repository.LocalLocationRepository
+import com.pevplugshare.data.repository.PendingOperationRepository
 import com.pevplugshare.data.storage.PhotoStorageManager
 import com.pevplugshare.domain.repository.AuthRepository
 import com.pevplugshare.domain.repository.LocationRepository
@@ -30,28 +34,38 @@ object NetworkModule {
 
     @Singleton
     @Provides
+    fun provideCookieManager(
+        @ApplicationContext context: Context
+    ): CookieManager {
+        return CookieManager(context)
+    }
+
+    @Singleton
+    @Provides
     fun provideOsmandApiClient(
-        tokenManager: TokenManager
+        tokenManager: TokenManager,
+        cookieManager: CookieManager
     ): OsmandApiClient {
-        return OsmandApiClient(tokenManager)
+        return OsmandApiClient(tokenManager, cookieManager)
     }
 
     @Singleton
     @Provides
     fun provideAuthRepository(
         apiClient: OsmandApiClient,
-        tokenManager: TokenManager
+        tokenManager: TokenManager,
+        @ApplicationContext context: Context,
+        cookieManager: CookieManager
     ): AuthRepository {
-        return AuthRepositoryImpl(apiClient, tokenManager)
+        return AuthRepositoryImpl(apiClient, tokenManager, context, cookieManager)
     }
 
     @Singleton
     @Provides
     fun provideLocationRepository(
-        apiClient: OsmandApiClient,
-        tokenManager: TokenManager
+        locationDao: LocationDao
     ): LocationRepository {
-        return LocationRepositoryImpl(apiClient, tokenManager)
+        return LocalLocationRepository(locationDao)
     }
 
     @Singleton
