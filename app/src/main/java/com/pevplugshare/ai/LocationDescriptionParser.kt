@@ -20,7 +20,8 @@ data class ParsedLocationData(
     val capacity: String?,
     val isFree: Boolean,
     val hasFee: Boolean,
-    val isPublic: Boolean?
+    val isPublic: Boolean?,
+    val additionalInfo: String? = null
 )
 
 @Singleton
@@ -34,7 +35,7 @@ class LocationDescriptionParser @Inject constructor(
 
         private const val SYSTEM_PROMPT = """Extract charging location data from descriptions. Return ONLY valid JSON with no markdown, no backticks, no extra text. Response MUST start with { and end with }.
 
-JSON: {"openingHours": "string or null", "chargingPoints": "number or null", "capacity": "string or null", "isFree": "boolean", "isPublic": "boolean or null"}
+JSON: {"openingHours": "string or null", "chargingPoints": "number or null", "capacity": "string or null", "isFree": "boolean", "isPublic": "boolean or null", "additionalInfo": "string or null"}
 
 SOCKET COUNTING: "2x10A"=2 sockets, "3 GPO"=3, "dual"=2, "6-12 total"=6, "multiple"=null. Don't confuse capacity (10A) with count.
 
@@ -44,10 +45,12 @@ ACCESS: "food court", "public"→true. "customers only", "members only"→false.
 
 COST: No mention="free" (isFree:true). "$", "paid", "fee"→isFree:false.
 
+ADDITIONAL INFO: Extract any other relevant information not covered by above fields. Examples: location details (e.g., "near parking area", "behind building"), conditions (e.g., "may be turned off", "sometimes unavailable"), access instructions (e.g., "ask staff", "key required"), or other useful details for users. Keep to 1-2 sentences max.
+
 EXAMPLES:
-"2x10A GPO, not suitable for night" → {"openingHours": "9AM-5PM (Weekdays)", "chargingPoints": 2, "capacity": "10A", "isFree": true, "isPublic": true}
-"3 GPO in food court, 24/7" → {"openingHours": "24/7", "chargingPoints": 3, "capacity": null, "isFree": true, "isPublic": true}
-"Single 15A, customers only, $5/hr" → {"openingHours": null, "chargingPoints": 1, "capacity": "15A", "isFree": false, "isPublic": false}"""
+"2x10A GPO behind building, may be turned off, ask staff" → {"openingHours": null, "chargingPoints": 2, "capacity": "10A", "isFree": true, "isPublic": false, "additionalInfo": "May be turned off during day, ask staff for access"}
+"3 GPO in food court near parking, 24/7" → {"openingHours": "24/7", "chargingPoints": 3, "capacity": null, "isFree": true, "isPublic": true, "additionalInfo": "Located in food court near parking area"}
+"Single 15A outlet, customers only, $5/hr" → {"openingHours": null, "chargingPoints": 1, "capacity": "15A", "isFree": false, "isPublic": false, "additionalInfo": null}"""
 
         private const val USER_PROMPT_TEMPLATE = """Extract charging location information from this description:
 
@@ -199,6 +202,7 @@ Return only the JSON response, no additional text."""
             Log.d(TAG, "  - capacity: ${data.optString("capacity")}")
             Log.d(TAG, "  - isFree: ${data.optBoolean("isFree")}")
             Log.d(TAG, "  - isPublic: ${data.optString("isPublic")}")
+            Log.d(TAG, "  - additionalInfo: ${data.optString("additionalInfo")}")
 
             return ParsedLocationData(
                 openingHours = data.optString("openingHours").takeIf { it.isNotEmpty() && it != "null" },
@@ -208,7 +212,8 @@ Return only the JSON response, no additional text."""
                 isFree = data.optBoolean("isFree", true),
                 hasFee = !data.optBoolean("isFree", true),
                 isPublic = if (data.has("isPublic") && !data.isNull("isPublic"))
-                    data.getBoolean("isPublic") else null
+                    data.getBoolean("isPublic") else null,
+                additionalInfo = data.optString("additionalInfo").takeIf { it.isNotEmpty() && it != "null" }
             )
         } catch (e: org.json.JSONException) {
             Log.e(TAG, "JSON parsing error: ${e.message}")
