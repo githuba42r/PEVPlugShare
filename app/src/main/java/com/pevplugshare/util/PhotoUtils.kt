@@ -6,9 +6,61 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.util.Log
 import androidx.exifinterface.media.ExifInterface
+import com.pevplugshare.data.model.PhotoMetadata
 import java.io.File
 
 object PhotoUtils {
+
+    fun getPhotoMetadata(photoPath: String): PhotoMetadata {
+        return try {
+            val exif = ExifInterface(photoPath)
+            val latLong = exif.latLong
+            val latitude = latLong?.get(0)
+            val longitude = latLong?.get(1)
+            
+            // Extract bearing/direction if available (some devices record this)
+            val bearing = extractBearing(exif)
+            
+            PhotoMetadata(
+                latitude = latitude,
+                longitude = longitude,
+                altitude = null, // EXIF_TAG_ALTITUDE not available in simple way, skip for now
+                bearing = bearing,
+                dateTime = exif.getAttribute(ExifInterface.TAG_DATETIME),
+                make = exif.getAttribute(ExifInterface.TAG_MAKE),
+                model = exif.getAttribute(ExifInterface.TAG_MODEL),
+                hasGpsData = latitude != null && longitude != null,
+                hasBearingData = bearing != null
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error reading photo metadata", e)
+            PhotoMetadata()
+        }
+    }
+
+    private fun extractBearing(exif: ExifInterface): Float? {
+        return try {
+            // Try to get bearing from various EXIF tags that might store it
+            val bearing = exif.getAttribute("GPSImgDirection")?.toFloatOrNull()
+                ?: exif.getAttribute("GPSDestBearing")?.toFloatOrNull()
+            
+            // If no bearing in EXIF, try to infer from device orientation
+            // This is less accurate but better than nothing
+            if (bearing == null) {
+                val orientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL
+                )
+                // Use orientation as a rough estimate (not accurate but better than nothing)
+                return null // Better to return null than inaccurate data
+            }
+            
+            bearing?.let { if (it < 0f) it + 360f else it }
+        } catch (e: Exception) {
+            Log.d(TAG, "Could not extract bearing from EXIF", e)
+            null
+        }
+    }
 
     fun getExifData(photoPath: String): Map<String, String> {
         return try {
