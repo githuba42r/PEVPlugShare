@@ -38,7 +38,7 @@
 
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".ui.add.AddLocationActivity"
