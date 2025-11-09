@@ -285,6 +285,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             buttonSyncToOsmand.setOnClickListener { syncToOsmand() }
             // Hide sync button in add mode
             buttonSyncToOsmand.visibility = if (isAddMode) android.view.View.GONE else android.view.View.VISIBLE
+            
+            // Setup AI buttons - hide if no API key
+            val hasApiKey = tokenManager.getOpenRouterApiKey()?.isNotBlank() == true
+            buttonGenerateDescription.visibility = if (hasApiKey) android.view.View.VISIBLE else android.view.View.GONE
+            buttonParseDescription.visibility = if (hasApiKey) android.view.View.VISIBLE else android.view.View.GONE
+            
             buttonGenerateDescription.setOnClickListener { showAiDescriptionDialog() }
             buttonParseDescription.setOnClickListener { parseDescriptionToFields() }
             // Parse button visible in both add and edit modes
@@ -946,7 +952,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
     
     private fun updateAnalyzeButtonVisibility() {
-        binding.analyzePhotosButton.visibility = if (photoUris.isNotEmpty()) {
+        val hasApiKey = tokenManager.getOpenRouterApiKey()?.isNotBlank() == true
+        val hasPhotos = photoUris.isNotEmpty()
+        binding.analyzePhotosButton.visibility = if (hasApiKey && hasPhotos) {
             android.view.View.VISIBLE
         } else {
             android.view.View.GONE
