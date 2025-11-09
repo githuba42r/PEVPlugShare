@@ -840,7 +840,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         binding.progressBar.visibility = android.view.View.VISIBLE
         binding.buttonParseDescription.isEnabled = false
         
-        viewModel.parseDescription(description) { parsed ->
+        viewModel.parseDescription(description) { parsed, error ->
             binding.progressBar.visibility = android.view.View.GONE
             binding.buttonParseDescription.isEnabled = true
             
@@ -905,7 +905,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(this, "❌ Failed to parse description. Check your AI settings.", Toast.LENGTH_LONG).show()
+                val errorMsg = error ?: "Unknown error"
+                Log.e("EditLocationActivity", "Parse error: $errorMsg")
+                Toast.makeText(this, "❌ Failed to parse:\n$errorMsg", Toast.LENGTH_LONG).show()
             }
         }
     }
