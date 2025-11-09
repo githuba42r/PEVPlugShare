@@ -18,6 +18,18 @@
             android:scaleType="centerCrop"
             android:contentDescription="Location photo thumbnail" />
         
+        <!-- Focus indicator badge -->
+        <ImageView
+            android:id="@+id/focusIndicator"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_edit"
+            android:tint="@android:color/holo_green_dark"
+            android:visibility="gone"
+            android:contentDescription="Focus area set" />
+        
         <ImageView
             android:id="@+id/removePhotoButton"
             android:layout_width="28dp"

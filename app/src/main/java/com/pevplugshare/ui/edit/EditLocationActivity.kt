@@ -63,9 +63,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     
     // Photo related fields
     private val photoUris = mutableListOf<String>()
+    private val photoFocusAreas = mutableMapOf<String, android.graphics.RectF>() // filePath -> focusRect
     private val maxPhotos = 5
     private var currentPhotoUri: Uri? = null
     private var tempPhotoFile: File? = null
+    private var editingPhotoIndex: Int = -1
     
     private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
@@ -102,6 +104,20 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         } else {
             Toast.makeText(this, "Camera permission required", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private val imageEditor = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val focusRect = result.data?.getParcelableExtra<android.graphics.RectF>(ImageEditorActivity.EXTRA_FOCUS_RECT)
+            if (editingPhotoIndex >= 0 && editingPhotoIndex < photoUris.size) {
+                val photoPath = photoUris[editingPhotoIndex]
+                if (focusRect != null) {
+                    photoFocusAreas[photoPath] = focusRect
+                    Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        editingPhotoIndex = -1
     }
 
     private val locationId: String? by lazy {
@@ -1001,6 +1017,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             .inflate(R.layout.item_photo_thumbnail, binding.photosContainer, false)
         val imageView = thumbnailView.findViewById<ImageView>(R.id.thumbnailImage)
         val removeButton = thumbnailView.findViewById<ImageView>(R.id.removePhotoButton)
+        val focusIndicator = thumbnailView.findViewById<ImageView>(R.id.focusIndicator)
         
         Glide.with(this)
             .load(file)
@@ -1008,6 +1025,28 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             .into(imageView)
         
         val index = photoUris.size - 1
+        
+        // Show focus indicator if focus area exists
+        if (photoFocusAreas.containsKey(file.absolutePath)) {
+            focusIndicator.visibility = android.view.View.VISIBLE
+        }
+        
+        // Click to edit image
+        imageView.setOnClickListener {
+            editPhoto(index, file)
+        }
+        
+        // Long click shows info
+        imageView.setOnLongClickListener {
+            val hasFocus = photoFocusAreas.containsKey(file.absolutePath)
+            Toast.makeText(
+                this,
+                if (hasFocus) "Focus area set - tap to edit" else "Tap to edit, long press for info",
+                Toast.LENGTH_SHORT
+            ).show()
+            true
+        }
+        
         removeButton.setOnClickListener {
             removePhoto(index)
         }
@@ -1021,11 +1060,24 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         if (index < photoUris.size) {
             val path = photoUris[index]
             File(path).delete()
+            photoFocusAreas.remove(path)
             photoUris.removeAt(index)
             refreshPhotoThumbnails()
             updateAnalyzeButtonVisibility()
             Toast.makeText(this, "Photo removed", Toast.LENGTH_SHORT).show()
         }
+    }
+    
+    private fun editPhoto(index: Int, file: File) {
+        editingPhotoIndex = index
+        val intent = android.content.Intent(this, ImageEditorActivity::class.java).apply {
+            putExtra(ImageEditorActivity.EXTRA_IMAGE_PATH, file.absolutePath)
+            
+            // Use temp file for output to preserve original
+            val editOutputFile = File.createTempFile("edited_", ".jpg", cacheDir)
+            putExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH, editOutputFile.absolutePath)
+        }
+        imageEditor.launch(intent)
     }
     
     private fun refreshPhotoThumbnails() {
@@ -1083,7 +1135,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         lifecycleScope.launch {
             try {
                 val photoFiles = photoUris.map { File(it) }
-                val result = photoAnalyzer.analyzePhotos(photoFiles, apiKey)
+                val result = photoAnalyzer.analyzePhotos(photoFiles, apiKey, photoFocusAreas)
                 
                 progressDialog.dismiss()
                 

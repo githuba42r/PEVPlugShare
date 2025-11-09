@@ -71,6 +71,11 @@
             android:name=".ui.edit.EditLocationActivity"
             android:exported="false" />
 
+        <!-- Image Editor Activity -->
+        <activity
+            android:name=".ui.edit.ImageEditorActivity"
+            android:exported="false" />
+
         <!-- Intent filter for JSON file import -->
         <activity
             android:name=".ui.import.ImportLocationsActivity"
