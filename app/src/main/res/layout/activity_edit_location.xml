@@ -528,7 +528,8 @@
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
                     android:text="Cancel"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    style="@style/Widget.Material3.Button.OutlinedButton" />
             </LinearLayout>
             
             <!-- Sync to OSMAnd Button (shown when pending sync) -->
@@ -540,7 +541,8 @@
                 android:text="Sync to OSMAnd"
                 android:icon="@drawable/ic_sync_pending"
                 android:textSize="16sp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
 
         </LinearLayout>
 
