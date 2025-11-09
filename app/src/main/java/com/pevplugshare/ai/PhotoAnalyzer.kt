@@ -340,4 +340,25 @@ Image showing multiple outlets in a food court:
             throw Exception("Failed to parse AI response: ${e.message}")
         }
     }
+
+    fun isAiAnalysisAvailable(): Boolean {
+        val hasApiKey = !tokenManager.getOpenRouterApiKey().isNullOrEmpty()
+        val hasModel = !tokenManager.getSelectedAiModel().isNullOrEmpty()
+        return hasApiKey && hasModel
+    }
+
+    fun getAiConfigurationStatus(): String {
+        return when {
+            tokenManager.getOpenRouterApiKey().isNullOrEmpty() && tokenManager.getSelectedAiModel().isNullOrEmpty() -> {
+                "AI API key and model not configured"
+            }
+            tokenManager.getOpenRouterApiKey().isNullOrEmpty() -> {
+                "AI API key not configured"
+            }
+            tokenManager.getSelectedAiModel().isNullOrEmpty() -> {
+                "AI model not selected"
+            }
+            else -> "AI analysis ready"
+        }
+    }
 }

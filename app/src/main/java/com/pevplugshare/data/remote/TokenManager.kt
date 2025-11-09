@@ -157,4 +157,16 @@ class TokenManager(context: Context) {
     fun getMapZoomLevel(): Float {
         return encryptedPrefs.getFloat(KEY_MAP_ZOOM_LEVEL, DEFAULT_MAP_ZOOM)
     }
+
+    fun hasAiApiKeyConfigured(): Boolean {
+        return !getOpenRouterApiKey().isNullOrEmpty()
+    }
+
+    fun hasAiModelSelected(): Boolean {
+        return !getSelectedAiModel().isNullOrEmpty()
+    }
+
+    fun isAiAnalysisEnabled(): Boolean {
+        return hasAiApiKeyConfigured() && hasAiModelSelected()
+    }
 }
