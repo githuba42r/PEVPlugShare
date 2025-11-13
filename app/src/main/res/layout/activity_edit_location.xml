@@ -531,7 +531,7 @@
                     android:textSize="16sp"
                     style="@style/CustomOutlinedButton" />
             </LinearLayout>
-            
+
             <!-- Sync to OSMAnd Button (shown when pending sync) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSyncToOsmand"

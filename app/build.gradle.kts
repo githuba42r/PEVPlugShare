@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.pevplugshare"
+    namespace = "com.a42r.pevplugshare"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.pevplugshare"
+        applicationId = "com.a42r.pevplugshare"
         minSdk = 26
         targetSdk = 34
         versionCode = 2
@@ -95,13 +95,13 @@ dependencies {
 
     // Map
     implementation("org.osmdroid:osmdroid-android:6.1.18")
-    
+
     // Preferences
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     // Photo/EXIF
     implementation(libs.androidx.exifinterface)
-    
+
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
