@@ -23,6 +23,11 @@ out/
 .gradle/
 build/
 
+# Gradle cache and wrapper (uncomment to ignore gradle wrapper)
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
 # Local configuration file (sdk path, etc)
 local.properties
 
