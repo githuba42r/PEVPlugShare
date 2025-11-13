@@ -26,7 +26,7 @@
             android:layout_gravity="bottom|start"
             android:layout_margin="4dp"
             android:src="@drawable/ic_edit"
-            android:tint="@android:color/holo_green_dark"
+            app:tint="@android:color/holo_green_dark"
             android:visibility="gone"
             android:contentDescription="Focus area set" />
         
@@ -39,7 +39,7 @@
             android:src="@drawable/ic_clear"
             android:background="@android:color/holo_red_dark"
             android:padding="4dp"
-            android:tint="@android:color/white"
+            app:tint="@android:color/white"
             android:contentDescription="Remove photo" />
     </FrameLayout>
 </com.google.android.material.card.MaterialCardView>
