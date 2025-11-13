@@ -1,12 +1,15 @@
 package com.pevplugshare.ui.quicklocation
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
@@ -226,6 +229,20 @@ class QuickLocationActivity : AppCompatActivity() {
     }
 
     private fun getCurrentLocation(callback: (lat: Double, lng: Double) -> Unit) {
+        // Check for location permissions
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // If no permissions, use fallback location
+            callback(-33.8688, 151.2093) // Sydney, Australia
+            return
+        }
+        
         try {
             fusedLocationClient.getCurrentLocation(
                 Priority.PRIORITY_HIGH_ACCURACY,
