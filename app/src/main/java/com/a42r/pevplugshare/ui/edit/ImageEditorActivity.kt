@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PorterDuff
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
@@ -48,6 +50,7 @@ class ImageEditorActivity : AppCompatActivity() {
         const val EXTRA_OUTPUT_PATH = "output_path"
         const val EXTRA_FOCUS_RECT = "focus_rect"
         const val EXTRA_METADATA = "metadata"
+        const val MAX_IMAGE_TEXTURE_SIZE = 2048 // Maximum dimension for width or height
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +67,11 @@ class ImageEditorActivity : AppCompatActivity() {
             cropButton = findViewById(R.id.cropButton)
             resetButton = findViewById(R.id.resetButton)
             saveButton = findViewById(R.id.saveButton)
+
+            // Initialize rotation buttons
+            val rotateLeftButton: Button = findViewById(R.id.rotateLeftButton)
+            val rotateRightButton: Button = findViewById(R.id.rotateRightButton)
+
         } catch (e: Exception) {
             Log.e("ImageEditorActivity", "Error finding views", e)
             Toast.makeText(this, "Error initializing UI: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -77,7 +85,7 @@ class ImageEditorActivity : AppCompatActivity() {
             return
         }
 
-        loadImage(imagePath)
+        loadImageAndOrient(imagePath) // Call the new function
         setupUI()
     }
 
@@ -158,6 +166,7 @@ class ImageEditorActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             saveImage()
         }
+        addRotationControls() // Call this to set up rotation buttons
     }
 
     private fun zoomImage(factor: Float) {
@@ -309,5 +318,106 @@ class ImageEditorActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Error saving image: ${e.message}", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun rotateBitmapUser(degrees: Float) {
+        val matrix = Matrix().apply { postRotate(degrees) }
+        editBitmap = Bitmap.createBitmap(editBitmap, 0, 0, editBitmap.width, editBitmap.height, matrix, true)
+        refreshImage()
+    }
+
+    private fun addRotationControls() {
+        val rotateLeftButton: Button = findViewById(R.id.rotateLeftButton)
+        val rotateRightButton: Button = findViewById(R.id.rotateRightButton)
+
+        rotateLeftButton.setOnClickListener {
+            rotateBitmapUser(-90f)
+        }
+
+        rotateRightButton.setOnClickListener {
+            rotateBitmapUser(90f)
+        }
+    }
+
+    // New function to handle image loading and auto-orientation
+    private fun loadImageAndOrient(imagePath: String) {
+        try {
+            val file = File(imagePath)
+            if (!file.exists()) {
+                throw Exception("Image file does not exist: $imagePath")
+            }
+
+            // Decode sampled bitmap to prevent OOM errors
+            var decodedBitmap = decodeSampledBitmapFromFile(imagePath, MAX_IMAGE_TEXTURE_SIZE, MAX_IMAGE_TEXTURE_SIZE)
+                ?: throw Exception("Failed to decode image: $imagePath")
+
+            // Apply EXIF orientation
+            val exif = ExifInterface(imagePath)
+            val orientation = exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
+
+            decodedBitmap = when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(decodedBitmap, 90f)
+                ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(decodedBitmap, 180f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(decodedBitmap, 270f)
+                ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> flipBitmap(decodedBitmap, true, false)
+                ExifInterface.ORIENTATION_FLIP_VERTICAL -> flipBitmap(decodedBitmap, false, true)
+                else -> decodedBitmap
+            }
+
+            originalBitmap = decodedBitmap
+            editBitmap = originalBitmap.copy(originalBitmap.config, true)
+            imageView.setImageBitmap(editBitmap)
+
+        } catch (e: Exception) {
+            Log.e("ImageEditorActivity", "Error loading and orienting image", e)
+            Toast.makeText(this, "Error loading image: ${e.message}", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+    }
+
+    private fun decodeSampledBitmapFromFile(imagePath: String, reqWidth: Int, reqHeight: Int): Bitmap? {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        return BitmapFactory.Options().run {
+            inJustDecodeBounds = true
+            BitmapFactory.decodeFile(imagePath, this)
+
+            // Calculate inSampleSize
+            inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
+
+            // Decode bitmap with inSampleSize set
+            inJustDecodeBounds = false
+            BitmapFactory.decodeFile(imagePath, this)
+        }
+    }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val (height: Int, width: Int) = options.run { outHeight to outWidth }
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
+    }
+
+    private fun rotateBitmap(bitmap: Bitmap, degree: Float): Bitmap {
+        val matrix = Matrix().apply { postRotate(degree) }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    private fun flipBitmap(bitmap: Bitmap, horizontal: Boolean, vertical: Boolean): Bitmap {
+        val matrix = Matrix().apply {
+            if (horizontal) preScale(-1f, 1f, bitmap.width / 2f, 0f)
+            if (vertical) preScale(1f, -1f, 0f, bitmap.height / 2f)
+        }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 }

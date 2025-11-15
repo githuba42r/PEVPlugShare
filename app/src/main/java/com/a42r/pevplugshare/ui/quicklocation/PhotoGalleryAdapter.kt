@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.a42r.pevplugshare.R
+import com.a42r.pevplugshare.util.PhotoUtils
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -36,7 +37,7 @@ class PhotoGalleryAdapter(
                     val options = BitmapFactory.Options().apply {
                         inSampleSize = 4 // Load smaller sample for performance
                     }
-                    val bitmap = BitmapFactory.decodeFile(photoPath, options)
+                    val bitmap = PhotoUtils.rotateImageIfNeeded(photoPath, options)
                     
                     withContext(Dispatchers.Main) {
                         if (bitmap != null) {
