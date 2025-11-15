@@ -26,6 +26,9 @@ class PhotoGalleryAdapter(
     private val onRemoveClick: (Int) -> Unit // New callback for remove button
 ) : RecyclerView.Adapter<PhotoGalleryAdapter.PhotoViewHolder>() {
 
+    // Track currently rendering items to avoid race conditions
+    private val renderingJobs = mutableMapOf<String, Job>()
+
     inner class PhotoViewHolder(private val binding: ItemPhotoThumbnailBinding) :
         RecyclerView.ViewHolder(binding.root) {
         
@@ -34,8 +37,14 @@ class PhotoGalleryAdapter(
             Log.d("PhotoGalleryAdapter", "Total focusAreas in map: ${focusAreas.size}")
             Log.d("PhotoGalleryAdapter", "focusAreas keys: ${focusAreas.keys.joinToString(", ")}")
 
+            // Cancel any previous rendering job for this photo
+            renderingJobs[photoPath]?.cancel()
+
+            // Clear the image view immediately to show loading state
+            binding.thumbnailImage.setImageResource(R.drawable.ic_add)
+
             // Load thumbnail in background
-            CoroutineScope(Dispatchers.Default).launch {
+            val job = CoroutineScope(Dispatchers.Default).launch {
                 try {
                     val options = BitmapFactory.Options().apply {
                         inSampleSize = 4 // Load smaller sample for performance
@@ -54,11 +63,14 @@ class PhotoGalleryAdapter(
                                 val paint = android.graphics.Paint().apply {
                                     color = android.graphics.Color.YELLOW
                                     style = android.graphics.Paint.Style.STROKE
-                                    strokeWidth = 5f
+                                    strokeWidth = 8f // Increased visibility for small thumbnails
+                                    isAntiAlias = true
                                 }
                                 // Scale the focusRect to the thumbnail size
-                                val scaleX = mutableBitmap.width.toFloat() / bitmap.width
-                                val scaleY = mutableBitmap.height.toFloat() / bitmap.height
+                                // The focusRect is based on original image, but bitmap is downsampled by inSampleSize
+                                val inSampleSize = 4 // Must match the inSampleSize above
+                                val scaleX = 1.0f / inSampleSize
+                                val scaleY = 1.0f / inSampleSize
                                 val scaledRect = android.graphics.RectF(
                                     focusRect.left * scaleX,
                                     focusRect.top * scaleY,
@@ -86,6 +98,8 @@ class PhotoGalleryAdapter(
                     }
                 }
             }
+            // Track this rendering job
+            renderingJobs[photoPath] = job
 
             binding.root.setOnClickListener {
                 onPhotoClick(photoPath)
