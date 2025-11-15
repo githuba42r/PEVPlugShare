@@ -47,6 +47,7 @@ class QuickLocationActivity : AppCompatActivity() {
     private var selectedLongitude: Double? = null
     private var selectedBearing: Float? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var hasMediaLocationPermission = false
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -58,6 +59,16 @@ class QuickLocationActivity : AppCompatActivity() {
         EDIT_PHOTOS,
         AI_ANALYSIS,
         ADD_LOCATION
+    }
+
+    private val requestMediaLocationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        hasMediaLocationPermission = isGranted
+        if (isGranted) {
+            Log.d("QuickLocationActivity", "ACCESS_MEDIA_LOCATION permission granted")
+        } else {
+            Log.w("QuickLocationActivity", "ACCESS_MEDIA_LOCATION permission denied - location data from images may not be available")
+            Toast.makeText(this, "Media location permission denied - image location data may be unavailable", Toast.LENGTH_LONG).show()
+        }
     }
 
     private val selectPhotos = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
@@ -80,6 +91,17 @@ class QuickLocationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Check and request ACCESS_MEDIA_LOCATION permission on Android 10+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                hasMediaLocationPermission = true
+            } else {
+                requestMediaLocationPermission.launch(Manifest.permission.ACCESS_MEDIA_LOCATION)
+            }
+        } else {
+            hasMediaLocationPermission = true // Not needed on Android 9 and below
+        }
 
         binding.selectPhotosButton.setOnClickListener {
             selectPhotos.launch("image/*")
@@ -148,12 +170,31 @@ class QuickLocationActivity : AppCompatActivity() {
         scope.launch(Dispatchers.Default) {
             uris.forEach { uri ->
                 try {
-                    val file = copyPhotoToCache(uri)
+                    Log.d("QuickLocationActivity", "Processing URI: $uri")
+
+                    // On Android 10+, use setRequireOriginal to get the original image with EXIF data
+                    val actualUri = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q && uri.scheme == "content") {
+                        try {
+                            android.provider.MediaStore.setRequireOriginal(uri)
+                        } catch (e: Exception) {
+                            Log.w("QuickLocationActivity", "setRequireOriginal failed, using original URI", e)
+                            uri
+                        }
+                    } else {
+                        uri
+                    }
+
+                    // Extract metadata from URI - with ACCESS_MEDIA_LOCATION permission,
+                    // this should now include GPS data
+                    val metadata = PhotoUtils.getPhotoMetadataFromUri(this@QuickLocationActivity, actualUri)
+                    Log.d("QuickLocationActivity", "Extracted metadata - hasGPS: ${metadata.hasGpsData}, location: ${metadata.getLocationString()}")
+
+                    // Copy photo to cache for later use
+                    val file = copyPhotoToCache(actualUri)
                     if (file != null) {
                         selectedPhotoPaths.add(file.absolutePath)
-                        val metadata = PhotoUtils.getPhotoMetadata(file.absolutePath)
                         photoMetadata[file.absolutePath] = metadata
-                        Log.d("QuickLocationActivity", "Extracted metadata from ${file.name}")
+                        Log.d("QuickLocationActivity", "Saved photo: ${file.name}")
                     }
                 } catch (e: Exception) {
                     Log.e("QuickLocationActivity", "Error processing photo", e)
@@ -196,19 +237,19 @@ class QuickLocationActivity : AppCompatActivity() {
     private fun proceedToLocationPicker() {
         currentStep = Step.PICK_LOCATION
 
-        // Extract location from first photo with GPS data (by order selected)
+        // Try to get location from image EXIF data
         var photoLat: Double? = null
         var photoLng: Double? = null
         var photoBearing: Float? = null
 
-        selectedPhotoPaths.forEach { path ->
+        for (path in selectedPhotoPaths) {
             val metadata = photoMetadata[path]
-            if (metadata?.hasGpsData == true) {
-                if (photoLat == null) {
-                    photoLat = metadata.latitude
-                    photoLng = metadata.longitude
-                    photoBearing = metadata.bearing
-                }
+            if (metadata != null && metadata.hasGpsData) {
+                photoLat = metadata.latitude
+                photoLng = metadata.longitude
+                photoBearing = metadata.bearing
+                Log.d("QuickLocationActivity", "Using EXIF location from image: ${metadata.getLocationString()}, bearing: ${metadata.getBearingString()}")
+                break
             }
         }
 
@@ -216,11 +257,12 @@ class QuickLocationActivity : AppCompatActivity() {
         selectedLongitude = photoLng
         selectedBearing = photoBearing
 
-        // If no GPS data in photos, get current location
+        // If no location from images, try device location
         if (selectedLatitude == null || selectedLongitude == null) {
             getCurrentLocation { lat, lng ->
                 selectedLatitude = lat
                 selectedLongitude = lng
+                Log.d("QuickLocationActivity", "Using device location: $lat, $lng")
                 showLocationPickerDialog()
             }
         } else {
@@ -238,7 +280,7 @@ class QuickLocationActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // If no permissions, use fallback location
+            // If no permissions, use fallback
             callback(-33.8688, 151.2093) // Sydney, Australia
             return
         }
@@ -251,14 +293,26 @@ class QuickLocationActivity : AppCompatActivity() {
                 if (location != null) {
                     callback(location.latitude, location.longitude)
                 } else {
-                    // Fallback to default location if can't get current
-                    callback(-33.8688, 151.2093) // Sydney, Australia
+                    // Try device's last known location (coarse)
+                    fusedLocationClient.lastLocation.addOnSuccessListener { lastLocation: Location? ->
+                        if (lastLocation != null) {
+                            callback(lastLocation.latitude, lastLocation.longitude)
+                        } else {
+                            callback(-33.8688, 151.2093) // Sydney, Australia
+                        }
+                    }
                 }
             }
         } catch (e: Exception) {
             Log.e("QuickLocationActivity", "Error getting current location", e)
-            // Fallback to default location
-            callback(-33.8688, 151.2093) // Sydney, Australia
+            // Try device's last known location (coarse)
+            fusedLocationClient.lastLocation.addOnSuccessListener { lastLocation: Location? ->
+                if (lastLocation != null) {
+                    callback(lastLocation.latitude, lastLocation.longitude)
+                } else {
+                    callback(-33.8688, 151.2093) // Sydney, Australia
+                }
+            }
         }
     }
 
@@ -287,6 +341,10 @@ class QuickLocationActivity : AppCompatActivity() {
     private fun proceedAfterLocationPicker() {
         // After location is selected, proceed directly to photo editing
         // (Skip the choice dialog - workflow order is: photos → location → editing → AI)
+        // Save selected location as last location
+        if (selectedLatitude != null && selectedLongitude != null) {
+            com.a42r.pevplugshare.util.QuickLocationPrefs.saveLastLocation(this, selectedLatitude!!, selectedLongitude!!)
+        }
         proceedToPhotoEditing()
     }
 
@@ -317,8 +375,13 @@ class QuickLocationActivity : AppCompatActivity() {
 
     private fun proceedToPhotoEditing() {
         currentStep = Step.EDIT_PHOTOS
+        // Filter out deleted/non-existent photo files before launching editor
+        val validPhotoPaths = selectedPhotoPaths.filter { path ->
+            val file = java.io.File(path)
+            file.exists()
+        }
         val intent = Intent(this, PhotoGalleryEditorActivity::class.java).apply {
-            putStringArrayListExtra("photo_paths", ArrayList(selectedPhotoPaths))
+            putStringArrayListExtra("photo_paths", ArrayList(validPhotoPaths))
             // Pass focus areas if any exist
             val focusBundle = Bundle()
             putExtra("focus_areas", focusBundle)
@@ -367,7 +430,7 @@ class QuickLocationActivity : AppCompatActivity() {
             putStringArrayListExtra("photo_paths", ArrayList(selectedPhotoPaths))
         }
         startActivity(intent)
-        finish()
+        // Removed finish() to keep wizard open
     }
 
     override fun onDestroy() {
