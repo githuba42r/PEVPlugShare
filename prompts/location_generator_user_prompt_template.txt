@@ -1,0 +1,24 @@
+# Location Description Generator User Prompt Template
+# Function: Provides the template for user messages when generating location descriptions
+# Use Case: Used by LocationDescriptionGenerator.kt to format user queries with structured location data for AI processing
+# This template structures the input parameters to guide the AI in creating standardized descriptions from location attributes
+
+Generate a standardized charging location description with the following details:
+
+Location Name: %s
+Access Type: %s
+Cost: %s
+Number of Charging Points: %d
+Socket Types: %s
+Opening Hours: %s
+Power Capacity: %s
+Additional Information: %s
+
+Follow the EXACT format from the system prompt with:
+1. Brief contextual description (1-2 sentences)
+2. Blank line
+3. "Details:" header
+4. Bullet points for all charging details
+5. If charging points is 0, use "at least 1 [socket type] is available"
+
+Return ONLY the formatted description, no additional commentary.
