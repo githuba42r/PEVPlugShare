@@ -389,6 +389,13 @@ class QuickLocationActivity : AppCompatActivity() {
             putStringArrayListExtra("photo_paths", ArrayList(validPhotoPaths))
             // Pass focus areas if any exist
             val focusBundle = Bundle()
+            validPhotoPaths.forEach { path ->
+                photoMetadata[path]?.focusRect?.let { rectF ->
+                    // Serialize RectF to a string
+                    val focusRectString = "${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}"
+                    focusBundle.putString(path, focusRectString)
+                }
+            }
             putExtra("focus_areas", focusBundle)
         }
         photoEditorLauncher.launch(intent)

@@ -151,11 +151,25 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 }
 
                 // Update focus rect and metadata for the (new or updated) photo
-                if (focusRect != null) {
-                    photoFocusAreas[editedPhotoPath] = focusRect
+                // Try to load focus from intent extra first, then fall back to SharedPreferences
+                var focusRectToUse = focusRect
+                if (focusRectToUse == null) {
+                    // Try to load from SharedPreferences
+                    val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
+                    val focusRectString = sharedPref.getString(editedPhotoPath, null)
+                    if (focusRectString != null) {
+                        focusRectToUse = com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)
+                        Log.d("EditLocationActivity", "Loaded focus area from SharedPreferences: $focusRectString")
+                    }
+                }
+
+                if (focusRectToUse != null) {
+                    photoFocusAreas[editedPhotoPath] = focusRectToUse
+                    Log.d("EditLocationActivity", "Updated photoFocusAreas with focus area for: $editedPhotoPath")
                     Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
                 } else {
                     photoFocusAreas.remove(editedPhotoPath) // Clear focus if none returned
+                    Log.d("EditLocationActivity", "No focus area found for: $editedPhotoPath")
                 }
 
                 if (metadata != null) {
@@ -247,6 +261,18 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 photoUris.addAll(it)
                 refreshPhotoThumbnails()
                 viewModel.updatePhotoPaths(photoUris)
+            }
+        }
+
+        // Load focus areas from SharedPreferences
+        val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
+        for (photoPath in photoUris) {
+            val focusRectString = sharedPref.getString(photoPath, null)
+            if (focusRectString != null) {
+                com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)?.let { rectF ->
+                    photoFocusAreas[photoPath] = rectF
+                    Log.d("EditLocationActivity", "Loaded focus area from SharedPreferences for: $photoPath")
+                }
             }
         }
 
@@ -1299,24 +1325,64 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         val imageView = thumbnailView.findViewById<ImageView>(R.id.thumbnailImage)
         val removeButton = thumbnailView.findViewById<ImageView>(R.id.removePhotoButton)
         val focusIndicator = thumbnailView.findViewById<ImageView>(R.id.focusIndicator)
-        
+
+        val filePath = file.absolutePath
+
         Glide.with(this)
+            .asBitmap()
             .load(file)
             .fitCenter() // Changed from centerCrop() to fitCenter()
             .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Bypass disk cache
             .skipMemoryCache(true) // Bypass memory cache
-            .into(imageView)
-        
+            .into(object : com.bumptech.glide.request.target.CustomTarget<android.graphics.Bitmap>() {
+                override fun onResourceReady(bitmap: android.graphics.Bitmap, transition: com.bumptech.glide.request.transition.Transition<in android.graphics.Bitmap>?) {
+                    val focusRect = photoFocusAreas[filePath]
+                    Log.d("EditLocationActivity", "Focus rect for $filePath: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+
+                    if (focusRect != null) {
+                        Log.d("EditLocationActivity", "Drawing yellow rectangle for $filePath")
+                        val mutableBitmap = bitmap.copy(android.graphics.Bitmap.Config.ARGB_8888, true)
+                        val canvas = android.graphics.Canvas(mutableBitmap)
+                        val paint = android.graphics.Paint().apply {
+                            color = android.graphics.Color.YELLOW
+                            style = android.graphics.Paint.Style.STROKE
+                            strokeWidth = 5f
+                        }
+                        // Scale the focusRect to the thumbnail size
+                        val scaleX = mutableBitmap.width.toFloat() / bitmap.width
+                        val scaleY = mutableBitmap.height.toFloat() / bitmap.height
+                        val scaledRect = android.graphics.RectF(
+                            focusRect.left * scaleX,
+                            focusRect.top * scaleY,
+                            focusRect.right * scaleX,
+                            focusRect.bottom * scaleY
+                        )
+                        Log.d("EditLocationActivity", "Scaled rect: ${scaledRect.left},${scaledRect.top},${scaledRect.right},${scaledRect.bottom} (scale: $scaleX x $scaleY)")
+                        canvas.drawRect(scaledRect, paint)
+                        imageView.setImageBitmap(mutableBitmap)
+                    } else {
+                        Log.d("EditLocationActivity", "No focus rect for $filePath, displaying plain bitmap")
+                        imageView.setImageBitmap(bitmap)
+                    }
+                    focusIndicator.visibility = android.view.View.GONE // Hide since we draw directly
+                }
+
+                override fun onLoadCleared(placeholder: android.graphics.drawable.Drawable?) {
+                    // Do nothing
+                }
+            })
+
         val index = photoUris.size - 1
-        
-        // Show focus indicator if focus area exists
-        if (photoFocusAreas.containsKey(file.absolutePath)) {
-            focusIndicator.visibility = android.view.View.VISIBLE
-        }
-        
+
         // Click to edit image
         imageView.setOnClickListener {
-            editPhoto(index, file)
+            // Use photoUris[index] instead of file parameter because photoUris may have been updated
+            // after editing (temp file paths change on each edit)
+            if (index >= 0 && index < photoUris.size) {
+                editPhoto(index, File(photoUris[index]))
+            } else {
+                Log.e("EditLocationActivity", "Invalid index for edit: $index, photoUris.size=${photoUris.size}")
+            }
         }
         
         // Long click shows info

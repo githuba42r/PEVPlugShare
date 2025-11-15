@@ -1,6 +1,8 @@
 package com.a42r.pevplugshare.ui.quicklocation
 
 import android.content.Intent
+import android.content.Context
+import android.graphics.RectF
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -26,7 +28,7 @@ import java.io.File
 class PhotoGalleryEditorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPhotoGalleryEditorBinding
     private val photoPaths = mutableListOf<String>()
-    private val focusAreas = mutableMapOf<String, String>() // photo path -> focus rect serialized
+    private val focusAreas = mutableMapOf<String, RectF>() // photo path -> focus rect
     private lateinit var adapter: PhotoGalleryAdapter
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Main + job)
@@ -43,13 +45,25 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
             val focusRectSerialized = result.data?.getStringExtra(ImageEditorActivity.EXTRA_FOCUS_RECT)
             val isSaveNew = result.data?.getBooleanExtra(ImageEditorActivity.EXTRA_IS_SAVE_NEW, false) ?: false
 
+            Log.d("PhotoGalleryEditorActivity", "Image editor result received:")
+            Log.d("PhotoGalleryEditorActivity", "  editedPath: $editedPath")
+            Log.d("PhotoGalleryEditorActivity", "  focusRectSerialized: $focusRectSerialized")
+            Log.d("PhotoGalleryEditorActivity", "  isSaveNew: $isSaveNew")
+
             if (editedPath != null) {
                 if (isSaveNew) {
                     // Add the new photo to the list
                     if (photoPaths.size < MAX_IMAGE_COUNT) {
                         photoPaths.add(editedPath)
                         if (focusRectSerialized != null) {
-                            focusAreas[editedPath] = focusRectSerialized
+                            Log.d("PhotoGalleryEditorActivity", "Parsing focus rect for new photo: $focusRectSerialized")
+                            com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectSerialized)?.let { rectF ->
+                                Log.d("PhotoGalleryEditorActivity", "Successfully parsed focusRect: ${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}")
+                                focusAreas[editedPath] = rectF
+                                Log.d("PhotoGalleryEditorActivity", "Added to focusAreas map. Total focus areas: ${focusAreas.size}")
+                            } ?: Log.d("PhotoGalleryEditorActivity", "Failed to parse focusRectSerialized")
+                        } else {
+                            Log.d("PhotoGalleryEditorActivity", "No focus rect returned for new photo")
                         }
                         adapter.notifyItemInserted(photoPaths.size - 1)
                         updateUI()
@@ -66,8 +80,14 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
                     }
                     photoPaths[selectedPhotoIndex!!] = editedPath
                     if (focusRectSerialized != null) {
-                        focusAreas[editedPath] = focusRectSerialized
+                        Log.d("PhotoGalleryEditorActivity", "Parsing focus rect for updated photo: $focusRectSerialized")
+                        com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectSerialized)?.let { rectF ->
+                            Log.d("PhotoGalleryEditorActivity", "Successfully parsed focusRect: ${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}")
+                            focusAreas[editedPath] = rectF
+                            Log.d("PhotoGalleryEditorActivity", "Updated focusAreas map. Total focus areas: ${focusAreas.size}")
+                        } ?: Log.d("PhotoGalleryEditorActivity", "Failed to parse focusRectSerialized")
                     } else {
+                        Log.d("PhotoGalleryEditorActivity", "No focus rect returned, clearing focus for photo: $editedPath")
                         focusAreas.remove(editedPath) // Clear focus if none returned
                     }
                     adapter.notifyItemChanged(selectedPhotoIndex!!)
@@ -118,11 +138,30 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
             file.exists()
         }.take(MAX_IMAGE_COUNT)) // Ensure initial load also respects MAX_IMAGE_COUNT
 
-        // Get existing focus areas if any
+        // Get existing focus areas if any from intent
         val focusAreasBundle = intent.getBundleExtra("focus_areas")
         if (focusAreasBundle != null) {
             for (key in focusAreasBundle.keySet()) {
-                focusAreas[key] = focusAreasBundle.getString(key) ?: ""
+                val focusRectString = focusAreasBundle.getString(key)
+                if (focusRectString != null) {
+                    com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)?.let { rectF ->
+                        focusAreas[key] = rectF
+                    }
+                }
+            }
+        }
+
+        // Also load focus areas from SharedPreferences for persistence
+        val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
+        Log.d("PhotoGalleryEditorActivity", "Loading focus areas from SharedPreferences")
+        for (photoPath in photoPaths) {
+            val focusRectString = sharedPref.getString(photoPath, null)
+            if (focusRectString != null) {
+                Log.d("PhotoGalleryEditorActivity", "Found persisted focus for $photoPath: $focusRectString")
+                com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)?.let { rectF ->
+                    focusAreas[photoPath] = rectF
+                    Log.d("PhotoGalleryEditorActivity", "Loaded persisted focus area from SharedPreferences")
+                }
             }
         }
 
@@ -186,12 +225,24 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
     }
 
     private fun proceedWithEditedPhotos() {
+        // Persist all focus areas to SharedPreferences before returning
+        val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
+        sharedPref.edit().apply {
+            for ((path, rectF) in focusAreas) {
+                val focusRectString = "${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}"
+                putString(path, focusRectString)
+                Log.d("PhotoGalleryEditorActivity", "Persisting focus area to SharedPreferences: $path = $focusRectString")
+            }
+            apply()
+        }
+
         // Prepare result with edited photo paths and focus areas
         val resultIntent = Intent().apply {
             putStringArrayListExtra("edited_photo_paths", ArrayList(photoPaths))
             val focusBundle = Bundle()
-            for ((path, focusRect) in focusAreas) {
-                focusBundle.putString(path, focusRect)
+            for ((path, rectF) in focusAreas) {
+                val focusRectString = "${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}"
+                focusBundle.putString(path, focusRectString)
             }
             putExtra("focus_areas", focusBundle)
         }

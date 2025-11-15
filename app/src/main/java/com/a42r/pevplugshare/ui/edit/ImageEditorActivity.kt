@@ -26,6 +26,7 @@ import android.graphics.PointF
 import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
+import android.content.Context
 
 /**
  * Activity for editing images: crop, zoom, and define focus areas
@@ -169,8 +170,36 @@ class ImageEditorActivity : AppCompatActivity() {
             return
         }
 
+        // Load focus data from SharedPreferences for the image being edited
+        Log.d("ImageEditorActivity", "Attempting to load focus data for image: $imagePath")
+        var hasPersistentFocus = false
+        try {
+            val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
+            val focusRectString = sharedPref.getString(imagePath, null)
+            if (focusRectString != null) {
+                Log.d("ImageEditorActivity", "Found persisted focus data: $focusRectString")
+                com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)?.let { rectF ->
+                    focusRect = rectF
+                    hasPersistentFocus = true
+                    Log.d("ImageEditorActivity", "Loaded focus rect from SharedPreferences: ${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}")
+                }
+            } else {
+                Log.d("ImageEditorActivity", "No persisted focus data found for: $imagePath")
+            }
+        } catch (e: Exception) {
+            Log.e("ImageEditorActivity", "Error loading focus data from SharedPreferences", e)
+        }
+
         loadImageAndOrient(imagePath) // Call the new function
         setupUI()
+
+        // If we loaded a persistent focus, refresh the UI to display it
+        if (hasPersistentFocus) {
+            currentMode = EditorMode.FOCUS
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+            Log.d("ImageEditorActivity", "Refreshed UI to display loaded focus area")
+        }
         updateUIForMode(EditorMode.MAIN) // Set initial UI state
     }
 
@@ -222,6 +251,7 @@ class ImageEditorActivity : AppCompatActivity() {
             updateUIForMode(currentMode)
             // Initialize default focus rect
             focusRect = getDefaultRect()
+            Log.d("ImageEditorActivity", "Focus button clicked. focusRect initialized: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
             refreshImageWithOverlay()
             hasUnsavedChanges = true
         }
@@ -299,6 +329,7 @@ class ImageEditorActivity : AppCompatActivity() {
         focusApplyButton.setOnClickListener {
             currentMode = EditorMode.MAIN
             updateUIForMode(currentMode)
+            Log.d("ImageEditorActivity", "Focus apply button clicked. focusRect: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
             refreshImageWithOverlay()
             Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
             hasUnsavedChanges = true // Applying focus is a change
@@ -666,7 +697,11 @@ class ImageEditorActivity : AppCompatActivity() {
 
     private fun saveImage(saveAsNew: Boolean) {
         try {
+            Log.d("ImageEditorActivity", "saveImage() called with saveAsNew=$saveAsNew")
+            Log.d("ImageEditorActivity", "focusRect before save: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+
             val outputPath = intent.getStringExtra(EXTRA_OUTPUT_PATH) ?: run {
+                Log.e("ImageEditorActivity", "No output path provided")
                 Toast.makeText(this, "No output path provided", Toast.LENGTH_SHORT).show()
                 return
             }
@@ -687,18 +722,51 @@ class ImageEditorActivity : AppCompatActivity() {
             FileOutputStream(outputFile).use { fos ->
                 editBitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos)
             }
+            Log.d("ImageEditorActivity", "Image file saved to: ${outputFile.absolutePath}")
 
-            // Save focusRect to EXIF data if available
-            focusRect?.let { rect ->
-                try {
-                    val exif = ExifInterface(outputFile.absolutePath)
-                    val focusRectString = "${rect.left},${rect.top},${rect.right},${rect.bottom}"
-                    exif.setAttribute(EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT, focusRectString)
-                    exif.saveAttributes()
-                    Log.d("ImageEditorActivity", "Saved focusRect to EXIF: $focusRectString")
-                } catch (e: Exception) {
-                    Log.e("ImageEditorActivity", "Error writing focusRect to EXIF", e)
+            // Save focusRect to both EXIF and SharedPreferences for reliability
+            if (focusRect != null) {
+                Log.d("ImageEditorActivity", "Attempting to save focusRect")
+                focusRect?.let { rect ->
+                    try {
+                        val focusRectString = "${rect.left},${rect.top},${rect.right},${rect.bottom}"
+                        Log.d("ImageEditorActivity", "focusRectString to save: $focusRectString")
+
+                        // Save to EXIF (for reference)
+                        try {
+                            val exif = ExifInterface(outputFile.absolutePath)
+                            exif.setAttribute(EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT, focusRectString)
+                            exif.saveAttributes()
+                            Log.d("ImageEditorActivity", "Saved focusRect to EXIF: $focusRectString")
+
+                            // Verify it was saved
+                            val verifyExif = ExifInterface(outputFile.absolutePath)
+                            val savedValue = verifyExif.getAttribute(EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT)
+                            Log.d("ImageEditorActivity", "Verification - value in EXIF after save: $savedValue")
+                        } catch (e: Exception) {
+                            Log.w("ImageEditorActivity", "Could not save to EXIF (this is expected for custom tags): ${e.message}")
+                        }
+
+                        // Save to SharedPreferences (primary storage)
+                        val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
+                        sharedPref.edit().apply {
+                            // Save with output file path
+                            putString(outputFile.absolutePath, focusRectString)
+                            // Also save with input image path for re-editing persistence
+                            val imagePath = intent.getStringExtra(EXTRA_IMAGE_PATH)
+                            if (imagePath != null && imagePath != outputFile.absolutePath) {
+                                putString(imagePath, focusRectString)
+                                Log.d("ImageEditorActivity", "Saved focus to SharedPreferences for both paths: input=$imagePath and output=${outputFile.absolutePath}")
+                            }
+                            apply()
+                        }
+                        Log.d("ImageEditorActivity", "Successfully saved focusRect to SharedPreferences")
+                    } catch (e: Exception) {
+                        Log.e("ImageEditorActivity", "Error saving focusRect", e)
+                    }
                 }
+            } else {
+                Log.d("ImageEditorActivity", "focusRect is null, not saving")
             }
 
             // Extract metadata from original image
@@ -707,16 +775,26 @@ class ImageEditorActivity : AppCompatActivity() {
 
             // Return focus rect and metadata
             val resultIntent = Intent().apply {
-                putExtra(EXTRA_FOCUS_RECT, focusRect)
+                focusRect?.let { rect ->
+                    val focusRectString = "${rect.left},${rect.top},${rect.right},${rect.bottom}"
+                    Log.d("ImageEditorActivity", "Returning focusRectString in intent: $focusRectString")
+                    putExtra(EXTRA_FOCUS_RECT, focusRectString)
+                } ?: run {
+                    // If focusRect is null, explicitly put null or an empty string
+                    Log.d("ImageEditorActivity", "Returning null focusRect in intent")
+                    putExtra(EXTRA_FOCUS_RECT, null as String?)
+                }
                 putExtra(EXTRA_METADATA, metadata)
                 putExtra(EXTRA_OUTPUT_PATH, outputFile.absolutePath) // Return the actual saved path
                 putExtra(EXTRA_IS_SAVE_NEW, saveAsNew) // Indicate if it was a "Save New" operation
             }
             setResult(RESULT_OK, resultIntent)
 
+            Log.d("ImageEditorActivity", "Image save complete. Output file: ${outputFile.absolutePath}")
             Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show()
             finish()
         } catch (e: Exception) {
+            Log.e("ImageEditorActivity", "Error saving image", e)
             Toast.makeText(this, "Error saving image: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
