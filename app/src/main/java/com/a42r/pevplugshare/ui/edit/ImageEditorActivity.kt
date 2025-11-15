@@ -88,6 +88,7 @@ class ImageEditorActivity : AppCompatActivity() {
         const val EXTRA_OUTPUT_PATH = "output_path"
         const val EXTRA_FOCUS_RECT = "focus_rect"
         const val EXTRA_METADATA = "metadata"
+        const val EXTRA_IS_SAVE_NEW = "is_save_new" // New constant
         const val MAX_IMAGE_TEXTURE_SIZE = 2048 // Maximum dimension for width or height
 
         const val NONE = 0
@@ -713,6 +714,7 @@ class ImageEditorActivity : AppCompatActivity() {
                 putExtra(EXTRA_FOCUS_RECT, focusRect)
                 putExtra(EXTRA_METADATA, metadata)
                 putExtra(EXTRA_OUTPUT_PATH, outputFile.absolutePath) // Return the actual saved path
+                putExtra(EXTRA_IS_SAVE_NEW, saveAsNew) // Indicate if it was a "Save New" operation
             }
             setResult(RESULT_OK, resultIntent)
 
