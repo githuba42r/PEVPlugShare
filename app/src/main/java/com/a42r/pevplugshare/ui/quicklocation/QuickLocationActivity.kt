@@ -71,6 +71,16 @@ class QuickLocationActivity : AppCompatActivity() {
         }
     }
 
+    private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            Log.d("QuickLocationActivity", "CAMERA permission granted")
+            launchCamera()
+        } else {
+            Log.w("QuickLocationActivity", "CAMERA permission denied")
+            Toast.makeText(this, "Camera permission denied. Cannot take photos.", Toast.LENGTH_LONG).show()
+        }
+    }
+
     private val selectPhotos = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         if (uris.isNotEmpty()) {
             Log.d("QuickLocationActivity", "Selected ${uris.size} photos")
@@ -107,20 +117,15 @@ class QuickLocationActivity : AppCompatActivity() {
             selectPhotos.launch("image/*")
         }
         binding.takePhotosButton.setOnClickListener {
-            showCameraWorkflowDialog()
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                launchCamera()
+            } else {
+                requestCameraPermission.launch(Manifest.permission.CAMERA)
+            }
         }
     }
 
-    private fun showCameraWorkflowDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Camera")
-            .setMessage("Take photos with your camera. You can take multiple photos and choose to continue or finish.")
-            .setPositiveButton("Start") { _, _ ->
-                launchCamera()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
+
 
     private fun launchCamera() {
         currentStep = Step.TAKE_PHOTOS
