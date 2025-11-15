@@ -192,7 +192,6 @@ class EditLocationViewModel @Inject constructor(
             try {
                 // Use provided locationId (if photos were pre-processed) or generate new one
                 val finalLocationId = locationId ?: java.util.UUID.randomUUID().toString()
-                Log.d("EditLocationViewModel", "addLocation: Using locationId: $finalLocationId (provided: ${locationId != null})")
 
                 // Create new location
                 val newLocation = Location(
