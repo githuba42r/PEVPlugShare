@@ -28,7 +28,7 @@ import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
         PendingLocationEntity::class,
         PendingOperationEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

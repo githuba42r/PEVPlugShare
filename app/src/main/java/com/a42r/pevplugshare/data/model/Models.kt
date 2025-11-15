@@ -45,7 +45,12 @@ data class Location(
     val syncStatus: SyncStatus = SyncStatus.SYNCED,
     val photos: List<Photo> = emptyList(),
     val imagePaths: List<String> = emptyList(),
-    val distanceMeters: Double? = null
+    val distanceMeters: Double? = null,
+    val businessName: String? = null,
+    val streetAddress: String? = null,
+    val suburb: String? = null,
+    val state: String? = null,
+    val postcode: String? = null
 )
 
 data class Photo(

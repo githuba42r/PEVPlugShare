@@ -28,7 +28,12 @@ data class LocationEntity(
     val imagePaths: String = "", // New field for image paths
     val descriptionHash: String? = null,
     val aiParsed: Boolean = false,
-    val aiParsedAt: Long? = null
+    val aiParsedAt: Long? = null,
+    val businessName: String? = null,
+    val streetAddress: String? = null,
+    val suburb: String? = null,
+    val state: String? = null,
+    val postcode: String? = null
 )
 
 @Entity(tableName = "location_photos")

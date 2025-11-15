@@ -512,6 +512,150 @@
                 android:textStyle="italic"
                 android:textColor="?android:attr/textColorSecondary" />
 
+            <!-- Additional Location Info Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Additional Location Information"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorPrimary" />
+
+                <ImageButton
+                    android:id="@+id/reverseGeocodeButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_refresh"
+                    android:contentDescription="Reverse geocode location"
+                    android:tint="?attr/colorPrimary" />
+            </LinearLayout>
+
+            <!-- Business Name Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Business Name"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/businessNameInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Business Name (Optional)"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <!-- Street Address Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Street Address"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/streetAddressInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Street Address (Optional)"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <!-- Suburb Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Suburb"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/suburbInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Suburb (Optional)"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <!-- State Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="State"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/stateInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="State (Optional)"
+                    android:inputType="text" />
+            </LinearLayout>
+
+            <!-- Postcode Field -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="Postcode"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/postcodeInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Postcode (Optional)"
+                    android:inputType="text" />
+            </LinearLayout>
+
             <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"

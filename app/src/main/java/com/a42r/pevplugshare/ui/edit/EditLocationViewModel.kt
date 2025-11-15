@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a42r.pevplugshare.data.model.Location
+import com.a42r.pevplugshare.data.remote.GeocodingResult
 import com.a42r.pevplugshare.data.repository.LocationRepositoryImpl
 import com.a42r.pevplugshare.util.LocationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,7 +39,12 @@ data class EditLocationFormData(
     val longitude: Double = 0.0,
     val gpoCount: Int = 1,
     val isFavorite: Boolean = false,
-    val photoPaths: List<String> = emptyList()
+    val photoPaths: List<String> = emptyList(),
+    val businessName: String = "",
+    val streetAddress: String = "",
+    val suburb: String = "",
+    val state: String = "",
+    val postcode: String = ""
 )
 
 @HiltViewModel
@@ -46,15 +52,20 @@ class EditLocationViewModel @Inject constructor(
     private val locationRepository: com.a42r.pevplugshare.domain.repository.LocationRepository,
     private val osmandSyncService: com.a42r.pevplugshare.data.repository.OsmandLocationSyncService,
     private val tokenManager: com.a42r.pevplugshare.data.remote.TokenManager,
-    private val descriptionParser: com.a42r.pevplugshare.ai.LocationDescriptionParser
+    private val descriptionParser: com.a42r.pevplugshare.ai.LocationDescriptionParser,
+    private val geocodingService: com.a42r.pevplugshare.data.remote.GeocodingService
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "EditLocationViewModel"
+    }
 
     private val _editState = MutableStateFlow<EditLocationState>(EditLocationState.Loading)
     val editState: StateFlow<EditLocationState> = _editState
 
     private val _formData = MutableStateFlow(EditLocationFormData())
     val formData: StateFlow<EditLocationFormData> = _formData
-    
+
     private var originalLocation: Location? = null
 
     fun initializeForAddMode() {
@@ -74,14 +85,14 @@ class EditLocationViewModel @Inject constructor(
             try {
                 // Get selected category
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
-                
+
                 // Load locations from repository
                 val result = locationRepository.getLocationsByCategory(category)
                 result.onSuccess { locations ->
                     val location = locations.find { it.id == locationId }
                     if (location != null) {
                         originalLocation = location
-                        _formData.value = EditLocationFormData(
+                        val initialFormData = EditLocationFormData(
                             name = location.name,
                             socketTypes = location.socketTypes.firstOrNull()?.name ?: "AS3112",
                             accessType = location.publicPrivate.name.lowercase(),
@@ -95,9 +106,63 @@ class EditLocationViewModel @Inject constructor(
                             latitude = location.latitude,
                             longitude = location.longitude,
                             gpoCount = location.gpoCount,
-                            isFavorite = location.isFavourite
+                            isFavorite = location.isFavourite,
+                            businessName = location.businessName ?: "",
+                            streetAddress = location.streetAddress ?: "",
+                            suburb = location.suburb ?: "",
+                            state = location.state ?: "",
+                            postcode = location.postcode ?: ""
                         )
+                        _formData.value = initialFormData
                         _editState.value = EditLocationState.Loaded(location)
+
+                        // Check if address fields are empty and perform reverse geocoding if needed
+                        val hasAddressData = location.businessName?.isNotBlank() == true ||
+                                           location.streetAddress?.isNotBlank() == true ||
+                                           location.suburb?.isNotBlank() == true ||
+                                           location.state?.isNotBlank() == true ||
+                                           location.postcode?.isNotBlank() == true
+
+                        Log.d(TAG, "Location ${location.id} has address data: $hasAddressData")
+
+                        if (!hasAddressData) {
+                            Log.d(TAG, "Performing reverse geocoding for location ${location.id} at (${location.latitude}, ${location.longitude})")
+                            // Perform reverse geocoding to populate address fields
+                            viewModelScope.launch {
+                                try {
+                                    val geocodingResult = geocodingService.reverseGeocode(location.latitude, location.longitude)
+                                    Log.d(TAG, "Geocoding result for location ${location.id}: $geocodingResult")
+
+                                    if (geocodingResult is com.a42r.pevplugshare.data.remote.GeocodingResult.Success) {
+                                        Log.d(TAG, "Updating form data with geocoded address for location ${location.id}")
+
+                                        // Use displayName for businessName, and update location name if it's empty
+                                        val businessName = geocodingResult.displayName ?: geocodingResult.businessName ?: ""
+                                        val locationName = if (_formData.value.name.isBlank() && geocodingResult.displayName != null) {
+                                            geocodingResult.displayName
+                                        } else {
+                                            _formData.value.name
+                                        }
+
+                                        _formData.value = _formData.value.copy(
+                                            name = locationName,
+                                            businessName = businessName,
+                                            streetAddress = geocodingResult.streetAddress ?: "",
+                                            suburb = geocodingResult.suburb ?: "",
+                                            state = geocodingResult.state ?: "",
+                                            postcode = geocodingResult.postcode ?: ""
+                                        )
+
+                                        Log.d(TAG, "Form data updated: name='$locationName', businessName='$businessName'")
+                                    } else {
+                                        Log.w(TAG, "Geocoding failed for location ${location.id}: ${geocodingResult}")
+                                    }
+                                } catch (e: Exception) {
+                                    // Silently fail geocoding - user can still edit manually
+                                    Log.w(TAG, "Failed to reverse geocode location ${location.id}: ${e.message}")
+                                }
+                            }
+                        }
                     } else {
                         _editState.value = EditLocationState.Error("Location not found")
                     }
@@ -168,6 +233,26 @@ class EditLocationViewModel @Inject constructor(
         _formData.value = _formData.value.copy(photoPaths = paths)
     }
 
+    fun updateBusinessName(businessName: String) {
+        _formData.value = _formData.value.copy(businessName = businessName)
+    }
+
+    fun updateStreetAddress(streetAddress: String) {
+        _formData.value = _formData.value.copy(streetAddress = streetAddress)
+    }
+
+    fun updateSuburb(suburb: String) {
+        _formData.value = _formData.value.copy(suburb = suburb)
+    }
+
+    fun updateState(state: String) {
+        _formData.value = _formData.value.copy(state = state)
+    }
+
+    fun updatePostcode(postcode: String) {
+        _formData.value = _formData.value.copy(postcode = postcode)
+    }
+
     fun addLocation(locationId: String? = null) {
         val data = _formData.value
 
@@ -214,17 +299,22 @@ class EditLocationViewModel @Inject constructor(
                     icon = "place",
                     lastModified = System.currentTimeMillis(),
                     syncStatus = com.a42r.pevplugshare.data.model.SyncStatus.PENDING,
-                    imagePaths = data.photoPaths
+                    imagePaths = data.photoPaths,
+                    businessName = data.businessName.ifBlank { null },
+                    streetAddress = data.streetAddress.ifBlank { null },
+                    suburb = data.suburb.ifBlank { null },
+                    state = data.state.ifBlank { null },
+                    postcode = data.postcode.ifBlank { null }
                 )
-                
+
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
-                
+
                 // Add to local database
                 locationRepository.addLocation(newLocation, category)
-                
+
                 // Mark as pending sync
                 osmandSyncService.markLocationPendingSync(newLocation, category)
-                
+
                 _editState.value = EditLocationState.UpdateSuccess
             } catch (e: Exception) {
                 _editState.value = EditLocationState.Error(e.message ?: "Add failed")
@@ -253,7 +343,7 @@ class EditLocationViewModel @Inject constructor(
                     _editState.value = EditLocationState.Error("Original location not found")
                     return@launch
                 }
-                
+
                 // Create updated location
                 val updatedLocation = original.copy(
                     name = data.name,
@@ -274,28 +364,28 @@ class EditLocationViewModel @Inject constructor(
                     syncStatus = com.a42r.pevplugshare.data.model.SyncStatus.PENDING,
                     imagePaths = data.photoPaths
                 )
-                
+
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
-                
+
                 // Update in local database
                 locationRepository.updateLocation(updatedLocation, category)
-                
+
                 // Mark as pending sync
                 osmandSyncService.markLocationPendingSync(updatedLocation, category)
-                
+
                 _editState.value = EditLocationState.UpdateSuccess
             } catch (e: Exception) {
                 _editState.value = EditLocationState.Error(e.message ?: "Update failed")
             }
         }
     }
-    
+
     fun syncToOsmand(locationId: String) {
         viewModelScope.launch {
             try {
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
                 val result = locationRepository.getLocationsByCategory(category)
-                
+
                 result.onSuccess { locations ->
                     val location = locations.find { it.id == locationId }
                     if (location != null) {
@@ -319,7 +409,7 @@ class EditLocationViewModel @Inject constructor(
             onResult(null, "Description is empty")
             return
         }
-        
+
         viewModelScope.launch {
             try {
                 val result = descriptionParser.parseDescription(description)
@@ -327,7 +417,7 @@ class EditLocationViewModel @Inject constructor(
                     // Update form data with parsed values, defaulting opening hours to 24/7 if not found
                     val hours = parsed.openingHours ?: "24/7"
                     updateOpeningHours(hours)
-                    
+
                     if (parsed.chargingPoints != null) {
                         updateGpoCount(parsed.chargingPoints)
                     }
@@ -338,7 +428,7 @@ class EditLocationViewModel @Inject constructor(
                         updateAdditionalInfo(parsed.additionalInfo)
                     }
                     updateHasFee(parsed.hasFee)
-                    
+
                     onResult(parsed, null)
                 }.onFailure { e ->
                     onResult(null, e.message ?: "Failed to parse description")
@@ -376,5 +466,9 @@ class EditLocationViewModel @Inject constructor(
                 _editState.value = EditLocationState.Error(e.message ?: "Failed to delete location")
             }
         }
+    }
+
+    suspend fun performReverseGeocoding(latitude: Double, longitude: Double): com.a42r.pevplugshare.data.remote.GeocodingResult {
+        return geocodingService.reverseGeocode(latitude, longitude)
     }
 }
