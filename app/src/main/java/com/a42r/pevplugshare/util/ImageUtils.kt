@@ -172,17 +172,26 @@ object ImageUtils {
         val newImagePaths = mutableListOf<String>()
 
         if (tempDir.exists() && tempDir.isDirectory) {
-            tempDir.listFiles()?.forEachIndexed { index, tempFile ->
-                if (tempFile.extension == "jpg") {
-                    val newFileName = "image_$index.jpg"
-                    val newPermanentFile = File(permanentDir, newFileName)
-                    try {
-                        tempFile.renameTo(newPermanentFile)
-                        newImagePaths.add(newPermanentFile.absolutePath)
-                        android.util.Log.d("ImageUtils", "Moved temp image ${tempFile.name} to ${newPermanentFile.absolutePath}")
-                    } catch (e: Exception) {
-                        android.util.Log.e("ImageUtils", "Error moving temp image ${tempFile.name}", e)
-                    }
+            // Get existing images in the permanent directory to find the next available index
+            val existingPermanentImages = getLocationImages(context, locationId)
+            var nextIndex = if (existingPermanentImages.isEmpty()) {
+                0
+            } else {
+                existingPermanentImages.mapNotNull { file ->
+                    file.name.removePrefix("image_").removeSuffix(".jpg").toIntOrNull()
+                }.maxOrNull()?.plus(1) ?: 0
+            }
+
+            tempDir.listFiles()?.filter { it.extension == "jpg" }?.forEach { tempFile ->
+                val newFileName = "image_$nextIndex.jpg"
+                val newPermanentFile = File(permanentDir, newFileName)
+                try {
+                    tempFile.renameTo(newPermanentFile)
+                    newImagePaths.add(newPermanentFile.absolutePath)
+                    android.util.Log.d("ImageUtils", "Moved temp image ${tempFile.name} to ${newPermanentFile.absolutePath}")
+                    nextIndex++
+                } catch (e: Exception) {
+                    android.util.Log.e("ImageUtils", "Error moving temp image ${tempFile.name}", e)
                 }
             }
             // Delete the temporary directory after moving files

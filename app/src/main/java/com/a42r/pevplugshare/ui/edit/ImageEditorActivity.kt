@@ -195,8 +195,7 @@ class ImageEditorActivity : AppCompatActivity() {
 
         // If we loaded a persistent focus, refresh the UI to display it
         if (hasPersistentFocus) {
-            currentMode = EditorMode.FOCUS
-            updateUIForMode(currentMode)
+            // Do not set currentMode to FOCUS here, only display the rect
             refreshImageWithOverlay()
             Log.d("ImageEditorActivity", "Refreshed UI to display loaded focus area")
         }
@@ -249,9 +248,13 @@ class ImageEditorActivity : AppCompatActivity() {
         focusButton.setOnClickListener {
             currentMode = EditorMode.FOCUS
             updateUIForMode(currentMode)
-            // Initialize default focus rect
-            focusRect = getDefaultRect()
-            Log.d("ImageEditorActivity", "Focus button clicked. focusRect initialized: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+            // Initialize default focus rect ONLY if it's null
+            if (focusRect == null) {
+                focusRect = getDefaultRect()
+                Log.d("ImageEditorActivity", "Focus button clicked. focusRect initialized to default: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+            } else {
+                Log.d("ImageEditorActivity", "Focus button clicked. Retaining existing focusRect: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+            }
             refreshImageWithOverlay()
             hasUnsavedChanges = true
         }
@@ -490,7 +493,7 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private inner class RectSelectionHandler(private val type: RectType) {
-        private val handleHalfSize = 80f // Changed half size of the square handles (total size 160f)
+        private val handleHalfSize = 40f // Changed half size of the square handles (total size 80f)
         private val minSize = 50f // Minimum size for the rect
 
         fun getActiveHandle(x: Float, y: Float, rect: RectF): Int {
@@ -625,7 +628,7 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun drawHandles(canvas: Canvas, rect: RectF, color: Int) {
-        val handleHalfSize = 80f // Changed half size of the square handles (total size 160f)
+        val handleHalfSize = 40f // Changed half size of the square handles (total size 80f)
         val cornerPaint = Paint().apply {
             this.color = color
             style = Paint.Style.FILL
