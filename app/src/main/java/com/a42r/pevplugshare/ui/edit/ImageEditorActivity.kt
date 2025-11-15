@@ -91,6 +91,8 @@ class ImageEditorActivity : AppCompatActivity() {
         const val EXTRA_IS_SAVE_NEW = "is_save_new" // New constant
         const val MAX_IMAGE_TEXTURE_SIZE = 2048 // Maximum dimension for width or height
 
+        const val EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT = "PEVPlugShare_FocusRect"
+
         const val NONE = 0
         const val DRAG = 1
         const val ZOOM = 2
@@ -684,6 +686,19 @@ class ImageEditorActivity : AppCompatActivity() {
 
             FileOutputStream(outputFile).use { fos ->
                 editBitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos)
+            }
+
+            // Save focusRect to EXIF data if available
+            focusRect?.let { rect ->
+                try {
+                    val exif = ExifInterface(outputFile.absolutePath)
+                    val focusRectString = "${rect.left},${rect.top},${rect.right},${rect.bottom}"
+                    exif.setAttribute(EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT, focusRectString)
+                    exif.saveAttributes()
+                    Log.d("ImageEditorActivity", "Saved focusRect to EXIF: $focusRectString")
+                } catch (e: Exception) {
+                    Log.e("ImageEditorActivity", "Error writing focusRect to EXIF", e)
+                }
             }
 
             // Extract metadata from original image

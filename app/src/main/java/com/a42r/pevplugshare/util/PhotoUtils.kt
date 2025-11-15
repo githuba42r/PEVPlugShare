@@ -4,9 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.graphics.RectF
 import android.util.Log
 import androidx.exifinterface.media.ExifInterface
 import com.a42r.pevplugshare.data.model.PhotoMetadata
+import com.a42r.pevplugshare.ui.edit.ImageEditorActivity
 import java.io.File
 
 object PhotoUtils {
@@ -23,6 +25,8 @@ object PhotoUtils {
             val latitude = latLong?.get(0)
             val longitude = latLong?.get(1)
             val bearing = extractBearing(exif)
+            val focusRectString = exif.getAttribute(ImageEditorActivity.EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT)
+            val focusRect = parseFocusRectString(focusRectString)
 
             PhotoMetadata(
                 latitude = latitude,
@@ -33,7 +37,8 @@ object PhotoUtils {
                 make = exif.getAttribute(androidx.exifinterface.media.ExifInterface.TAG_MAKE),
                 model = exif.getAttribute(androidx.exifinterface.media.ExifInterface.TAG_MODEL),
                 hasGpsData = latitude != null && longitude != null,
-                hasBearingData = bearing != null
+                hasBearingData = bearing != null,
+                focusRect = focusRect
             )
         } catch (e: Exception) {
             Log.e(TAG, "Error reading photo metadata from URI", e)
@@ -50,6 +55,8 @@ object PhotoUtils {
 
             // Extract bearing/direction if available (some devices record this)
             val bearing = extractBearing(exif)
+            val focusRectString = exif.getAttribute(ImageEditorActivity.EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT)
+            val focusRect = parseFocusRectString(focusRectString)
 
             PhotoMetadata(
                 latitude = latitude,
@@ -60,7 +67,8 @@ object PhotoUtils {
                 make = exif.getAttribute(ExifInterface.TAG_MAKE),
                 model = exif.getAttribute(ExifInterface.TAG_MODEL),
                 hasGpsData = latitude != null && longitude != null,
-                hasBearingData = bearing != null
+                hasBearingData = bearing != null,
+                focusRect = focusRect
             )
         } catch (e: Exception) {
             Log.e(TAG, "Error reading photo metadata", e)
@@ -236,6 +244,22 @@ object PhotoUtils {
             if (vertical) preScale(1f, -1f, 0f, bitmap.height / 2f)
         }
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    private fun parseFocusRectString(focusRectString: String?): RectF? {
+        if (focusRectString == null) return null
+        return try {
+            val parts = focusRectString.split(',').map { it.toFloat() }
+            if (parts.size == 4) {
+                RectF(parts[0], parts[1], parts[2], parts[3])
+            } else {
+                Log.w(TAG, "Invalid focusRectString format: $focusRectString")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parsing focusRectString: $focusRectString", e)
+            null
+        }
     }
 
     private const val TAG = "PhotoUtils"

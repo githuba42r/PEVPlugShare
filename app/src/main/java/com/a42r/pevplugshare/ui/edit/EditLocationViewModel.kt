@@ -34,7 +34,8 @@ data class EditLocationFormData(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val gpoCount: Int = 1,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val photoPaths: List<String> = emptyList()
 )
 
 @HiltViewModel
@@ -160,6 +161,10 @@ class EditLocationViewModel @Inject constructor(
         _formData.value = _formData.value.copy(isFavorite = isFavorite)
     }
 
+    fun updatePhotoPaths(paths: List<String>) {
+        _formData.value = _formData.value.copy(photoPaths = paths)
+    }
+
     fun addLocation() {
         val data = _formData.value
 
@@ -202,7 +207,8 @@ class EditLocationViewModel @Inject constructor(
                     color = "#1f6b2a",
                     icon = "place",
                     lastModified = System.currentTimeMillis(),
-                    syncStatus = com.a42r.pevplugshare.data.model.SyncStatus.PENDING
+                    syncStatus = com.a42r.pevplugshare.data.model.SyncStatus.PENDING,
+                    imagePaths = data.photoPaths
                 )
                 
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
@@ -259,7 +265,8 @@ class EditLocationViewModel @Inject constructor(
                     gpoCount = data.gpoCount,
                     isFavourite = data.isFavorite,
                     lastModified = System.currentTimeMillis(),
-                    syncStatus = com.a42r.pevplugshare.data.model.SyncStatus.PENDING
+                    syncStatus = com.a42r.pevplugshare.data.model.SyncStatus.PENDING,
+                    imagePaths = data.photoPaths
                 )
                 
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
