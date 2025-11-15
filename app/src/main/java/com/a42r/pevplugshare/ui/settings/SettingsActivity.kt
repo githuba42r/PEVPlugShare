@@ -24,8 +24,9 @@ class SettingsActivity : AppCompatActivity() {
     lateinit var tokenManager: com.a42r.pevplugshare.data.remote.TokenManager
     
     private val okHttpClient = OkHttpClient()
-    private var availableModels = listOf<String>()
+    private var availableModels = listOf<com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>()
     private var modelPricingMap = mutableMapOf<String, com.a42r.pevplugshare.ui.settings.model.ModelPricing>()
+    private var modelDataMap = mutableMapOf<String, com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>()
     private var modelChanged = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -153,9 +154,9 @@ class SettingsActivity : AppCompatActivity() {
             com.a42r.pevplugshare.R.id.cancelButton
         )
         
-        // Convert model IDs to AiModel objects
-        val aiModels = availableModels.map { modelId ->
-            createAiModelFromId(modelId)
+        // Convert OpenRouterModel objects to AiModel objects
+        val aiModels = availableModels.map { openRouterModel ->
+            createAiModelFromId(openRouterModel)
         }
         
         val currentSelectedModel = tokenManager.getSelectedAiModel()
@@ -179,8 +180,17 @@ class SettingsActivity : AppCompatActivity() {
             }
         )
         
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
+        
+        // Scroll to selected model if available
+        currentSelectedModel?.let { selectedId ->
+            val selectedPosition = aiModels.indexOfFirst { it.id == selectedId }
+            if (selectedPosition != -1) {
+                layoutManager.scrollToPositionWithOffset(selectedPosition, 0)
+            }
+        }
         
         // Filter function
         val applyFilter = {
@@ -256,10 +266,20 @@ class SettingsActivity : AppCompatActivity() {
             statusMessage.text = "Enter your OpenRouter.ai API key to enable AI features"
             statusMessage.setTextColor(getColor(android.R.color.darker_gray))
             apiKeyInput.setText("")
+
+            // Check clipboard for API key
+            val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            if (clipboardManager.hasPrimaryClip() && clipboardManager.primaryClipDescription?.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_PLAIN) == true) {
+                val clipboardText = clipboardManager.primaryClip?.getItemAt(0)?.text?.toString()
+                if (!clipboardText.isNullOrBlank() && clipboardText.startsWith("sk-or-")) {
+                    apiKeyInput.setText(clipboardText)
+                    Toast.makeText(this@SettingsActivity, "API key pasted from clipboard", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
     
-    private fun showValidApiKey(models: List<String>) {
+    private fun showValidApiKey(models: List<com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>) {
         binding.apply {
             apiKeyEntrySection.visibility = View.GONE
             apiKeyValidSection.visibility = View.VISIBLE
@@ -272,8 +292,17 @@ class SettingsActivity : AppCompatActivity() {
             // Update selected model display
             val savedModelId = tokenManager.getSelectedAiModel()
             if (savedModelId != null) {
-                val savedModel = createAiModelFromId(savedModelId)
-                updateSelectedModelDisplay(savedModel)
+                val savedOpenRouterModel = modelDataMap[savedModelId]
+                if (savedOpenRouterModel != null) {
+                    val savedModel = createAiModelFromId(savedOpenRouterModel)
+                    updateSelectedModelDisplay(savedModel)
+                } else {
+                    // Fallback if model not found in map (shouldn't happen if API call is fresh)
+                    binding.selectedModelName.text = "Tap to select a model"
+                    binding.selectedModelProvider.text = ""
+                    binding.selectedModelCost.text = ""
+                    binding.selectedModelContext.visibility = View.GONE
+                }
             } else {
                 // No model selected yet
                 binding.selectedModelName.text = "Tap to select a model"
@@ -302,12 +331,12 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
     
-    private fun createAiModelFromId(modelId: String): com.a42r.pevplugshare.ui.settings.model.AiModel {
+    private fun createAiModelFromId(openRouterModel: com.a42r.pevplugshare.ui.settings.model.OpenRouterModel): com.a42r.pevplugshare.ui.settings.model.AiModel {
+        val modelId = openRouterModel.id
         val parts = modelId.split("/")
         val provider = parts.getOrNull(0)?.capitalize() ?: "Unknown"
-        val modelName = parts.getOrNull(1) ?: modelId
         
-        val pricing = modelPricingMap[modelId]
+        val pricing = openRouterModel.pricing
         val costDisplay = if (pricing != null) {
             if (pricing.prompt == "Free" && pricing.completion == "Free") {
                 "Free"
@@ -318,33 +347,20 @@ class SettingsActivity : AppCompatActivity() {
             getModelCost(modelId) // Fallback to hardcoded prices
         }
         
+        val contextSizeDisplay = openRouterModel.context_length?.let { "${it / 1000}K tokens" }
+        
         return com.a42r.pevplugshare.ui.settings.model.AiModel(
             id = modelId,
             name = formatModelDisplayName(modelId).split(" (").first(),
             provider = provider,
             cost = costDisplay,
-            contextSize = getModelContextSize(modelId),
+            contextSize = contextSizeDisplay,
+            description = openRouterModel.description, // Pass the description along
             pricing = pricing
         )
     }
     
-    private fun getModelContextSize(modelId: String): String? {
-        val lowerModelId = modelId.lowercase()
-        return when {
-            lowerModelId.contains("gpt-4o") -> "128K tokens"
-            lowerModelId.contains("gpt-4-turbo") -> "128K tokens"
-            lowerModelId.contains("gpt-4") -> "8K tokens"
-            lowerModelId.contains("gpt-3.5-turbo") -> "16K tokens"
-            lowerModelId.contains("claude-3-opus") || lowerModelId.contains("claude-3-sonnet") -> "200K tokens"
-            lowerModelId.contains("claude-3.5-sonnet") -> "200K tokens"
-            lowerModelId.contains("claude-3-haiku") -> "200K tokens"
-            lowerModelId.contains("gemini-1.5") -> "1M tokens"
-            lowerModelId.contains("llama-3.1") -> "128K tokens"
-            lowerModelId.contains("llama-3") -> "8K tokens"
-            lowerModelId.contains("mixtral") -> "32K tokens"
-            else -> null
-        }
-    }
+
     
     private fun formatModelDisplayName(modelId: String): String {
         // Extract provider and model name
@@ -483,7 +499,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
     
-    private suspend fun fetchAvailableModels(apiKey: String): List<String> {
+    private suspend fun fetchAvailableModels(apiKey: String): List<com.a42r.pevplugshare.ui.settings.model.OpenRouterModel> {
         return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
             val request = Request.Builder()
                 .url("https://openrouter.ai/api/v1/models")
@@ -500,28 +516,41 @@ class SettingsActivity : AppCompatActivity() {
             val json = JSONObject(jsonResponse)
             val dataArray = json.getJSONArray("data")
             
-            val models = mutableListOf<String>()
+            val models = mutableListOf<com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>()
             modelPricingMap.clear()
+            modelDataMap.clear() // Clear modelDataMap as well
             
             for (i in 0 until dataArray.length()) {
-                val model = dataArray.getJSONObject(i)
-                val modelId = model.getString("id")
+                val modelJson = dataArray.getJSONObject(i)
+                val modelId = modelJson.getString("id")
+                val contextLength = modelJson.optInt("context_length", -1).takeIf { it != -1 }
+                val description = modelJson.optString("description", null)
                 
+                var pricing: com.a42r.pevplugshare.ui.settings.model.ModelPricing? = null
                 // Extract pricing information
-                if (model.has("pricing")) {
-                    val pricing = model.getJSONObject("pricing")
-                    val promptCost = pricing.optString("prompt", "0")
-                    val completionCost = pricing.optString("completion", "0")
+                if (modelJson.has("pricing")) {
+                    val pricingJson = modelJson.getJSONObject("pricing")
+                    val promptCost = pricingJson.optString("prompt", "0")
+                    val completionCost = pricingJson.optString("completion", "0")
                     
                     // Convert to per million tokens and format
                     val promptPerMillion = (promptCost.toDoubleOrNull() ?: 0.0) * 1000000
                     val completionPerMillion = (completionCost.toDoubleOrNull() ?: 0.0) * 1000000
                     
-                    modelPricingMap[modelId] = com.a42r.pevplugshare.ui.settings.model.ModelPricing(
+                    pricing = com.a42r.pevplugshare.ui.settings.model.ModelPricing(
                         prompt = formatCost(promptPerMillion),
                         completion = formatCost(completionPerMillion)
                     )
+                    modelPricingMap[modelId] = pricing
                 }
+                
+                val openRouterModel = com.a42r.pevplugshare.ui.settings.model.OpenRouterModel(
+                    id = modelId,
+                    context_length = contextLength,
+                    description = description,
+                    pricing = pricing
+                )
+                modelDataMap[modelId] = openRouterModel
                 
                 // Filter for free or commonly used models
                 if (modelId.contains("free", ignoreCase = true) || 
@@ -530,14 +559,36 @@ class SettingsActivity : AppCompatActivity() {
                     modelId.contains("llama", ignoreCase = true) ||
                     modelId.contains("mistral", ignoreCase = true) ||
                     modelId.contains("gemini", ignoreCase = true)) {
-                    models.add(modelId)
+                    models.add(openRouterModel)
                 }
             }
             
             // If no filtered models, return first 30
             if (models.isEmpty()) {
                 for (i in 0 until minOf(30, dataArray.length())) {
-                    models.add(dataArray.getJSONObject(i).getString("id"))
+                    val modelJson = dataArray.getJSONObject(i)
+                    val modelId = modelJson.getString("id")
+                    val contextLength = modelJson.optInt("context_length", -1).takeIf { it != -1 }
+                    val description = modelJson.optString("description", null)
+                    
+                    var pricing: com.a42r.pevplugshare.ui.settings.model.ModelPricing? = null
+                    if (modelJson.has("pricing")) {
+                        val pricingJson = modelJson.getJSONObject("pricing")
+                        val promptCost = pricingJson.optString("prompt", "0")
+                        val completionCost = pricingJson.optString("completion", "0")
+                        val promptPerMillion = (promptCost.toDoubleOrNull() ?: 0.0) * 1000000
+                        val completionPerMillion = (completionCost.toDoubleOrNull() ?: 0.0) * 1000000
+                        pricing = com.a42r.pevplugshare.ui.settings.model.ModelPricing(
+                            prompt = formatCost(promptPerMillion),
+                            completion = formatCost(completionPerMillion)
+                        )
+                    }
+                    models.add(com.a42r.pevplugshare.ui.settings.model.OpenRouterModel(
+                        id = modelId,
+                        context_length = contextLength,
+                        description = description,
+                        pricing = pricing
+                    ))
                 }
             }
             
