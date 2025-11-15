@@ -631,11 +631,38 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun applyCrop() {
-        cropRect?.let { rect ->
-            val left = rect.left.toInt().coerceIn(0, editBitmap.width - 1)
-            val top = rect.top.toInt().coerceIn(0, editBitmap.height - 1)
-            val width = (rect.width()).toInt().coerceIn(1, editBitmap.width - left)
-            val height = (rect.height()).toInt().coerceIn(1, editBitmap.height - top)
+        cropRect?.let { cropArea ->
+            val left = cropArea.left.toInt().coerceIn(0, editBitmap.width - 1)
+            val top = cropArea.top.toInt().coerceIn(0, editBitmap.height - 1)
+            val width = (cropArea.width()).toInt().coerceIn(1, editBitmap.width - left)
+            val height = (cropArea.height()).toInt().coerceIn(1, editBitmap.height - top)
+
+            // Calculate relative position and size of focusRect BEFORE cropping
+            var newFocusRect: RectF? = null
+            focusRect?.let { currentFocus ->
+                // Calculate ratios relative to the cropArea
+                val relativeLeft = (currentFocus.left - cropArea.left) / cropArea.width()
+                val relativeTop = (currentFocus.top - cropArea.top) / cropArea.height()
+                val relativeRight = (currentFocus.right - cropArea.left) / cropArea.width()
+                val relativeBottom = (currentFocus.bottom - cropArea.top) / cropArea.height()
+
+                // Ensure focus rect is within crop area, if not, adjust or nullify
+                if (currentFocus.intersect(cropArea)) {
+                    // Apply ratios to the NEWLY cropped bitmap dimensions
+                    val croppedBitmapWidth = width.toFloat()
+                    val croppedBitmapHeight = height.toFloat()
+
+                    val newLeft = relativeLeft * croppedBitmapWidth
+                    val newTop = relativeTop * croppedBitmapHeight
+                    val newRight = relativeRight * croppedBitmapWidth
+                    val newBottom = relativeBottom * croppedBitmapHeight
+
+                    newFocusRect = RectF(newLeft, newTop, newRight, newBottom)
+                } else {
+                    // If focusRect is completely outside cropArea, it's gone
+                    newFocusRect = null
+                }
+            }
 
             editBitmap = Bitmap.createBitmap(editBitmap, left, top, width, height)
             cropRect = null // Clear crop selection after applying
@@ -644,6 +671,9 @@ class ImageEditorActivity : AppCompatActivity() {
             imageView.imageMatrix = matrix
             imageView.scaleX = 1f
             imageView.scaleY = 1f
+
+            focusRect = newFocusRect // Update focusRect with the new, relative position
+
             Toast.makeText(this, "Image cropped", Toast.LENGTH_SHORT).show()
         } ?: run {
             Toast.makeText(this, "No crop area defined", Toast.LENGTH_SHORT).show()
