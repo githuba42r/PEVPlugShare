@@ -40,101 +40,96 @@
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:contentDescription="Image to edit" />
+
+        <ImageView
+            android:id="@+id/resetZoomIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="top|start"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_zoom_out"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:visibility="gone"
+            android:contentDescription="Reset Zoom" />
     </FrameLayout>
 
     <!-- Main Control Buttons -->
-    <GridLayout
-        android:id="@+id/mainControlsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorSurface"
-        android:padding="8dp"
-        android:columnCount="5"
-        android:alignmentMode="alignMargins"
-        android:columnOrderPreserved="false">
-
-        <!-- Zoom In -->
-        <include
-            android:id="@+id/zoomInButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Zoom Out -->
-        <include
-            android:id="@+id/zoomOutButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Rotate Left -->
-        <include
-            android:id="@+id/rotateLeftButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Rotate Right -->
-        <include
-            android:id="@+id/rotateRightButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Focus -->
-        <include
-            android:id="@+id/focusButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Crop -->
-        <include
-            android:id="@+id/cropButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Reset -->
-        <include
-            android:id="@+id/resetButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Save -->
-        <include
-            android:id="@+id/saveButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Save New -->
-        <include
-            android:id="@+id/saveNewButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-        <!-- Cancel -->
-        <include
-            android:id="@+id/cancelButton"
-            layout="@layout/layout_icon_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1" />
-
-    </GridLayout>
-
+            <GridLayout
+                android:id="@+id/mainControlsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
+                android:padding="8dp"
+                android:columnCount="5"
+                android:alignmentMode="alignMargins"
+                android:columnOrderPreserved="false">
+    
+                <!-- Rotate Left -->
+                <include
+                    android:id="@+id/rotateLeftButton"
+                    layout="@layout/layout_icon_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+    
+                <!-- Rotate Right -->
+                <include
+                    android:id="@+id/rotateRightButton"
+                    layout="@layout/layout_icon_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+    
+                <!-- Focus -->
+                <include
+                    android:id="@+id/focusButton"
+                    layout="@layout/layout_icon_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+    
+                <!-- Crop -->
+                <include
+                    android:id="@+id/cropButton"
+                    layout="@layout/layout_icon_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+    
+                <!-- Reset -->
+                <include
+                    android:id="@+id/resetButton"
+                    layout="@layout/layout_icon_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+    
+                <!-- Save -->
+                <include
+                    android:id="@+id/saveButton"
+                    layout="@layout/layout_icon_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+    
+                <!-- Save New -->
+                <include
+                    android:id="@+id/saveNewButton"
+                    layout="@layout/layout_icon_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+    
+                <!-- Cancel -->
+                <include
+                    android:id="@+id/cancelButton"
+                    layout="@layout/layout_icon_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+    
+            </GridLayout>
     <!-- Crop Sub-menu Controls -->
     <LinearLayout
         android:id="@+id/cropControlsLayout"
