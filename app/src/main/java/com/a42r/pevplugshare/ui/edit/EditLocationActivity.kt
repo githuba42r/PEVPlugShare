@@ -216,10 +216,29 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         setupPhotoSection()
         setupObservers()
 
+        // Retrieve photo paths from intent
+        val incomingPhotoPaths = intent.getStringArrayListExtra("photo_paths")
+        incomingPhotoPaths?.let {
+            photoUris.addAll(it)
+            refreshPhotoThumbnails()
+        }
+
+        // Retrieve location from intent
+        val intentLatitude = intent.getDoubleExtra("latitude", 0.0)
+        val intentLongitude = intent.getDoubleExtra("longitude", 0.0)
+
         if (isAddMode) {
             // Add mode: Initialize for new location entry
             viewModel.initializeForAddMode()
-            requestLocationAndPopulate()
+            if (intentLatitude != 0.0 || intentLongitude != 0.0) {
+                viewModel.updateLocation(intentLatitude, intentLongitude)
+                selectedLatitude = intentLatitude
+                selectedLongitude = intentLongitude
+                binding.locationCoordinatesTextView.text =
+                    "📍 ${String.format("%.4f", intentLatitude)}, ${String.format("%.4f", intentLongitude)}"
+            } else {
+                requestLocationAndPopulate()
+            }
         } else {
             // Edit mode: Load existing location
             locationId?.let { viewModel.loadLocation(it) }
@@ -247,26 +266,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 com.google.android.gms.tasks.CancellationTokenSource().token
             ).addOnSuccessListener { location ->
                 location?.let {
-                    viewModel.updateLocation(it.latitude, it.longitude)
-                    selectedLatitude = it.latitude
-                    selectedLongitude = it.longitude
-                    
-                    // Add direction info to additional info field
-                    if (isAddMode) {
-                        val direction = getCompassDirection(currentAzimuth)
-                        val directionInfo = "Device facing: $direction"
-                        val existingInfo = binding.additionalInfoInput.text.toString()
-                        val newInfo = if (existingInfo.isBlank()) {
-                            directionInfo
-                        } else {
-                            "$existingInfo\n$directionInfo"
-                        }
-                        binding.additionalInfoInput.setText(newInfo)
-                        viewModel.updateAdditionalInfo(newInfo)
-                    }
-                    
-                    Toast.makeText(this, "Location acquired", Toast.LENGTH_SHORT).show()
-                }
+                                    viewModel.updateLocation(it.latitude, it.longitude)
+                                    selectedLatitude = it.latitude
+                                    selectedLongitude = it.longitude
+                                    binding.locationCoordinatesTextView.text =
+                                        "📍 ${String.format("%.4f", it.latitude)}, ${String.format("%.4f", it.longitude)}"                }
             }.addOnFailureListener {
                 Toast.makeText(this, "Failed to get location", Toast.LENGTH_SHORT).show()
             }

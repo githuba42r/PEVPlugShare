@@ -430,7 +430,7 @@ class QuickLocationActivity : AppCompatActivity() {
             putStringArrayListExtra("photo_paths", ArrayList(selectedPhotoPaths))
         }
         startActivity(intent)
-        // Removed finish() to keep wizard open
+        finish() // Finish QuickLocationActivity after launching EditLocationActivity
     }
 
     override fun onDestroy() {

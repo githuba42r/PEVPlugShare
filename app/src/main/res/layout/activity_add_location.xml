@@ -52,6 +52,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Add/Edit Photos" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/photoThumbnailRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
         </LinearLayout>
 
         <!-- Required Fields Section -->
