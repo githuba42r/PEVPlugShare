@@ -238,6 +238,19 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
 
+        // Retrieve focus areas from intent and populate SharedPreferences
+        val incomingFocusAreas = intent.getBundleExtra("focus_areas")
+        incomingFocusAreas?.let { bundle ->
+            val sharedPref = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+            bundle.keySet().forEach { key ->
+                val focusRectString = bundle.getString(key)
+                if (focusRectString != null) {
+                    sharedPref.edit().putString("focus_$key", focusRectString).apply()
+                    Log.d("EditLocationActivity", "Loaded focus from Intent for $key: $focusRectString")
+                }
+            }
+        }
+
         // Retrieve location from intent
         val intentLatitude = intent.getDoubleExtra("latitude", 0.0)
         val intentLongitude = intent.getDoubleExtra("longitude", 0.0)
