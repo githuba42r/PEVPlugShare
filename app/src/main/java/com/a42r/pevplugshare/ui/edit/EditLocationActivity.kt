@@ -38,6 +38,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import java.io.File
 import java.io.IOException
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -68,6 +69,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private val photoFocusAreas = mutableMapOf<String, android.graphics.RectF>() // filePath -> focusRect
     private val photoMetadata = mutableMapOf<String, com.a42r.pevplugshare.data.model.PhotoMetadata>() // filePath -> metadata
     private val maxPhotos = 5
+    private var currentEditLocationId: String? = null
     private var currentPhotoUri: Uri? = null
     private var tempPhotoFile: File? = null
     private var editingPhotoIndex: Int = -1
@@ -221,9 +223,39 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         // Retrieve photo paths from intent
         val incomingPhotoPaths = intent.getStringArrayListExtra("photo_paths")
         incomingPhotoPaths?.let {
-            photoUris.addAll(it)
-            refreshPhotoThumbnails()
-            viewModel.updatePhotoPaths(photoUris) // Update ViewModel with initial photo paths
+            Log.d("EditLocationActivity", "Received ${it.size} photo paths from intent")
+            Log.d("EditLocationActivity", "Photo paths: $it")
+
+            // In add mode, check if these are cache paths that need processing
+            if (isAddMode) {
+                Log.d("EditLocationActivity", "Add mode detected - checking if photos need processing from cache")
+                // If photos are from QuickLocationActivity, they're in cache and need processing
+                // Process them now before adding to photoUris
+                // Note: currentEditLocationId will be set after this block, so we generate temp ID now
+                // and will use it throughout add mode for consistency
+                if (currentEditLocationId == null) {
+                    currentEditLocationId = UUID.randomUUID().toString()
+                    Log.d("EditLocationActivity", "Set currentEditLocationId for add mode: $currentEditLocationId")
+                }
+
+                lifecycleScope.launch {
+                    val processedPaths = withContext(Dispatchers.IO) {
+                        Log.d("EditLocationActivity", "Processing incoming cache photos with locationId: $currentEditLocationId")
+                        processCachePhotos(it, currentEditLocationId!!)
+                    }
+                    Log.d("EditLocationActivity", "Processed ${processedPaths.size} photos to permanent storage")
+                    Log.d("EditLocationActivity", "Processed paths: $processedPaths")
+
+                    photoUris.addAll(processedPaths)
+                    refreshPhotoThumbnails()
+                    viewModel.updatePhotoPaths(photoUris)
+                }
+            } else {
+                // Edit mode: photos already have stable paths (stored in database)
+                photoUris.addAll(it)
+                refreshPhotoThumbnails()
+                viewModel.updatePhotoPaths(photoUris)
+            }
         }
 
         // Retrieve location from intent
@@ -231,6 +263,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         val intentLongitude = intent.getDoubleExtra("longitude", 0.0)
 
         if (isAddMode) {
+            // Only generate if not already set (may have been set when processing incoming photos)
+            if (currentEditLocationId == null) {
+                currentEditLocationId = UUID.randomUUID().toString()
+                Log.d("EditLocationActivity", "Add mode: Generated currentEditLocationId: $currentEditLocationId")
+            }
             // Add mode: Initialize for new location entry
             viewModel.initializeForAddMode()
             if (intentLatitude != 0.0 || intentLongitude != 0.0) {
@@ -772,7 +809,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             return
         }
         if (isAddMode) {
-            viewModel.addLocation()
+            Log.d("EditLocationActivity", "submitUpdates: Add mode detected, calling addLocation with currentEditLocationId: $currentEditLocationId")
+            viewModel.addLocation(currentEditLocationId)
         } else {
             viewModel.submitUpdates(locationId!!)
         }
@@ -1074,7 +1112,60 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             null
         }
     }
-    
+
+    /**
+     * Process cache photos from QuickLocationActivity into permanent storage
+     * This is called during onCreate for add mode when photos are passed via Intent
+     */
+    private suspend fun processCachePhotos(cachePaths: List<String>, locationId: String): List<String> {
+        Log.d("EditLocationActivity", "processCachePhotos called with ${cachePaths.size} cache paths")
+        Log.d("EditLocationActivity", "Using locationId: $locationId for processing")
+
+        val permanentPaths = mutableListOf<String>()
+
+        cachePaths.forEachIndexed { index, cachePath ->
+            try {
+                val cacheFile = File(cachePath)
+                Log.d("EditLocationActivity", "Processing cache image $index: $cachePath, exists=${cacheFile.exists()}")
+
+                if (cacheFile.exists()) {
+                    Log.d("EditLocationActivity", "Cache file exists, resizing and saving with locationId: $locationId, index: $index")
+
+                    photoSaveMutex.lock()
+                    try {
+                        val resizedFile = ImageUtils.resizeAndSaveImage(
+                            this@EditLocationActivity,
+                            cacheFile,
+                            locationId,
+                            index
+                        )
+
+                        resizedFile?.let {
+                            Log.d("EditLocationActivity", "Successfully saved cache image $index to: ${it.absolutePath}")
+                            permanentPaths.add(it.absolutePath)
+                            // Delete cache file after successful save
+                            cacheFile.delete()
+                            Log.d("EditLocationActivity", "Deleted cache file: $cachePath")
+                        } ?: run {
+                            Log.w("EditLocationActivity", "resizeAndSaveImage returned null for cache image $index")
+                        }
+                    } finally {
+                        photoSaveMutex.unlock()
+                    }
+                } else {
+                    Log.w("EditLocationActivity", "Cache file does not exist: $cachePath")
+                }
+            } catch (e: Exception) {
+                Log.e("EditLocationActivity", "Error processing cache image $index", e)
+                e.printStackTrace()
+            }
+        }
+
+        Log.d("EditLocationActivity", "processCachePhotos complete. Processed ${permanentPaths.size} photos to permanent storage")
+        Log.d("EditLocationActivity", "Permanent paths: $permanentPaths")
+        return permanentPaths
+    }
+
     private fun processAndSavePhoto() {
         photosBeingProcessed++
         updateSubmitButtonState()
@@ -1082,7 +1173,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         
         lifecycleScope.launch(Dispatchers.IO) {
             tempPhotoFile?.let { sourceFile ->
-                val currentLocationId = locationId ?: "temp_${System.currentTimeMillis()}"
+                val currentLocationId = if (isAddMode) currentEditLocationId ?: "temp_fallback" else locationId ?: "temp_fallback"
                 Log.d("EditLocationActivity", "Processing camera photo - locationId: $currentLocationId, isAddMode: $isAddMode")
                 
                 photoSaveMutex.lock()
@@ -1158,7 +1249,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 }
                 Log.d("EditLocationActivity", "Copied gallery photo to temp file: ${tempFile.length()} bytes")
                 
-                val currentLocationId = locationId ?: "temp_${System.currentTimeMillis()}"
+                val currentLocationId = if (isAddMode) currentEditLocationId ?: "temp_fallback" else locationId ?: "temp_fallback"
                 Log.d("EditLocationActivity", "Processing gallery photo - locationId: $currentLocationId, isAddMode: $isAddMode")
                 
                 photoSaveMutex.lock()

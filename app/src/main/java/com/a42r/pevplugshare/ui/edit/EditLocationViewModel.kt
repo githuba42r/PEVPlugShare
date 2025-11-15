@@ -1,5 +1,7 @@
 package com.a42r.pevplugshare.ui.edit
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a42r.pevplugshare.data.model.Location
@@ -166,7 +168,7 @@ class EditLocationViewModel @Inject constructor(
         _formData.value = _formData.value.copy(photoPaths = paths)
     }
 
-    fun addLocation() {
+    fun addLocation(locationId: String? = null) {
         val data = _formData.value
 
         if (data.name.isBlank()) {
@@ -178,7 +180,7 @@ class EditLocationViewModel @Inject constructor(
             _editState.value = EditLocationState.Error("GPO count must be between 1 and 10+")
             return
         }
-        
+
         if (data.latitude == 0.0 && data.longitude == 0.0) {
             _editState.value = EditLocationState.Error("Location coordinates required")
             return
@@ -188,9 +190,13 @@ class EditLocationViewModel @Inject constructor(
             _editState.value = EditLocationState.Updating
 
             try {
+                // Use provided locationId (if photos were pre-processed) or generate new one
+                val finalLocationId = locationId ?: java.util.UUID.randomUUID().toString()
+                Log.d("EditLocationViewModel", "addLocation: Using locationId: $finalLocationId (provided: ${locationId != null})")
+
                 // Create new location
                 val newLocation = Location(
-                    id = java.util.UUID.randomUUID().toString(),
+                    id = finalLocationId,
                     name = data.name,
                     socketTypes = listOf(com.a42r.pevplugshare.data.model.SocketType.valueOf(data.socketTypes)),
                     publicPrivate = com.a42r.pevplugshare.data.model.LocationAccessType.valueOf(data.accessType.uppercase()),
