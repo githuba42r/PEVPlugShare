@@ -10,6 +10,36 @@ import com.a42r.pevplugshare.data.model.PhotoMetadata
 import java.io.File
 
 object PhotoUtils {
+    fun getPhotoMetadataFromUri(context: android.content.Context, uri: android.net.Uri): PhotoMetadata {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            if (inputStream == null) {
+                Log.e(TAG, "Could not open input stream for URI: $uri")
+                return PhotoMetadata()
+            }
+
+            val exif = androidx.exifinterface.media.ExifInterface(inputStream)
+            val latLong = exif.latLong
+            val latitude = latLong?.get(0)
+            val longitude = latLong?.get(1)
+            val bearing = extractBearing(exif)
+
+            PhotoMetadata(
+                latitude = latitude,
+                longitude = longitude,
+                altitude = null,
+                bearing = bearing,
+                dateTime = exif.getAttribute(androidx.exifinterface.media.ExifInterface.TAG_DATETIME),
+                make = exif.getAttribute(androidx.exifinterface.media.ExifInterface.TAG_MAKE),
+                model = exif.getAttribute(androidx.exifinterface.media.ExifInterface.TAG_MODEL),
+                hasGpsData = latitude != null && longitude != null,
+                hasBearingData = bearing != null
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error reading photo metadata from URI", e)
+            PhotoMetadata()
+        }
+    }
 
     fun getPhotoMetadata(photoPath: String): PhotoMetadata {
         return try {
@@ -17,10 +47,10 @@ object PhotoUtils {
             val latLong = exif.latLong
             val latitude = latLong?.get(0)
             val longitude = latLong?.get(1)
-            
+
             // Extract bearing/direction if available (some devices record this)
             val bearing = extractBearing(exif)
-            
+
             PhotoMetadata(
                 latitude = latitude,
                 longitude = longitude,
@@ -43,7 +73,7 @@ object PhotoUtils {
             // Try to get bearing from various EXIF tags that might store it
             val bearing = exif.getAttribute("GPSImgDirection")?.toFloatOrNull()
                 ?: exif.getAttribute("GPSDestBearing")?.toFloatOrNull()
-            
+
             // If no bearing in EXIF, try to infer from device orientation
             // This is less accurate but better than nothing
             if (bearing == null) {
@@ -54,7 +84,7 @@ object PhotoUtils {
                 // Use orientation as a rough estimate (not accurate but better than nothing)
                 return null // Better to return null than inaccurate data
             }
-            
+
             bearing?.let { if (it < 0f) it + 360f else it }
         } catch (e: Exception) {
             Log.d(TAG, "Could not extract bearing from EXIF", e)

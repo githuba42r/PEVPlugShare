@@ -53,7 +53,7 @@ class LocationPickerMapActivity : AppCompatActivity() {
         mapView.setTileSource(org.osmdroid.tileprovider.tilesource.TileSourceFactory.MAPNIK)
         mapController = mapView.controller
         mapController.setZoom(15)
-        
+
         // Set initial location
         val initialPoint = GeoPoint(selectedLatitude!!, selectedLongitude!!)
         mapController.setCenter(initialPoint)
@@ -113,17 +113,17 @@ class LocationPickerMapActivity : AppCompatActivity() {
     }
 
     private fun addMarker(geoPoint: GeoPoint) {
-        val items = arrayOf(
+        val items = mutableListOf(
             OverlayItem(
                 "Selected Location",
                 "${String.format("%.4f", geoPoint.latitude)}, ${String.format("%.4f", geoPoint.longitude)}",
                 geoPoint
             )
         )
-        
+
         markerOverlay = ItemizedIconOverlay(
             this,
-            items.toList(),
+            items,
             object : ItemizedIconOverlay.OnItemGestureListener<OverlayItem> {
                 override fun onItemSingleTapUp(index: Int, item: OverlayItem): Boolean = true
                 override fun onItemLongPress(index: Int, item: OverlayItem): Boolean = false
@@ -189,7 +189,7 @@ class LocationPickerMapActivity : AppCompatActivity() {
                 if (!addresses.isNullOrEmpty()) {
                     val address = addresses[0]
                     val addressText = address.getAddressLine(0)
-                    
+
                     withContext(Dispatchers.Main) {
                         binding.locationSearch.setQuery(addressText, false)
                     }
@@ -211,7 +211,7 @@ class LocationPickerMapActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        mapView.onDetach()
+        // Removed unsupported call to mapView.onDetach() to prevent crash
         super.onDestroy()
         job.cancel()
     }

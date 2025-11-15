@@ -30,14 +30,36 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.Main + job)
     private var selectedPhotoIndex: Int? = null
 
+    // Launcher for editing a single photo
+    private val imageEditorLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK && selectedPhotoIndex != null) {
+            val editedPath = result.data?.getStringExtra("edited_image_path")
+            val focusRect = result.data?.getStringExtra("focus_rect")
+            if (editedPath != null) {
+                photoPaths[selectedPhotoIndex!!] = editedPath
+            }
+            if (focusRect != null) {
+                focusAreas[photoPaths[selectedPhotoIndex!!]] = focusRect
+            }
+            adapter.notifyItemChanged(selectedPhotoIndex!!)
+        }
+        selectedPhotoIndex = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPhotoGalleryEditorBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Get photo paths from intent
-        photoPaths.addAll(intent.getStringArrayListExtra("photo_paths") ?: emptyList())
-        
+        // Get photo paths from intent and filter out deleted/non-existent files
+        val incomingPhotoPaths = intent.getStringArrayListExtra("photo_paths") ?: emptyList()
+        photoPaths.addAll(incomingPhotoPaths.filter { path ->
+            val file = java.io.File(path)
+            file.exists()
+        })
+
         // Get existing focus areas if any
         val focusAreasBundle = intent.getBundleExtra("focus_areas")
         if (focusAreasBundle != null) {
@@ -52,12 +74,16 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
     private fun setupUI() {
         // Setup title
         binding.titleText.text = "Edit ${photoPaths.size} Photos"
-        
+
         // Setup gallery recycler
         adapter = PhotoGalleryAdapter(photoPaths, focusAreas) { selectedPath ->
-            launchPhotoEditor(selectedPath)
+            val index = photoPaths.indexOf(selectedPath)
+            if (index != -1) {
+                selectedPhotoIndex = index
+                launchPhotoEditor(selectedPath)
+            }
         }
-        
+
         binding.photoGalleryRecycler.apply {
             layoutManager = GridLayoutManager(this@PhotoGalleryEditorActivity, 3)
             adapter = this@PhotoGalleryEditorActivity.adapter
@@ -77,12 +103,9 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
     private fun launchPhotoEditor(photoPath: String) {
         val intent = Intent(this, ImageEditorActivity::class.java).apply {
             putExtra(ImageEditorActivity.EXTRA_IMAGE_PATH, photoPath)
-            putExtra("is_focus_only", true) // Only allow focus area, no crop/zoom for now
+            putExtra("is_focus_only", true)
         }
-        startActivity(intent)
-        
-        // After returning, check for focus area result
-        // This would be handled via activity result in a full implementation
+        imageEditorLauncher.launch(intent)
     }
 
     private fun proceedWithEditedPhotos() {
@@ -95,7 +118,7 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
             }
             putExtra("focus_areas", focusBundle)
         }
-        
+
         setResult(RESULT_OK, resultIntent)
         finish()
     }
