@@ -1,6 +1,7 @@
 package com.a42r.pevplugshare.ai
 
 import android.util.Log
+import com.a42r.pevplugshare.ai.LocationDescriptionParser
 import com.a42r.pevplugshare.data.db.dao.LocationDao
 import com.a42r.pevplugshare.data.db.entity.LocationEntity
 import com.a42r.pevplugshare.data.model.Location
