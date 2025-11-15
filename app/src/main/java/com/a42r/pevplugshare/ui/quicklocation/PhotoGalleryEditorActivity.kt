@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +31,8 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
     private val scope = CoroutineScope(Dispatchers.Main + job)
     private var selectedPhotoIndex: Int? = null
 
+    private val MAX_IMAGE_COUNT = 5
+
     // Launcher for editing a single photo
     private val imageEditorLauncher = registerForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
@@ -42,12 +45,17 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
             if (editedPath != null) {
                 if (isSaveNew) {
                     // Add the new photo to the list
-                    photoPaths.add(editedPath)
-                    if (focusRectSerialized != null) {
-                        focusAreas[editedPath] = focusRectSerialized
+                    if (photoPaths.size < MAX_IMAGE_COUNT) {
+                        photoPaths.add(editedPath)
+                        if (focusRectSerialized != null) {
+                            focusAreas[editedPath] = focusRectSerialized
+                        }
+                        adapter.notifyItemInserted(photoPaths.size - 1)
+                        updateUI()
+                        Toast.makeText(this, "New photo added", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Maximum of $MAX_IMAGE_COUNT photos allowed", Toast.LENGTH_SHORT).show()
                     }
-                    adapter.notifyItemInserted(photoPaths.size - 1)
-                    Toast.makeText(this, "New photo added", Toast.LENGTH_SHORT).show()
                 } else if (selectedPhotoIndex != null && selectedPhotoIndex!! >= 0 && selectedPhotoIndex!! < photoPaths.size) {
                     // Update the existing photo
                     val originalPhotoPath = photoPaths[selectedPhotoIndex!!]
@@ -62,11 +70,39 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
                         focusAreas.remove(editedPath) // Clear focus if none returned
                     }
                     adapter.notifyItemChanged(selectedPhotoIndex!!)
+                    updateUI()
                     Toast.makeText(this, "Photo updated", Toast.LENGTH_SHORT).show()
                 }
             }
         }
         selectedPhotoIndex = null
+    }
+
+    // Launcher for selecting multiple images
+    private val selectMultipleImagesLauncher = registerForActivityResult(
+        ActivityResultContracts.GetMultipleContents()
+    ) { uris ->
+        uris?.let {
+            val newPhotoPaths = mutableListOf<String>()
+            for (uri in it) {
+                // Convert URI to file path (this might require more robust handling for different URIs)
+                // For simplicity, assuming content URIs that can be resolved to file paths
+                val filePath = uri.path // This is a simplified approach, might need actual file utility
+                if (filePath != null && photoPaths.size + newPhotoPaths.size < MAX_IMAGE_COUNT) {
+                    newPhotoPaths.add(filePath)
+                } else if (photoPaths.size + newPhotoPaths.size >= MAX_IMAGE_COUNT) {
+                    Toast.makeText(this, "Maximum of $MAX_IMAGE_COUNT photos allowed", Toast.LENGTH_SHORT).show()
+                    break
+                }
+            }
+            if (newPhotoPaths.isNotEmpty()) {
+                val startInsertPosition = photoPaths.size
+                photoPaths.addAll(newPhotoPaths)
+                adapter.notifyItemRangeInserted(startInsertPosition, newPhotoPaths.size)
+                updateUI()
+                Toast.makeText(this, "${newPhotoPaths.size} new photos added", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +115,7 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
         photoPaths.addAll(incomingPhotoPaths.filter { path ->
             val file = java.io.File(path)
             file.exists()
-        })
+        }.take(MAX_IMAGE_COUNT)) // Ensure initial load also respects MAX_IMAGE_COUNT
 
         // Get existing focus areas if any
         val focusAreasBundle = intent.getBundleExtra("focus_areas")
@@ -90,12 +126,10 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
         }
 
         setupUI()
+        updateUI() // Initial UI update
     }
 
     private fun setupUI() {
-        // Setup title
-        binding.titleText.text = "Edit ${photoPaths.size} Photos"
-
         // Setup gallery recycler
         adapter = PhotoGalleryAdapter(photoPaths, focusAreas) { selectedPath ->
             val index = photoPaths.indexOf(selectedPath)
@@ -119,6 +153,17 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
         binding.backButton.setOnClickListener {
             finish()
         }
+
+        // Setup add more images button
+        binding.addMoreImagesButton.setOnClickListener {
+            selectMultipleImagesLauncher.launch("image/*")
+        }
+    }
+
+    private fun updateUI() {
+        binding.titleText.text = "Edit ${photoPaths.size} Photos"
+        binding.imageCountTextView.text = "${photoPaths.size}/$MAX_IMAGE_COUNT Images Selected"
+        binding.addMoreImagesButton.isEnabled = photoPaths.size < MAX_IMAGE_COUNT
     }
 
     private fun launchPhotoEditor(photoPath: String) {
