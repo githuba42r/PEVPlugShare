@@ -223,28 +223,20 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         // Retrieve photo paths from intent
         val incomingPhotoPaths = intent.getStringArrayListExtra("photo_paths")
         incomingPhotoPaths?.let {
-            Log.d("EditLocationActivity", "Received ${it.size} photo paths from intent")
-            Log.d("EditLocationActivity", "Photo paths: $it")
-
             // In add mode, check if these are cache paths that need processing
             if (isAddMode) {
-                Log.d("EditLocationActivity", "Add mode detected - checking if photos need processing from cache")
                 // If photos are from QuickLocationActivity, they're in cache and need processing
                 // Process them now before adding to photoUris
                 // Note: currentEditLocationId will be set after this block, so we generate temp ID now
                 // and will use it throughout add mode for consistency
                 if (currentEditLocationId == null) {
                     currentEditLocationId = UUID.randomUUID().toString()
-                    Log.d("EditLocationActivity", "Set currentEditLocationId for add mode: $currentEditLocationId")
                 }
 
                 lifecycleScope.launch {
                     val processedPaths = withContext(Dispatchers.IO) {
-                        Log.d("EditLocationActivity", "Processing incoming cache photos with locationId: $currentEditLocationId")
                         processCachePhotos(it, currentEditLocationId!!)
                     }
-                    Log.d("EditLocationActivity", "Processed ${processedPaths.size} photos to permanent storage")
-                    Log.d("EditLocationActivity", "Processed paths: $processedPaths")
 
                     photoUris.addAll(processedPaths)
                     refreshPhotoThumbnails()
@@ -266,7 +258,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             // Only generate if not already set (may have been set when processing incoming photos)
             if (currentEditLocationId == null) {
                 currentEditLocationId = UUID.randomUUID().toString()
-                Log.d("EditLocationActivity", "Add mode: Generated currentEditLocationId: $currentEditLocationId")
             }
             // Add mode: Initialize for new location entry
             viewModel.initializeForAddMode()
@@ -809,15 +800,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             return
         }
         if (isAddMode) {
-            Log.d("EditLocationActivity", "submitUpdates: Add mode detected, calling addLocation with currentEditLocationId: $currentEditLocationId")
             viewModel.addLocation(currentEditLocationId)
         } else {
             viewModel.submitUpdates(locationId!!)
         }
     }
-    
+
     private fun updateSubmitButtonState() {
-        Log.d("EditLocationActivity", "updateSubmitButtonState called: photosBeingProcessed=$photosBeingProcessed, isAddMode=$isAddMode")
         
         runOnUiThread {
             binding.apply {
@@ -1118,19 +1107,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
      * This is called during onCreate for add mode when photos are passed via Intent
      */
     private suspend fun processCachePhotos(cachePaths: List<String>, locationId: String): List<String> {
-        Log.d("EditLocationActivity", "processCachePhotos called with ${cachePaths.size} cache paths")
-        Log.d("EditLocationActivity", "Using locationId: $locationId for processing")
-
         val permanentPaths = mutableListOf<String>()
 
         cachePaths.forEachIndexed { index, cachePath ->
             try {
                 val cacheFile = File(cachePath)
-                Log.d("EditLocationActivity", "Processing cache image $index: $cachePath, exists=${cacheFile.exists()}")
 
                 if (cacheFile.exists()) {
-                    Log.d("EditLocationActivity", "Cache file exists, resizing and saving with locationId: $locationId, index: $index")
-
                     photoSaveMutex.lock()
                     try {
                         val resizedFile = ImageUtils.resizeAndSaveImage(
@@ -1141,28 +1124,19 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         )
 
                         resizedFile?.let {
-                            Log.d("EditLocationActivity", "Successfully saved cache image $index to: ${it.absolutePath}")
                             permanentPaths.add(it.absolutePath)
                             // Delete cache file after successful save
                             cacheFile.delete()
-                            Log.d("EditLocationActivity", "Deleted cache file: $cachePath")
-                        } ?: run {
-                            Log.w("EditLocationActivity", "resizeAndSaveImage returned null for cache image $index")
                         }
                     } finally {
                         photoSaveMutex.unlock()
                     }
-                } else {
-                    Log.w("EditLocationActivity", "Cache file does not exist: $cachePath")
                 }
             } catch (e: Exception) {
                 Log.e("EditLocationActivity", "Error processing cache image $index", e)
-                e.printStackTrace()
             }
         }
 
-        Log.d("EditLocationActivity", "processCachePhotos complete. Processed ${permanentPaths.size} photos to permanent storage")
-        Log.d("EditLocationActivity", "Permanent paths: $permanentPaths")
         return permanentPaths
     }
 
