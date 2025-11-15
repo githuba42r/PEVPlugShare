@@ -20,7 +20,7 @@ data class PhotoMetadata(
     val model: String? = null,
     val hasGpsData: Boolean = false,
     val hasBearingData: Boolean = false,
-    val focusRect: RectF? = null
+    var focusRect: RectF? = null
 ) : Parcelable {
     fun getLocationString(): String {
         return if (latitude != null && longitude != null) {
@@ -54,6 +54,19 @@ data class PhotoMetadata(
     companion object {
         fun fromJsonString(jsonString: String): PhotoMetadata {
             return Gson().fromJson(jsonString, PhotoMetadata::class.java)
+        }
+
+        fun deserializeRectF(rectFString: String): RectF? {
+            return try {
+                val parts = rectFString.split(",").map { it.toFloat() }
+                if (parts.size == 4) {
+                    RectF(parts[0], parts[1], parts[2], parts[3])
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 }
