@@ -3,35 +3,29 @@ package com.a42r.pevplugshare.ui.edit
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.PorterDuff
 import android.graphics.Matrix
 import android.media.ExifInterface
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector // Import ScaleGestureDetector
-import android.view.View // Import View
+import android.view.ScaleGestureDetector
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
-import android.widget.Button
-import android.widget.TextView // Import TextView
-import android.widget.LinearLayout // Import LinearLayout
-import android.widget.GridLayout // Import GridLayout
+import android.widget.TextView
+import android.widget.LinearLayout
+import android.widget.GridLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.a42r.pevplugshare.R
 import java.io.File
 import java.io.FileOutputStream
-import android.graphics.PointF // Import PointF
-import android.content.Intent // Import Intent
-import androidx.annotation.DrawableRes // Import DrawableRes
-import androidx.appcompat.app.AlertDialog // Import AlertDialog
+import android.graphics.PointF
+import android.content.Intent
+import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
 
 /**
  * Activity for editing images: crop, zoom, and define focus areas
@@ -84,8 +78,6 @@ class ImageEditorActivity : AppCompatActivity() {
 
     private val MIN_ZOOM = 0.5f
     private val MAX_ZOOM = 5.0f
-
-    private val ZOOM = 2
 
     enum class EditorMode {
         MAIN, CROP, FOCUS
@@ -179,7 +171,7 @@ class ImageEditorActivity : AppCompatActivity() {
         updateUIForMode(EditorMode.MAIN) // Set initial UI state
     }
 
-    private fun setupIconButton(view: View, @DrawableRes iconResId: Int, label: String) {
+    private fun setupIconButton(view: View, iconResId: Int, label: String) {
         view.findViewById<ImageView>(R.id.iconImageView).setImageResource(iconResId)
         view.findViewById<TextView>(R.id.labelTextView).text = label
     }
@@ -230,120 +222,159 @@ class ImageEditorActivity : AppCompatActivity() {
             refreshImageWithOverlay()
             hasUnsavedChanges = true
         }
-    
-            cropButton.setOnClickListener {
-                currentMode = EditorMode.CROP
-                updateUIForMode(currentMode)
-                // Initialize default crop rect
-                cropRect = getDefaultRect()
-                refreshImageWithOverlay()
-                hasUnsavedChanges = true
+
+        cropButton.setOnClickListener {
+            currentMode = EditorMode.CROP
+            updateUIForMode(currentMode)
+            // Initialize default crop rect
+            cropRect = getDefaultRect()
+            refreshImageWithOverlay()
+            hasUnsavedChanges = true
+        }
+
+        resetButton.setOnClickListener {
+            resetAllEdits()
+        }
+
+        saveButton.setOnClickListener {
+            saveImage(false) // Save and finish
+            hasUnsavedChanges = false // Reset changes flag
+        }
+
+        saveNewButton.setOnClickListener {
+            saveImage(true) // Save as new and finish
+            hasUnsavedChanges = false // Reset changes flag
+        }
+
+        cancelButton.setOnClickListener {
+            if (hasUnsavedChanges) {
+                showDiscardChangesDialog()
+            } else {
+                setResult(RESULT_CANCELED)
+                finish()
             }
-    
-            resetButton.setOnClickListener {
-                editBitmap = originalBitmap.copy(originalBitmap.config, true)
-                focusRect = null
-                cropRect = null
-                currentZoom = 1.0f
-                imageView.scaleX = 1f
-                imageView.scaleY = 1f
-                refreshImageWithOverlay()
-                Toast.makeText(this, "All edits reset", Toast.LENGTH_SHORT).show()
-                hasUnsavedChanges = false // Reset changes flag
-            }
-    
-            saveButton.setOnClickListener {
-                saveImage(false) // Save and finish
-                hasUnsavedChanges = false // Reset changes flag
-            }
-    
-            saveNewButton.setOnClickListener {
-                saveImage(true) // Save as new and finish
-                hasUnsavedChanges = false // Reset changes flag
-            }
-    
-            cancelButton.setOnClickListener {
-                if (hasUnsavedChanges) {
-                    showDiscardChangesDialog()
-                } else {
-                    setResult(RESULT_CANCELED)
-                    finish()
+        }
+
+        // Crop sub-menu controls
+        cropCancelButton.setOnClickListener {
+            currentMode = EditorMode.MAIN
+            cropRect = null // Clear crop selection
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+            // No change to hasUnsavedChanges here, as it's a cancel of a sub-operation
+        }
+
+        cropResetButton.setOnClickListener {
+            cropRect = getDefaultRect()
+            refreshImageWithOverlay()
+            hasUnsavedChanges = true
+        }
+
+        cropApplyButton.setOnClickListener {
+            applyCrop()
+            currentMode = EditorMode.MAIN
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+            hasUnsavedChanges = true // Applying crop is a change
+        }
+
+        // Focus sub-menu controls
+        focusCancelButton.setOnClickListener {
+            currentMode = EditorMode.MAIN
+            focusRect = null // Clear focus selection
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+            // No change to hasUnsavedChanges here, as it's a cancel of a sub-operation
+        }
+
+        focusResetButton.setOnClickListener {
+            focusRect = getDefaultRect()
+            refreshImageWithOverlay()
+            hasUnsavedChanges = true
+        }
+
+        focusApplyButton.setOnClickListener {
+            currentMode = EditorMode.MAIN
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+            Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
+            hasUnsavedChanges = true // Applying focus is a change
+        }
+
+        // Reset Zoom Icon
+        resetZoomIcon.setOnClickListener {
+            resetZoom()
+        }
+
+        // Image canvas touch handling
+        imageView.setOnTouchListener { v, event ->
+            scaleGestureDetector?.onTouchEvent(event)
+
+            val currentScale = FloatArray(9)
+            matrix.getValues(currentScale)
+            currentZoom = currentScale[Matrix.MSCALE_X]
+
+            if (currentMode == EditorMode.MAIN) {
+                val x = event.x
+                val y = event.y
+
+                when (event.action and MotionEvent.ACTION_MASK) {
+                    MotionEvent.ACTION_DOWN -> {
+                        savedMatrix.set(matrix)
+                        start.set(x, y)
+                        mode = DRAG
+                        lastTouchX = x
+                        lastTouchY = y
+                    }
+                    MotionEvent.ACTION_POINTER_DOWN -> {
+                        savedMatrix.set(matrix)
+                        start.set(x, y)
+                        mode = ZOOM
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                        mode = NONE
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        if (mode == DRAG) {
+                            matrix.set(savedMatrix)
+                            matrix.postTranslate(x - start.x, y - start.y)
+                            hasUnsavedChanges = true
+                        }
+                    }
                 }
-            }
-    
-            // Crop sub-menu controls
-            cropCancelButton.setOnClickListener {
-                currentMode = EditorMode.MAIN
-                cropRect = null // Clear crop selection
-                updateUIForMode(currentMode)
-                refreshImageWithOverlay()
-                // No change to hasUnsavedChanges here, as it's a cancel of a sub-operation
-            }
-    
-            cropResetButton.setOnClickListener {
-                cropRect = getDefaultRect()
-                refreshImageWithOverlay()
-                hasUnsavedChanges = true
-            }
-    
-            cropApplyButton.setOnClickListener {
-                applyCrop()
-                currentMode = EditorMode.MAIN
-                updateUIForMode(currentMode)
-                refreshImageWithOverlay()
-                hasUnsavedChanges = true // Applying crop is a change
-            }
-    
-            // Focus sub-menu controls
-            focusCancelButton.setOnClickListener {
-                currentMode = EditorMode.MAIN
-                focusRect = null // Clear focus selection
-                updateUIForMode(currentMode)
-                refreshImageWithOverlay()
-                // No change to hasUnsavedChanges here, as it's a cancel of a sub-operation
-            }
-    
-            focusResetButton.setOnClickListener {
-                focusRect = getDefaultRect()
-                refreshImageWithOverlay()
-                hasUnsavedChanges = true
-            }
-    
-            focusApplyButton.setOnClickListener {
-                currentMode = EditorMode.MAIN
-                updateUIForMode(currentMode)
-                refreshImageWithOverlay()
-                Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
-                hasUnsavedChanges = true // Applying focus is a change
-            }
-    
-            // Image canvas touch handling
-            imageView.setOnTouchListener { _, event ->
+                imageView.imageMatrix = matrix
+                updateResetZoomIconVisibility()
+                return@setOnTouchListener true
+            } else {
+                // Handle drawing for CROP/FOCUS modes
                 when (currentMode) {
                     EditorMode.CROP -> handleRectDrawing(event, RectType.CROP)
                     EditorMode.FOCUS -> handleRectDrawing(event, RectType.FOCUS)
-                    else -> false // No drawing in MAIN mode
+                    else -> false
                 }
+                updateResetZoomIconVisibility()
+                return@setOnTouchListener true
             }
-    
-            addRotationControls()
         }
-    
-        private fun showDiscardChangesDialog() {
-            AlertDialog.Builder(this)
-                .setTitle("Discard Changes?")
-                .setMessage("You have unsaved changes. Do you want to discard them?")
-                .setPositiveButton("Discard") { dialog, _ ->
-                    dialog.dismiss()
-                    setResult(RESULT_CANCELED)
-                    finish()
-                }
-                .setNegativeButton("Keep Editing") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .create()
-                .show()
-        }
+
+        addRotationControls()
+    }
+
+    private fun showDiscardChangesDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Discard Changes?")
+            .setMessage("You have unsaved changes. Do you want to discard them?")
+            .setPositiveButton("Discard") { dialog, _ ->
+                dialog.dismiss()
+                setResult(RESULT_CANCELED)
+                finish()
+            }
+            .setNegativeButton("Keep Editing") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
 
     private fun updateUIForMode(mode: EditorMode) {
         when (mode) {
@@ -436,8 +467,8 @@ class ImageEditorActivity : AppCompatActivity() {
         // Bottom-Right
         if (x >= rect.right - halfHandle && x <= rect.right + halfHandle &&
             y >= rect.bottom - halfHandle && y <= rect.bottom + halfHandle) return 3
-        // Move (inside the rect)
-        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return 4
+        // Move (inside the rect) - Only for CROP, not for FOCUS
+        if (activeRectType == RectType.CROP && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return 4
         return -1
     }
 
@@ -465,13 +496,15 @@ class ImageEditorActivity : AppCompatActivity() {
                 right = newX.coerceAtLeast(left + minSize)
                 bottom = newY.coerceAtLeast(top + minSize)
             }
-            4 -> { // Move
-                val dx = newX - originalRect.centerX()
-                val dy = newY - originalRect.centerY()
-                left += dx
-                top += dy
-                right += dx
-                bottom += dy
+            4 -> { // Move - Only for CROP
+                if (activeRectType == RectType.CROP) {
+                    val dx = newX - originalRect.centerX()
+                    val dy = newY - originalRect.centerY()
+                    left += dx
+                    top += dy
+                    right += dx
+                    bottom += dy
+                }
             }
         }
 
@@ -519,10 +552,11 @@ class ImageEditorActivity : AppCompatActivity() {
         }
 
         imageView.setImageBitmap(tempBitmap)
+        updateResetZoomIconVisibility() // Update visibility after image refresh
     }
 
     private fun drawHandles(canvas: Canvas, rect: RectF, color: Int) {
-        val handleSize = 20f // Size of the square handles
+        val handleSize = 40f // Increased size of the square handles
         val cornerPaint = Paint().apply {
             this.color = color
             style = Paint.Style.FILL
@@ -552,6 +586,8 @@ class ImageEditorActivity : AppCompatActivity() {
             editBitmap = Bitmap.createBitmap(editBitmap, left, top, width, height)
             cropRect = null // Clear crop selection after applying
             currentZoom = 1.0f
+            matrix.reset() // Reset zoom matrix after crop
+            imageView.imageMatrix = matrix
             imageView.scaleX = 1f
             imageView.scaleY = 1f
             Toast.makeText(this, "Image cropped", Toast.LENGTH_SHORT).show()
@@ -603,20 +639,9 @@ class ImageEditorActivity : AppCompatActivity() {
         }
     }
 
-    private fun zoomImage(factor: Float) {
-        currentZoom *= factor
-        currentZoom = currentZoom.coerceIn(0.5f, 3.0f)
-        imageView.scaleX = currentZoom
-        imageView.scaleY = currentZoom
-    }
-
     private fun refreshImage() {
         refreshImageWithOverlay()
     }
-
-
-
-
 
     private fun updateResetZoomIconVisibility() {
         if (currentZoom > 1.0f + 0.01f || currentZoom < 1.0f - 0.01f) { // Check if zoomed in or out
@@ -697,6 +722,8 @@ class ImageEditorActivity : AppCompatActivity() {
             originalBitmap = decodedBitmap
             editBitmap = originalBitmap.copy(originalBitmap.config, true)
             imageView.setImageBitmap(editBitmap)
+            imageView.imageMatrix = matrix // Apply initial matrix for zoom
+            updateResetZoomIconVisibility()
 
         } catch (e: Exception) {
             Log.e("ImageEditorActivity", "Error loading and orienting image", e)
