@@ -1,6 +1,7 @@
 package com.a42r.pevplugshare.ui.add
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
@@ -18,6 +19,7 @@ import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.data.model.LocationAccessType
 import com.a42r.pevplugshare.data.model.SocketType
 import com.a42r.pevplugshare.databinding.ActivityAddLocationBinding
+import com.a42r.pevplugshare.ui.quicklocation.PhotoGalleryEditorActivity
 import com.a42r.pevplugshare.util.DistanceCalculator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,6 +38,22 @@ class AddLocationActivity : AppCompatActivity() {
         }
     }
 
+    private val photoGalleryEditorLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val editedPhotoPaths = result.data?.getStringArrayListExtra("edited_photo_paths")
+            val focusAreas = result.data?.getBundleExtra("focus_areas")
+
+            if (editedPhotoPaths != null) {
+                viewModel.updatePhotoPaths(editedPhotoPaths)
+                // Update UI based on photo count, e.g., enable/disable submit button
+                updateSubmitButtonState()
+            }
+            // Handle focus areas if needed
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddLocationBinding.inflate(layoutInflater)
@@ -46,6 +64,7 @@ class AddLocationActivity : AppCompatActivity() {
         setupUI()
         setupObservers()
         requestLocationAndPopulate()
+        updateSubmitButtonState()
     }
 
     private fun setupUI() {
@@ -53,6 +72,15 @@ class AddLocationActivity : AppCompatActivity() {
             // Get current location button
             getLocationButton.setOnClickListener {
                 requestLocationAndPopulate()
+            }
+
+            // Placeholder button to launch PhotoGalleryEditorActivity
+            // This button needs to be added to activity_add_location.xml
+            addPhotosButton.setOnClickListener {
+                val intent = Intent(this@AddLocationActivity, PhotoGalleryEditorActivity::class.java).apply {
+                    putStringArrayListExtra("photo_paths", ArrayList(viewModel.formData.value.photoPaths))
+                }
+                photoGalleryEditorLauncher.launch(intent)
             }
 
             // Socket type spinners
@@ -219,8 +247,14 @@ class AddLocationActivity : AppCompatActivity() {
             additionalInfo = binding.additionalInfoInput.text.toString(),
             providerName = binding.providerNameInput.text.toString(),
             providerWebsite = binding.providerWebsiteInput.text.toString(),
-            chargingCosts = binding.chargingCostsInput.text.toString()
+            chargingCosts = binding.chargingCostsInput.text.toString(),
+            photoPaths = viewModel.formData.value.photoPaths // Include photo paths in form data
         )
         viewModel.updateFormData(formData)
+    }
+
+    private fun updateSubmitButtonState() {
+        // Disable submit button if no photos are selected
+        binding.submitButton.isEnabled = viewModel.formData.value.photoPaths.isNotEmpty()
     }
 }

@@ -34,7 +34,8 @@ data class LocationFormData(
     val additionalInfo: String = "",
     val providerName: String = "",
     val providerWebsite: String = "",
-    val chargingCosts: String = ""
+    val chargingCosts: String = "",
+    val photoPaths: List<String> = emptyList()
 )
 
 @HiltViewModel
@@ -98,6 +99,10 @@ class AddLocationViewModel @Inject constructor(
 
     fun setCurrentLocation(latitude: Double, longitude: Double) {
         _formData.value = _formData.value.copy(latitude = latitude, longitude = longitude)
+    }
+
+    fun updatePhotoPaths(paths: List<String>) {
+        _formData.value = _formData.value.copy(photoPaths = paths)
     }
 
     fun submitLocation() {
@@ -173,7 +178,8 @@ class AddLocationViewModel @Inject constructor(
                     chargingCosts = data.chargingCosts.ifBlank { null },
                     color = "#1f6b2a",
                     icon = "charging_station",
-                    lastModified = System.currentTimeMillis()
+                    lastModified = System.currentTimeMillis(),
+                    imagePaths = data.photoPaths // Save photo paths with the location
                 )
 
                 // Add to location repository (which handles OSMAnd sync)

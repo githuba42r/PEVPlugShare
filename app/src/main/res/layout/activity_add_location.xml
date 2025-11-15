@@ -45,6 +45,13 @@
                 android:layout_marginTop="8dp"
                 android:text="No location captured"
                 android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/addPhotosButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Add/Edit Photos" />
         </LinearLayout>
 
         <!-- Required Fields Section -->
