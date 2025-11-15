@@ -3,6 +3,7 @@ package com.a42r.pevplugshare.ui.quicklocation
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,7 @@ import java.io.File
  */
 class PhotoGalleryAdapter(
     private val photoPaths: MutableList<String>, // Changed to MutableList
-    private val focusAreas: MutableMap<String, String>, // Changed to MutableMap
+    private val focusAreas: MutableMap<String, android.graphics.RectF>, // Changed to MutableMap
     private val onPhotoClick: (String) -> Unit,
     private val onRemoveClick: (Int) -> Unit // New callback for remove button
 ) : RecyclerView.Adapter<PhotoGalleryAdapter.PhotoViewHolder>() {
@@ -29,6 +30,10 @@ class PhotoGalleryAdapter(
         RecyclerView.ViewHolder(binding.root) {
         
         fun bind(photoPath: String, position: Int) {
+            Log.d("PhotoGalleryAdapter", "bind() called for position $position, photoPath: $photoPath")
+            Log.d("PhotoGalleryAdapter", "Total focusAreas in map: ${focusAreas.size}")
+            Log.d("PhotoGalleryAdapter", "focusAreas keys: ${focusAreas.keys.joinToString(", ")}")
+
             // Load thumbnail in background
             CoroutineScope(Dispatchers.Default).launch {
                 try {
@@ -36,29 +41,52 @@ class PhotoGalleryAdapter(
                         inSampleSize = 4 // Load smaller sample for performance
                     }
                     val bitmap = PhotoUtils.rotateImageIfNeeded(photoPath, options)
-                    
+
                     withContext(Dispatchers.Main) {
                         if (bitmap != null) {
-                            binding.thumbnailImage.setImageBitmap(bitmap)
+                            val focusRect = focusAreas[photoPath]
+                            Log.d("PhotoGalleryAdapter", "Focus rect for $photoPath: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+
+                            if (focusRect != null) {
+                                Log.d("PhotoGalleryAdapter", "Drawing yellow rectangle for $photoPath")
+                                val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+                                val canvas = android.graphics.Canvas(mutableBitmap)
+                                val paint = android.graphics.Paint().apply {
+                                    color = android.graphics.Color.YELLOW
+                                    style = android.graphics.Paint.Style.STROKE
+                                    strokeWidth = 5f
+                                }
+                                // Scale the focusRect to the thumbnail size
+                                val scaleX = mutableBitmap.width.toFloat() / bitmap.width
+                                val scaleY = mutableBitmap.height.toFloat() / bitmap.height
+                                val scaledRect = android.graphics.RectF(
+                                    focusRect.left * scaleX,
+                                    focusRect.top * scaleY,
+                                    focusRect.right * scaleX,
+                                    focusRect.bottom * scaleY
+                                )
+                                Log.d("PhotoGalleryAdapter", "Scaled rect: ${scaledRect.left},${scaledRect.top},${scaledRect.right},${scaledRect.bottom} (scale: $scaleX x $scaleY)")
+                                canvas.drawRect(scaledRect, paint)
+                                binding.thumbnailImage.setImageBitmap(mutableBitmap)
+                            } else {
+                                Log.d("PhotoGalleryAdapter", "No focus rect for $photoPath, displaying plain bitmap")
+                                binding.thumbnailImage.setImageBitmap(bitmap)
+                            }
                         } else {
+                            Log.w("PhotoGalleryAdapter", "Bitmap is null for $photoPath")
                             binding.thumbnailImage.setImageResource(R.drawable.ic_add) // Fallback
                         }
-                        
-                        // Show focus badge if has focus area
-                        if (focusAreas.containsKey(photoPath)) {
-                            binding.focusIndicator.visibility = View.VISIBLE
-                        } else {
-                            binding.focusIndicator.visibility = View.GONE
-                        }
+                        binding.focusIndicator.visibility = View.GONE // Always hide, as we draw directly
                     }
                 } catch (e: Exception) {
+                    Log.e("PhotoGalleryAdapter", "Error loading thumbnail for $photoPath", e)
                     e.printStackTrace()
                     withContext(Dispatchers.Main) {
                         binding.thumbnailImage.setImageResource(R.drawable.ic_add)
                     }
                 }
             }
-            
+
             binding.root.setOnClickListener {
                 onPhotoClick(photoPath)
             }

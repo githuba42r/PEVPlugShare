@@ -246,7 +246,7 @@ object PhotoUtils {
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
-    private fun parseFocusRectString(focusRectString: String?): RectF? {
+    internal fun parseFocusRectString(focusRectString: String?): RectF? {
         if (focusRectString == null) return null
         return try {
             val parts = focusRectString.split(',').map { it.toFloat() }
