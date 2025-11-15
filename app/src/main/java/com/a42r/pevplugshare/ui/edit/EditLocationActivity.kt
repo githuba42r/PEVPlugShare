@@ -1202,7 +1202,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         
         Glide.with(this)
             .load(file)
-            .centerCrop()
+            .fitCenter() // Changed from centerCrop() to fitCenter()
+            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Bypass disk cache
+            .skipMemoryCache(true) // Bypass memory cache
             .into(imageView)
         
         val index = photoUris.size - 1
