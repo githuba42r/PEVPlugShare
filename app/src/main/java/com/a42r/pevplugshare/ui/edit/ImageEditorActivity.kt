@@ -27,11 +27,22 @@ import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import com.a42r.pevplugshare.domain.repository.PhotoRepository
+import com.a42r.pevplugshare.data.db.entity.PhotoEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Activity for editing images: crop, zoom, and define focus areas
  */
+@AndroidEntryPoint
 class ImageEditorActivity : AppCompatActivity() {
+    @Inject
+    lateinit var photoRepository: PhotoRepository
     private lateinit var imageView: ImageView
     private lateinit var instructionTextView: TextView // New
     private lateinit var mainControlsLayout: GridLayout // Changed from LinearLayout
@@ -66,6 +77,7 @@ class ImageEditorActivity : AppCompatActivity() {
     private var cropRect: RectF? = null // New for crop region
     private var currentMode: EditorMode = EditorMode.MAIN // New state management
     private var hasUnsavedChanges: Boolean = false // New flag to track changes
+    private var persistedFocusRectString: String? = null // Store normalized focus string during load
 
     // Pinch-to-zoom variables
     private var scaleGestureDetector: ScaleGestureDetector? = null
@@ -171,33 +183,42 @@ class ImageEditorActivity : AppCompatActivity() {
         }
 
         // Load focus data from SharedPreferences for the image being edited
-        Log.d("ImageEditorActivity", "Attempting to load focus data for image: $imagePath")
-        var hasPersistentFocus = false
-        try {
-            val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
-            val focusRectString = sharedPref.getString(imagePath, null)
-            if (focusRectString != null) {
-                Log.d("ImageEditorActivity", "Found persisted focus data: $focusRectString")
-                com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)?.let { rectF ->
-                    focusRect = rectF
-                    hasPersistentFocus = true
-                    Log.d("ImageEditorActivity", "Loaded focus rect from SharedPreferences: ${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}")
-                }
-            } else {
-                Log.d("ImageEditorActivity", "No persisted focus data found for: $imagePath")
-            }
-        } catch (e: Exception) {
-            Log.e("ImageEditorActivity", "Error loading focus data from SharedPreferences", e)
+        Log.d("ImageEditorActivity", "")
+        Log.d("ImageEditorActivity", "📖 IMAGE EDITOR INITIALIZATION")
+        Log.d("ImageEditorActivity", "   Image path: $imagePath")
+
+        // Check if there's a saved focus in SharedPreferences
+        val sharedPref = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        persistedFocusRectString = sharedPref.getString("focus_$imagePath", null)
+        if (persistedFocusRectString != null) {
+            Log.d("ImageEditorActivity", "✅ PERSISTED FOCUS FOUND IN SharedPreferences")
+            Log.d("ImageEditorActivity", "   Normalized string: $persistedFocusRectString")
+        } else {
+            Log.d("ImageEditorActivity", "❌ NO PERSISTED FOCUS FOUND")
         }
 
-        loadImageAndOrient(imagePath) // Call the new function
+        Log.d("ImageEditorActivity", "📐 LOADING IMAGE WITH ORIENTATION")
+        loadImageAndOrient(imagePath) // Call the new function - sets editBitmap
         setupUI()
+        Log.d("ImageEditorActivity", "   Bitmap loaded: ${editBitmap.width}x${editBitmap.height}")
 
-        // If we loaded a persistent focus, refresh the UI to display it
-        if (hasPersistentFocus) {
+        // If we loaded a persistent focus, denormalize it using the loaded image dimensions
+        if (persistedFocusRectString != null) {
+            Log.d("ImageEditorActivity", "🔄 DENORMALIZING PERSISTED FOCUS")
+            Log.d("ImageEditorActivity", "   Normalized string: $persistedFocusRectString")
+            Log.d("ImageEditorActivity", "   Target bitmap size: ${editBitmap.width}x${editBitmap.height}")
+            focusRect = com.a42r.pevplugshare.util.PhotoUtils.normalizedStringToFocusRect(
+                persistedFocusRectString,
+                editBitmap.width,
+                editBitmap.height
+            )
+            Log.d("ImageEditorActivity", "✅ FOCUS LOADED IN EDITOR")
+            Log.d("ImageEditorActivity", "   Denormalized to: ${focusRect?.let { "L=${it.left} T=${it.top} R=${it.right} B=${it.bottom}" } ?: "null"}")
             // Do not set currentMode to FOCUS here, only display the rect
             refreshImageWithOverlay()
-            Log.d("ImageEditorActivity", "Refreshed UI to display loaded focus area")
+            Log.d("ImageEditorActivity", "   Status: Focus displayed on overlay")
+        } else {
+            Log.d("ImageEditorActivity", "ℹ️  NO FOCUS TO LOAD - User will create new focus if needed")
         }
         updateUIForMode(EditorMode.MAIN) // Set initial UI state
     }
@@ -251,9 +272,13 @@ class ImageEditorActivity : AppCompatActivity() {
             // Initialize default focus rect ONLY if it's null
             if (focusRect == null) {
                 focusRect = getDefaultRect()
-                Log.d("ImageEditorActivity", "Focus button clicked. focusRect initialized to default: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+                Log.d("ImageEditorActivity", "🎯 FOCUS MODE ENTERED - FOCUS INITIALIZED")
+                Log.d("ImageEditorActivity", "   Status: New focus rect created")
+                Log.d("ImageEditorActivity", "   Coordinates: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
             } else {
-                Log.d("ImageEditorActivity", "Focus button clicked. Retaining existing focusRect: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+                Log.d("ImageEditorActivity", "🎯 FOCUS MODE ENTERED - FOCUS LOADED")
+                Log.d("ImageEditorActivity", "   Status: Existing focus retained")
+                Log.d("ImageEditorActivity", "   Coordinates: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
             }
             refreshImageWithOverlay()
             hasUnsavedChanges = true
@@ -332,7 +357,9 @@ class ImageEditorActivity : AppCompatActivity() {
         focusApplyButton.setOnClickListener {
             currentMode = EditorMode.MAIN
             updateUIForMode(currentMode)
-            Log.d("ImageEditorActivity", "Focus apply button clicked. focusRect: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+            Log.d("ImageEditorActivity", "✅ FOCUS APPLY BUTTON CLICKED")
+            Log.d("ImageEditorActivity", "   Status: User confirmed focus region")
+            Log.d("ImageEditorActivity", "   Coordinates: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
             refreshImageWithOverlay()
             Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
             hasUnsavedChanges = true // Applying focus is a change
@@ -700,11 +727,12 @@ class ImageEditorActivity : AppCompatActivity() {
 
     private fun saveImage(saveAsNew: Boolean) {
         try {
-            Log.d("ImageEditorActivity", "saveImage() called with saveAsNew=$saveAsNew")
-            Log.d("ImageEditorActivity", "focusRect before save: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+            Log.d("ImageEditorActivity", "💾 SAVE IMAGE INITIATED")
+            Log.d("ImageEditorActivity", "   Save type: ${if (saveAsNew) "SAVE AS NEW" else "UPDATE EXISTING"}")
+            Log.d("ImageEditorActivity", "   Focus rect at save: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
 
             val outputPath = intent.getStringExtra(EXTRA_OUTPUT_PATH) ?: run {
-                Log.e("ImageEditorActivity", "No output path provided")
+                Log.e("ImageEditorActivity", "❌ No output path provided")
                 Toast.makeText(this, "No output path provided", Toast.LENGTH_SHORT).show()
                 return
             }
@@ -727,64 +755,38 @@ class ImageEditorActivity : AppCompatActivity() {
             }
             Log.d("ImageEditorActivity", "Image file saved to: ${outputFile.absolutePath}")
 
-            // Save focusRect to both EXIF and SharedPreferences for reliability
-            if (focusRect != null) {
-                Log.d("ImageEditorActivity", "Attempting to save focusRect")
-                focusRect?.let { rect ->
-                    try {
-                        val focusRectString = "${rect.left},${rect.top},${rect.right},${rect.bottom}"
-                        Log.d("ImageEditorActivity", "focusRectString to save: $focusRectString")
-
-                        // Save to EXIF (for reference)
-                        try {
-                            val exif = ExifInterface(outputFile.absolutePath)
-                            exif.setAttribute(EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT, focusRectString)
-                            exif.saveAttributes()
-                            Log.d("ImageEditorActivity", "Saved focusRect to EXIF: $focusRectString")
-
-                            // Verify it was saved
-                            val verifyExif = ExifInterface(outputFile.absolutePath)
-                            val savedValue = verifyExif.getAttribute(EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT)
-                            Log.d("ImageEditorActivity", "Verification - value in EXIF after save: $savedValue")
-                        } catch (e: Exception) {
-                            Log.w("ImageEditorActivity", "Could not save to EXIF (this is expected for custom tags): ${e.message}")
-                        }
-
-                        // Save to SharedPreferences (primary storage)
-                        val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
-                        sharedPref.edit().apply {
-                            // Save with output file path
-                            putString(outputFile.absolutePath, focusRectString)
-                            // Also save with input image path for re-editing persistence
-                            val imagePath = intent.getStringExtra(EXTRA_IMAGE_PATH)
-                            if (imagePath != null && imagePath != outputFile.absolutePath) {
-                                putString(imagePath, focusRectString)
-                                Log.d("ImageEditorActivity", "Saved focus to SharedPreferences for both paths: input=$imagePath and output=${outputFile.absolutePath}")
-                            }
-                            apply()
-                        }
-                        Log.d("ImageEditorActivity", "Successfully saved focusRect to SharedPreferences")
-                    } catch (e: Exception) {
-                        Log.e("ImageEditorActivity", "Error saving focusRect", e)
-                    }
-                }
-            } else {
-                Log.d("ImageEditorActivity", "focusRect is null, not saving")
-            }
-
             // Extract metadata from original image
-            val imagePath = intent.getStringExtra(EXTRA_IMAGE_PATH) ?: ""
-            val metadata = com.a42r.pevplugshare.util.PhotoUtils.getPhotoMetadata(imagePath)
+            val originalImagePath = intent.getStringExtra(EXTRA_IMAGE_PATH) ?: ""
+            val metadata = com.a42r.pevplugshare.util.PhotoUtils.getPhotoMetadata(originalImagePath)
 
             // Return focus rect and metadata
             val resultIntent = Intent().apply {
+                var normalizedFocusRectString: String? = null
                 focusRect?.let { rect ->
-                    val focusRectString = "${rect.left},${rect.top},${rect.right},${rect.bottom}"
-                    Log.d("ImageEditorActivity", "Returning focusRectString in intent: $focusRectString")
-                    putExtra(EXTRA_FOCUS_RECT, focusRectString)
+                    // Normalize focus rectangle to 0-1 coordinates relative to the edited bitmap
+                    normalizedFocusRectString = com.a42r.pevplugshare.util.PhotoUtils.focusRectToNormalizedString(
+                        rect,
+                        editBitmap.width,
+                        editBitmap.height
+                    )
+                    Log.d("ImageEditorActivity", "")
+                    Log.d("ImageEditorActivity", "✏️  FOCUS SERIALIZATION FOR RETURN")
+                    Log.d("ImageEditorActivity", "   Pixel coords: L=${rect.left} T=${rect.top} R=${rect.right} B=${rect.bottom}")
+                    Log.d("ImageEditorActivity", "   Bitmap size: ${editBitmap.width}x${editBitmap.height}")
+                    Log.d("ImageEditorActivity", "   Normalized: $normalizedFocusRectString")
+                    Log.d("ImageEditorActivity", "   Storing to SharedPreferences: YES")
+
+                    // Store focus to SharedPreferences for temporary storage
+                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(this@ImageEditorActivity)
+                        .edit()
+                        .putString("focus_${outputFile.absolutePath}", normalizedFocusRectString)
+                        .apply()
+
+                    putExtra(EXTRA_FOCUS_RECT, normalizedFocusRectString)
                 } ?: run {
                     // If focusRect is null, explicitly put null or an empty string
-                    Log.d("ImageEditorActivity", "Returning null focusRect in intent")
+                    Log.d("ImageEditorActivity", "❌ FOCUS SERIALIZATION: focusRect IS NULL")
+                    Log.d("ImageEditorActivity", "   Storing to SharedPreferences: NO")
                     putExtra(EXTRA_FOCUS_RECT, null as String?)
                 }
                 putExtra(EXTRA_METADATA, metadata)

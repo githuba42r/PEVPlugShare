@@ -1,0 +1,349 @@
+--------- beginning of main
+11-15 22:17:28.587 10478 10478 D EditLocationActivity: Loading existing photos for location PEV Charging - Murrarie Cycling Track: found 0 photos
+11-15 22:17:28.609 10478 10478 D EditLocationActivity: EditLocationState.Loaded: photosBeingProcessed=0, buttonSubmit.isEnabled=true
+11-15 22:17:37.963 10478 10478 D EditLocationActivity: === pickImages called with 2 uris ===
+11-15 22:17:37.963 10478 10478 D EditLocationActivity:   uri[0]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:17:37.963 10478 10478 D EditLocationActivity:   uri[1]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000000675
+11-15 22:17:37.963 10478 10478 D EditLocationActivity: photoUris.size=0, remainingSlots=5, urisToProcess.size=2
+11-15 22:17:37.963 10478 10478 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:17:37.964 10478 10478 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:17:37.965 10478 10478 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:17:37.965 10478 10478 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=1 ===
+11-15 22:17:37.968 10478 10478 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000000675
+11-15 22:17:37.968 10478 10478 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:17:37.969 10478 10478 D EditLocationActivity:   Button text: 'Processing 2 photo(s)...' DISABLED
+11-15 22:17:37.969 10478 10478 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=2 ===
+11-15 22:17:37.969 10478 10478 D EditLocationActivity: After loop: photosBeingProcessed=2
+11-15 22:17:37.970 10478 10893 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_4573239177414185690.jpg
+11-15 22:17:37.971 10478 10892 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_2752883809055460280.jpg
+11-15 22:17:38.017 10478 10892 D EditLocationActivity: Copied gallery photo to temp file: 7821186 bytes
+11-15 22:17:38.017 10478 10892 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:17:38.018 10478 10893 D EditLocationActivity: Copied gallery photo to temp file: 9284664 bytes
+11-15 22:17:38.018 10478 10893 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:17:38.018 10478 10892 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 0 existing images
+11-15 22:17:38.018 10478 10892 D EditLocationActivity:   -> returning index 0 (no existing images)
+11-15 22:17:38.018 10478 10892 D EditLocationActivity: Got nextImageIndex: 0 (under mutex lock)
+11-15 22:17:38.125 10478 10892 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_0.jpg
+11-15 22:17:38.125 10478 10478 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_0.jpg
+11-15 22:17:38.133 10478 10478 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=1
+11-15 22:17:38.133 10478 10478 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:17:38.134 10478 10478 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:17:38.134 10478 10892 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:17:38.135 10478 10893 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 1 existing images
+11-15 22:17:38.135 10478 10893 D EditLocationActivity:     existing: image_0.jpg
+11-15 22:17:38.135 10478 10893 D EditLocationActivity:   -> highestIndex: 0, returning: 1
+11-15 22:17:38.135 10478 10893 D EditLocationActivity: Got nextImageIndex: 1 (under mutex lock)
+11-15 22:17:38.135 10478 10892 D EditLocationActivity: Deleted temp file
+11-15 22:17:38.162 10478 10478 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_0.jpg: null
+11-15 22:17:38.162 10478 10478 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_0.jpg, displaying plain bitmap
+11-15 22:17:38.258 10478 10893 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg
+11-15 22:17:38.259 10478 10478 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg
+11-15 22:17:38.263 10478 10478 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=0
+11-15 22:17:38.263 10478 10478 D EditLocationActivity:   isProcessingPhotos=false, shouldBeEnabled=true
+11-15 22:17:38.264 10478 10478 D EditLocationActivity:   Button text: 'Update' ENABLED
+11-15 22:17:38.264 10478 10893 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:17:38.265 10478 10893 D EditLocationActivity: Deleted temp file
+11-15 22:17:38.284 10478 10478 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg: null
+11-15 22:17:38.284 10478 10478 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg, displaying plain bitmap
+11-15 22:17:46.417 10478 10478 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg
+11-15 22:17:46.418 10478 10478 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_3316162089490036600.jpg
+11-15 22:17:46.427 10478 10478 D EditLocationActivity: Image editor launched successfully
+11-15 22:17:46.447 10478 10478 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg
+11-15 22:17:46.448 10478 10893 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg
+11-15 22:17:48.058 10478 10478 D ImageEditorActivity: Focus button clicked. focusRect initialized to default: 229.5,484.5,1300.5,1555.5
+11-15 22:17:54.367 10478 10478 D ImageEditorActivity: Focus apply button clicked. focusRect: 747.4217,704.3849,932.34375,984.8877
+11-15 22:17:56.655 10478 10478 D ImageEditorActivity: saveImage() called with saveAsNew=false
+11-15 22:17:56.655 10478 10478 D ImageEditorActivity: focusRect before save: 747.4217,704.3849,932.34375,984.8877
+11-15 22:17:56.705 10478 10478 D ImageEditorActivity: Image file saved to: /data/user/0/com.a42r.pevplugshare/cache/edited_3316162089490036600.jpg
+11-15 22:17:56.709 10478 10478 D ImageEditorActivity: Returning focusRectString in intent: 747.4217,704.3849,932.34375,984.8877
+11-15 22:17:56.709 10478 10478 D ImageEditorActivity: Image save complete. Output file: /data/user/0/com.a42r.pevplugshare/cache/edited_3316162089490036600.jpg
+11-15 22:17:58.856 10478 10478 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg
+11-15 22:17:58.857 10478 10478 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_7666382295996645236.jpg
+11-15 22:17:58.866 10478 10478 D EditLocationActivity: Image editor launched successfully
+11-15 22:17:58.883 10478 10478 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg
+11-15 22:17:58.884 10478 10893 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_1.jpg
+11-15 22:21:37.412 11908 11908 D EditLocationActivity: Loading existing photos for location PEV Charging - Murrarie Cycling Track: found 0 photos
+11-15 22:21:37.435 11908 11908 D EditLocationActivity: EditLocationState.Loaded: photosBeingProcessed=0, buttonSubmit.isEnabled=true
+11-15 22:21:42.349 11908 11908 D EditLocationActivity: === pickImages called with 0 uris ===
+11-15 22:21:50.346 11908 11908 D EditLocationActivity: === pickImages called with 2 uris ===
+11-15 22:21:50.346 11908 11908 D EditLocationActivity:   uri[0]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:21:50.346 11908 11908 D EditLocationActivity:   uri[1]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000000675
+11-15 22:21:50.346 11908 11908 D EditLocationActivity: photoUris.size=0, remainingSlots=5, urisToProcess.size=2
+11-15 22:21:50.346 11908 11908 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:21:50.346 11908 11908 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:21:50.348 11908 11908 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:21:50.348 11908 11908 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=1 ===
+11-15 22:21:50.350 11908 11908 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000000675
+11-15 22:21:50.350 11908 11908 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:21:50.350 11908 12362 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_9020000587402653305.jpg
+11-15 22:21:50.350 11908 11908 D EditLocationActivity:   Button text: 'Processing 2 photo(s)...' DISABLED
+11-15 22:21:50.350 11908 11908 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=2 ===
+11-15 22:21:50.351 11908 11908 D EditLocationActivity: After loop: photosBeingProcessed=2
+11-15 22:21:50.351 11908 12364 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_979588921348354037.jpg
+11-15 22:21:50.398 11908 12364 D EditLocationActivity: Copied gallery photo to temp file: 7821186 bytes
+11-15 22:21:50.398 11908 12364 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:21:50.399 11908 12364 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 2 existing images
+11-15 22:21:50.400 11908 12364 D EditLocationActivity:     existing: image_0.jpg
+11-15 22:21:50.400 11908 12364 D EditLocationActivity:     existing: image_1.jpg
+11-15 22:21:50.400 11908 12364 D EditLocationActivity:   -> highestIndex: 1, returning: 2
+11-15 22:21:50.400 11908 12364 D EditLocationActivity: Got nextImageIndex: 2 (under mutex lock)
+11-15 22:21:50.405 11908 12362 D EditLocationActivity: Copied gallery photo to temp file: 9284664 bytes
+11-15 22:21:50.405 11908 12362 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:21:50.513 11908 12364 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_2.jpg
+11-15 22:21:50.513 11908 11908 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_2.jpg
+11-15 22:21:50.519 11908 11908 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=1
+11-15 22:21:50.520 11908 11908 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:21:50.520 11908 11908 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:21:50.520 11908 12364 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:21:50.521 11908 12362 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 3 existing images
+11-15 22:21:50.521 11908 12362 D EditLocationActivity:     existing: image_0.jpg
+11-15 22:21:50.521 11908 12362 D EditLocationActivity:     existing: image_1.jpg
+11-15 22:21:50.521 11908 12362 D EditLocationActivity:     existing: image_2.jpg
+11-15 22:21:50.521 11908 12364 D EditLocationActivity: Deleted temp file
+11-15 22:21:50.521 11908 12362 D EditLocationActivity:   -> highestIndex: 2, returning: 3
+11-15 22:21:50.521 11908 12362 D EditLocationActivity: Got nextImageIndex: 3 (under mutex lock)
+11-15 22:21:50.549 11908 11908 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_2.jpg: null
+11-15 22:21:50.549 11908 11908 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_2.jpg, displaying plain bitmap
+11-15 22:21:50.644 11908 12362 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:21:50.644 11908 11908 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:21:50.649 11908 11908 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=0
+11-15 22:21:50.649 11908 11908 D EditLocationActivity:   isProcessingPhotos=false, shouldBeEnabled=true
+11-15 22:21:50.650 11908 11908 D EditLocationActivity:   Button text: 'Update' ENABLED
+11-15 22:21:50.650 11908 12364 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:21:50.652 11908 12364 D EditLocationActivity: Deleted temp file
+11-15 22:21:50.667 11908 11908 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg: null
+11-15 22:21:50.667 11908 11908 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg, displaying plain bitmap
+11-15 22:21:52.194 11908 11908 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:21:52.195 11908 11908 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_7332779345705805830.jpg
+11-15 22:21:52.204 11908 11908 D EditLocationActivity: Image editor launched successfully
+11-15 22:21:52.224 11908 11908 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:21:52.225 11908 12364 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:21:53.577 11908 11908 D ImageEditorActivity: Focus button clicked. focusRect initialized to default: 229.5,484.5,1300.5,1555.5
+11-15 22:21:59.744 11908 11908 D ImageEditorActivity: Focus apply button clicked. focusRect: 742.5879,670.0598,951.39404,946.84937
+11-15 22:22:01.066 11908 11908 D ImageEditorActivity: saveImage() called with saveAsNew=false
+11-15 22:22:01.066 11908 11908 D ImageEditorActivity: focusRect before save: 742.5879,670.0598,951.39404,946.84937
+11-15 22:22:01.116 11908 11908 D ImageEditorActivity: Image file saved to: /data/user/0/com.a42r.pevplugshare/cache/edited_7332779345705805830.jpg
+11-15 22:22:01.117 11908 11908 D ImageEditorActivity: Returning focusRectString in intent: 742.5879,670.0598,951.39404,946.84937
+11-15 22:22:01.117 11908 11908 D ImageEditorActivity: Image save complete. Output file: /data/user/0/com.a42r.pevplugshare/cache/edited_7332779345705805830.jpg
+11-15 22:22:02.708 11908 11908 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:22:02.709 11908 11908 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_8499922140098119089.jpg
+11-15 22:22:02.717 11908 11908 D EditLocationActivity: Image editor launched successfully
+11-15 22:22:02.736 11908 11908 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:22:02.737 11908 12364 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:22:07.393 11908 11908 D ImageEditorActivity: Focus button clicked. focusRect initialized to default: 229.5,484.5,1300.5,1555.5
+11-15 22:22:18.745 11908 11908 D ImageEditorActivity: Focus apply button clicked. focusRect: 747.8174,657.1106,955.5029,961.41724
+11-15 22:22:24.875 11908 11908 D ImageEditorActivity: saveImage() called with saveAsNew=false
+11-15 22:22:24.876 11908 11908 D ImageEditorActivity: focusRect before save: 747.8174,657.1106,955.5029,961.41724
+11-15 22:22:24.924 11908 11908 D ImageEditorActivity: Image file saved to: /data/user/0/com.a42r.pevplugshare/cache/edited_8499922140098119089.jpg
+11-15 22:22:24.926 11908 11908 D ImageEditorActivity: Returning focusRectString in intent: 747.8174,657.1106,955.5029,961.41724
+11-15 22:22:24.926 11908 11908 D ImageEditorActivity: Image save complete. Output file: /data/user/0/com.a42r.pevplugshare/cache/edited_8499922140098119089.jpg
+11-15 22:22:28.376 11908 11908 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:22:28.377 11908 11908 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_5451183806062046551.jpg
+11-15 22:22:28.384 11908 11908 D EditLocationActivity: Image editor launched successfully
+11-15 22:22:28.403 11908 11908 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:22:28.403 11908 12364 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_3.jpg
+11-15 22:26:19.989 14777 14777 D EditLocationActivity: Loading existing photos for location PEV Charging - Murrarie Cycling Track: found 0 photos
+11-15 22:26:20.007 14777 14777 D EditLocationActivity: EditLocationState.Loaded: photosBeingProcessed=0, buttonSubmit.isEnabled=true
+11-15 22:26:27.944 14777 14777 D EditLocationActivity: === pickImages called with 2 uris ===
+11-15 22:26:27.944 14777 14777 D EditLocationActivity:   uri[0]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:26:27.944 14777 14777 D EditLocationActivity:   uri[1]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000000675
+11-15 22:26:27.944 14777 14777 D EditLocationActivity: photoUris.size=0, remainingSlots=5, urisToProcess.size=2
+11-15 22:26:27.944 14777 14777 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:26:27.944 14777 14777 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:26:27.946 14777 14777 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:26:27.946 14777 14777 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=1 ===
+11-15 22:26:27.948 14777 14777 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000000675
+11-15 22:26:27.948 14777 14777 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:26:27.948 14777 14777 D EditLocationActivity:   Button text: 'Processing 2 photo(s)...' DISABLED
+11-15 22:26:27.948 14777 14777 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=2 ===
+11-15 22:26:27.948 14777 15150 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_4586313286805344765.jpg
+11-15 22:26:27.948 14777 14777 D EditLocationActivity: After loop: photosBeingProcessed=2
+11-15 22:26:27.949 14777 15152 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_1633619832398438079.jpg
+11-15 22:26:28.004 14777 15152 D EditLocationActivity: Copied gallery photo to temp file: 7821186 bytes
+11-15 22:26:28.004 14777 15152 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:26:28.009 14777 15152 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 4 existing images
+11-15 22:26:28.009 14777 15152 D EditLocationActivity:     existing: image_0.jpg
+11-15 22:26:28.009 14777 15152 D EditLocationActivity:     existing: image_1.jpg
+11-15 22:26:28.009 14777 15152 D EditLocationActivity:     existing: image_2.jpg
+11-15 22:26:28.009 14777 15152 D EditLocationActivity:     existing: image_3.jpg
+11-15 22:26:28.009 14777 15152 D EditLocationActivity:   -> highestIndex: 3, returning: 4
+11-15 22:26:28.009 14777 15152 D EditLocationActivity: Got nextImageIndex: 4 (under mutex lock)
+11-15 22:26:28.013 14777 15150 D EditLocationActivity: Copied gallery photo to temp file: 9284664 bytes
+11-15 22:26:28.013 14777 15150 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:26:28.116 14777 15152 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_4.jpg
+11-15 22:26:28.116 14777 14777 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_4.jpg
+11-15 22:26:28.122 14777 14777 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=1
+11-15 22:26:28.122 14777 14777 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:26:28.123 14777 14777 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:26:28.123 14777 15152 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:26:28.123 14777 15150 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 5 existing images
+11-15 22:26:28.124 14777 15150 D EditLocationActivity:     existing: image_0.jpg
+11-15 22:26:28.124 14777 15150 D EditLocationActivity:     existing: image_1.jpg
+11-15 22:26:28.124 14777 15150 D EditLocationActivity:     existing: image_2.jpg
+11-15 22:26:28.124 14777 15150 D EditLocationActivity:     existing: image_3.jpg
+11-15 22:26:28.124 14777 15150 D EditLocationActivity:     existing: image_4.jpg
+11-15 22:26:28.124 14777 15150 D EditLocationActivity:   -> highestIndex: 4, returning: 5
+11-15 22:26:28.124 14777 15150 D EditLocationActivity: Got nextImageIndex: 5 (under mutex lock)
+11-15 22:26:28.124 14777 15152 D EditLocationActivity: Deleted temp file
+11-15 22:26:28.154 14777 14777 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_4.jpg: null
+11-15 22:26:28.154 14777 14777 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_4.jpg, displaying plain bitmap
+11-15 22:26:28.244 14777 15150 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg
+11-15 22:26:28.244 14777 14777 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg
+11-15 22:26:28.249 14777 14777 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=0
+11-15 22:26:28.249 14777 14777 D EditLocationActivity:   isProcessingPhotos=false, shouldBeEnabled=true
+11-15 22:26:28.249 14777 14777 D EditLocationActivity:   Button text: 'Update' ENABLED
+11-15 22:26:28.249 14777 15150 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:26:28.251 14777 15150 D EditLocationActivity: Deleted temp file
+11-15 22:26:28.268 14777 14777 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg: null
+11-15 22:26:28.268 14777 14777 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg, displaying plain bitmap
+11-15 22:26:29.293 14777 14777 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg
+11-15 22:26:29.293 14777 14777 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_3623826057813140408.jpg
+11-15 22:26:29.303 14777 14777 D EditLocationActivity: Image editor launched successfully
+11-15 22:26:29.322 14777 14777 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg
+11-15 22:26:29.323 14777 15150 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg
+11-15 22:26:30.658 14777 14777 D ImageEditorActivity: Focus button clicked. focusRect initialized to default: 229.5,484.5,1300.5,1555.5
+11-15 22:26:35.784 14777 14777 D ImageEditorActivity: Focus apply button clicked. focusRect: 753.0469,662.7759,950.27344,956.5613
+11-15 22:26:37.173 14777 14777 D ImageEditorActivity: saveImage() called with saveAsNew=false
+11-15 22:26:37.173 14777 14777 D ImageEditorActivity: focusRect before save: 753.0469,662.7759,950.27344,956.5613
+11-15 22:26:37.222 14777 14777 D ImageEditorActivity: Image file saved to: /data/user/0/com.a42r.pevplugshare/cache/edited_3623826057813140408.jpg
+11-15 22:26:37.223 14777 14777 D ImageEditorActivity: Returning normalized focusRectString in intent: 0.4921875,0.32489014,0.62109375,0.4689026
+11-15 22:26:37.223 14777 14777 D ImageEditorActivity: Original pixel coordinates: 753.0469,662.7759,950.27344,956.5613 (bitmap: 1530x2040)
+11-15 22:26:37.223 14777 14777 D ImageEditorActivity: Image save complete. Output file: /data/user/0/com.a42r.pevplugshare/cache/edited_3623826057813140408.jpg
+11-15 22:26:44.897 14777 14777 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg
+11-15 22:26:44.898 14777 14777 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_5720074202028569363.jpg
+11-15 22:26:44.907 14777 14777 D EditLocationActivity: Image editor launched successfully
+11-15 22:26:44.928 14777 14777 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg
+11-15 22:26:44.929 14777 15155 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_5.jpg
+11-15 22:28:54.915 15840 15840 D EditLocationActivity: Loading existing photos for location PEV Charging - Murrarie Cycling Track: found 0 photos
+11-15 22:28:54.938 15840 15840 D EditLocationActivity: EditLocationState.Loaded: photosBeingProcessed=0, buttonSubmit.isEnabled=true
+11-15 22:29:03.913 15840 15840 D EditLocationActivity: === pickImages called with 2 uris ===
+11-15 22:29:03.913 15840 15840 D EditLocationActivity:   uri[0]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000000675
+11-15 22:29:03.913 15840 15840 D EditLocationActivity:   uri[1]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:29:03.913 15840 15840 D EditLocationActivity: photoUris.size=0, remainingSlots=5, urisToProcess.size=2
+11-15 22:29:03.913 15840 15840 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000000675
+11-15 22:29:03.913 15840 15840 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:29:03.914 15840 15840 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:29:03.914 15840 15840 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=1 ===
+11-15 22:29:03.915 15840 15840 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:29:03.915 15840 15840 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:29:03.915 15840 15840 D EditLocationActivity:   Button text: 'Processing 2 photo(s)...' DISABLED
+11-15 22:29:03.915 15840 15840 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=2 ===
+11-15 22:29:03.915 15840 15840 D EditLocationActivity: After loop: photosBeingProcessed=2
+11-15 22:29:03.916 15840 16161 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_4733443115423819174.jpg
+11-15 22:29:03.916 15840 16163 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_7289020702011916883.jpg
+11-15 22:29:03.971 15840 16161 D EditLocationActivity: Copied gallery photo to temp file: 7821186 bytes
+11-15 22:29:03.971 15840 16161 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:29:03.972 15840 16161 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 6 existing images
+11-15 22:29:03.972 15840 16161 D EditLocationActivity:     existing: image_0.jpg
+11-15 22:29:03.972 15840 16161 D EditLocationActivity:     existing: image_1.jpg
+11-15 22:29:03.972 15840 16161 D EditLocationActivity:     existing: image_2.jpg
+11-15 22:29:03.972 15840 16161 D EditLocationActivity:     existing: image_3.jpg
+11-15 22:29:03.972 15840 16161 D EditLocationActivity:     existing: image_4.jpg
+11-15 22:29:03.972 15840 16161 D EditLocationActivity:     existing: image_5.jpg
+11-15 22:29:03.972 15840 16161 D EditLocationActivity:   -> highestIndex: 5, returning: 6
+11-15 22:29:03.972 15840 16161 D EditLocationActivity: Got nextImageIndex: 6 (under mutex lock)
+11-15 22:29:03.979 15840 16163 D EditLocationActivity: Copied gallery photo to temp file: 9284664 bytes
+11-15 22:29:03.979 15840 16163 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:29:04.079 15840 16161 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_6.jpg
+11-15 22:29:04.079 15840 15840 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_6.jpg
+11-15 22:29:04.084 15840 15840 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=1
+11-15 22:29:04.084 15840 15840 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:29:04.084 15840 15840 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:29:04.084 15840 16161 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:29:04.085 15840 16163 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 7 existing images
+11-15 22:29:04.085 15840 16163 D EditLocationActivity:     existing: image_0.jpg
+11-15 22:29:04.085 15840 16163 D EditLocationActivity:     existing: image_1.jpg
+11-15 22:29:04.085 15840 16163 D EditLocationActivity:     existing: image_2.jpg
+11-15 22:29:04.085 15840 16163 D EditLocationActivity:     existing: image_3.jpg
+11-15 22:29:04.085 15840 16163 D EditLocationActivity:     existing: image_4.jpg
+11-15 22:29:04.085 15840 16163 D EditLocationActivity:     existing: image_5.jpg
+11-15 22:29:04.085 15840 16163 D EditLocationActivity:     existing: image_6.jpg
+11-15 22:29:04.085 15840 16163 D EditLocationActivity:   -> highestIndex: 6, returning: 7
+11-15 22:29:04.085 15840 16163 D EditLocationActivity: Got nextImageIndex: 7 (under mutex lock)
+11-15 22:29:04.085 15840 16161 D EditLocationActivity: Deleted temp file
+11-15 22:29:04.109 15840 15840 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_6.jpg: null
+11-15 22:29:04.109 15840 15840 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_6.jpg, displaying plain bitmap
+11-15 22:29:04.202 15840 16163 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg
+11-15 22:29:04.202 15840 15840 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg
+11-15 22:29:04.205 15840 15840 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=0
+11-15 22:29:04.205 15840 15840 D EditLocationActivity:   isProcessingPhotos=false, shouldBeEnabled=true
+11-15 22:29:04.206 15840 15840 D EditLocationActivity:   Button text: 'Update' ENABLED
+11-15 22:29:04.206 15840 16163 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:29:04.207 15840 16163 D EditLocationActivity: Deleted temp file
+11-15 22:29:04.222 15840 15840 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg: null
+11-15 22:29:04.222 15840 15840 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg, displaying plain bitmap
+11-15 22:29:04.918 15840 15840 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg
+11-15 22:29:04.918 15840 15840 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_7371422729938052986.jpg
+11-15 22:29:04.922 15840 15840 D EditLocationActivity: Image editor launched successfully
+11-15 22:29:04.937 15840 15840 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg
+11-15 22:29:04.938 15840 16163 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg
+11-15 22:29:06.202 15840 15840 D ImageEditorActivity: Focus button clicked. focusRect initialized to default: 229.5,484.5,1300.5,1555.5
+11-15 22:29:13.193 15840 15840 D ImageEditorActivity: Focus apply button clicked. focusRect: 729.55566,671.67847,949.15283,979.3137
+11-15 22:29:16.132 15840 15840 D ImageEditorActivity: saveImage() called with saveAsNew=false
+11-15 22:29:16.132 15840 15840 D ImageEditorActivity: focusRect before save: 729.55566,671.67847,949.15283,979.3137
+11-15 22:29:16.181 15840 15840 D ImageEditorActivity: Image file saved to: /data/user/0/com.a42r.pevplugshare/cache/edited_7371422729938052986.jpg
+11-15 22:29:16.182 15840 15840 D ImageEditorActivity: Returning normalized focusRectString in intent: 0.47683376,0.32925415,0.6203613,0.48005575
+11-15 22:29:16.182 15840 15840 D ImageEditorActivity: Original pixel coordinates: 729.55566,671.67847,949.15283,979.3137 (bitmap: 1530x2040)
+11-15 22:29:16.182 15840 15840 D ImageEditorActivity: Image save complete. Output file: /data/user/0/com.a42r.pevplugshare/cache/edited_7371422729938052986.jpg
+11-15 22:29:17.591 15840 15840 D EditLocationActivity: editPhoto called: index=1, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg
+11-15 22:29:17.592 15840 15840 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_2522347615912130352.jpg
+11-15 22:29:17.600 15840 15840 D EditLocationActivity: Image editor launched successfully
+11-15 22:29:17.618 15840 15840 D ImageEditorActivity: Attempting to load focus data for image: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg
+11-15 22:29:17.619 15840 16165 D ImageEditorActivity: No persisted focus data found for: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_7.jpg
+11-15 22:34:26.743 17372 17372 D EditLocationActivity: Loading existing photos for location PEV Charging - Murrarie Cycling Track: found 0 photos
+11-15 22:34:26.796 17372 17372 D EditLocationActivity: EditLocationState.Loaded: photosBeingProcessed=0, buttonSubmit.isEnabled=true
+11-15 22:34:36.669 17372 17372 D EditLocationActivity: === pickImages called with 1 uris ===
+11-15 22:34:36.669 17372 17372 D EditLocationActivity:   uri[0]: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:34:36.669 17372 17372 D EditLocationActivity: photoUris.size=0, remainingSlots=5, urisToProcess.size=1
+11-15 22:34:36.669 17372 17372 D EditLocationActivity: Processing URI: content://media/picker_get_content/0/com.android.providers.media.photopicker/media/1000002314
+11-15 22:34:36.670 17372 17372 D EditLocationActivity:   isProcessingPhotos=true, shouldBeEnabled=false
+11-15 22:34:36.672 17372 17372 D EditLocationActivity:   Button text: 'Processing 1 photo(s)...' DISABLED
+11-15 22:34:36.672 17372 17372 D EditLocationActivity: === START processAndSaveGalleryPhoto: photosBeingProcessed=1 ===
+11-15 22:34:36.674 17372 17372 D EditLocationActivity: After loop: photosBeingProcessed=1
+11-15 22:34:36.675 17372 17760 D EditLocationActivity: Created temp file: /data/user/0/com.a42r.pevplugshare/cache/gallery_3480781988766721382.jpg
+11-15 22:34:36.704 17372 17760 D EditLocationActivity: Copied gallery photo to temp file: 9284664 bytes
+11-15 22:34:36.704 17372 17760 D EditLocationActivity: Processing gallery photo - sessionId: temp_fallback
+11-15 22:34:36.705 17372 17760 D EditLocationActivity: findNextImageIndex for temp_fallback (isTemporary=true): found 8 existing images
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:     existing: image_0.jpg
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:     existing: image_1.jpg
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:     existing: image_2.jpg
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:     existing: image_3.jpg
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:     existing: image_4.jpg
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:     existing: image_5.jpg
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:     existing: image_6.jpg
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:     existing: image_7.jpg
+11-15 22:34:36.705 17372 17760 D EditLocationActivity:   -> highestIndex: 7, returning: 8
+11-15 22:34:36.705 17372 17760 D EditLocationActivity: Got nextImageIndex: 8 (under mutex lock)
+11-15 22:34:36.829 17372 17760 D EditLocationActivity: After resizeAndSaveImage: file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_8.jpg
+11-15 22:34:36.829 17372 17372 D EditLocationActivity: ✓ Gallery photo saved successfully to temp: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_8.jpg
+11-15 22:34:36.831 17372 17760 D EditLocationActivity: 
+11-15 22:34:36.831 17372 17760 D EditLocationActivity: 🖼️  THUMBNAIL LOADING STARTED
+11-15 22:34:36.831 17372 17760 D EditLocationActivity:    File: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_8.jpg
+11-15 22:34:36.833 17372 17760 D EditLocationActivity: 📋 DATABASE LOOKUP
+11-15 22:34:36.833 17372 17760 D EditLocationActivity:    Photo found: false
+11-15 22:34:36.833 17372 17760 D EditLocationActivity:    Focus from DB: null
+11-15 22:34:36.833 17372 17760 D EditLocationActivity: 🖼️  THUMBNAIL LOADING COMPLETE - Focus ready: false
+11-15 22:34:36.836 17372 17372 D EditLocationActivity: ✓ Gallery photo complete: photosBeingProcessed=0
+11-15 22:34:36.836 17372 17372 D EditLocationActivity:   isProcessingPhotos=false, shouldBeEnabled=true
+11-15 22:34:36.836 17372 17372 D EditLocationActivity:   Button text: 'Update' ENABLED
+11-15 22:34:36.836 17372 17760 D EditLocationActivity: === END processAndSaveGalleryPhoto: mutex unlocked ===
+11-15 22:34:36.837 17372 17760 D EditLocationActivity: Deleted temp file
+11-15 22:34:36.862 17372 17372 D EditLocationActivity: Focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_8.jpg: null
+11-15 22:34:36.862 17372 17372 D EditLocationActivity: No focus rect for /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_8.jpg, displaying plain bitmap
+11-15 22:34:41.036 17372 17372 D EditLocationActivity: editPhoto called: index=0, file=/data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_8.jpg
+11-15 22:34:41.037 17372 17372 D EditLocationActivity: Opening image editor with output: /data/user/0/com.a42r.pevplugshare/cache/edited_9155024590881612912.jpg
+11-15 22:34:41.046 17372 17372 D EditLocationActivity: Image editor launched successfully
+11-15 22:34:41.069 17372 17372 D ImageEditorActivity: 
+11-15 22:34:41.069 17372 17372 D ImageEditorActivity: 📖 IMAGE EDITOR INITIALIZATION
+11-15 22:34:41.069 17372 17372 D ImageEditorActivity:    Image path: /data/user/0/com.a42r.pevplugshare/cache/temp_images/temp_fallback/image_8.jpg
+11-15 22:34:41.069 17372 17760 D ImageEditorActivity: 🔍 LOADING FOCUS FROM DATABASE
+11-15 22:34:41.071 17372 17760 D ImageEditorActivity: ❌ NO PERSISTED FOCUS FOUND - New focus will be created
+11-15 22:34:41.076 17372 17372 D ImageEditorActivity: 📐 LOADING IMAGE WITH ORIENTATION
+11-15 22:34:41.091 17372 17372 D ImageEditorActivity:    Bitmap loaded: 1530x2040
+11-15 22:34:41.092 17372 17372 D ImageEditorActivity: ℹ️  NO FOCUS TO LOAD - User will create new focus if needed
+11-15 22:34:42.484 17372 17372 D ImageEditorActivity: 🎯 FOCUS MODE ENTERED - FOCUS INITIALIZED
+11-15 22:34:42.484 17372 17372 D ImageEditorActivity:    Status: New focus rect created
+11-15 22:34:42.484 17372 17372 D ImageEditorActivity:    Coordinates: 229.5,484.5,1300.5,1555.5
+11-15 22:34:54.991 17372 17372 D ImageEditorActivity: ✅ FOCUS APPLY BUTTON CLICKED
+11-15 22:34:54.991 17372 17372 D ImageEditorActivity:    Status: User confirmed focus region
+11-15 22:34:54.991 17372 17372 D ImageEditorActivity:    Coordinates: 750.0586,657.1106,958.1177,937.9468

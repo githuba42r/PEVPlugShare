@@ -71,6 +71,18 @@ interface PhotoDao {
 
     @Query("DELETE FROM location_photos WHERE id = :id")
     suspend fun deletePhotoById(id: String)
+
+    @Query("SELECT * FROM location_photos WHERE filePath = :filePath")
+    suspend fun getPhotoByFilePath(filePath: String): PhotoEntity?
+
+    @Query("DELETE FROM location_photos WHERE filePath = :filePath")
+    suspend fun deletePhotoByFilePath(filePath: String)
+
+    @Query("UPDATE location_photos SET locationId = :newLocationId WHERE locationId = :oldLocationId")
+    suspend fun updatePhotoLocationId(oldLocationId: String, newLocationId: String)
+
+    @Query("UPDATE location_photos SET filePath = :newFilePath WHERE filePath = :oldFilePath")
+    suspend fun updatePhotoFilePath(oldFilePath: String, newFilePath: String)
 }
 
 @Dao

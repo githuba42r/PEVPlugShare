@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.databinding.ItemPhotoThumbnailBinding
 import com.a42r.pevplugshare.util.PhotoUtils
+import com.a42r.pevplugshare.domain.repository.PhotoRepository
+import com.a42r.pevplugshare.data.db.entity.PhotoEntity
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -21,9 +23,9 @@ import java.io.File
  */
 class PhotoGalleryAdapter(
     private val photoPaths: MutableList<String>, // Changed to MutableList
-    private val focusAreas: MutableMap<String, android.graphics.RectF>, // Changed to MutableMap
     private val onPhotoClick: (String) -> Unit,
-    private val onRemoveClick: (Int) -> Unit // New callback for remove button
+    private val onRemoveClick: (Int) -> Unit, // New callback for remove button
+    private val photoRepository: PhotoRepository // Injected PhotoRepository
 ) : RecyclerView.Adapter<PhotoGalleryAdapter.PhotoViewHolder>() {
 
     // Track currently rendering items to avoid race conditions
@@ -34,8 +36,6 @@ class PhotoGalleryAdapter(
         
         fun bind(photoPath: String, position: Int) {
             Log.d("PhotoGalleryAdapter", "bind() called for position $position, photoPath: $photoPath")
-            Log.d("PhotoGalleryAdapter", "Total focusAreas in map: ${focusAreas.size}")
-            Log.d("PhotoGalleryAdapter", "focusAreas keys: ${focusAreas.keys.joinToString(", ")}")
 
             // Cancel any previous rendering job for this photo
             renderingJobs[photoPath]?.cancel()
@@ -51,9 +51,28 @@ class PhotoGalleryAdapter(
                     }
                     val bitmap = PhotoUtils.rotateImageIfNeeded(photoPath, options)
 
+                    // Fetch focusRect from PhotoRepository
+                    val photoEntity = photoRepository.getPhotoByFilePath(photoPath)
+                    val focusRectString = photoEntity?.focusRectString
+
+                    // Denormalize focus rect from normalized coordinates
+                    val focusRect = focusRectString?.let { rectString ->
+                        // Get the actual image dimensions to denormalize
+                        val imageOptions = BitmapFactory.Options().apply {
+                            inJustDecodeBounds = true
+                        }
+                        BitmapFactory.decodeFile(photoPath, imageOptions)
+                        val imageWidth = imageOptions.outWidth
+                        val imageHeight = imageOptions.outHeight
+
+                        Log.d("PhotoGalleryAdapter", "Image dimensions for denormalization: $imageWidth x $imageHeight")
+
+                        // Denormalize the focus rectangle using actual image dimensions
+                        PhotoUtils.normalizedStringToFocusRect(rectString, imageWidth, imageHeight)
+                    }
+
                     withContext(Dispatchers.Main) {
                         if (bitmap != null) {
-                            val focusRect = focusAreas[photoPath]
                             Log.d("PhotoGalleryAdapter", "Focus rect for $photoPath: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
 
                             if (focusRect != null) {
