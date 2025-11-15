@@ -103,6 +103,7 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
     private fun launchPhotoEditor(photoPath: String) {
         val intent = Intent(this, ImageEditorActivity::class.java).apply {
             putExtra(ImageEditorActivity.EXTRA_IMAGE_PATH, photoPath)
+            putExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH, photoPath) // Add output path
             putExtra("is_focus_only", true)
         }
         imageEditorLauncher.launch(intent)
