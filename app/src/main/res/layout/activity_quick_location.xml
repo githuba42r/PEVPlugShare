@@ -52,20 +52,69 @@
                 android:gravity="center"
                 android:layout_marginBottom="24dp" />
 
-            <Button
-                android:id="@+id/selectPhotosButton"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="Select Photos from Device"
-                android:textSize="16sp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
 
-            <Button
-                android:id="@+id/takePhotosButton"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="Take Photos with Camera"
-                android:textSize="16sp" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp">
+
+                    <ImageButton
+                        android:id="@+id/selectPhotosButton"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/circle_green_background"
+                        android:src="@drawable/ic_image_gallery"
+                        android:tint="@android:color/white"
+                        android:contentDescription="Select Photos from Device"
+                        android:scaleType="fitCenter"
+                        android:padding="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select Photos"
+                        android:layout_marginTop="8dp"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp">
+
+                    <ImageButton
+                        android:id="@+id/takePhotosButton"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/circle_green_background"
+                        android:src="@drawable/ic_camera"
+                        android:tint="@android:color/white"
+                        android:contentDescription="Take Photos with Camera"
+                        android:scaleType="fitCenter"
+                        android:padding="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Take Photos"
+                        android:layout_marginTop="8dp"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 

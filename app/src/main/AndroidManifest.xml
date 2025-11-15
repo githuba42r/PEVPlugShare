@@ -115,7 +115,7 @@
         <!-- FileProvider for camera images -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="com.a42r.pevplugshare.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
