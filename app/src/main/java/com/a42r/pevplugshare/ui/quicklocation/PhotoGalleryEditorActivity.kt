@@ -153,7 +153,8 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
 
         // Also load focus areas from SharedPreferences for persistence
         val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
-        Log.d("PhotoGalleryEditorActivity", "Loading focus areas from SharedPreferences")
+        Log.d("PhotoGalleryEditorActivity", "Loading focus areas from SharedPreferences - photoPaths.size=${photoPaths.size}")
+        Log.d("PhotoGalleryEditorActivity", "Current photoPaths: $photoPaths")
         for (photoPath in photoPaths) {
             val focusRectString = sharedPref.getString(photoPath, null)
             if (focusRectString != null) {
@@ -162,8 +163,11 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
                     focusAreas[photoPath] = rectF
                     Log.d("PhotoGalleryEditorActivity", "Loaded persisted focus area from SharedPreferences")
                 }
+            } else {
+                Log.d("PhotoGalleryEditorActivity", "No persisted focus found for: $photoPath")
             }
         }
+        Log.d("PhotoGalleryEditorActivity", "After loading from SharedPreferences - focusAreas.size=${focusAreas.size}, keys=${focusAreas.keys}")
 
         setupUI()
         updateUI() // Initial UI update
