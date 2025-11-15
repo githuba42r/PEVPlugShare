@@ -631,6 +631,10 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
 
             viewModel.updateLocation(location.latitude, location.longitude)
+            selectedLatitude = location.latitude
+            selectedLongitude = location.longitude
+            binding.locationCoordinatesTextView.text =
+                "📍 ${String.format("%.4f", location.latitude)}, ${String.format("%.4f", location.longitude)}"
         }
 
         viewModel.updateName(location.name)
