@@ -61,8 +61,16 @@
                 android:text="Context: 128K tokens"
                 android:textSize="12sp"
                 android:paddingTop="2dp"
-                android:textColor="?android:textColorSecondary"
-                android:visibility="gone" />
+                android:textColor="?android:textColorSecondary" />
+
+            <TextView
+                android:id="@+id/modelParameters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Parameters: 7B"
+                android:textSize="12sp"
+                android:paddingTop="2dp"
+                android:textColor="?android:textColorSecondary" />
 
             <TextView
                 android:id="@+id/modelLink"
