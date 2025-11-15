@@ -268,10 +268,10 @@ class QuickLocationActivity : AppCompatActivity() {
                 selectedLatitude = lat
                 selectedLongitude = lng
                 Log.d("QuickLocationActivity", "Using device location: $lat, $lng")
-                showLocationPickerDialog()
+                proceedAfterLocationPicker()
             }
         } else {
-            showLocationPickerDialog()
+            proceedAfterLocationPicker()
         }
     }
 
@@ -321,27 +321,7 @@ class QuickLocationActivity : AppCompatActivity() {
         }
     }
 
-    private val locationPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val resultBundle = result.data?.getBundleExtra("result")
-            if (resultBundle != null) {
-                selectedLatitude = resultBundle.getDouble("latitude")
-                selectedLongitude = resultBundle.getDouble("longitude")
-                selectedBearing = resultBundle.getFloat("bearing")
-                Log.d("QuickLocationActivity", "Location selected: $selectedLatitude, $selectedLongitude")
-            }
-            proceedAfterLocationPicker()
-        }
-    }
 
-    private fun showLocationPickerDialog() {
-        val intent = Intent(this, LocationPickerMapActivity::class.java).apply {
-            putExtra("latitude", selectedLatitude ?: -33.8688)
-            putExtra("longitude", selectedLongitude ?: 151.2093)
-            putExtra("bearing", selectedBearing ?: 0f)
-        }
-        locationPickerLauncher.launch(intent)
-    }
 
     private fun proceedAfterLocationPicker() {
         // After location is selected, proceed directly to photo editing
@@ -370,9 +350,20 @@ class QuickLocationActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             // Photos have been edited, proceed with workflow
             val editedPhotoPaths = result.data?.getStringArrayListExtra("edited_photo_paths")
+            val focusAreasBundle = result.data?.getBundleExtra("focus_areas")
+
             if (editedPhotoPaths != null) {
                 selectedPhotoPaths.clear()
                 selectedPhotoPaths.addAll(editedPhotoPaths)
+            }
+
+            focusAreasBundle?.let { bundle ->
+                for (path in selectedPhotoPaths) {
+                    val focusRectString = bundle.getString(path)
+                    if (focusRectString != null) {
+                        photoMetadata[path]?.focusRect = PhotoMetadata.deserializeRectF(focusRectString)
+                    }
+                }
             }
             proceedAfterPhotoEditing()
         }
@@ -431,6 +422,15 @@ class QuickLocationActivity : AppCompatActivity() {
 
     private fun proceedToAddLocation() {
         currentStep = Step.ADD_LOCATION
+
+        val focusAreasBundle = Bundle()
+        selectedPhotoPaths.forEach { path ->
+            photoMetadata[path]?.focusRect?.let { rectF ->
+                val focusRectString = "${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}"
+                focusAreasBundle.putString(path, focusRectString)
+            }
+        }
+
         val intent = Intent(this, EditLocationActivity::class.java).apply {
             if (selectedLatitude != null && selectedLongitude != null) {
                 putExtra("latitude", selectedLatitude!!)
@@ -440,6 +440,7 @@ class QuickLocationActivity : AppCompatActivity() {
                 putExtra("bearing", selectedBearing!!)
             }
             putStringArrayListExtra("photo_paths", ArrayList(selectedPhotoPaths))
+            putExtra("focus_areas", focusAreasBundle)
         }
         startActivity(intent)
         finish() // Finish QuickLocationActivity after launching EditLocationActivity
