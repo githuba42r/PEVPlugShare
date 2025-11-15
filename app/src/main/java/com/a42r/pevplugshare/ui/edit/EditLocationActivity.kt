@@ -357,6 +357,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             buttonParseDescription.setOnClickListener { parseDescriptionToFields() }
             // Parse button visible in both add and edit modes
 
+            // Reverse geocoding button
+            reverseGeocodeButton.setOnClickListener { performReverseGeocoding() }
+
             // Add name field text watcher to enable/disable submit button
             nameInput.addTextChangedListener(object : android.text.TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -595,6 +598,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private fun populateFormFromLocation(location: com.a42r.pevplugshare.data.model.Location) {
         binding.apply {
             nameInput.setText(location.name)
+            businessNameInput.setText(location.businessName ?: "")
+            streetAddressInput.setText(location.streetAddress ?: "")
+            suburbInput.setText(location.suburb ?: "")
+            stateInput.setText(location.state ?: "")
+            postcodeInput.setText(location.postcode ?: "")
             selectSocketCount(location.gpoCount)
             descriptionInput.setText(location.description ?: "")
             additionalInfoInput.setText(location.additionalInfo ?: "")
@@ -638,6 +646,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         }
 
         viewModel.updateName(location.name)
+        viewModel.updateBusinessName(location.businessName ?: "")
+        viewModel.updateStreetAddress(location.streetAddress ?: "")
+        viewModel.updateSuburb(location.suburb ?: "")
+        viewModel.updateState(location.state ?: "")
+        viewModel.updatePostcode(location.postcode ?: "")
         viewModel.updateGpoCount(location.gpoCount)
         viewModel.updateDescription(location.description ?: "")
         viewModel.updateOpeningHours(location.openingHours ?: "24/7")
@@ -760,9 +773,48 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun updateUIFromFormData(data: EditLocationFormData) {
+        Log.d("EditLocationActivity", "Updating UI with form data: $data")
         binding.apply {
+            // Update text fields with current form data values
+            nameInput.setText(data.name)
+            businessNameInput.setText(data.businessName)
+            streetAddressInput.setText(data.streetAddress)
+            suburbInput.setText(data.suburb)
+            stateInput.setText(data.state)
+            postcodeInput.setText(data.postcode)
+            descriptionInput.setText(data.description)
+            additionalInfoInput.setText(data.additionalInfo)
+            providerNameInput.setText(data.providerName)
+            chargingCostsInput.setText(data.chargingCosts)
+            providerWebsiteInput.setText(data.providerWebsite)
+
+            // Update checkbox
+            feeCheckbox.isChecked = data.hasFee
+            feeDetailsSection.visibility = if (data.hasFee) android.view.View.VISIBLE else android.view.View.GONE
+
+            // Set up focus change listeners to update ViewModel when user edits
             nameInput.setOnFocusChangeListener { _, _ ->
                 viewModel.updateName(nameInput.text.toString())
+            }
+
+            businessNameInput.setOnFocusChangeListener { _, _ ->
+                viewModel.updateBusinessName(businessNameInput.text.toString())
+            }
+
+            streetAddressInput.setOnFocusChangeListener { _, _ ->
+                viewModel.updateStreetAddress(streetAddressInput.text.toString())
+            }
+
+            suburbInput.setOnFocusChangeListener { _, _ ->
+                viewModel.updateSuburb(suburbInput.text.toString())
+            }
+
+            stateInput.setOnFocusChangeListener { _, _ ->
+                viewModel.updateState(stateInput.text.toString())
+            }
+
+            postcodeInput.setOnFocusChangeListener { _, _ ->
+                viewModel.updatePostcode(postcodeInput.text.toString())
             }
 
             descriptionInput.setOnFocusChangeListener { _, _ ->
@@ -1174,6 +1226,148 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun performReverseGeocoding() {
+        Log.d("EditLocationActivity", "performReverseGeocoding called")
+        // Get current coordinates from the form
+        val latitude = viewModel.formData.value.latitude
+        val longitude = viewModel.formData.value.longitude
+
+        Log.d("EditLocationActivity", "Coordinates: lat=$latitude, lon=$longitude")
+
+        if (latitude == 0.0 && longitude == 0.0) {
+            Toast.makeText(this, "No location coordinates available", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Show loading indicator
+        binding.reverseGeocodeButton.isEnabled = false
+        binding.reverseGeocodeButton.alpha = 0.5f
+
+        // Perform geocoding in a coroutine
+        lifecycleScope.launch {
+            try {
+                Log.d("EditLocationActivity", "Starting geocoding request")
+                val result = viewModel.performReverseGeocoding(latitude, longitude)
+                Log.d("EditLocationActivity", "Geocoding result: $result")
+                when (result) {
+                    is com.a42r.pevplugshare.data.remote.GeocodingResult.Success -> {
+                        Log.d("EditLocationActivity", "Geocoding success, showing confirmation dialog")
+                        showGeocodingConfirmationDialog(result)
+                    }
+                    is com.a42r.pevplugshare.data.remote.GeocodingResult.Error -> {
+                        Log.d("EditLocationActivity", "Geocoding error: ${result.message}")
+                        Toast.makeText(this@EditLocationActivity, "Geocoding failed: ${result.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("EditLocationActivity", "Error during reverse geocoding", e)
+                Toast.makeText(this@EditLocationActivity, "Error during geocoding", Toast.LENGTH_SHORT).show()
+            } finally {
+                // Re-enable button
+                binding.reverseGeocodeButton.isEnabled = true
+                binding.reverseGeocodeButton.alpha = 1.0f
+            }
+        }
+    }
+
+    private fun showGeocodingConfirmationDialog(geocodingResult: com.a42r.pevplugshare.data.remote.GeocodingResult.Success) {
+        Log.d("EditLocationActivity", "showGeocodingConfirmationDialog called with result: $geocodingResult")
+        // Get current form values
+        val currentFormData = viewModel.formData.value
+        Log.d("EditLocationActivity", "Current form data: $currentFormData")
+
+        // Build the changes message
+        val changes = StringBuilder()
+        changes.append("The following information will be updated:\n\n")
+
+        // Check location name
+        if (currentFormData.name.isBlank() && geocodingResult.displayName != null) {
+            changes.append("📍 Location Name: \"${geocodingResult.displayName}\"\n")
+        }
+
+        // Check business name
+        if (currentFormData.businessName.isBlank() && geocodingResult.displayName != null) {
+            changes.append("🏢 Business Name: \"${geocodingResult.displayName}\"\n")
+        }
+
+        // Check address fields
+        if (currentFormData.streetAddress.isBlank() && geocodingResult.streetAddress != null) {
+            changes.append("🏠 Street Address: \"${geocodingResult.streetAddress}\"\n")
+        }
+        if (currentFormData.suburb.isBlank() && geocodingResult.suburb != null) {
+            changes.append("🏙️ Suburb: \"${geocodingResult.suburb}\"\n")
+        }
+        if (currentFormData.state.isBlank() && geocodingResult.state != null) {
+            changes.append("🗺️ State: \"${geocodingResult.state}\"\n")
+        }
+        if (currentFormData.postcode.isBlank() && geocodingResult.postcode != null) {
+            changes.append("📮 Postcode: \"${geocodingResult.postcode}\"\n")
+        }
+
+        val changesMessage = changes.toString()
+        Log.d("EditLocationActivity", "Changes message: $changesMessage")
+
+        if (changesMessage == "The following information will be updated:\n\n") {
+            // No changes to show
+            Log.d("EditLocationActivity", "No changes to show, showing toast")
+            Toast.makeText(this, "No new information found at this location", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Show confirmation dialog
+        Log.d("EditLocationActivity", "Showing confirmation dialog")
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Confirm Address Update")
+            .setMessage(changesMessage)
+            .setPositiveButton("Apply Changes") { dialog, _ ->
+                Log.d("EditLocationActivity", "User confirmed changes, applying results")
+                dialog.dismiss()
+                applyGeocodingResults(geocodingResult)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun applyGeocodingResults(geocodingResult: com.a42r.pevplugshare.data.remote.GeocodingResult.Success) {
+        Log.d("EditLocationActivity", "applyGeocodingResults called with result: $geocodingResult")
+        val currentFormData = viewModel.formData.value
+        Log.d("EditLocationActivity", "Current form data before update: $currentFormData")
+
+        // Update form data with geocoding results (only if fields are currently empty)
+        if (currentFormData.name.isBlank() && geocodingResult.displayName != null) {
+            Log.d("EditLocationActivity", "Updating name to: ${geocodingResult.displayName}")
+            viewModel.updateName(geocodingResult.displayName)
+        }
+
+        if (currentFormData.businessName.isBlank() && geocodingResult.displayName != null) {
+            Log.d("EditLocationActivity", "Updating businessName to: ${geocodingResult.displayName}")
+            viewModel.updateBusinessName(geocodingResult.displayName)
+        }
+
+        if (currentFormData.streetAddress.isBlank() && geocodingResult.streetAddress != null) {
+            Log.d("EditLocationActivity", "Updating streetAddress to: ${geocodingResult.streetAddress}")
+            viewModel.updateStreetAddress(geocodingResult.streetAddress)
+        }
+
+        if (currentFormData.suburb.isBlank() && geocodingResult.suburb != null) {
+            Log.d("EditLocationActivity", "Updating suburb to: ${geocodingResult.suburb}")
+            viewModel.updateSuburb(geocodingResult.suburb)
+        }
+
+        if (currentFormData.state.isBlank() && geocodingResult.state != null) {
+            Log.d("EditLocationActivity", "Updating state to: ${geocodingResult.state}")
+            viewModel.updateState(geocodingResult.state)
+        }
+
+        if (currentFormData.postcode.isBlank() && geocodingResult.postcode != null) {
+            Log.d("EditLocationActivity", "Updating postcode to: ${geocodingResult.postcode}")
+            viewModel.updatePostcode(geocodingResult.postcode)
+        }
+
+        Log.d("EditLocationActivity", "Form data after update: ${viewModel.formData.value}")
+        Toast.makeText(this, "Address information updated", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupPhotoSection() {
