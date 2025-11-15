@@ -314,7 +314,7 @@ class ImageEditorActivity : AppCompatActivity() {
             matrix.getValues(currentScale)
             currentZoom = currentScale[Matrix.MSCALE_X]
 
-            if (currentMode == EditorMode.MAIN) {
+            val handledByZoom = if (currentMode == EditorMode.MAIN) {
                 val x = event.x
                 val y = event.y
 
@@ -343,18 +343,23 @@ class ImageEditorActivity : AppCompatActivity() {
                     }
                 }
                 imageView.imageMatrix = matrix
-                updateResetZoomIconVisibility()
-                return@setOnTouchListener true
+                true // Event handled by zoom/drag
             } else {
-                // Handle drawing for CROP/FOCUS modes
+                false // Not handled by zoom/drag in CROP/FOCUS mode
+            }
+
+            val handledByRectDrawing = if (!handledByZoom) {
                 when (currentMode) {
                     EditorMode.CROP -> handleRectDrawing(event, RectType.CROP)
                     EditorMode.FOCUS -> handleRectDrawing(event, RectType.FOCUS)
                     else -> false
                 }
-                updateResetZoomIconVisibility()
-                return@setOnTouchListener true
+            } else {
+                false
             }
+
+            updateResetZoomIconVisibility()
+            return@setOnTouchListener handledByZoom || handledByRectDrawing
         }
 
         addRotationControls()
@@ -416,20 +421,21 @@ class ImageEditorActivity : AppCompatActivity() {
     private var activeHandle = -1 // 0-TL, 1-TR, 2-BL, 3-BR, 4-Move
 
     private fun handleRectDrawing(event: MotionEvent, type: RectType): Boolean {
+        Log.d("RectDrawing", "handleRectDrawing called for type $type, event action: ${event.action}")
         val currentRect = if (type == RectType.CROP) cropRect else focusRect
-        if (currentRect == null) return false
+        if (currentRect == null) {
+            Log.d("RectDrawing", "handleRectDrawing: currentRect is null for type $type. Returning false.")
+            return false
+        }
 
-        // Convert touch coordinates to bitmap coordinates
-        val bitmapCoords = imageViewToBitmapCoords(event.x, event.y)
-        val bitmapX = bitmapCoords.x
-        val bitmapY = bitmapCoords.y
-
-        val handleSize = 30f // Larger handle size for easier interaction
+        val rectHandler = RectSelectionHandler(type)
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 activeRectType = type
-                activeHandle = getActiveHandle(bitmapX, bitmapY, currentRect, handleSize)
+                Log.d("RectDrawing", "Calling getActiveHandle with eventX=${event.x}, eventY=${event.y}, currentRect=$currentRect")
+                activeHandle = rectHandler.getActiveHandle(event.x, event.y, currentRect)
+                Log.d("RectDrawing", "ACTION_DOWN: type=$type, touch=(${event.x}, ${event.y}), activeHandle=$activeHandle")
                 if (activeHandle != -1) {
                     // Change color to indicate active resizing
                     refreshImageWithOverlay(true, type)
@@ -437,13 +443,16 @@ class ImageEditorActivity : AppCompatActivity() {
             }
             MotionEvent.ACTION_MOVE -> {
                 if (activeHandle != -1 && activeRectType == type) {
-                    val newRect = adjustRect(currentRect, activeHandle, bitmapX, bitmapY)
+                    Log.d("RectDrawing", "ACTION_MOVE: type=$type, touch=(${event.x}, ${event.y}), activeHandle=$activeHandle, originalRect=$currentRect")
+                    val newRect = rectHandler.adjustRect(currentRect, activeHandle, event.x, event.y)
                     if (type == RectType.CROP) cropRect = newRect else focusRect = newRect
                     refreshImageWithOverlay(true, type)
                     hasUnsavedChanges = true
+                    Log.d("RectDrawing", "ACTION_MOVE: newRect=$newRect")
                 }
             }
             MotionEvent.ACTION_UP -> {
+                Log.d("RectDrawing", "ACTION_UP: type=$type, touch=(${event.x}, ${event.y}), activeHandle=$activeHandle")
                 activeHandle = -1
                 activeRectType = null
                 refreshImageWithOverlay(false, type) // Revert color
@@ -453,68 +462,104 @@ class ImageEditorActivity : AppCompatActivity() {
         return true
     }
 
-    private fun getActiveHandle(x: Float, y: Float, rect: RectF, handleSize: Float): Int {
-        val halfHandle = handleSize / 2
-        // Top-Left
-        if (x >= rect.left - halfHandle && x <= rect.left + halfHandle &&
-            y >= rect.top - halfHandle && y <= rect.top + halfHandle) return 0
-        // Top-Right
-        if (x >= rect.right - halfHandle && x <= rect.right + halfHandle &&
-            y >= rect.top - halfHandle && y <= rect.top + halfHandle) return 1
-        // Bottom-Left
-        if (x >= rect.left - halfHandle && x <= rect.left + halfHandle &&
-            y >= rect.bottom - halfHandle && y <= rect.bottom + halfHandle) return 2
-        // Bottom-Right
-        if (x >= rect.right - halfHandle && x <= rect.right + halfHandle &&
-            y >= rect.bottom - halfHandle && y <= rect.bottom + halfHandle) return 3
-        // Move (inside the rect) - Only for CROP, not for FOCUS
-        if (activeRectType == RectType.CROP && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return 4
-        return -1
-    }
+    private inner class RectSelectionHandler(private val type: RectType) {
+        private val handleHalfSize = 140f // Increased half size of the square handles (total size 280f)
+        private val minSize = 50f // Minimum size for the rect
 
-    private fun adjustRect(originalRect: RectF, handle: Int, newX: Float, newY: Float): RectF {
-        val minSize = 50f // Minimum size for the rect
-        var left = originalRect.left
-        var top = originalRect.top
-        var right = originalRect.right
-        var bottom = originalRect.bottom
+        fun getActiveHandle(x: Float, y: Float, rect: RectF): Int {
+            Log.d("RectSelectionHandler", "getActiveHandle: x=$x, y=$y, rect=$rect, handleHalfSize=$handleHalfSize")
 
-        when (handle) {
-            0 -> { // Top-Left
-                left = newX.coerceAtMost(right - minSize)
-                top = newY.coerceAtMost(bottom - minSize)
+            // Convert rect corners to view coordinates
+            val rectCorners = floatArrayOf(
+                rect.left, rect.top,
+                rect.right, rect.top,
+                rect.left, rect.bottom,
+                rect.right, rect.bottom
+            )
+            imageView.imageMatrix.mapPoints(rectCorners)
+
+            val viewRect = RectF(
+                rectCorners[0], rectCorners[1],
+                rectCorners[6], rectCorners[7] // Use bottom-right for width/height
+            )
+
+            // Adjust viewRect to be correct
+            viewRect.left = minOf(rectCorners[0], rectCorners[2], rectCorners[4], rectCorners[6])
+            viewRect.top = minOf(rectCorners[1], rectCorners[3], rectCorners[5], rectCorners[7])
+            viewRect.right = maxOf(rectCorners[0], rectCorners[2], rectCorners[4], rectCorners[6])
+            viewRect.bottom = maxOf(rectCorners[1], rectCorners[3], rectCorners[5], rectCorners[7])
+
+            val viewHalfHandle = handleHalfSize * imageView.imageMatrix.mapRadius(1f) // Scale handle size by current zoom
+
+            // Top-Left
+            if (x >= viewRect.left - viewHalfHandle && x <= viewRect.left + viewHalfHandle &&
+                y >= viewRect.top - viewHalfHandle && y <= viewRect.top + viewHalfHandle) {
+                Log.d("RectSelectionHandler", "Handle: Top-Left (0) - Detected!")
+                return 0
             }
-            1 -> { // Top-Right
-                right = newX.coerceAtLeast(left + minSize)
-                top = newY.coerceAtMost(bottom - minSize)
+            // Top-Right
+            if (x >= viewRect.right - viewHalfHandle && x <= viewRect.right + viewHalfHandle &&
+                y >= viewRect.top - viewHalfHandle && y <= viewRect.top + viewHalfHandle) {
+                Log.d("RectSelectionHandler", "Handle: Top-Right (1) - Detected!")
+                return 1
             }
-            2 -> { // Bottom-Left
-                left = newX.coerceAtMost(right - minSize)
-                bottom = newY.coerceAtLeast(top + minSize)
+            // Bottom-Left
+            if (x >= viewRect.left - viewHalfHandle && x <= viewRect.left + viewHalfHandle &&
+                y >= viewRect.bottom - viewHalfHandle && y <= viewRect.bottom + viewHalfHandle) {
+                Log.d("RectSelectionHandler", "Handle: Bottom-Left (2) - Detected!")
+                return 2
             }
-            3 -> { // Bottom-Right
-                right = newX.coerceAtLeast(left + minSize)
-                bottom = newY.coerceAtLeast(top + minSize)
+            // Bottom-Right
+            if (x >= viewRect.right - viewHalfHandle && x <= viewRect.right + viewHalfHandle &&
+                y >= viewRect.bottom - viewHalfHandle && y <= viewRect.bottom + viewHalfHandle) {
+                Log.d("RectSelectionHandler", "Handle: Bottom-Right (3) - Detected!")
+                return 3
             }
-            4 -> { // Move - Only for CROP
-                if (activeRectType == RectType.CROP) {
-                    val dx = newX - originalRect.centerX()
-                    val dy = newY - originalRect.centerY()
-                    left += dx
-                    top += dy
-                    right += dx
-                    bottom += dy
-                }
-            }
+            Log.d("RectSelectionHandler", "Handle: None (-1)")
+            return -1
         }
 
-        // Ensure rect stays within image bounds
-        left = left.coerceIn(0f, editBitmap.width.toFloat() - minSize)
-        top = top.coerceIn(0f, editBitmap.height.toFloat() - minSize)
-        right = right.coerceIn(left + minSize, editBitmap.width.toFloat())
-        bottom = bottom.coerceIn(top + minSize, editBitmap.height.toFloat())
+        fun adjustRect(originalRect: RectF, handle: Int, newX: Float, newY: Float): RectF {
+            Log.d("RectSelectionHandler", "adjustRect: originalRect=$originalRect, handle=$handle, newX=$newX, newY=$newY")
+            var left = originalRect.left
+            var top = originalRect.top
+            var right = originalRect.right
+            var bottom = originalRect.bottom
 
-        return RectF(left, top, right, bottom)
+            // Convert newX, newY from view coordinates back to bitmap coordinates
+            val bitmapCoords = imageViewToBitmapCoords(newX, newY)
+            val bitmapNewX = bitmapCoords.x
+            val bitmapNewY = bitmapCoords.y
+
+            when (handle) {
+                0 -> { // Top-Left
+                    left = bitmapNewX.coerceAtMost(right - minSize)
+                    top = bitmapNewY.coerceAtMost(bottom - minSize)
+                }
+                1 -> { // Top-Right
+                    right = bitmapNewX.coerceAtLeast(left + minSize)
+                    top = bitmapNewY.coerceAtMost(bottom - minSize)
+                }
+                2 -> { // Bottom-Left
+                    left = bitmapNewX.coerceAtMost(right - minSize)
+                    bottom = bitmapNewY.coerceAtLeast(top + minSize)
+                }
+                3 -> { // Bottom-Right
+                    right = bitmapNewX.coerceAtLeast(left + minSize)
+                    bottom = bitmapNewY.coerceAtLeast(top + minSize)
+                }
+            }
+
+            // Ensure rect stays within image bounds
+            left = left.coerceIn(0f, editBitmap.width.toFloat() - minSize)
+            top = top.coerceIn(0f, editBitmap.height.toFloat() - minSize)
+            right = right.coerceIn(left + minSize, editBitmap.width.toFloat())
+            bottom = bottom.coerceIn(top + minSize, editBitmap.height.toFloat())
+
+            val newRect = RectF(left, top, right, bottom)
+            Log.d("RectSelectionHandler", "adjustRect: newRect=$newRect")
+            return newRect
+        }
     }
 
     private fun imageViewToBitmapCoords(x: Float, y: Float): PointF {
@@ -529,12 +574,17 @@ class ImageEditorActivity : AppCompatActivity() {
         val tempBitmap = editBitmap.copy(editBitmap.config, true)
         val canvas = Canvas(tempBitmap)
 
+        val currentImageMatrixValues = FloatArray(9)
+        imageView.imageMatrix.getValues(currentImageMatrixValues)
+        Log.d("RectDrawing", "refreshImageWithOverlay: Image Matrix = ${currentImageMatrixValues.contentToString()}")
+
         // Draw crop rectangle
         cropRect?.let { rect ->
+            Log.d("RectDrawing", "refreshImageWithOverlay: Drawing Crop Rect = $rect")
             val paint = Paint().apply {
                 color = if (isActive && type == RectType.CROP) 0xFFFF0000.toInt() else 0xFFCC0000.toInt() // Red or darker red
                 style = Paint.Style.STROKE
-                strokeWidth = 5f
+                strokeWidth = 10f // Increased border width
             }
             canvas.drawRect(rect, paint)
             drawHandles(canvas, rect, paint.color)
@@ -542,10 +592,11 @@ class ImageEditorActivity : AppCompatActivity() {
 
         // Draw focus rectangle
         focusRect?.let { rect ->
+            Log.d("RectDrawing", "refreshImageWithOverlay: Drawing Focus Rect = $rect")
             val paint = Paint().apply {
                 color = if (isActive && type == RectType.FOCUS) 0xFFFFFF00.toInt() else 0xFFCCCC00.toInt() // Yellow or darker yellow
                 style = Paint.Style.STROKE
-                strokeWidth = 5f
+                strokeWidth = 10f // Increased border width
             }
             canvas.drawRect(rect, paint)
             drawHandles(canvas, rect, paint.color)
@@ -556,24 +607,24 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun drawHandles(canvas: Canvas, rect: RectF, color: Int) {
-        val handleSize = 40f // Increased size of the square handles
+        val handleHalfSize = 140f // Half size of the square handles (total size 280f)
         val cornerPaint = Paint().apply {
             this.color = color
             style = Paint.Style.FILL
         }
 
         // Top-Left
-        canvas.drawRect(rect.left - handleSize, rect.top - handleSize,
-            rect.left + handleSize, rect.top + handleSize, cornerPaint)
+        canvas.drawRect(rect.left - handleHalfSize, rect.top - handleHalfSize,
+            rect.left + handleHalfSize, rect.top + handleHalfSize, cornerPaint)
         // Top-Right
-        canvas.drawRect(rect.right - handleSize, rect.top - handleSize,
-            rect.right + handleSize, rect.top + handleSize, cornerPaint)
+        canvas.drawRect(rect.right - handleHalfSize, rect.top - handleHalfSize,
+            rect.right + handleHalfSize, rect.top + handleHalfSize, cornerPaint)
         // Bottom-Left
-        canvas.drawRect(rect.left - handleSize, rect.bottom - handleSize,
-            rect.left + handleSize, rect.bottom + handleSize, cornerPaint)
+        canvas.drawRect(rect.left - handleHalfSize, rect.bottom - handleHalfSize,
+            rect.left + handleHalfSize, rect.bottom + handleHalfSize, cornerPaint)
         // Bottom-Right
-        canvas.drawRect(rect.right - handleSize, rect.bottom - handleSize,
-            rect.right + handleSize, rect.bottom + handleSize, cornerPaint)
+        canvas.drawRect(rect.right - handleHalfSize, rect.bottom - handleHalfSize,
+            rect.right + handleHalfSize, rect.bottom + handleHalfSize, cornerPaint)
     }
 
     private fun applyCrop() {
