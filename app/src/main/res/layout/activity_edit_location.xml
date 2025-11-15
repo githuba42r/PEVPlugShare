@@ -540,6 +540,19 @@
                     style="@style/CustomOutlinedButton" />
             </LinearLayout>
 
+            <!-- Delete Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonDelete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Delete Location"
+                android:textSize="16sp"
+                style="@style/CustomOutlinedButton"
+                app:strokeColor="@android:color/holo_red_dark"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone" />
+
             <!-- Sync to OSMAnd Button (shown when pending sync) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSyncToOsmand"

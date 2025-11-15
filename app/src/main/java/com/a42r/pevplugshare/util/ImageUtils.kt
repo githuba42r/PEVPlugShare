@@ -139,4 +139,18 @@ object ImageUtils {
         val locationDir = getLocationImageDirectory(context, locationId)
         locationDir.listFiles()?.forEach { it.delete() }
     }
+
+    fun deleteImageFile(imagePath: String): Boolean {
+        return try {
+            val file = File(imagePath)
+            if (file.exists()) {
+                file.delete()
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("ImageUtils", "Error deleting image file: $imagePath", e)
+            false
+        }
+    }
 }

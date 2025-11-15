@@ -312,6 +312,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             buttonSyncToOsmand.setOnClickListener { syncToOsmand() }
             // Hide sync button in add mode
             buttonSyncToOsmand.visibility = if (isAddMode) android.view.View.GONE else android.view.View.VISIBLE
+
+            // Delete button visibility and click listener
+            binding.buttonDelete.visibility = if (isAddMode) android.view.View.GONE else android.view.View.VISIBLE
+            binding.buttonDelete.setOnClickListener {
+                showDeleteConfirmationDialog()
+            }
             
             // Setup AI buttons - hide if no API key
             val hasApiKey = tokenManager.getOpenRouterApiKey()?.isNotBlank() == true
@@ -532,6 +538,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         val message = if (isAddMode) "Location added!" else "Location updated!"
                         Toast.makeText(this@EditLocationActivity, message, Toast.LENGTH_SHORT).show()
                         setResult(RESULT_OK)
+                        finish()
+                    }
+                    is EditLocationState.DeleteSuccess -> {
+                        binding.progressBar.visibility = android.view.View.GONE
+                        Toast.makeText(this@EditLocationActivity, "Location deleted!", Toast.LENGTH_SHORT).show()
+                        setResult(RESULT_OK) // Indicate success to previous activity
                         finish()
                     }
                     is EditLocationState.Error -> {
@@ -959,6 +971,20 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         }
     }
     
+    private fun showDeleteConfirmationDialog() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Delete Location")
+            .setMessage("Are you sure you want to delete this location and all its associated images? This action cannot be undone.")
+            .setPositiveButton("Delete") { dialog, _ ->
+                dialog.dismiss()
+                locationId?.let { id ->
+                    viewModel.deleteLocation(id)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
     private fun setupPhotoSection() {
         binding.addPhotoButton.setOnClickListener {
             if (photoUris.size < maxPhotos) {
