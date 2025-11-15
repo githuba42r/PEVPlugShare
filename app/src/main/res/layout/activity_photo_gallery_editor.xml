@@ -74,13 +74,15 @@
             android:textSize="14sp"
             android:textColor="@android:color/darker_gray" />
 
-        <com.google.android.material.button.MaterialButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addMoreImagesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add More Images"
-            app:icon="@drawable/ic_add"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            android:src="@drawable/ic_add"
+            app:tint="@android:color/white"
+            app:fabSize="mini"
+            app:backgroundTint="?attr/colorPrimary"
+            android:contentDescription="Add more images" />
     </LinearLayout>
 
     <!-- Action Buttons -->
