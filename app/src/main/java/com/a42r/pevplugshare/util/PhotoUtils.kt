@@ -262,5 +262,67 @@ object PhotoUtils {
         }
     }
 
+    /**
+     * Normalize focus rectangle to 0-1 coordinates relative to bitmap dimensions
+     * This ensures the focus rectangle remains valid even if the image is scaled/resampled
+     */
+    fun normalizeFocusRect(focusRect: RectF, bitmapWidth: Int, bitmapHeight: Int): RectF {
+        return RectF(
+            focusRect.left / bitmapWidth,
+            focusRect.top / bitmapHeight,
+            focusRect.right / bitmapWidth,
+            focusRect.bottom / bitmapHeight
+        )
+    }
+
+    /**
+     * Denormalize focus rectangle from 0-1 coordinates to actual pixel coordinates
+     * based on provided bitmap dimensions
+     */
+    fun denormalizeFocusRect(normalizedRect: RectF, bitmapWidth: Int, bitmapHeight: Int): RectF {
+        return RectF(
+            normalizedRect.left * bitmapWidth,
+            normalizedRect.top * bitmapHeight,
+            normalizedRect.right * bitmapWidth,
+            normalizedRect.bottom * bitmapHeight
+        )
+    }
+
+    /**
+     * Convert focus rectangle to normalized string format (0-1 coordinates)
+     */
+    fun focusRectToNormalizedString(focusRect: RectF, bitmapWidth: Int, bitmapHeight: Int): String {
+        Log.d(TAG, "Normalizing focus rect: ${focusRect.left},${focusRect.top},${focusRect.right},${focusRect.bottom}")
+        Log.d(TAG, "Using bitmap dimensions: $bitmapWidth x $bitmapHeight")
+        val normalized = normalizeFocusRect(focusRect, bitmapWidth, bitmapHeight)
+        val result = "${normalized.left},${normalized.top},${normalized.right},${normalized.bottom}"
+        Log.d(TAG, "Normalized result: $result")
+        return result
+    }
+
+    /**
+     * Convert normalized string to focus rectangle in pixel coordinates
+     */
+    fun normalizedStringToFocusRect(normalizedString: String?, bitmapWidth: Int, bitmapHeight: Int): RectF? {
+        if (normalizedString == null) return null
+        return try {
+            val parts = normalizedString.trim().split(',').map { it.trim().toFloat() }
+            if (parts.size == 4) {
+                val normalizedRect = RectF(parts[0], parts[1], parts[2], parts[3])
+                Log.d(TAG, "Parsed normalized rect: ${normalizedRect.left},${normalizedRect.top},${normalizedRect.right},${normalizedRect.bottom}")
+                Log.d(TAG, "Denormalizing with bitmap dimensions: $bitmapWidth x $bitmapHeight")
+                val denormalized = denormalizeFocusRect(normalizedRect, bitmapWidth, bitmapHeight)
+                Log.d(TAG, "Denormalized to: ${denormalized.left},${denormalized.top},${denormalized.right},${denormalized.bottom}")
+                denormalized
+            } else {
+                Log.w(TAG, "Invalid normalized focusRectString format: $normalizedString (parts.size=${parts.size})")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parsing normalized focusRectString: $normalizedString", e)
+            null
+        }
+    }
+
     private const val TAG = "PhotoUtils"
 }

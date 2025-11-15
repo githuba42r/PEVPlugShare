@@ -4,6 +4,8 @@ import android.graphics.RectF
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+import com.google.gson.Gson
+
 /**
  * Photo metadata extracted from EXIF data
  */
@@ -43,5 +45,15 @@ data class PhotoMetadata(
             }
             String.format("%.1f° (%s)", it, direction)
         } ?: "No bearing data"
+    }
+
+    fun toJsonString(): String {
+        return Gson().toJson(this)
+    }
+
+    companion object {
+        fun fromJsonString(jsonString: String): PhotoMetadata {
+            return Gson().fromJson(jsonString, PhotoMetadata::class.java)
+        }
     }
 }
