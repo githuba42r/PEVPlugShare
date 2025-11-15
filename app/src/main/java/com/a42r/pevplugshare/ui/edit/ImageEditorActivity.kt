@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector // Import ScaleGestureDetector
 import android.view.View // Import View
 import android.widget.ImageView
 import android.widget.Toast
@@ -30,6 +31,7 @@ import java.io.FileOutputStream
 import android.graphics.PointF // Import PointF
 import android.content.Intent // Import Intent
 import androidx.annotation.DrawableRes // Import DrawableRes
+import androidx.appcompat.app.AlertDialog // Import AlertDialog
 
 /**
  * Activity for editing images: crop, zoom, and define focus areas
@@ -40,10 +42,9 @@ class ImageEditorActivity : AppCompatActivity() {
     private lateinit var mainControlsLayout: GridLayout // Changed from LinearLayout
     private lateinit var cropControlsLayout: LinearLayout // New
     private lateinit var focusControlsLayout: LinearLayout // New
+    private lateinit var resetZoomIcon: ImageView // New
 
     // Main controls
-    private lateinit var zoomInButton: View
-    private lateinit var zoomOutButton: View
     private lateinit var rotateLeftButton: View
     private lateinit var rotateRightButton: View
     private lateinit var focusButton: View
@@ -69,6 +70,22 @@ class ImageEditorActivity : AppCompatActivity() {
     private var focusRect: RectF? = null
     private var cropRect: RectF? = null // New for crop region
     private var currentMode: EditorMode = EditorMode.MAIN // New state management
+    private var hasUnsavedChanges: Boolean = false // New flag to track changes
+
+    // Pinch-to-zoom variables
+    private var scaleGestureDetector: ScaleGestureDetector? = null
+    private var matrix = Matrix()
+    private var savedMatrix = Matrix()
+    private val start = PointF()
+    private val mid = PointF()
+    private var mode = NONE
+    private var lastTouchX = 0f
+    private var lastTouchY = 0f
+
+    private val MIN_ZOOM = 0.5f
+    private val MAX_ZOOM = 5.0f
+
+    private val ZOOM = 2
 
     enum class EditorMode {
         MAIN, CROP, FOCUS
@@ -80,6 +97,10 @@ class ImageEditorActivity : AppCompatActivity() {
         const val EXTRA_FOCUS_RECT = "focus_rect"
         const val EXTRA_METADATA = "metadata"
         const val MAX_IMAGE_TEXTURE_SIZE = 2048 // Maximum dimension for width or height
+
+        const val NONE = 0
+        const val DRAG = 1
+        const val ZOOM = 2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,14 +114,9 @@ class ImageEditorActivity : AppCompatActivity() {
             mainControlsLayout = findViewById<GridLayout>(R.id.mainControlsLayout)
             cropControlsLayout = findViewById<LinearLayout>(R.id.cropControlsLayout)
             focusControlsLayout = findViewById<LinearLayout>(R.id.focusControlsLayout)
+            resetZoomIcon = findViewById(R.id.resetZoomIcon) // New
 
             // Main controls
-            zoomInButton = findViewById(R.id.zoomInButton)
-            setupIconButton(zoomInButton, R.drawable.ic_zoom_in, "Zoom +")
-
-            zoomOutButton = findViewById(R.id.zoomOutButton)
-            setupIconButton(zoomOutButton, R.drawable.ic_zoom_out, "Zoom -")
-
             rotateLeftButton = findViewById(R.id.rotateLeftButton)
             setupIconButton(rotateLeftButton, R.drawable.ic_rotate_left, "Rotate Left")
 
@@ -168,109 +184,166 @@ class ImageEditorActivity : AppCompatActivity() {
         view.findViewById<TextView>(R.id.labelTextView).text = label
     }
 
+    private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            var scaleFactor = detector.scaleFactor
+            val currentScale = FloatArray(9)
+            matrix.getValues(currentScale)
+            val prevScale = currentScale[Matrix.MSCALE_X]
 
+            // Limit zoom in/out
+            if (prevScale * scaleFactor > MAX_ZOOM) {
+                scaleFactor = MAX_ZOOM / prevScale
+            }
+            if (prevScale * scaleFactor < MIN_ZOOM) {
+                scaleFactor = MIN_ZOOM / prevScale
+            }
+
+            matrix.postScale(scaleFactor, scaleFactor, detector.focusX, detector.focusY)
+            imageView.imageMatrix = matrix
+            currentZoom = prevScale * scaleFactor
+            updateResetZoomIconVisibility()
+            hasUnsavedChanges = true
+            return true
+        }
+    }
 
     private fun setupUI() {
-        // Zoom controls
-        zoomInButton.setOnClickListener {
-            zoomImage(1.2f)
-        }
-        zoomOutButton.setOnClickListener {
-            zoomImage(0.8f)
-        }
+        scaleGestureDetector = ScaleGestureDetector(this, ScaleListener())
 
         // Main menu controls
+        rotateLeftButton.setOnClickListener {
+            rotateBitmapUser(-90f)
+            hasUnsavedChanges = true
+        }
+
+        rotateRightButton.setOnClickListener {
+            rotateBitmapUser(90f)
+            hasUnsavedChanges = true
+        }
+
         focusButton.setOnClickListener {
             currentMode = EditorMode.FOCUS
             updateUIForMode(currentMode)
             // Initialize default focus rect
             focusRect = getDefaultRect()
             refreshImageWithOverlay()
+            hasUnsavedChanges = true
         }
-
-        cropButton.setOnClickListener {
-            currentMode = EditorMode.CROP
-            updateUIForMode(currentMode)
-            // Initialize default crop rect
-            cropRect = getDefaultRect()
-            refreshImageWithOverlay()
-        }
-
-        resetButton.setOnClickListener {
-            editBitmap = originalBitmap.copy(originalBitmap.config, true)
-            focusRect = null
-            cropRect = null
-            currentZoom = 1.0f
-            imageView.scaleX = 1f
-            imageView.scaleY = 1f
-            refreshImageWithOverlay()
-            Toast.makeText(this, "All edits reset", Toast.LENGTH_SHORT).show()
-        }
-
-        saveButton.setOnClickListener {
-            saveImage(false) // Save and finish
-        }
-
-        saveNewButton.setOnClickListener {
-            saveImage(true) // Save as new and finish
-        }
-
-        cancelButton.setOnClickListener {
-            setResult(RESULT_CANCELED)
-            finish()
-        }
-
-        // Crop sub-menu controls
-        cropCancelButton.setOnClickListener {
-            currentMode = EditorMode.MAIN
-            cropRect = null // Clear crop selection
-            updateUIForMode(currentMode)
-            refreshImageWithOverlay()
-        }
-
-        cropResetButton.setOnClickListener {
-            cropRect = getDefaultRect()
-            refreshImageWithOverlay()
-        }
-
-        cropApplyButton.setOnClickListener {
-            applyCrop()
-            currentMode = EditorMode.MAIN
-            updateUIForMode(currentMode)
-            refreshImageWithOverlay()
-        }
-
-        // Focus sub-menu controls
-        focusCancelButton.setOnClickListener {
-            currentMode = EditorMode.MAIN
-            focusRect = null // Clear focus selection
-            updateUIForMode(currentMode)
-            refreshImageWithOverlay()
-        }
-
-        focusResetButton.setOnClickListener {
-            focusRect = getDefaultRect()
-            refreshImageWithOverlay()
-        }
-
-        focusApplyButton.setOnClickListener {
-            currentMode = EditorMode.MAIN
-            updateUIForMode(currentMode)
-            refreshImageWithOverlay()
-            Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
-        }
-
-        // Image canvas touch handling
-        imageView.setOnTouchListener { _, event ->
-            when (currentMode) {
-                EditorMode.CROP -> handleRectDrawing(event, RectType.CROP)
-                EditorMode.FOCUS -> handleRectDrawing(event, RectType.FOCUS)
-                else -> false // No drawing in MAIN mode
+    
+            cropButton.setOnClickListener {
+                currentMode = EditorMode.CROP
+                updateUIForMode(currentMode)
+                // Initialize default crop rect
+                cropRect = getDefaultRect()
+                refreshImageWithOverlay()
+                hasUnsavedChanges = true
             }
+    
+            resetButton.setOnClickListener {
+                editBitmap = originalBitmap.copy(originalBitmap.config, true)
+                focusRect = null
+                cropRect = null
+                currentZoom = 1.0f
+                imageView.scaleX = 1f
+                imageView.scaleY = 1f
+                refreshImageWithOverlay()
+                Toast.makeText(this, "All edits reset", Toast.LENGTH_SHORT).show()
+                hasUnsavedChanges = false // Reset changes flag
+            }
+    
+            saveButton.setOnClickListener {
+                saveImage(false) // Save and finish
+                hasUnsavedChanges = false // Reset changes flag
+            }
+    
+            saveNewButton.setOnClickListener {
+                saveImage(true) // Save as new and finish
+                hasUnsavedChanges = false // Reset changes flag
+            }
+    
+            cancelButton.setOnClickListener {
+                if (hasUnsavedChanges) {
+                    showDiscardChangesDialog()
+                } else {
+                    setResult(RESULT_CANCELED)
+                    finish()
+                }
+            }
+    
+            // Crop sub-menu controls
+            cropCancelButton.setOnClickListener {
+                currentMode = EditorMode.MAIN
+                cropRect = null // Clear crop selection
+                updateUIForMode(currentMode)
+                refreshImageWithOverlay()
+                // No change to hasUnsavedChanges here, as it's a cancel of a sub-operation
+            }
+    
+            cropResetButton.setOnClickListener {
+                cropRect = getDefaultRect()
+                refreshImageWithOverlay()
+                hasUnsavedChanges = true
+            }
+    
+            cropApplyButton.setOnClickListener {
+                applyCrop()
+                currentMode = EditorMode.MAIN
+                updateUIForMode(currentMode)
+                refreshImageWithOverlay()
+                hasUnsavedChanges = true // Applying crop is a change
+            }
+    
+            // Focus sub-menu controls
+            focusCancelButton.setOnClickListener {
+                currentMode = EditorMode.MAIN
+                focusRect = null // Clear focus selection
+                updateUIForMode(currentMode)
+                refreshImageWithOverlay()
+                // No change to hasUnsavedChanges here, as it's a cancel of a sub-operation
+            }
+    
+            focusResetButton.setOnClickListener {
+                focusRect = getDefaultRect()
+                refreshImageWithOverlay()
+                hasUnsavedChanges = true
+            }
+    
+            focusApplyButton.setOnClickListener {
+                currentMode = EditorMode.MAIN
+                updateUIForMode(currentMode)
+                refreshImageWithOverlay()
+                Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
+                hasUnsavedChanges = true // Applying focus is a change
+            }
+    
+            // Image canvas touch handling
+            imageView.setOnTouchListener { _, event ->
+                when (currentMode) {
+                    EditorMode.CROP -> handleRectDrawing(event, RectType.CROP)
+                    EditorMode.FOCUS -> handleRectDrawing(event, RectType.FOCUS)
+                    else -> false // No drawing in MAIN mode
+                }
+            }
+    
+            addRotationControls()
         }
-
-        addRotationControls()
-    }
+    
+        private fun showDiscardChangesDialog() {
+            AlertDialog.Builder(this)
+                .setTitle("Discard Changes?")
+                .setMessage("You have unsaved changes. Do you want to discard them?")
+                .setPositiveButton("Discard") { dialog, _ ->
+                    dialog.dismiss()
+                    setResult(RESULT_CANCELED)
+                    finish()
+                }
+                .setNegativeButton("Keep Editing") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+        }
 
     private fun updateUIForMode(mode: EditorMode) {
         when (mode) {
@@ -336,12 +409,14 @@ class ImageEditorActivity : AppCompatActivity() {
                     val newRect = adjustRect(currentRect, activeHandle, bitmapX, bitmapY)
                     if (type == RectType.CROP) cropRect = newRect else focusRect = newRect
                     refreshImageWithOverlay(true, type)
+                    hasUnsavedChanges = true
                 }
             }
             MotionEvent.ACTION_UP -> {
                 activeHandle = -1
                 activeRectType = null
                 refreshImageWithOverlay(false, type) // Revert color
+                hasUnsavedChanges = true
             }
         }
         return true
@@ -543,10 +618,42 @@ class ImageEditorActivity : AppCompatActivity() {
 
 
 
+    private fun updateResetZoomIconVisibility() {
+        if (currentZoom > 1.0f + 0.01f || currentZoom < 1.0f - 0.01f) { // Check if zoomed in or out
+            resetZoomIcon.visibility = View.VISIBLE
+        } else {
+            resetZoomIcon.visibility = View.GONE
+        }
+    }
+
+    private fun resetZoom() {
+        matrix.reset()
+        imageView.imageMatrix = matrix
+        currentZoom = 1.0f
+        updateResetZoomIconVisibility()
+        hasUnsavedChanges = true
+    }
+
+    private fun resetAllEdits() {
+        editBitmap = originalBitmap.copy(originalBitmap.config, true)
+        focusRect = null
+        cropRect = null
+        currentZoom = 1.0f
+        matrix.reset() // Reset zoom matrix
+        imageView.imageMatrix = matrix
+        imageView.scaleX = 1f
+        imageView.scaleY = 1f
+        refreshImageWithOverlay()
+        Toast.makeText(this, "All edits reset", Toast.LENGTH_SHORT).show()
+        hasUnsavedChanges = false // Reset changes flag
+        updateResetZoomIconVisibility()
+    }
+
     private fun rotateBitmapUser(degrees: Float) {
         val matrix = Matrix().apply { postRotate(degrees) }
         editBitmap = Bitmap.createBitmap(editBitmap, 0, 0, editBitmap.width, editBitmap.height, matrix, true)
         refreshImage()
+        hasUnsavedChanges = true
     }
 
     private fun addRotationControls() {
