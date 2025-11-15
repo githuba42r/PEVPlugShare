@@ -1,5 +1,6 @@
 package com.a42r.pevplugshare.data.model
 
+import android.graphics.RectF
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -16,7 +17,8 @@ data class PhotoMetadata(
     val make: String? = null,
     val model: String? = null,
     val hasGpsData: Boolean = false,
-    val hasBearingData: Boolean = false
+    val hasBearingData: Boolean = false,
+    val focusRect: RectF? = null
 ) : Parcelable {
     fun getLocationString(): String {
         return if (latitude != null && longitude != null) {

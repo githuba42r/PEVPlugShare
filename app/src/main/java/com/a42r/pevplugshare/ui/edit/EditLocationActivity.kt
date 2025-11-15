@@ -133,6 +133,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     // Add the new photo to the list
                     photoUris.add(editedPhotoPath)
                     addPhotoThumbnail(File(editedPhotoPath))
+                    viewModel.updatePhotoPaths(photoUris)
                     Toast.makeText(this, "New photo added", Toast.LENGTH_SHORT).show()
                 } else if (editingPhotoIndex >= 0 && editingPhotoIndex < photoUris.size) {
                     // Replace the existing photo
@@ -143,6 +144,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     }
                     photoUris[editingPhotoIndex] = editedPhotoPath
                     refreshPhotoThumbnails() // Refresh all thumbnails to reflect changes
+                    viewModel.updatePhotoPaths(photoUris)
                     Toast.makeText(this, "Photo updated", Toast.LENGTH_SHORT).show()
                 }
 
@@ -221,6 +223,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         incomingPhotoPaths?.let {
             photoUris.addAll(it)
             refreshPhotoThumbnails()
+            viewModel.updatePhotoPaths(photoUris) // Update ViewModel with initial photo paths
         }
 
         // Retrieve location from intent
@@ -1075,6 +1078,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                             Log.d("EditLocationActivity", "✓ Camera photo saved successfully: ${it.absolutePath}")
                             photoUris.add(it.absolutePath)
                             addPhotoThumbnail(it)
+                            viewModel.updatePhotoPaths(photoUris)
                             // Delete temp file
                             sourceFile.delete()
                             tempPhotoFile = null
@@ -1150,6 +1154,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                             Log.d("EditLocationActivity", "✓ Gallery photo saved successfully: ${it.absolutePath}")
                             photoUris.add(it.absolutePath)
                             addPhotoThumbnail(it)
+                            viewModel.updatePhotoPaths(photoUris)
                             Toast.makeText(
                                 this@EditLocationActivity,
                                 "Photo added (${photoUris.size}/$maxPhotos)",
@@ -1252,6 +1257,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             photoFocusAreas.remove(path)
             photoMetadata.remove(path)
             photoUris.removeAt(index)
+            viewModel.updatePhotoPaths(photoUris)
             
             // Renumber remaining images to ensure continuous indexing
             renumberPhotos(locationId)
