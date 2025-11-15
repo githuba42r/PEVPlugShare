@@ -15,35 +15,64 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View // Import View
 import android.widget.ImageView
 import android.widget.Toast
 import android.widget.Button
+import android.widget.TextView // Import TextView
+import android.widget.LinearLayout // Import LinearLayout
+import android.widget.GridLayout // Import GridLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.a42r.pevplugshare.R
 import java.io.File
 import java.io.FileOutputStream
+import android.graphics.PointF // Import PointF
+import android.content.Intent // Import Intent
+import androidx.annotation.DrawableRes // Import DrawableRes
 
 /**
  * Activity for editing images: crop, zoom, and define focus areas
  */
 class ImageEditorActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
-    private lateinit var zoomInButton: Button
-    private lateinit var zoomOutButton: Button
-    private lateinit var toggleFocusButton: Button
-    private lateinit var clearFocusButton: Button
-    private lateinit var cropButton: Button
-    private lateinit var resetButton: Button
-    private lateinit var saveButton: Button
+    private lateinit var instructionTextView: TextView // New
+    private lateinit var mainControlsLayout: GridLayout // Changed from LinearLayout
+    private lateinit var cropControlsLayout: LinearLayout // New
+    private lateinit var focusControlsLayout: LinearLayout // New
+
+    // Main controls
+    private lateinit var zoomInButton: View
+    private lateinit var zoomOutButton: View
+    private lateinit var rotateLeftButton: View
+    private lateinit var rotateRightButton: View
+    private lateinit var focusButton: View
+    private lateinit var cropButton: View
+    private lateinit var resetButton: View
+    private lateinit var saveButton: View
+    private lateinit var saveNewButton: View
+    private lateinit var cancelButton: View
+
+    // Crop sub-menu controls
+    private lateinit var cropCancelButton: View
+    private lateinit var cropResetButton: View
+    private lateinit var cropApplyButton: View
+
+    // Focus sub-menu controls
+    private lateinit var focusCancelButton: View
+    private lateinit var focusResetButton: View
+    private lateinit var focusApplyButton: View
 
     private lateinit var originalBitmap: Bitmap
     private lateinit var editBitmap: Bitmap
     private var currentZoom = 1.0f
     private var focusRect: RectF? = null
-    private var isDrawingFocus = false
-    private var focusStartX = 0f
-    private var focusStartY = 0f
+    private var cropRect: RectF? = null // New for crop region
+    private var currentMode: EditorMode = EditorMode.MAIN // New state management
+
+    enum class EditorMode {
+        MAIN, CROP, FOCUS
+    }
 
     companion object {
         const val EXTRA_IMAGE_PATH = "image_path"
@@ -60,17 +89,61 @@ class ImageEditorActivity : AppCompatActivity() {
         try {
             // Find views
             imageView = findViewById(R.id.imageView)
-            zoomInButton = findViewById(R.id.zoomInButton)
-            zoomOutButton = findViewById(R.id.zoomOutButton)
-            toggleFocusButton = findViewById(R.id.toggleFocusButton)
-            clearFocusButton = findViewById(R.id.clearFocusButton)
-            cropButton = findViewById(R.id.cropButton)
-            resetButton = findViewById(R.id.resetButton)
-            saveButton = findViewById(R.id.saveButton)
+            instructionTextView = findViewById(R.id.instructionTextView)
+            mainControlsLayout = findViewById<GridLayout>(R.id.mainControlsLayout)
+            cropControlsLayout = findViewById<LinearLayout>(R.id.cropControlsLayout)
+            focusControlsLayout = findViewById<LinearLayout>(R.id.focusControlsLayout)
 
-            // Initialize rotation buttons
-            val rotateLeftButton: Button = findViewById(R.id.rotateLeftButton)
-            val rotateRightButton: Button = findViewById(R.id.rotateRightButton)
+            // Main controls
+            zoomInButton = findViewById(R.id.zoomInButton)
+            setupIconButton(zoomInButton, R.drawable.ic_zoom_in, "Zoom +")
+
+            zoomOutButton = findViewById(R.id.zoomOutButton)
+            setupIconButton(zoomOutButton, R.drawable.ic_zoom_out, "Zoom -")
+
+            rotateLeftButton = findViewById(R.id.rotateLeftButton)
+            setupIconButton(rotateLeftButton, R.drawable.ic_rotate_left, "Rotate Left")
+
+            rotateRightButton = findViewById(R.id.rotateRightButton)
+            setupIconButton(rotateRightButton, R.drawable.ic_rotate_right, "Rotate Right")
+
+            focusButton = findViewById(R.id.focusButton)
+            setupIconButton(focusButton, R.drawable.ic_focus, "Focus")
+
+            cropButton = findViewById(R.id.cropButton)
+            setupIconButton(cropButton, R.drawable.ic_crop, "Crop")
+
+            resetButton = findViewById(R.id.resetButton)
+            setupIconButton(resetButton, R.drawable.ic_reset, "Reset")
+
+            saveButton = findViewById(R.id.saveButton)
+            setupIconButton(saveButton, R.drawable.ic_save, "Save")
+
+            saveNewButton = findViewById(R.id.saveNewButton)
+            setupIconButton(saveNewButton, R.drawable.ic_save_new, "Save New")
+
+            cancelButton = findViewById(R.id.cancelButton)
+            setupIconButton(cancelButton, R.drawable.ic_cancel, "Cancel")
+
+            // Crop sub-menu controls
+            cropCancelButton = findViewById(R.id.cropCancelButton)
+            setupIconButton(cropCancelButton, R.drawable.ic_cancel, "Cancel")
+
+            cropResetButton = findViewById(R.id.cropResetButton)
+            setupIconButton(cropResetButton, R.drawable.ic_reset, "Reset")
+
+            cropApplyButton = findViewById(R.id.cropApplyButton)
+            setupIconButton(cropApplyButton, R.drawable.ic_check, "Apply")
+
+            // Focus sub-menu controls
+            focusCancelButton = findViewById(R.id.focusCancelButton)
+            setupIconButton(focusCancelButton, R.drawable.ic_cancel, "Cancel")
+
+            focusResetButton = findViewById(R.id.focusResetButton)
+            setupIconButton(focusResetButton, R.drawable.ic_reset, "Reset")
+
+            focusApplyButton = findViewById(R.id.focusApplyButton)
+            setupIconButton(focusApplyButton, R.drawable.ic_check, "Apply")
 
         } catch (e: Exception) {
             Log.e("ImageEditorActivity", "Error finding views", e)
@@ -87,29 +160,15 @@ class ImageEditorActivity : AppCompatActivity() {
 
         loadImageAndOrient(imagePath) // Call the new function
         setupUI()
+        updateUIForMode(EditorMode.MAIN) // Set initial UI state
     }
 
-    private fun loadImage(imagePath: String) {
-        try {
-            val file = File(imagePath)
-            if (!file.exists()) {
-                throw Exception("Image file does not exist: $imagePath")
-            }
-
-            val bitmap = BitmapFactory.decodeFile(imagePath)
-            if (bitmap == null) {
-                throw Exception("Failed to decode image: $imagePath")
-            }
-
-            originalBitmap = bitmap
-            editBitmap = originalBitmap.copy(originalBitmap.config, true)
-            imageView.setImageBitmap(editBitmap)
-        } catch (e: Exception) {
-            Log.e("ImageEditorActivity", "Error loading image", e)
-            Toast.makeText(this, "Error loading image: ${e.message}", Toast.LENGTH_SHORT).show()
-            finish()
-        }
+    private fun setupIconButton(view: View, @DrawableRes iconResId: Int, label: String) {
+        view.findViewById<ImageView>(R.id.iconImageView).setImageResource(iconResId)
+        view.findViewById<TextView>(R.id.labelTextView).text = label
     }
+
+
 
     private fun setupUI() {
         // Zoom controls
@@ -120,184 +179,330 @@ class ImageEditorActivity : AppCompatActivity() {
             zoomImage(0.8f)
         }
 
-        // Focus area controls
-        toggleFocusButton.setOnClickListener {
-            isDrawingFocus = !isDrawingFocus
-            toggleFocusButton.text = if (isDrawingFocus) "Stop Focus" else "Add Focus Area"
-            toggleFocusButton.setBackgroundColor(
-                if (isDrawingFocus) getColor(android.R.color.holo_green_dark)
-                else getColor(android.R.color.darker_gray)
-            )
+        // Main menu controls
+        focusButton.setOnClickListener {
+            currentMode = EditorMode.FOCUS
+            updateUIForMode(currentMode)
+            // Initialize default focus rect
+            focusRect = getDefaultRect()
+            refreshImageWithOverlay()
         }
 
-        clearFocusButton.setOnClickListener {
+        cropButton.setOnClickListener {
+            currentMode = EditorMode.CROP
+            updateUIForMode(currentMode)
+            // Initialize default crop rect
+            cropRect = getDefaultRect()
+            refreshImageWithOverlay()
+        }
+
+        resetButton.setOnClickListener {
+            editBitmap = originalBitmap.copy(originalBitmap.config, true)
             focusRect = null
-            isDrawingFocus = false
-            toggleFocusButton.text = "Add Focus Area"
-            toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
-            refreshImage()
+            cropRect = null
+            currentZoom = 1.0f
+            imageView.scaleX = 1f
+            imageView.scaleY = 1f
+            refreshImageWithOverlay()
+            Toast.makeText(this, "All edits reset", Toast.LENGTH_SHORT).show()
+        }
+
+        saveButton.setOnClickListener {
+            saveImage(false) // Save and finish
+        }
+
+        saveNewButton.setOnClickListener {
+            saveImage(true) // Save as new and finish
+        }
+
+        cancelButton.setOnClickListener {
+            setResult(RESULT_CANCELED)
+            finish()
+        }
+
+        // Crop sub-menu controls
+        cropCancelButton.setOnClickListener {
+            currentMode = EditorMode.MAIN
+            cropRect = null // Clear crop selection
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+        }
+
+        cropResetButton.setOnClickListener {
+            cropRect = getDefaultRect()
+            refreshImageWithOverlay()
+        }
+
+        cropApplyButton.setOnClickListener {
+            applyCrop()
+            currentMode = EditorMode.MAIN
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+        }
+
+        // Focus sub-menu controls
+        focusCancelButton.setOnClickListener {
+            currentMode = EditorMode.MAIN
+            focusRect = null // Clear focus selection
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+        }
+
+        focusResetButton.setOnClickListener {
+            focusRect = getDefaultRect()
+            refreshImageWithOverlay()
+        }
+
+        focusApplyButton.setOnClickListener {
+            currentMode = EditorMode.MAIN
+            updateUIForMode(currentMode)
+            refreshImageWithOverlay()
+            Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
         }
 
         // Image canvas touch handling
         imageView.setOnTouchListener { _, event ->
-            if (isDrawingFocus) {
-                handleFocusDrawing(event)
+            when (currentMode) {
+                EditorMode.CROP -> handleRectDrawing(event, RectType.CROP)
+                EditorMode.FOCUS -> handleRectDrawing(event, RectType.FOCUS)
+                else -> false // No drawing in MAIN mode
             }
-            true
         }
 
-        // Crop controls
-        cropButton.setOnClickListener {
-            cropImage()
-        }
-
-        // Reset button
-        resetButton.setOnClickListener {
-            editBitmap = originalBitmap.copy(originalBitmap.config, true)
-            focusRect = null
-            isDrawingFocus = false
-            currentZoom = 1.0f
-            toggleFocusButton.text = "Add Focus Area"
-            toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
-            refreshImage()
-        }
-
-        // Save button
-        saveButton.setOnClickListener {
-            saveImage()
-        }
-        addRotationControls() // Call this to set up rotation buttons
+        addRotationControls()
     }
 
-    private fun zoomImage(factor: Float) {
-        currentZoom *= factor
-        currentZoom = currentZoom.coerceIn(0.5f, 3.0f)
-        imageView.scaleX = currentZoom
-        imageView.scaleY = currentZoom
+    private fun updateUIForMode(mode: EditorMode) {
+        when (mode) {
+            EditorMode.MAIN -> {
+                mainControlsLayout.visibility = View.VISIBLE
+                cropControlsLayout.visibility = View.GONE
+                focusControlsLayout.visibility = View.GONE
+                instructionTextView.text = "Edit Image"
+            }
+            EditorMode.CROP -> {
+                mainControlsLayout.visibility = View.GONE
+                cropControlsLayout.visibility = View.VISIBLE
+                focusControlsLayout.visibility = View.GONE
+                instructionTextView.text = "Drag to adjust crop area. Tap Apply when done."
+            }
+            EditorMode.FOCUS -> {
+                mainControlsLayout.visibility = View.GONE
+                cropControlsLayout.visibility = View.GONE
+                focusControlsLayout.visibility = View.VISIBLE
+                instructionTextView.text = "Drag to adjust focus area. Tap Apply when done."
+            }
+        }
     }
 
-    private fun handleFocusDrawing(event: MotionEvent) {
-        // Get ImageView dimensions and drawable area
-        val imageViewWidth = imageView.width.toFloat()
-        val imageViewHeight = imageView.height.toFloat()
+    private fun getDefaultRect(): RectF {
+        val imageWidth = editBitmap.width.toFloat()
+        val imageHeight = editBitmap.height.toFloat()
+        val defaultSize = minOf(imageWidth, imageHeight) * 0.7f
+        val left = (imageWidth - defaultSize) / 2
+        val top = (imageHeight - defaultSize) / 2
+        return RectF(left, top, left + defaultSize, top + defaultSize)
+    }
 
-        // Get the drawable area (where the actual image is displayed)
-        // For fitCenter, the image is centered
-        val displayedImageWidth = editBitmap.width.toFloat() * currentZoom
-        val displayedImageHeight = editBitmap.height.toFloat() * currentZoom
+    private enum class RectType {
+        CROP, FOCUS
+    }
 
-        // Calculate the offset for centered image
-        val offsetX = (imageViewWidth - displayedImageWidth) / 2f
-        val offsetY = (imageViewHeight - displayedImageHeight) / 2f
+    private var activeRectType: RectType? = null
+    private var activeHandle = -1 // 0-TL, 1-TR, 2-BL, 3-BR, 4-Move
+
+    private fun handleRectDrawing(event: MotionEvent, type: RectType): Boolean {
+        val currentRect = if (type == RectType.CROP) cropRect else focusRect
+        if (currentRect == null) return false
 
         // Convert touch coordinates to bitmap coordinates
-        // 1. Remove the centering offset
-        // 2. Remove the zoom scaling
-        // 3. Clamp to bitmap bounds
-        val bitmapX = ((event.x - offsetX) / currentZoom).coerceIn(0f, editBitmap.width.toFloat())
-        val bitmapY = ((event.y - offsetY) / currentZoom).coerceIn(0f, editBitmap.height.toFloat())
+        val bitmapCoords = imageViewToBitmapCoords(event.x, event.y)
+        val bitmapX = bitmapCoords.x
+        val bitmapY = bitmapCoords.y
+
+        val handleSize = 30f // Larger handle size for easier interaction
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                focusStartX = bitmapX
-                focusStartY = bitmapY
-                Log.d("ImageEditor", "Focus start: ($bitmapX, $bitmapY) - touch: (${event.x}, ${event.y}) - offset: ($offsetX, $offsetY)")
+                activeRectType = type
+                activeHandle = getActiveHandle(bitmapX, bitmapY, currentRect, handleSize)
+                if (activeHandle != -1) {
+                    // Change color to indicate active resizing
+                    refreshImageWithOverlay(true, type)
+                }
             }
             MotionEvent.ACTION_MOVE -> {
-                val rect = RectF(
-                    minOf(focusStartX, bitmapX),
-                    minOf(focusStartY, bitmapY),
-                    maxOf(focusStartX, bitmapX),
-                    maxOf(focusStartY, bitmapY)
-                )
-                focusRect = rect
-                refreshImageWithFocus()
+                if (activeHandle != -1 && activeRectType == type) {
+                    val newRect = adjustRect(currentRect, activeHandle, bitmapX, bitmapY)
+                    if (type == RectType.CROP) cropRect = newRect else focusRect = newRect
+                    refreshImageWithOverlay(true, type)
+                }
             }
             MotionEvent.ACTION_UP -> {
-                val rect = RectF(
-                    minOf(focusStartX, bitmapX),
-                    minOf(focusStartY, bitmapY),
-                    maxOf(focusStartX, bitmapX),
-                    maxOf(focusStartY, bitmapY)
-                )
-                focusRect = rect
-                isDrawingFocus = false
-                toggleFocusButton.text = "Add Focus Area"
-                toggleFocusButton.setBackgroundColor(getColor(android.R.color.darker_gray))
-                refreshImageWithFocus()
-                Log.d("ImageEditor", "Focus end: rect=$rect")
+                activeHandle = -1
+                activeRectType = null
+                refreshImageWithOverlay(false, type) // Revert color
             }
         }
+        return true
     }
 
-    private fun refreshImageWithFocus() {
-        val bitmap = editBitmap.copy(editBitmap.config, true)
-        val canvas = Canvas(bitmap)
+    private fun getActiveHandle(x: Float, y: Float, rect: RectF, handleSize: Float): Int {
+        val halfHandle = handleSize / 2
+        // Top-Left
+        if (x >= rect.left - halfHandle && x <= rect.left + halfHandle &&
+            y >= rect.top - halfHandle && y <= rect.top + halfHandle) return 0
+        // Top-Right
+        if (x >= rect.right - halfHandle && x <= rect.right + halfHandle &&
+            y >= rect.top - halfHandle && y <= rect.top + halfHandle) return 1
+        // Bottom-Left
+        if (x >= rect.left - halfHandle && x <= rect.left + halfHandle &&
+            y >= rect.bottom - halfHandle && y <= rect.bottom + halfHandle) return 2
+        // Bottom-Right
+        if (x >= rect.right - halfHandle && x <= rect.right + halfHandle &&
+            y >= rect.bottom - halfHandle && y <= rect.bottom + halfHandle) return 3
+        // Move (inside the rect)
+        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return 4
+        return -1
+    }
+
+    private fun adjustRect(originalRect: RectF, handle: Int, newX: Float, newY: Float): RectF {
+        val minSize = 50f // Minimum size for the rect
+        var left = originalRect.left
+        var top = originalRect.top
+        var right = originalRect.right
+        var bottom = originalRect.bottom
+
+        when (handle) {
+            0 -> { // Top-Left
+                left = newX.coerceAtMost(right - minSize)
+                top = newY.coerceAtMost(bottom - minSize)
+            }
+            1 -> { // Top-Right
+                right = newX.coerceAtLeast(left + minSize)
+                top = newY.coerceAtMost(bottom - minSize)
+            }
+            2 -> { // Bottom-Left
+                left = newX.coerceAtMost(right - minSize)
+                bottom = newY.coerceAtLeast(top + minSize)
+            }
+            3 -> { // Bottom-Right
+                right = newX.coerceAtLeast(left + minSize)
+                bottom = newY.coerceAtLeast(top + minSize)
+            }
+            4 -> { // Move
+                val dx = newX - originalRect.centerX()
+                val dy = newY - originalRect.centerY()
+                left += dx
+                top += dy
+                right += dx
+                bottom += dy
+            }
+        }
+
+        // Ensure rect stays within image bounds
+        left = left.coerceIn(0f, editBitmap.width.toFloat() - minSize)
+        top = top.coerceIn(0f, editBitmap.height.toFloat() - minSize)
+        right = right.coerceIn(left + minSize, editBitmap.width.toFloat())
+        bottom = bottom.coerceIn(top + minSize, editBitmap.height.toFloat())
+
+        return RectF(left, top, right, bottom)
+    }
+
+    private fun imageViewToBitmapCoords(x: Float, y: Float): PointF {
+        val matrix = Matrix()
+        imageView.imageMatrix.invert(matrix)
+        val points = floatArrayOf(x, y)
+        matrix.mapPoints(points)
+        return PointF(points[0], points[1])
+    }
+
+    private fun refreshImageWithOverlay(isActive: Boolean = false, type: RectType? = null) {
+        val tempBitmap = editBitmap.copy(editBitmap.config, true)
+        val canvas = Canvas(tempBitmap)
+
+        // Draw crop rectangle
+        cropRect?.let { rect ->
+            val paint = Paint().apply {
+                color = if (isActive && type == RectType.CROP) 0xFFFF0000.toInt() else 0xFFCC0000.toInt() // Red or darker red
+                style = Paint.Style.STROKE
+                strokeWidth = 5f
+            }
+            canvas.drawRect(rect, paint)
+            drawHandles(canvas, rect, paint.color)
+        }
 
         // Draw focus rectangle
         focusRect?.let { rect ->
             val paint = Paint().apply {
-                color = 0xFFFFD700.toInt() // Gold color
+                color = if (isActive && type == RectType.FOCUS) 0xFFFFFF00.toInt() else 0xFFCCCC00.toInt() // Yellow or darker yellow
                 style = Paint.Style.STROKE
-                strokeWidth = 3f
+                strokeWidth = 5f
             }
             canvas.drawRect(rect, paint)
-
-            // Draw corner handles
-            val handleSize = 15f
-            val cornerPaint = Paint().apply {
-                color = 0xFFFFD700.toInt()
-                style = Paint.Style.FILL
-            }
-
-            // Draw corners
-            val corners = listOf(
-                Pair(rect.left - handleSize / 2, rect.top - handleSize / 2),
-                Pair(rect.right - handleSize / 2, rect.top - handleSize / 2),
-                Pair(rect.left - handleSize / 2, rect.bottom - handleSize / 2),
-                Pair(rect.right - handleSize / 2, rect.bottom - handleSize / 2)
-            )
-            corners.forEach { (x, y) ->
-                canvas.drawCircle(x + handleSize, y + handleSize, handleSize / 2, cornerPaint)
-            }
+            drawHandles(canvas, rect, paint.color)
         }
 
-        imageView.setImageBitmap(bitmap)
+        imageView.setImageBitmap(tempBitmap)
     }
 
-    private fun refreshImage() {
-        imageView.setImageBitmap(editBitmap)
+    private fun drawHandles(canvas: Canvas, rect: RectF, color: Int) {
+        val handleSize = 20f // Size of the square handles
+        val cornerPaint = Paint().apply {
+            this.color = color
+            style = Paint.Style.FILL
+        }
+
+        // Top-Left
+        canvas.drawRect(rect.left - handleSize, rect.top - handleSize,
+            rect.left + handleSize, rect.top + handleSize, cornerPaint)
+        // Top-Right
+        canvas.drawRect(rect.right - handleSize, rect.top - handleSize,
+            rect.right + handleSize, rect.top + handleSize, cornerPaint)
+        // Bottom-Left
+        canvas.drawRect(rect.left - handleSize, rect.bottom - handleSize,
+            rect.left + handleSize, rect.bottom + handleSize, cornerPaint)
+        // Bottom-Right
+        canvas.drawRect(rect.right - handleSize, rect.bottom - handleSize,
+            rect.right + handleSize, rect.bottom + handleSize, cornerPaint)
     }
 
-    private fun cropImage() {
-        focusRect?.let { rect ->
+    private fun applyCrop() {
+        cropRect?.let { rect ->
             val left = rect.left.toInt().coerceIn(0, editBitmap.width - 1)
             val top = rect.top.toInt().coerceIn(0, editBitmap.height - 1)
             val width = (rect.width()).toInt().coerceIn(1, editBitmap.width - left)
             val height = (rect.height()).toInt().coerceIn(1, editBitmap.height - top)
 
             editBitmap = Bitmap.createBitmap(editBitmap, left, top, width, height)
-            focusRect = null
-            isDrawingFocus = false
-            toggleFocusButton.text = "Add Focus Area"
+            cropRect = null // Clear crop selection after applying
             currentZoom = 1.0f
             imageView.scaleX = 1f
             imageView.scaleY = 1f
-            refreshImage()
             Toast.makeText(this, "Image cropped", Toast.LENGTH_SHORT).show()
         } ?: run {
-            Toast.makeText(this, "Please draw a focus area first to crop", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "No crop area defined", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun saveImage() {
+    private fun saveImage(saveAsNew: Boolean) {
         try {
             val outputPath = intent.getStringExtra(EXTRA_OUTPUT_PATH) ?: run {
                 Toast.makeText(this, "No output path provided", Toast.LENGTH_SHORT).show()
                 return
             }
 
-            val outputFile = File(outputPath)
+            val outputFile = if (saveAsNew) {
+                // Generate a new unique file name for "Save New"
+                val originalFile = File(outputPath)
+                val parentDir = originalFile.parentFile
+                val fileNameWithoutExtension = originalFile.nameWithoutExtension
+                val fileExtension = originalFile.extension
+                File(parentDir, "${fileNameWithoutExtension}_${System.currentTimeMillis()}.$fileExtension")
+            } else {
+                File(outputPath)
+            }
+
             outputFile.parentFile?.mkdirs()
 
             FileOutputStream(outputFile).use { fos ->
@@ -309,9 +514,12 @@ class ImageEditorActivity : AppCompatActivity() {
             val metadata = com.a42r.pevplugshare.util.PhotoUtils.getPhotoMetadata(imagePath)
 
             // Return focus rect and metadata
-            intent.putExtra(EXTRA_FOCUS_RECT, focusRect)
-            intent.putExtra(EXTRA_METADATA, metadata)
-            setResult(RESULT_OK, intent)
+            val resultIntent = Intent().apply {
+                putExtra(EXTRA_FOCUS_RECT, focusRect)
+                putExtra(EXTRA_METADATA, metadata)
+                putExtra(EXTRA_OUTPUT_PATH, outputFile.absolutePath) // Return the actual saved path
+            }
+            setResult(RESULT_OK, resultIntent)
 
             Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show()
             finish()
@@ -320,6 +528,21 @@ class ImageEditorActivity : AppCompatActivity() {
         }
     }
 
+    private fun zoomImage(factor: Float) {
+        currentZoom *= factor
+        currentZoom = currentZoom.coerceIn(0.5f, 3.0f)
+        imageView.scaleX = currentZoom
+        imageView.scaleY = currentZoom
+    }
+
+    private fun refreshImage() {
+        refreshImageWithOverlay()
+    }
+
+
+
+
+
     private fun rotateBitmapUser(degrees: Float) {
         val matrix = Matrix().apply { postRotate(degrees) }
         editBitmap = Bitmap.createBitmap(editBitmap, 0, 0, editBitmap.width, editBitmap.height, matrix, true)
@@ -327,9 +550,6 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun addRotationControls() {
-        val rotateLeftButton: Button = findViewById(R.id.rotateLeftButton)
-        val rotateRightButton: Button = findViewById(R.id.rotateRightButton)
-
         rotateLeftButton.setOnClickListener {
             rotateBitmapUser(-90f)
         }
