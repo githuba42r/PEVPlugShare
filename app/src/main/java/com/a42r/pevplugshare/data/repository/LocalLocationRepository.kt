@@ -127,6 +127,7 @@ class LocalLocationRepository(
             isFavourite = isFavourite,
             syncStatus = SyncStatus.valueOf(syncStatus),
             photos = emptyList(),
+            imagePaths = if (imagePaths.isNotBlank()) imagePaths.split(",") else emptyList(), // Map imagePaths
             distanceMeters = null
         )
     }
@@ -152,6 +153,7 @@ class LocalLocationRepository(
             lastModified = lastModified,
             isFavourite = isFavourite,
             syncStatus = syncStatus.value,
+            imagePaths = imagePaths.joinToString(","), // Map imagePaths
             descriptionHash = null,
             aiParsed = false,
             aiParsedAt = null

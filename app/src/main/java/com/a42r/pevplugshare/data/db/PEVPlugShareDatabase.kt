@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.a42r.pevplugshare.data.db.converters.Converters
 import com.a42r.pevplugshare.data.db.dao.LocationDao
 import com.a42r.pevplugshare.data.db.dao.PhotoDao
 import com.a42r.pevplugshare.data.db.dao.PendingLocationDao
@@ -29,6 +31,7 @@ import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
     version = 3,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class PEVPlugShareDatabase : RoomDatabase() {
     abstract fun locationDao(): LocationDao
     abstract fun photoDao(): PhotoDao

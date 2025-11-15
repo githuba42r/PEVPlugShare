@@ -25,6 +25,7 @@ data class LocationEntity(
     val lastModified: Long,
     val isFavourite: Boolean = false,
     val syncStatus: String = "SYNCED",
+    val imagePaths: String = "", // New field for image paths
     val descriptionHash: String? = null,
     val aiParsed: Boolean = false,
     val aiParsedAt: Long? = null
