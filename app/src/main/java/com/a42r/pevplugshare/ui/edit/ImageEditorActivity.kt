@@ -422,10 +422,8 @@ class ImageEditorActivity : AppCompatActivity() {
     private var activeHandle = -1 // 0-TL, 1-TR, 2-BL, 3-BR, 4-Move
 
     private fun handleRectDrawing(event: MotionEvent, type: RectType): Boolean {
-        Log.d("RectDrawing", "handleRectDrawing called for type $type, event action: ${event.action}")
         val currentRect = if (type == RectType.CROP) cropRect else focusRect
         if (currentRect == null) {
-            Log.d("RectDrawing", "handleRectDrawing: currentRect is null for type $type. Returning false.")
             return false
         }
 
@@ -434,9 +432,7 @@ class ImageEditorActivity : AppCompatActivity() {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 activeRectType = type
-                Log.d("RectDrawing", "Calling getActiveHandle with eventX=${event.x}, eventY=${event.y}, currentRect=$currentRect")
                 activeHandle = rectHandler.getActiveHandle(event.x, event.y, currentRect)
-                Log.d("RectDrawing", "ACTION_DOWN: type=$type, touch=(${event.x}, ${event.y}), activeHandle=$activeHandle")
                 if (activeHandle != -1) {
                     // Change color to indicate active resizing
                     refreshImageWithOverlay(true, type)
@@ -444,16 +440,13 @@ class ImageEditorActivity : AppCompatActivity() {
             }
             MotionEvent.ACTION_MOVE -> {
                 if (activeHandle != -1 && activeRectType == type) {
-                    Log.d("RectDrawing", "ACTION_MOVE: type=$type, touch=(${event.x}, ${event.y}), activeHandle=$activeHandle, originalRect=$currentRect")
                     val newRect = rectHandler.adjustRect(currentRect, activeHandle, event.x, event.y)
                     if (type == RectType.CROP) cropRect = newRect else focusRect = newRect
                     refreshImageWithOverlay(true, type)
                     hasUnsavedChanges = true
-                    Log.d("RectDrawing", "ACTION_MOVE: newRect=$newRect")
                 }
             }
             MotionEvent.ACTION_UP -> {
-                Log.d("RectDrawing", "ACTION_UP: type=$type, touch=(${event.x}, ${event.y}), activeHandle=$activeHandle")
                 activeHandle = -1
                 activeRectType = null
                 refreshImageWithOverlay(false, type) // Revert color
@@ -468,8 +461,6 @@ class ImageEditorActivity : AppCompatActivity() {
         private val minSize = 50f // Minimum size for the rect
 
         fun getActiveHandle(x: Float, y: Float, rect: RectF): Int {
-            Log.d("RectSelectionHandler", "getActiveHandle: x=$x, y=$y, rect=$rect, handleHalfSize=$handleHalfSize")
-
             // Convert rect corners to view coordinates
             val rectCorners = floatArrayOf(
                 rect.left, rect.top,
@@ -495,33 +486,27 @@ class ImageEditorActivity : AppCompatActivity() {
             // Top-Left
             if (x >= viewRect.left - viewHalfHandle && x <= viewRect.left + viewHalfHandle &&
                 y >= viewRect.top - viewHalfHandle && y <= viewRect.top + viewHalfHandle) {
-                Log.d("RectSelectionHandler", "Handle: Top-Left (0) - Detected!")
                 return 0
             }
             // Top-Right
             if (x >= viewRect.right - viewHalfHandle && x <= viewRect.right + viewHalfHandle &&
                 y >= viewRect.top - viewHalfHandle && y <= viewRect.top + viewHalfHandle) {
-                Log.d("RectSelectionHandler", "Handle: Top-Right (1) - Detected!")
                 return 1
             }
             // Bottom-Left
             if (x >= viewRect.left - viewHalfHandle && x <= viewRect.left + viewHalfHandle &&
                 y >= viewRect.bottom - viewHalfHandle && y <= viewRect.bottom + viewHalfHandle) {
-                Log.d("RectSelectionHandler", "Handle: Bottom-Left (2) - Detected!")
                 return 2
             }
             // Bottom-Right
             if (x >= viewRect.right - viewHalfHandle && x <= viewRect.right + viewHalfHandle &&
                 y >= viewRect.bottom - viewHalfHandle && y <= viewRect.bottom + viewHalfHandle) {
-                Log.d("RectSelectionHandler", "Handle: Bottom-Right (3) - Detected!")
                 return 3
             }
-            Log.d("RectSelectionHandler", "Handle: None (-1)")
             return -1
         }
 
         fun adjustRect(originalRect: RectF, handle: Int, newX: Float, newY: Float): RectF {
-            Log.d("RectSelectionHandler", "adjustRect: originalRect=$originalRect, handle=$handle, newX=$newX, newY=$newY")
             var left = originalRect.left
             var top = originalRect.top
             var right = originalRect.right
@@ -558,7 +543,6 @@ class ImageEditorActivity : AppCompatActivity() {
             bottom = bottom.coerceIn(top + minSize, editBitmap.height.toFloat())
 
             val newRect = RectF(left, top, right, bottom)
-            Log.d("RectSelectionHandler", "adjustRect: newRect=$newRect")
             return newRect
         }
     }
@@ -577,11 +561,9 @@ class ImageEditorActivity : AppCompatActivity() {
 
         val currentImageMatrixValues = FloatArray(9)
         imageView.imageMatrix.getValues(currentImageMatrixValues)
-        Log.d("RectDrawing", "refreshImageWithOverlay: Image Matrix = ${currentImageMatrixValues.contentToString()}")
 
         // Draw crop rectangle
         cropRect?.let { rect ->
-            Log.d("RectDrawing", "refreshImageWithOverlay: Drawing Crop Rect = $rect")
             val paint = Paint().apply {
                 color = if (isActive && type == RectType.CROP) 0xFFFF0000.toInt() else 0xFFCC0000.toInt() // Red or darker red
                 style = Paint.Style.STROKE
@@ -593,7 +575,6 @@ class ImageEditorActivity : AppCompatActivity() {
 
         // Draw focus rectangle
         focusRect?.let { rect ->
-            Log.d("RectDrawing", "refreshImageWithOverlay: Drawing Focus Rect = $rect")
             val paint = Paint().apply {
                 color = if (isActive && type == RectType.FOCUS) 0xFFFFFF00.toInt() else 0xFFCCCC00.toInt() // Yellow or darker yellow
                 style = Paint.Style.STROKE
