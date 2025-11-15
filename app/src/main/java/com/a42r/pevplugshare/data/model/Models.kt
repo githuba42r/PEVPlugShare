@@ -44,7 +44,7 @@ data class Location(
     val isFavourite: Boolean = false,
     val syncStatus: SyncStatus = SyncStatus.SYNCED,
     val photos: List<Photo> = emptyList(),
-    val imagePaths: List<String>? = null,
+    val imagePaths: List<String> = emptyList(),
     val distanceMeters: Double? = null
 )
 
