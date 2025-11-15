@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ import com.a42r.pevplugshare.data.model.SocketType
 import com.a42r.pevplugshare.databinding.ActivityAddLocationBinding
 import com.a42r.pevplugshare.ui.quicklocation.PhotoGalleryEditorActivity
 import com.a42r.pevplugshare.util.DistanceCalculator
+import com.a42r.pevplugshare.util.ImageUtils
 import com.a42r.pevplugshare.util.PhotoUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -35,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.UUID
 
 @AndroidEntryPoint
 class AddLocationActivity : AppCompatActivity() {
@@ -145,8 +148,24 @@ class AddLocationActivity : AppCompatActivity() {
 
             // Submit button
             submitButton.setOnClickListener {
+                Log.d("AddLocationActivity", "=== SUBMIT BUTTON CLICKED ===")
                 collectFormData()
-                viewModel.submitLocation()
+                // Process images in background before submitting
+                lifecycleScope.launch {
+                    val locationId = UUID.randomUUID().toString()
+                    Log.d("AddLocationActivity", "Generated locationId: $locationId")
+                    Log.d("AddLocationActivity", "Current form data photoPaths: ${viewModel.formData.value.photoPaths}")
+
+                    val permanentImagePaths = withContext(Dispatchers.IO) {
+                        Log.d("AddLocationActivity", "Starting image processing for locationId: $locationId")
+                        processAndSaveImages(locationId)
+                    }
+
+                    Log.d("AddLocationActivity", "Image processing complete. Permanent paths: $permanentImagePaths")
+                    // Submit location with processed images using the same locationId
+                    Log.d("AddLocationActivity", "Calling saveLocationWithProcessedImages with paths: $permanentImagePaths")
+                    viewModel.saveLocationWithProcessedImages(permanentImagePaths)
+                }
             }
 
             // Cancel button
@@ -293,6 +312,54 @@ class AddLocationActivity : AppCompatActivity() {
             photoPaths = viewModel.formData.value.photoPaths // Include photo paths in form data
         )
         viewModel.updateFormData(formData)
+    }
+
+    /**
+     * Process and save images from cache to permanent storage
+     * @param locationId The location ID to save images under
+     * @return List of permanent image paths
+     */
+    private suspend fun processAndSaveImages(locationId: String): List<String> {
+        Log.d("AddLocationActivity", "processAndSaveImages called with locationId: $locationId")
+        val permanentPaths = mutableListOf<String>()
+        val cachePaths = viewModel.formData.value.photoPaths
+
+        Log.d("AddLocationActivity", "Total cache paths to process: ${cachePaths.size}")
+
+        cachePaths.forEachIndexed { index, cachePath ->
+            try {
+                Log.d("AddLocationActivity", "Processing image $index: $cachePath")
+                val cacheFile = File(cachePath)
+                if (cacheFile.exists()) {
+                    Log.d("AddLocationActivity", "Cache file exists, resizing and saving with locationId: $locationId, index: $index")
+                    // Use ImageUtils to resize and save image to permanent storage
+                    val resizedFile = ImageUtils.resizeAndSaveImage(
+                        this@AddLocationActivity,
+                        cacheFile,
+                        locationId,
+                        index
+                    )
+                    resizedFile?.let {
+                        Log.d("AddLocationActivity", "Successfully saved image to: ${it.absolutePath}")
+                        permanentPaths.add(it.absolutePath)
+                        // Delete cache file after successful save
+                        cacheFile.delete()
+                        Log.d("AddLocationActivity", "Deleted cache file: $cachePath")
+                    } ?: run {
+                        Log.w("AddLocationActivity", "resizeAndSaveImage returned null for image $index")
+                    }
+                } else {
+                    Log.w("AddLocationActivity", "Cache file does not exist: $cachePath")
+                }
+            } catch (e: Exception) {
+                // Log error but continue processing other images
+                Log.e("AddLocationActivity", "Error processing image $index", e)
+                e.printStackTrace()
+            }
+        }
+
+        Log.d("AddLocationActivity", "processAndSaveImages complete. Returning ${permanentPaths.size} permanent paths: $permanentPaths")
+        return permanentPaths
     }
 
     private fun updateSubmitButtonState() {

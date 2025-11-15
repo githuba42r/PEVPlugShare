@@ -153,4 +153,40 @@ object ImageUtils {
             false
         }
     }
+
+    fun renameLocationImageDirectory(context: Context, oldLocationId: String, newLocationId: String): List<String> {
+        val oldDir = getLocationImageDirectory(context, oldLocationId)
+        val newDir = getLocationImageDirectory(context, newLocationId)
+
+        if (oldDir.exists()) {
+            if (newDir.exists()) {
+                android.util.Log.w("ImageUtils", "Target directory $newLocationId already exists. Attempting to delete if empty.")
+                if (newDir.isDirectory && newDir.list()?.isEmpty() == true) {
+                    if (newDir.delete()) {
+                        android.util.Log.d("ImageUtils", "Empty target directory $newLocationId deleted.")
+                    } else {
+                        android.util.Log.e("ImageUtils", "Failed to delete empty target directory $newLocationId.")
+                        return emptyList()
+                    }
+                } else if (newDir.isDirectory && newDir.list()?.isNotEmpty() == true) {
+                    android.util.Log.e("ImageUtils", "Target directory $newLocationId exists and is NOT empty. Cannot rename.")
+                    // If the new directory exists and is not empty, we cannot rename.
+                    // This might indicate a previous failed operation or a logic error.
+                    // For now, we'll return emptyList() to prevent data corruption.
+                    return emptyList()
+                }
+            }
+
+            if (oldDir.renameTo(newDir)) {
+                android.util.Log.d("ImageUtils", "Renamed image directory from $oldLocationId to $newLocationId")
+                // Return updated paths
+                return newDir.listFiles()?.filter { it.extension == "jpg" }?.map { it.absolutePath } ?: emptyList()
+            } else {
+                android.util.Log.e("ImageUtils", "Failed to rename image directory from $oldLocationId to $newLocationId. oldDir exists: ${oldDir.exists()}, newDir exists: ${newDir.exists()}")
+            }
+        } else {
+            android.util.Log.w("ImageUtils", "Source directory $oldLocationId does not exist. No renaming needed.")
+        }
+        return emptyList()
+    }
 }
