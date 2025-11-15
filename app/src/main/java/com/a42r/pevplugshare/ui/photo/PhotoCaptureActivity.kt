@@ -23,6 +23,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.databinding.ActivityPhotoCaptureBinding
+import com.a42r.pevplugshare.util.PhotoUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
@@ -161,7 +162,7 @@ class PhotoCaptureActivity : AppCompatActivity() {
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     try {
-                        val bitmap = BitmapFactory.decodeFile(outputFileResults.savedUri?.path)
+                        val bitmap = outputFileResults.savedUri?.path?.let { PhotoUtils.rotateImageIfNeeded(it) }
                         if (bitmap != null) {
                             viewModel.setPhotoBitmap(bitmap)
                             getCurrentLocation()

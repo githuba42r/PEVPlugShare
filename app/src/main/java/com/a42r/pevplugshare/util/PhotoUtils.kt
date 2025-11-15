@@ -136,6 +136,32 @@ object PhotoUtils {
         }
     }
 
+    fun rotateImageIfNeeded(photoPath: String, options: BitmapFactory.Options): Bitmap? {
+        return try {
+            var bitmap = BitmapFactory.decodeFile(photoPath, options) ?: return null
+
+            val exif = ExifInterface(photoPath)
+            val orientation = exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
+
+            bitmap = when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
+                ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
+                ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
+                ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> flipBitmap(bitmap, true, false)
+                ExifInterface.ORIENTATION_FLIP_VERTICAL -> flipBitmap(bitmap, false, true)
+                else -> bitmap
+            }
+
+            bitmap
+        } catch (e: Exception) {
+            Log.e(TAG, "Error rotating image with options", e)
+            null
+        }
+    }
+
     fun compressImage(inputPath: String, outputPath: String, quality: Int = 85): Boolean {
         return try {
             val bitmap = rotateImageIfNeeded(inputPath) ?: return false
