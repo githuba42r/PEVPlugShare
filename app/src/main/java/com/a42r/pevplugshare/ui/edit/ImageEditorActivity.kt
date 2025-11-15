@@ -463,7 +463,7 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private inner class RectSelectionHandler(private val type: RectType) {
-        private val handleHalfSize = 140f // Increased half size of the square handles (total size 280f)
+        private val handleHalfSize = 80f // Changed half size of the square handles (total size 160f)
         private val minSize = 50f // Minimum size for the rect
 
         fun getActiveHandle(x: Float, y: Float, rect: RectF): Int {
@@ -599,7 +599,10 @@ class ImageEditorActivity : AppCompatActivity() {
                 strokeWidth = 10f // Increased border width
             }
             canvas.drawRect(rect, paint)
-            drawHandles(canvas, rect, paint.color)
+            // Only draw handles if not in MAIN mode
+            if (currentMode != EditorMode.MAIN) {
+                drawHandles(canvas, rect, paint.color)
+            }
         }
 
         imageView.setImageBitmap(tempBitmap)
@@ -607,7 +610,7 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun drawHandles(canvas: Canvas, rect: RectF, color: Int) {
-        val handleHalfSize = 140f // Half size of the square handles (total size 280f)
+        val handleHalfSize = 80f // Changed half size of the square handles (total size 160f)
         val cornerPaint = Paint().apply {
             this.color = color
             style = Paint.Style.FILL
