@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
+import com.a42r.pevplugshare.util.PhotoUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -179,21 +180,21 @@ Image showing multiple outlets in a food court:
             // Add images as base64
             for (file in imageFiles) {
                 try {
-                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                        ?: throw Exception("Failed to decode image: ${file.name}")
+                    val originalBitmap = PhotoUtils.rotateImageIfNeeded(file.absolutePath)
+                        ?: throw Exception("Failed to decode or orient image: ${file.name}")
                     
                     // Resize if too large
                     val maxDimension = 768
-                    val resizedBitmap = if (bitmap.width > maxDimension || bitmap.height > maxDimension) {
-                        val scale = maxDimension.toFloat() / maxOf(bitmap.width, bitmap.height)
+                    val resizedBitmap = if (originalBitmap.width > maxDimension || originalBitmap.height > maxDimension) {
+                        val scale = maxDimension.toFloat() / maxOf(originalBitmap.width, originalBitmap.height)
                         Bitmap.createScaledBitmap(
-                            bitmap,
-                            (bitmap.width * scale).toInt(),
-                            (bitmap.height * scale).toInt(),
+                            originalBitmap,
+                            (originalBitmap.width * scale).toInt(),
+                            (originalBitmap.height * scale).toInt(),
                             true
                         )
                     } else {
-                        bitmap
+                        originalBitmap
                     }
                     
                     // Convert to base64
@@ -208,8 +209,10 @@ Image showing multiple outlets in a food court:
                         })
                     })
                     
-                    resizedBitmap.recycle()
-                    bitmap.recycle()
+                    if (resizedBitmap != originalBitmap) {
+                        resizedBitmap.recycle()
+                    }
+                    originalBitmap.recycle()
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to process image: ${file.name}", e)
                     throw Exception("Failed to process image ${file.name}: ${e.message}")
