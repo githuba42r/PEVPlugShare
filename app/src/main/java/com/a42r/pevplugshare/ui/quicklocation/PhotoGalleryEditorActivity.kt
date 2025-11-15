@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -131,13 +132,20 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
 
     private fun setupUI() {
         // Setup gallery recycler
-        adapter = PhotoGalleryAdapter(photoPaths, focusAreas) { selectedPath ->
-            val index = photoPaths.indexOf(selectedPath)
-            if (index != -1) {
-                selectedPhotoIndex = index
-                launchPhotoEditor(selectedPath)
+        adapter = PhotoGalleryAdapter(
+            photoPaths,
+            focusAreas,
+            { selectedPath ->
+                val index = photoPaths.indexOf(selectedPath)
+                if (index != -1) {
+                    selectedPhotoIndex = index
+                    launchPhotoEditor(selectedPath)
+                }
+            },
+            { position ->
+                showRemoveConfirmationDialog(position)
             }
-        }
+        )
 
         binding.photoGalleryRecycler.apply {
             layoutManager = GridLayoutManager(this@PhotoGalleryEditorActivity, 3)
@@ -188,6 +196,33 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
 
         setResult(RESULT_OK, resultIntent)
         finish()
+    }
+
+    private fun showRemoveConfirmationDialog(position: Int) {
+        AlertDialog.Builder(this)
+            .setTitle("Remove Photo")
+            .setMessage("Are you sure you want to remove this photo?")
+            .setPositiveButton("Remove") { dialog, _ ->
+                removeImage(position)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun removeImage(position: Int) {
+        if (position >= 0 && position < photoPaths.size) {
+            val removedPath = photoPaths.removeAt(position)
+            focusAreas.remove(removedPath)
+            File(removedPath).delete() // Delete the actual file
+
+            adapter.notifyItemRemoved(position)
+            adapter.notifyItemRangeChanged(position, photoPaths.size) // Update subsequent items
+            updateUI()
+            Toast.makeText(this, "Photo removed", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroy() {

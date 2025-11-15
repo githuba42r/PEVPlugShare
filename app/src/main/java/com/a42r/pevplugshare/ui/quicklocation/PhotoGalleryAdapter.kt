@@ -4,11 +4,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.a42r.pevplugshare.R
+import com.a42r.pevplugshare.databinding.ItemPhotoThumbnailBinding
 import com.a42r.pevplugshare.util.PhotoUtils
 import kotlinx.coroutines.*
 import java.io.File
@@ -17,18 +19,14 @@ import java.io.File
  * Adapter for displaying and managing photos in gallery view
  */
 class PhotoGalleryAdapter(
-    private val photoPaths: List<String>,
-    private val focusAreas: Map<String, String>,
-    private val onPhotoClick: (String) -> Unit
+    private val photoPaths: MutableList<String>, // Changed to MutableList
+    private val focusAreas: MutableMap<String, String>, // Changed to MutableMap
+    private val onPhotoClick: (String) -> Unit,
+    private val onRemoveClick: (Int) -> Unit // New callback for remove button
 ) : RecyclerView.Adapter<PhotoGalleryAdapter.PhotoViewHolder>() {
 
-    inner class PhotoViewHolder(private val container: FrameLayout) :
-        RecyclerView.ViewHolder(container) {
-        
-        private val imageView: ImageView = container.findViewById(android.R.id.icon) as? ImageView
-            ?: ImageView(container.context).apply {
-                container.addView(this, 0)
-            }
+    inner class PhotoViewHolder(private val binding: ItemPhotoThumbnailBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         
         fun bind(photoPath: String, position: Int) {
             // Load thumbnail in background
@@ -41,43 +39,39 @@ class PhotoGalleryAdapter(
                     
                     withContext(Dispatchers.Main) {
                         if (bitmap != null) {
-                            imageView.setImageBitmap(bitmap)
+                            binding.thumbnailImage.setImageBitmap(bitmap)
                         } else {
-                            imageView.setImageResource(R.drawable.ic_add) // Fallback
+                            binding.thumbnailImage.setImageResource(R.drawable.ic_add) // Fallback
                         }
                         
                         // Show focus badge if has focus area
                         if (focusAreas.containsKey(photoPath)) {
-                            container.foreground = container.context.getDrawable(R.drawable.focus_area_badge)
+                            binding.focusIndicator.visibility = View.VISIBLE
                         } else {
-                            container.foreground = null
+                            binding.focusIndicator.visibility = View.GONE
                         }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     withContext(Dispatchers.Main) {
-                        imageView.setImageResource(R.drawable.ic_add)
+                        binding.thumbnailImage.setImageResource(R.drawable.ic_add)
                     }
                 }
             }
             
-            container.setOnClickListener {
+            binding.root.setOnClickListener {
                 onPhotoClick(photoPath)
+            }
+
+            binding.removePhotoButton.setOnClickListener {
+                onRemoveClick(position)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
-        val container = FrameLayout(parent.context).apply {
-            layoutParams = ViewGroup.LayoutParams(300, 300)
-        }
-        val imageView = ImageView(parent.context).apply {
-            scaleType = ImageView.ScaleType.CENTER_CROP
-            layoutParams = FrameLayout.LayoutParams(300, 300)
-            setId(android.R.id.icon)
-        }
-        container.addView(imageView)
-        return PhotoViewHolder(container)
+        val binding = ItemPhotoThumbnailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PhotoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
