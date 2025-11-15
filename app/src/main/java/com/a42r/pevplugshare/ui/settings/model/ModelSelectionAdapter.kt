@@ -23,6 +23,7 @@ class ModelSelectionAdapter(
         val modelProvider: TextView = view.findViewById(R.id.modelProvider)
         val modelCost: TextView = view.findViewById(R.id.modelCost)
         val modelDetails: TextView = view.findViewById(R.id.modelDetails)
+        val modelParameters: TextView = view.findViewById(R.id.modelParameters)
         val modelLink: TextView = view.findViewById(R.id.modelLink)
     }
 
@@ -44,6 +45,14 @@ class ModelSelectionAdapter(
             holder.modelDetails.visibility = View.VISIBLE
         } else {
             holder.modelDetails.visibility = View.GONE
+        }
+
+        val parameters = extractParameters(model.description)
+        if (parameters != null) {
+            holder.modelParameters.text = "Parameters: $parameters"
+            holder.modelParameters.visibility = View.VISIBLE
+        } else {
+            holder.modelParameters.visibility = View.GONE
         }
         
         holder.radioButton.isChecked = model.id == selectedModelId
@@ -92,4 +101,14 @@ class ModelSelectionAdapter(
     fun getSelectedModel(): AiModel? {
         return filteredModels.find { it.id == selectedModelId }
     }
-}
+
+    private fun extractParameters(description: String?): String? {
+        if (description.isNullOrBlank()) return null
+
+        // Regex to find patterns like "7B", "7b", "13B", "13b", "70B", "70b" followed by "parameters" or "param"
+        // or "7 billion", "7 billion parameters"
+        val regex = Regex("(\\d+(\\.\\d+)?[BMb])(?:\\s*parameters?)?|(\\d+)\\s*(?:billion|B)(?:\\s*parameters?)?", RegexOption.IGNORE_CASE)
+        val match = regex.find(description)
+
+        return match?.value
+    }}
