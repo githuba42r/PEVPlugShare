@@ -34,16 +34,37 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
     private val imageEditorLauncher = registerForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == RESULT_OK && selectedPhotoIndex != null) {
-            val editedPath = result.data?.getStringExtra("edited_image_path")
-            val focusRect = result.data?.getStringExtra("focus_rect")
+        if (result.resultCode == RESULT_OK) {
+            val editedPath = result.data?.getStringExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH)
+            val focusRectSerialized = result.data?.getStringExtra(ImageEditorActivity.EXTRA_FOCUS_RECT)
+            val isSaveNew = result.data?.getBooleanExtra(ImageEditorActivity.EXTRA_IS_SAVE_NEW, false) ?: false
+
             if (editedPath != null) {
-                photoPaths[selectedPhotoIndex!!] = editedPath
+                if (isSaveNew) {
+                    // Add the new photo to the list
+                    photoPaths.add(editedPath)
+                    if (focusRectSerialized != null) {
+                        focusAreas[editedPath] = focusRectSerialized
+                    }
+                    adapter.notifyItemInserted(photoPaths.size - 1)
+                    Toast.makeText(this, "New photo added", Toast.LENGTH_SHORT).show()
+                } else if (selectedPhotoIndex != null && selectedPhotoIndex!! >= 0 && selectedPhotoIndex!! < photoPaths.size) {
+                    // Update the existing photo
+                    val originalPhotoPath = photoPaths[selectedPhotoIndex!!]
+                    // Delete the original file if it's different from the edited path
+                    if (originalPhotoPath != editedPath) {
+                        File(originalPhotoPath).delete()
+                    }
+                    photoPaths[selectedPhotoIndex!!] = editedPath
+                    if (focusRectSerialized != null) {
+                        focusAreas[editedPath] = focusRectSerialized
+                    } else {
+                        focusAreas.remove(editedPath) // Clear focus if none returned
+                    }
+                    adapter.notifyItemChanged(selectedPhotoIndex!!)
+                    Toast.makeText(this, "Photo updated", Toast.LENGTH_SHORT).show()
+                }
             }
-            if (focusRect != null) {
-                focusAreas[photoPaths[selectedPhotoIndex!!]] = focusRect
-            }
-            adapter.notifyItemChanged(selectedPhotoIndex!!)
         }
         selectedPhotoIndex = null
     }

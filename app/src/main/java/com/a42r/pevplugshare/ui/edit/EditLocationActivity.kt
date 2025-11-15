@@ -123,25 +123,43 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
     private val imageEditor = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
+            val editedPhotoPath = result.data?.getStringExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH)
             val focusRect = result.data?.getParcelableExtra<android.graphics.RectF>(ImageEditorActivity.EXTRA_FOCUS_RECT)
             val metadata = result.data?.getParcelableExtra<com.a42r.pevplugshare.data.model.PhotoMetadata>(ImageEditorActivity.EXTRA_METADATA)
-            
-            if (editingPhotoIndex >= 0 && editingPhotoIndex < photoUris.size) {
-                val photoPath = photoUris[editingPhotoIndex]
-                
-                if (focusRect != null) {
-                    photoFocusAreas[photoPath] = focusRect
-                    Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
+            val isSaveNew = result.data?.getBooleanExtra(ImageEditorActivity.EXTRA_IS_SAVE_NEW, false) ?: false
+
+            if (editedPhotoPath != null) {
+                if (isSaveNew) {
+                    // Add the new photo to the list
+                    photoUris.add(editedPhotoPath)
+                    addPhotoThumbnail(File(editedPhotoPath))
+                    Toast.makeText(this, "New photo added", Toast.LENGTH_SHORT).show()
+                } else if (editingPhotoIndex >= 0 && editingPhotoIndex < photoUris.size) {
+                    // Replace the existing photo
+                    val originalPhotoPath = photoUris[editingPhotoIndex]
+                    // Delete the original file if it's different from the edited path
+                    if (originalPhotoPath != editedPhotoPath) {
+                        File(originalPhotoPath).delete()
+                    }
+                    photoUris[editingPhotoIndex] = editedPhotoPath
+                    refreshPhotoThumbnails() // Refresh all thumbnails to reflect changes
+                    Toast.makeText(this, "Photo updated", Toast.LENGTH_SHORT).show()
                 }
-                
+
+                // Update focus rect and metadata for the (new or updated) photo
+                if (focusRect != null) {
+                    photoFocusAreas[editedPhotoPath] = focusRect
+                    Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
+                } else {
+                    photoFocusAreas.remove(editedPhotoPath) // Clear focus if none returned
+                }
+
                 if (metadata != null) {
-                    photoMetadata[photoPath] = metadata
-                    
+                    photoMetadata[editedPhotoPath] = metadata
                     // Check if metadata location differs significantly from current location
                     if (metadata.hasGpsData) {
                         checkLocationUpdate(metadata)
                     }
-                    
                     // Show bearing info if available
                     if (metadata.hasBearingData) {
                         Toast.makeText(
@@ -150,6 +168,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                } else {
+                    photoMetadata.remove(editedPhotoPath) // Clear metadata if none returned
                 }
             }
         }
