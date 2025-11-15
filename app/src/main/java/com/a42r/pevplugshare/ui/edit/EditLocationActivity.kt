@@ -50,26 +50,26 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityEditLocationBinding
     private val viewModel: EditLocationViewModel by viewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    
+
     @Inject
     lateinit var tokenManager: com.a42r.pevplugshare.data.remote.TokenManager
-    
+
     @Inject
     lateinit var photoAnalyzer: com.a42r.pevplugshare.ai.PhotoAnalyzer
 
     @Inject
     lateinit var photoRepository: PhotoRepository
-    
+
     private var mapView: MapView? = null
     private var locationMarker: Marker? = null
     private var selectedLatitude: Double = 0.0
     private var selectedLongitude: Double = 0.0
-    
+
     // Sensor related fields
     private lateinit var sensorManager: SensorManager
     private var rotationSensor: Sensor? = null
     private var currentAzimuth: Float = 0f
-    
+
     // Photo related fields
     private val photoUris = mutableListOf<String>()
     private val photoMetadata = mutableMapOf<String, com.a42r.pevplugshare.data.model.PhotoMetadata>() // filePath -> metadata
@@ -81,7 +81,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private val photoSaveMutex = Mutex()  // Mutex for synchronized photo saving
     private var photosBeingProcessed = 0  // Count of photos currently being processed/saved
     private var submittedSuccessfully: Boolean = false
-    
+
     private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             currentPhotoUri?.let {
@@ -89,19 +89,19 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private val pickImages = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         Log.d("EditLocationActivity", "=== pickImages called with ${uris.size} uris ===")
         uris.forEachIndexed { index, uri ->
             Log.d("EditLocationActivity", "  uri[$index]: $uri")
         }
-        
+
         if (uris.isNotEmpty()) {
             val remainingSlots = maxPhotos - photoUris.size
             val urisToProcess = uris.take(remainingSlots)
-            
+
             Log.d("EditLocationActivity", "photoUris.size=${photoUris.size}, remainingSlots=$remainingSlots, urisToProcess.size=${urisToProcess.size}")
-            
+
             if (uris.size > remainingSlots) {
                 Toast.makeText(
                     this,
@@ -109,16 +109,16 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            
+
             urisToProcess.forEach { uri ->
                 Log.d("EditLocationActivity", "Processing URI: $uri")
                 processAndSaveGalleryPhoto(uri)
             }
-            
+
             Log.d("EditLocationActivity", "After loop: photosBeingProcessed=$photosBeingProcessed")
         }
     }
-    
+
     private val cameraPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -171,7 +171,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private val locationId: String? by lazy {
         intent.getStringExtra("location_id")
     }
-    
+
     private val isAddMode: Boolean by lazy {
         val id = locationId
         id == null || id.isEmpty()
@@ -179,13 +179,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Initialize osmdroid configuration
         Configuration.getInstance().load(
             this,
             androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
         )
-        
+
         binding = ActivityEditLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -198,7 +198,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        
+
         // Initialize sensor manager for compass
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
@@ -276,7 +276,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             locationId?.let { viewModel.loadLocation(it) }
         }
     }
-    
+
     private fun requestLocationAndPopulate() {
         // Check for location permission
         if (ContextCompat.checkSelfPermission(
@@ -290,7 +290,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
         }
     }
-    
+
     private fun getLocationAndPopulate() {
         try {
             fusedLocationClient.getCurrentLocation(
@@ -310,7 +310,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             Toast.makeText(this, "Location permission required", Toast.LENGTH_SHORT).show()
         }
     }
-    
+
     private fun getCompassDirection(azimuth: Float): String {
         val degrees = (azimuth + 360) % 360
         return when (degrees.roundToInt()) {
@@ -330,7 +330,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         binding.apply {
             // Map location button
             mapLocationButton.setOnClickListener { showMapModal() }
-            
+
             buttonSubmit.setOnClickListener { submitUpdates() }
             buttonSubmit.text = if (isAddMode) "Add Location" else "Update"
             // Disable submit button initially in add mode until name is filled
@@ -347,16 +347,16 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             binding.buttonDelete.setOnClickListener {
                 showDeleteConfirmationDialog()
             }
-            
+
             // Setup AI buttons - hide if no API key
             val hasApiKey = tokenManager.getOpenRouterApiKey()?.isNotBlank() == true
             buttonGenerateDescription.visibility = if (hasApiKey) android.view.View.VISIBLE else android.view.View.GONE
             buttonParseDescription.visibility = if (hasApiKey) android.view.View.VISIBLE else android.view.View.GONE
-            
+
             buttonGenerateDescription.setOnClickListener { showAiDescriptionDialog() }
             buttonParseDescription.setOnClickListener { parseDescriptionToFields() }
             // Parse button visible in both add and edit modes
-            
+
             // Add name field text watcher to enable/disable submit button
             nameInput.addTextChangedListener(object : android.text.TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -372,7 +372,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     viewModel.updateName(s?.toString() ?: "")
                 }
             })
-            
+
             // Setup socket number buttons
             socket1Button.setOnClickListener { selectSocketCount(1) }
             socket2Button.setOnClickListener { selectSocketCount(2) }
@@ -400,7 +400,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             socketAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             socketTypeSpinner.adapter = socketAdapter
             socketTypeSpinner.setSelection(0)
-            
+
             // Setup opening hours spinner with common options
             val openingHoursList = arrayOf(
                 "24/7",
@@ -422,7 +422,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             hoursAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             openingHoursSpinner.adapter = hoursAdapter
             openingHoursSpinner.setSelection(0)
-            
+
             // Setup fee indicator click
             feeIndicator.setOnClickListener {
                 val hasFee = !feeCheckbox.isChecked
@@ -430,14 +430,14 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 updateFeeIndicator(hasFee)
                 feeDetailsSection.visibility = if (hasFee) android.view.View.VISIBLE else android.view.View.GONE
             }
-            
+
             // Setup access type toggle click
             accessTypeToggleLayout.setOnClickListener {
                 val isPublic = accessTypeText.text != "Public"
                 updateAccessTypeIndicator(isPublic)
                 viewModel.updateAccessType(if (isPublic) "public" else "private")
             }
-            
+
             // Setup favorite toggle click
             favoriteIndicator.setOnClickListener {
                 val isFavorite = favoriteIndicator.tag == "favorite"
@@ -453,19 +453,19 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         mapView = findViewById(com.a42r.pevplugshare.R.id.mapView)
         val buttonAccept = findViewById<com.google.android.material.button.MaterialButton>(com.a42r.pevplugshare.R.id.buttonAcceptLocation)
         val buttonCancel = findViewById<com.google.android.material.button.MaterialButton>(com.a42r.pevplugshare.R.id.buttonCancelLocation)
-        
+
         // Setup map
         mapView?.apply {
             setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(true)
             controller.setZoom(tokenManager.getMapZoomLevel().toDouble())
-            
+
             // Add tap listener to update marker position
             setOnClickListener {
                 // Map click will be handled by the map's touch events
             }
         }
-        
+
         // Accept button
         buttonAccept.setOnClickListener {
             // Update the location with selected coordinates
@@ -473,12 +473,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             Toast.makeText(this, "Location updated", Toast.LENGTH_SHORT).show()
             hideMapModal()
         }
-        
+
         // Cancel button
         buttonCancel.setOnClickListener {
             hideMapModal()
         }
-        
+
         // Setup map tap listener
         mapView?.overlays?.add(object : org.osmdroid.views.overlay.Overlay() {
             override fun onSingleTapConfirmed(e: android.view.MotionEvent, mapView: MapView): Boolean {
@@ -489,33 +489,33 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         })
     }
-    
+
     private fun showMapModal() {
         val mapModalOverlay = findViewById<android.view.View>(com.a42r.pevplugshare.R.id.mapModalOverlay)
         mapModalOverlay.visibility = android.view.View.VISIBLE
-        
+
         // Initialize map with current location
         val currentLat = viewModel.formData.value.latitude
         val currentLon = viewModel.formData.value.longitude
-        
+
         if (currentLat != 0.0 && currentLon != 0.0) {
             updateMapMarker(currentLat, currentLon)
             mapView?.controller?.setCenter(GeoPoint(currentLat, currentLon))
         }
     }
-    
+
     private fun hideMapModal() {
         val mapModalOverlay = findViewById<android.view.View>(com.a42r.pevplugshare.R.id.mapModalOverlay)
         mapModalOverlay.visibility = android.view.View.GONE
     }
-    
+
     private fun updateMapMarker(latitude: Double, longitude: Double) {
         selectedLatitude = latitude
         selectedLongitude = longitude
-        
+
         // Remove existing marker
         locationMarker?.let { mapView?.overlays?.remove(it) }
-        
+
         // Add new marker
         locationMarker = Marker(mapView).apply {
             position = GeoPoint(latitude, longitude)
@@ -540,7 +540,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         binding.progressBar.visibility = android.view.View.GONE
                         binding.formContainer.visibility = android.view.View.VISIBLE
                         binding.buttonSubmit.isEnabled = true
-                        
+
                         // Initialize UI with default values
                         initializeUIForAddMode()
                     }
@@ -551,9 +551,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         binding.buttonSubmit.isEnabled = photosBeingProcessed == 0
                         Log.d("EditLocationActivity", "EditLocationState.Loaded: photosBeingProcessed=$photosBeingProcessed, buttonSubmit.isEnabled=${binding.buttonSubmit.isEnabled}")
                         populateFormFromLocation(state.location)
-                        
+
                         // Show sync button if pending
-                        binding.buttonSyncToOsmand.visibility = 
+                        binding.buttonSyncToOsmand.visibility =
                             if (state.location.syncStatus.value == "PENDING") android.view.View.VISIBLE
                             else android.view.View.GONE
                     }
@@ -644,36 +644,36 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         viewModel.updateProviderName(location.providerName ?: "")
         viewModel.updateChargingCosts(location.chargingCosts ?: "")
         viewModel.updateProviderWebsite(location.providerWebsite ?: "")
-        
+
         // Set favorite state
         updateFavoriteIndicator(location.isFavourite)
         viewModel.updateFavorite(location.isFavourite)
     }
-    
+
     private fun initializeUIForAddMode() {
         binding.apply {
             // Set socket count to 1
             selectSocketCount(1)
-            
+
             // Set opening hours to 24/7 (index 0)
             openingHoursSpinner.setSelection(0)
-            
+
             // Set socket type to AU GPO (index 0)
             socketTypeSpinner.setSelection(0)
-            
+
             // Set as Public
             updateAccessTypeIndicator(true)
-            
+
             // Set as Free (no fee)
             feeCheckbox.isChecked = false
             updateFeeIndicator(false)
             feeDetailsSection.visibility = android.view.View.GONE
-            
+
             // Set favorite to false
             updateFavoriteIndicator(false)
         }
     }
-    
+
     private fun updateFavoriteIndicator(isFavorite: Boolean) {
         binding.favoriteIndicator.apply {
             if (isFavorite) {
@@ -687,7 +687,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun updateFeeIndicator(hasFee: Boolean) {
         binding.feeIndicator.apply {
             if (hasFee) {
@@ -697,7 +697,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun updateAccessTypeIndicator(isPublic: Boolean) {
         binding.apply {
             if (isPublic) {
@@ -719,27 +719,27 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             val selectedColor = ContextCompat.getColor(this@EditLocationActivity, com.google.android.material.R.color.design_default_color_primary)
             val defaultWidth = 1
             val selectedWidth = 3
-            
+
             socket1Button.icon = null
             socket1Button.strokeColor = android.content.res.ColorStateList.valueOf(defaultColor)
             socket1Button.strokeWidth = defaultWidth
-            
+
             socket2Button.icon = null
             socket2Button.strokeColor = android.content.res.ColorStateList.valueOf(defaultColor)
             socket2Button.strokeWidth = defaultWidth
-            
+
             socket4Button.icon = null
             socket4Button.strokeColor = android.content.res.ColorStateList.valueOf(defaultColor)
             socket4Button.strokeWidth = defaultWidth
-            
+
             socket10Button.icon = null
             socket10Button.strokeColor = android.content.res.ColorStateList.valueOf(defaultColor)
             socket10Button.strokeWidth = defaultWidth
-            
+
             socket10PlusButton.icon = null
             socket10PlusButton.strokeColor = android.content.res.ColorStateList.valueOf(defaultColor)
             socket10PlusButton.strokeWidth = defaultWidth
-            
+
             // Highlight selected button with thicker, colored border
             val selectedButton = when (count) {
                 1 -> socket1Button
@@ -750,11 +750,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
             selectedButton.strokeColor = android.content.res.ColorStateList.valueOf(selectedColor)
             selectedButton.strokeWidth = selectedWidth
-            
+
             viewModel.updateGpoCount(count)
         }
     }
-    
+
     private fun updateUIFromFormData(data: EditLocationFormData) {
         binding.apply {
             nameInput.setOnFocusChangeListener { _, _ ->
@@ -967,11 +967,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun updateSubmitButtonState() {
-        
+
         runOnUiThread {
             binding.apply {
                 val isProcessingPhotos = photosBeingProcessed > 0
-                
+
                 // In add mode, also check that name is not blank
                 val shouldBeEnabled = if (isAddMode) {
                     !isProcessingPhotos && !nameInput.text.isNullOrBlank()
@@ -979,10 +979,10 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     // In edit mode, only disable while processing photos
                     !isProcessingPhotos
                 }
-                
+
                 Log.d("EditLocationActivity", "  isProcessingPhotos=$isProcessingPhotos, shouldBeEnabled=$shouldBeEnabled")
                 buttonSubmit.isEnabled = shouldBeEnabled
-                
+
                 if (isProcessingPhotos) {
                     buttonSubmit.text = "Processing $photosBeingProcessed photo(s)..."
                     Log.d("EditLocationActivity", "  Button text: '${buttonSubmit.text}' DISABLED")
@@ -993,23 +993,23 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun syncToOsmand() {
         locationId?.let { viewModel.syncToOsmand(it) }
     }
-    
+
     private fun showAiDescriptionDialog() {
         val name = binding.nameInput.text.toString()
         if (name.isBlank()) {
             Toast.makeText(this, "Please enter a location name first", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         val gpoCount = viewModel.formData.value.gpoCount
         val openingHours = binding.openingHoursSpinner.selectedItem?.toString()
         val additionalInfo = binding.additionalInfoInput.text.toString().takeIf { it.isNotBlank() }
         val currentDescription = binding.descriptionInput.text.toString()
-        
+
         // Get socket type from spinner
         val socketTypeIndex = binding.socketTypeSpinner.selectedItemPosition
         val socketType = when (socketTypeIndex) {
@@ -1023,20 +1023,20 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             8 -> "OTHER"
             else -> "AS3112"
         }
-        
+
         // Get access type from indicator
         val accessType = if (binding.accessTypeText.text == "Public") {
             com.a42r.pevplugshare.data.model.LocationAccessType.PUBLIC
         } else {
             com.a42r.pevplugshare.data.model.LocationAccessType.PRIVATE
         }
-        
+
         // Get fee status
         val hasFee = binding.feeCheckbox.isChecked
-        
+
         // Get capacity if available
         val capacity = binding.chargingCostsInput.text.toString().takeIf { it.isNotBlank() }
-        
+
         val dialog = AiDescriptionDialogFragment.newInstance(
             locationName = name,
             accessType = accessType,
@@ -1052,7 +1052,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             viewModel.updateDescription(generatedDescription)
             Toast.makeText(this, "Description updated", Toast.LENGTH_SHORT).show()
         }
-        
+
         dialog.show(supportFragmentManager, "AiDescriptionDialog")
     }
 
@@ -1062,21 +1062,21 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             Toast.makeText(this, "No description to parse", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         binding.progressBar.visibility = android.view.View.VISIBLE
         binding.buttonParseDescription.isEnabled = false
-        
+
         viewModel.parseDescription(description) { parsed, error ->
             binding.progressBar.visibility = android.view.View.GONE
             binding.buttonParseDescription.isEnabled = true
-            
+
             if (parsed != null) {
                 val extractedInfo = mutableListOf<String>()
-                
+
                 // Update opening hours - default to 24/7 if not found
                 val hours = parsed.openingHours ?: "24/7"
                 extractedInfo.add("Opening hours: $hours${if (parsed.openingHours == null) " (default)" else ""}")
-                
+
                 // Try to match with spinner options
                 val hoursAdapter = binding.openingHoursSpinner.adapter as android.widget.ArrayAdapter<String>
                 var matchedHours = false
@@ -1093,20 +1093,20 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     binding.openingHoursSpinner.setSelection(0)
                 }
                 viewModel.updateOpeningHours(hours)
-                
+
                 // Update charging points if found
                 if (parsed.chargingPoints != null) {
                     extractedInfo.add("Number of sockets: ${parsed.chargingPoints}")
                     selectSocketCount(parsed.chargingPoints)
                 }
-                
+
                 // Update capacity/costs if found
                 if (parsed.capacity != null) {
                     extractedInfo.add("Capacity: ${parsed.capacity}")
                     binding.chargingCostsInput.setText(parsed.capacity)
                     viewModel.updateChargingCosts(parsed.capacity)
                 }
-                
+
                 // Update fee status
                 val feeInfo = if (parsed.isFree) "Free to use" else "Has charging fees"
                 extractedInfo.add(feeInfo)
@@ -1114,7 +1114,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 updateFeeIndicator(parsed.hasFee)
                 binding.feeDetailsSection.visibility = if (parsed.hasFee) android.view.View.VISIBLE else android.view.View.GONE
                 viewModel.updateHasFee(parsed.hasFee)
-                
+
                 // Update public/private status if found
                 if (parsed.isPublic != null) {
                     val accessInfo = if (parsed.isPublic) "Public access" else "Private access"
@@ -1122,19 +1122,19 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     updateAccessTypeIndicator(parsed.isPublic)
                     viewModel.updateAccessType(if (parsed.isPublic) "public" else "private")
                 }
-                
+
                 // Add additional info if found
                 if (parsed.additionalInfo != null) {
                     extractedInfo.add("Additional details: ${parsed.additionalInfo}")
                     binding.additionalInfoInput.setText(parsed.additionalInfo)
                 }
-                
+
                 val message = if (extractedInfo.isNotEmpty()) {
                     "✅ Extracted:\n" + extractedInfo.joinToString("\n")
                 } else {
                     "No additional information could be extracted from the description"
                 }
-                
+
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             } else {
                 val errorMsg = error ?: "Unknown error"
@@ -1157,7 +1157,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             else -> 0 // AS3112
         }
     }
-    
+
     private fun showDeleteConfirmationDialog() {
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Delete Location")
@@ -1180,7 +1180,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 Toast.makeText(this, "Maximum 5 photos allowed", Toast.LENGTH_SHORT).show()
             }
         }
-        
+
         // Setup analyze photos button
         binding.analyzePhotosButton.setOnClickListener {
             if (photoUris.isNotEmpty()) {
@@ -1189,16 +1189,16 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 Toast.makeText(this, "Add photos first to analyze", Toast.LENGTH_SHORT).show()
             }
         }
-        
+
         // Show/hide analyze button based on photo count
         updateAnalyzeButtonVisibility()
-        
+
         // Load existing photos if in edit mode
         if (!isAddMode) {
             loadExistingPhotos()
         }
     }
-    
+
     private fun updateAnalyzeButtonVisibility() {
         val hasApiKey = tokenManager.getOpenRouterApiKey()?.isNotBlank() == true
         val hasPhotos = photoUris.isNotEmpty()
@@ -1208,7 +1208,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             android.view.View.GONE
         }
     }
-    
+
     private fun showPhotoSourceDialog() {
         val options = arrayOf("Take Photo", "Choose Multiple Photos")
         androidx.appcompat.app.AlertDialog.Builder(this)
@@ -1226,7 +1226,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
             .show()
     }
-    
+
     private fun checkCameraPermissionAndLaunch() {
         when {
             ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
@@ -1238,7 +1238,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun launchCamera() {
         val photoFile = createImageFile()
         photoFile?.let { file ->
@@ -1251,7 +1251,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             takePicture.launch(currentPhotoUri)
         }
     }
-    
+
     private fun createImageFile(): File? {
         return try {
             val timestamp = System.currentTimeMillis()
@@ -1305,18 +1305,18 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         photosBeingProcessed++
         updateSubmitButtonState()
         Log.d("EditLocationActivity", "=== START processAndSavePhoto: photosBeingProcessed=$photosBeingProcessed ===")
-        
+
         lifecycleScope.launch(Dispatchers.IO) {
             tempPhotoFile?.let { sourceFile ->
                 val currentSessionId = currentEditLocationId ?: "temp_fallback" // Use currentEditLocationId as session ID
                 Log.d("EditLocationActivity", "Processing camera photo - sessionId: $currentSessionId")
-                
+
                 photoSaveMutex.lock()
                 try {
                     // Find next available index INSIDE the mutex to prevent race condition
                     val nextImageIndex = findNextImageIndex(currentSessionId, isTemporary = true)
                     Log.d("EditLocationActivity", "Got nextImageIndex: $nextImageIndex (under mutex lock)")
-                    
+
                     val resizedFile = ImageUtils.resizeAndSaveImage(
                         this@EditLocationActivity,
                         sourceFile,
@@ -1325,7 +1325,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         isTemporary = true
                     )
                     Log.d("EditLocationActivity", "After resizeAndSaveImage: file=${ resizedFile?.absolutePath ?: "NULL"}")
-                    
+
                     withContext(Dispatchers.Main) {
                         resizedFile?.let {
                             Log.d("EditLocationActivity", "✓ Camera photo saved successfully to temp: ${it.absolutePath}")
@@ -1348,7 +1348,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                        
+
                         photosBeingProcessed--
                         Log.d("EditLocationActivity", "✓ Camera photo complete: photosBeingProcessed=$photosBeingProcessed")
                         updateSubmitButtonState()
@@ -1366,34 +1366,34 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun processAndSaveGalleryPhoto(uri: Uri) {
         photosBeingProcessed++
         updateSubmitButtonState()
         Log.d("EditLocationActivity", "=== START processAndSaveGalleryPhoto: photosBeingProcessed=$photosBeingProcessed ===")
-        
+
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 // Copy URI content to temp file
                 val tempFile = File.createTempFile("gallery_", ".jpg", cacheDir)
                 Log.d("EditLocationActivity", "Created temp file: ${tempFile.absolutePath}")
-                
+
                 contentResolver.openInputStream(uri)?.use { input ->
                     tempFile.outputStream().use { output ->
                         input.copyTo(output)
                     }
                 }
                 Log.d("EditLocationActivity", "Copied gallery photo to temp file: ${tempFile.length()} bytes")
-                
+
                 val currentSessionId = currentEditLocationId ?: "temp_fallback" // Use currentEditLocationId as session ID
                 Log.d("EditLocationActivity", "Processing gallery photo - sessionId: $currentSessionId")
-                
+
                 photoSaveMutex.lock()
                 try {
                     // Find next available index INSIDE the mutex to prevent race condition
                     val nextImageIndex = findNextImageIndex(currentSessionId, isTemporary = true)
                     Log.d("EditLocationActivity", "Got nextImageIndex: $nextImageIndex (under mutex lock)")
-                    
+
                     val resizedFile = ImageUtils.resizeAndSaveImage(
                         this@EditLocationActivity,
                         tempFile,
@@ -1402,7 +1402,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         isTemporary = true
                     )
                     Log.d("EditLocationActivity", "After resizeAndSaveImage: file=${resizedFile?.absolutePath ?: "NULL"}")
-                    
+
                     withContext(Dispatchers.Main) {
                         resizedFile?.let { file ->
                             Log.d("EditLocationActivity", "✓ Gallery photo saved successfully to temp: ${file.absolutePath}")
@@ -1437,7 +1437,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     photoSaveMutex.unlock()
                     Log.d("EditLocationActivity", "=== END processAndSaveGalleryPhoto: mutex unlocked ===")
                 }
-                
+
                 // Delete temp file
                 tempFile.delete()
                 Log.d("EditLocationActivity", "Deleted temp file")
@@ -1455,7 +1455,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun addPhotoThumbnail(file: File) {
         val thumbnailView = LayoutInflater.from(this)
             .inflate(R.layout.item_photo_thumbnail, binding.photosContainer, false)
@@ -1597,24 +1597,24 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 Log.e("EditLocationActivity", "❌ Could not find photo index for removal: $currentPath")
             }
         }
-        
+
         binding.photosContainer.addView(thumbnailView, binding.photosContainer.childCount)
         updateAddButtonVisibility()
         updateAnalyzeButtonVisibility()
     }
-    
+
     private fun removePhoto(index: Int) {
         if (index < photoUris.size) {
             val path = photoUris[index]
             val sessionId = currentEditLocationId ?: locationId ?: return // Use currentEditLocationId for temp, or locationId for permanent
-            
+
             // Delete the actual file
             File(path).delete()
-            
+
             photoMetadata.remove(path)
             photoUris.removeAt(index)
             viewModel.updatePhotoPaths(photoUris)
-            
+
             // Delete from database
             lifecycleScope.launch(Dispatchers.IO) {
                 photoRepository.deletePhotoByFilePath(path)
@@ -1622,13 +1622,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
             // Renumber remaining images to ensure continuous indexing
             renumberPhotos(sessionId, isTemporary = isAddMode) // Renumber in temp if add mode, else permanent
-            
+
             refreshPhotoThumbnails()
             updateAnalyzeButtonVisibility()
             Toast.makeText(this, "Photo removed", Toast.LENGTH_SHORT).show()
         }
     }
-    
+
     private fun renumberPhotos(id: String, isTemporary: Boolean) {
         val imageFiles = if (isTemporary) {
             ImageUtils.getTempImageDirectory(this, id).listFiles()?.filter { it.extension == "jpg" }?.sortedBy { it.name } ?: emptyList()
@@ -1653,7 +1653,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun editPhoto(index: Int, file: File) {
         try {
             Log.d("EditLocationActivity", "editPhoto called: index=$index, file=${file.absolutePath}")
@@ -1721,22 +1721,22 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             Log.e("EditLocationActivity", "Error in editPhoto", e)
         }
     }
-    
+
     private fun checkLocationUpdate(metadata: com.a42r.pevplugshare.data.model.PhotoMetadata) {
         // Check if photo location differs significantly from current location
         if (metadata.latitude == null || metadata.longitude == null) {
             return
         }
-        
+
         val photoLat = metadata.latitude!!
         val photoLon = metadata.longitude!!
-        
+
         // Calculate distance from current location
         val distance = com.a42r.pevplugshare.util.DistanceCalculator.calculateDistance(
             selectedLatitude, selectedLongitude,
             photoLat, photoLon
         )
-        
+
         // If more than 50 meters different, ask user
         if (distance > 50) {
             androidx.appcompat.app.AlertDialog.Builder(this)
@@ -1754,7 +1754,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 .show()
         }
     }
-    
+
     private fun updateLocationFromPhoto(
         photoLat: Double,
         photoLon: Double,
@@ -1762,7 +1762,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     ) {
         selectedLatitude = photoLat
         selectedLongitude = photoLon
-        
+
         // Update UI fields if they exist
         try {
             // Try to update latitude/longitude fields if visible
@@ -1773,7 +1773,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         } catch (e: Exception) {
             Log.d("EditLocationActivity", "Could not update coordinate fields: ${e.message}")
         }
-        
+
         // Add bearing/direction to additional notes if available
         if (metadata.hasBearingData && metadata.bearing != null) {
             try {
@@ -1790,28 +1790,28 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 Log.d("EditLocationActivity", "Could not update notes field: ${e.message}")
             }
         }
-        
+
         Toast.makeText(
             this,
             "Location updated to GPS coordinates from photo",
             Toast.LENGTH_SHORT
         ).show()
     }
-    
+
     private fun refreshPhotoThumbnails() {
         // Remove all thumbnails except the add button
         while (binding.photosContainer.childCount > 1) {
             binding.photosContainer.removeViewAt(1)
         }
-        
+
         // Re-add thumbnails
         photoUris.forEachIndexed { index, path ->
             addPhotoThumbnail(File(path))
         }
-        
+
         updateAddButtonVisibility()
     }
-    
+
     private fun updateAddButtonVisibility() {
         binding.addPhotoButton.visibility = if (photoUris.size >= maxPhotos) {
             android.view.View.GONE
@@ -1819,7 +1819,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             android.view.View.VISIBLE
         }
     }
-    
+
     private fun loadExistingPhotos() {
         locationId?.let { id ->
             val existingPhotos = ImageUtils.getLocationImages(this, id)
@@ -1854,14 +1854,14 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun findNextImageIndex(id: String, isTemporary: Boolean): Int {
         val existingImages = if (isTemporary) {
             ImageUtils.getTempImageDirectory(this, id).listFiles()?.filter { it.extension == "jpg" }?.sortedBy { it.name } ?: emptyList()
         } else {
             ImageUtils.getLocationImages(this, id)
         }
-        
+
         Log.d("EditLocationActivity", "findNextImageIndex for $id (isTemporary=$isTemporary): found ${existingImages.size} existing images")
         existingImages.forEach { img ->
             Log.d("EditLocationActivity", "    existing: ${img.name}")
@@ -1877,19 +1877,19 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         Log.d("EditLocationActivity", "  -> highestIndex: $highestIndex, returning: ${highestIndex + 1}")
         return highestIndex + 1
     }
-    
+
     private fun analyzePhotosWithAI() {
         val apiKey = tokenManager.getOpenRouterApiKey()
         if (apiKey.isNullOrBlank()) {
             Toast.makeText(this, "API key not configured", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         if (photoUris.isEmpty()) {
             Toast.makeText(this, "No photos to analyze", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         // Show progress dialog
         val progressDialog = androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Analyzing Photos")
@@ -1897,7 +1897,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             .setCancelable(false)
             .create()
         progressDialog.show()
-        
+
         lifecycleScope.launch {
             try {
                 val photoFiles = photoUris.map { File(it) }
@@ -1910,16 +1910,19 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         }
                     }
                 }
+                Log.d("EditLocationActivity", "Starting AI photo analysis request for ${photoUris.size} photos")
                 val result = photoAnalyzer.analyzePhotos(photoFiles, apiKey, focusAreasMap)
-                
+
                 progressDialog.dismiss()
-                
+
                 result.fold(
                     onSuccess = { analysis ->
+                        Log.d("EditLocationActivity", "AI photo analysis request successful, received analysis result")
                         showAnalysisResults(analysis)
                         applyAnalysisToForm(analysis)
                     },
                     onFailure = { error ->
+                        Log.d("EditLocationActivity", "AI photo analysis request failed: ${error.message}")
                         Toast.makeText(
                             this@EditLocationActivity,
                             "Analysis failed: ${error.message}",
@@ -1929,6 +1932,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 )
             } catch (e: Exception) {
                 progressDialog.dismiss()
+                Log.d("EditLocationActivity", "AI photo analysis request error: ${e.message}")
                 Toast.makeText(
                     this@EditLocationActivity,
                     "Analysis error: ${e.message}",
@@ -1937,40 +1941,40 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     private fun showAnalysisResults(analysis: com.a42r.pevplugshare.ai.PhotoAnalysisResult) {
         val message = buildString {
             append("📸 Photo Analysis Results:\n\n")
-            
+
             analysis.socketCount?.let {
                 append("🔌 Socket Count: $it\n")
             }
-            
+
             if (analysis.socketTypes.isNotEmpty()) {
                 append("\n🔋 Socket Types:\n")
                 analysis.socketTypes.forEach { type ->
                     append("  • $type\n")
                 }
             }
-            
+
             analysis.locationDescription?.let {
                 append("\n📍 Location:\n$it\n")
             }
-            
+
             analysis.powerRating?.let {
                 append("\n⚡ Power Rating: $it\n")
             }
-            
+
             if (analysis.warnings.isNotEmpty()) {
                 append("\n⚠️ Notes:\n")
                 analysis.warnings.forEach { warning ->
                     append("  • $warning\n")
                 }
             }
-            
+
             append("\nApply to form?")
         }
-        
+
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("AI Analysis Complete")
             .setMessage(message)
@@ -1981,7 +1985,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             .setNegativeButton("Cancel", null)
             .show()
     }
-    
+
     private fun applyAnalysisToForm(analysis: com.a42r.pevplugshare.ai.PhotoAnalysisResult) {
         binding.apply {
             // Update socket count
@@ -1994,19 +1998,26 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     else -> selectSocketCount(11) // 10+
                 }
             }
-            
-            // Append location description to additional info
+
+            // Handle location description - use for main description if empty, otherwise additional info
             analysis.locationDescription?.let { location ->
-                val existing = additionalInfoInput.text.toString()
-                val updated = if (existing.isBlank()) {
-                    "Location: $location"
+                if (descriptionInput.text.toString().isBlank()) {
+                    // Use for main description if it's empty
+                    descriptionInput.setText(location)
+                    viewModel.updateDescription(location)
                 } else {
-                    "$existing\n\nLocation: $location"
+                    // Append to additional info if main description already exists
+                    val existing = additionalInfoInput.text.toString()
+                    val updated = if (existing.isBlank()) {
+                        "Location: $location"
+                    } else {
+                        "$existing\n\nLocation: $location"
+                    }
+                    additionalInfoInput.setText(updated)
+                    viewModel.updateAdditionalInfo(updated)
                 }
-                additionalInfoInput.setText(updated)
-                viewModel.updateAdditionalInfo(updated)
             }
-            
+
             // Append power rating and warnings to additional info
             val additionalNotes = buildString {
                 analysis.powerRating?.let {
@@ -2018,7 +2029,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     append("Notes: ${analysis.warnings.joinToString(", ")}")
                 }
             }
-            
+
             if (additionalNotes.isNotBlank()) {
                 val existing = additionalInfoInput.text.toString()
                 val updated = if (existing.isBlank()) {
@@ -2031,7 +2042,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
@@ -2042,7 +2053,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-    
+
     override fun onPause() {
         super.onPause()
         mapView?.onPause()
@@ -2051,22 +2062,22 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             sensorManager.unregisterListener(this)
         }
     }
-    
+
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let {
             if (it.sensor.type == Sensor.TYPE_ROTATION_VECTOR) {
                 val rotationMatrix = FloatArray(9)
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, it.values)
-                
+
                 val orientation = FloatArray(3)
                 SensorManager.getOrientation(rotationMatrix, orientation)
-                
+
                 // Convert radians to degrees
                 currentAzimuth = Math.toDegrees(orientation[0].toDouble()).toFloat()
             }
         }
     }
-    
+
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Not needed for this use case
     }

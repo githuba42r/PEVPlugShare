@@ -1,0 +1,10 @@
+# Location Description Parser User Prompt Template
+# Function: Provides the template for user messages when parsing location descriptions
+# Use Case: Used by LocationDescriptionParser.kt to format user queries for AI processing, inserting the actual description into the template
+# This template structures the user input to guide the AI in extracting specific information from charging location descriptions
+
+Extract charging location information from this description:
+
+"%s"
+
+Return only the JSON response, no additional text.
