@@ -75,6 +75,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private var editingPhotoIndex: Int = -1
     private val photoSaveMutex = Mutex()  // Mutex for synchronized photo saving
     private var photosBeingProcessed = 0  // Count of photos currently being processed/saved
+    private var submittedSuccessfully: Boolean = false
     
     private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
@@ -591,6 +592,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         binding.progressBar.visibility = android.view.View.GONE
                         val message = if (isAddMode) "Location added!" else "Location updated!"
                         Toast.makeText(this@EditLocationActivity, message, Toast.LENGTH_SHORT).show()
+                        submittedSuccessfully = true // Set flag on successful submission
                         setResult(RESULT_OK)
                         finish()
                     }
@@ -825,10 +827,28 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             Toast.makeText(this, "Please wait for photos to finish processing", Toast.LENGTH_SHORT).show()
             return
         }
-        if (isAddMode) {
-            viewModel.addLocation(currentEditLocationId)
-        } else {
-            viewModel.submitUpdates(locationId!!)
+
+        lifecycleScope.launch {
+            val finalLocationId = if (isAddMode) currentEditLocationId ?: UUID.randomUUID().toString() else locationId!!
+            
+            // Move temporary images to permanent storage
+            val newPermanentPaths = ImageUtils.moveTempImagesToPermanent(
+                this@EditLocationActivity,
+                currentEditLocationId ?: "temp_fallback", // Use currentEditLocationId as session ID
+                finalLocationId
+            )
+            
+            // Update photoUris with the new permanent paths
+            photoUris.clear()
+            photoUris.addAll(newPermanentPaths)
+            viewModel.updatePhotoPaths(photoUris)
+
+            if (isAddMode) {
+                viewModel.addLocation(finalLocationId)
+            } else {
+                viewModel.submitUpdates(finalLocationId)
+            }
+            submittedSuccessfully = true
         }
     }
 
@@ -1132,8 +1152,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
      * Process cache photos from QuickLocationActivity into permanent storage
      * This is called during onCreate for add mode when photos are passed via Intent
      */
-    private suspend fun processCachePhotos(cachePaths: List<String>, locationId: String): List<String> {
-        val permanentPaths = mutableListOf<String>()
+    private suspend fun processCachePhotos(cachePaths: List<String>, sessionId: String): List<String> {
+        val temporaryPaths = mutableListOf<String>()
 
         cachePaths.forEachIndexed { index, cachePath ->
             try {
@@ -1145,12 +1165,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         val resizedFile = ImageUtils.resizeAndSaveImage(
                             this@EditLocationActivity,
                             cacheFile,
-                            locationId,
-                            index
+                            sessionId,
+                            index,
+                            isTemporary = true
                         )
 
                         resizedFile?.let {
-                            permanentPaths.add(it.absolutePath)
+                            temporaryPaths.add(it.absolutePath)
                             // Delete cache file after successful save
                             cacheFile.delete()
                         }
@@ -1163,7 +1184,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
         }
 
-        return permanentPaths
+        return temporaryPaths
     }
 
     private fun processAndSavePhoto() {
@@ -1173,26 +1194,27 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         
         lifecycleScope.launch(Dispatchers.IO) {
             tempPhotoFile?.let { sourceFile ->
-                val currentLocationId = if (isAddMode) currentEditLocationId ?: "temp_fallback" else locationId ?: "temp_fallback"
-                Log.d("EditLocationActivity", "Processing camera photo - locationId: $currentLocationId, isAddMode: $isAddMode")
+                val currentSessionId = currentEditLocationId ?: "temp_fallback" // Use currentEditLocationId as session ID
+                Log.d("EditLocationActivity", "Processing camera photo - sessionId: $currentSessionId")
                 
                 photoSaveMutex.lock()
                 try {
                     // Find next available index INSIDE the mutex to prevent race condition
-                    val nextImageIndex = findNextImageIndex(currentLocationId)
+                    val nextImageIndex = findNextImageIndex(currentSessionId, isTemporary = true)
                     Log.d("EditLocationActivity", "Got nextImageIndex: $nextImageIndex (under mutex lock)")
                     
                     val resizedFile = ImageUtils.resizeAndSaveImage(
                         this@EditLocationActivity,
                         sourceFile,
-                        currentLocationId,
-                        nextImageIndex
+                        currentSessionId,
+                        nextImageIndex,
+                        isTemporary = true
                     )
                     Log.d("EditLocationActivity", "After resizeAndSaveImage: file=${ resizedFile?.absolutePath ?: "NULL"}")
                     
                     withContext(Dispatchers.Main) {
                         resizedFile?.let {
-                            Log.d("EditLocationActivity", "✓ Camera photo saved successfully: ${it.absolutePath}")
+                            Log.d("EditLocationActivity", "✓ Camera photo saved successfully to temp: ${it.absolutePath}")
                             photoUris.add(it.absolutePath)
                             addPhotoThumbnail(it)
                             viewModel.updatePhotoPaths(photoUris)
@@ -1249,26 +1271,27 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 }
                 Log.d("EditLocationActivity", "Copied gallery photo to temp file: ${tempFile.length()} bytes")
                 
-                val currentLocationId = if (isAddMode) currentEditLocationId ?: "temp_fallback" else locationId ?: "temp_fallback"
-                Log.d("EditLocationActivity", "Processing gallery photo - locationId: $currentLocationId, isAddMode: $isAddMode")
+                val currentSessionId = currentEditLocationId ?: "temp_fallback" // Use currentEditLocationId as session ID
+                Log.d("EditLocationActivity", "Processing gallery photo - sessionId: $currentSessionId")
                 
                 photoSaveMutex.lock()
                 try {
                     // Find next available index INSIDE the mutex to prevent race condition
-                    val nextImageIndex = findNextImageIndex(currentLocationId)
+                    val nextImageIndex = findNextImageIndex(currentSessionId, isTemporary = true)
                     Log.d("EditLocationActivity", "Got nextImageIndex: $nextImageIndex (under mutex lock)")
                     
                     val resizedFile = ImageUtils.resizeAndSaveImage(
                         this@EditLocationActivity,
                         tempFile,
-                        currentLocationId,
-                        nextImageIndex
+                        currentSessionId,
+                        nextImageIndex,
+                        isTemporary = true
                     )
                     Log.d("EditLocationActivity", "After resizeAndSaveImage: file=${resizedFile?.absolutePath ?: "NULL"}")
                     
                     withContext(Dispatchers.Main) {
                         resizedFile?.let {
-                            Log.d("EditLocationActivity", "✓ Gallery photo saved successfully: ${it.absolutePath}")
+                            Log.d("EditLocationActivity", "✓ Gallery photo saved successfully to temp: ${it.absolutePath}")
                             photoUris.add(it.absolutePath)
                             addPhotoThumbnail(it)
                             viewModel.updatePhotoPaths(photoUris)
@@ -1408,16 +1431,18 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private fun removePhoto(index: Int) {
         if (index < photoUris.size) {
             val path = photoUris[index]
-            val locationId = this.locationId ?: return
+            val sessionId = currentEditLocationId ?: locationId ?: return // Use currentEditLocationId for temp, or locationId for permanent
             
+            // Delete the actual file
             File(path).delete()
+            
             photoFocusAreas.remove(path)
             photoMetadata.remove(path)
             photoUris.removeAt(index)
             viewModel.updatePhotoPaths(photoUris)
             
             // Renumber remaining images to ensure continuous indexing
-            renumberPhotos(locationId)
+            renumberPhotos(sessionId, isTemporary = isAddMode) // Renumber in temp if add mode, else permanent
             
             refreshPhotoThumbnails()
             updateAnalyzeButtonVisibility()
@@ -1425,9 +1450,14 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         }
     }
     
-    private fun renumberPhotos(locationId: String) {
-        val existingImages = ImageUtils.getLocationImages(this, locationId)
-        existingImages.forEachIndexed { index, file ->
+    private fun renumberPhotos(id: String, isTemporary: Boolean) {
+        val imageFiles = if (isTemporary) {
+            ImageUtils.getTempImageDirectory(this, id).listFiles()?.filter { it.extension == "jpg" }?.sortedBy { it.name } ?: emptyList()
+        } else {
+            ImageUtils.getLocationImages(this, id)
+        }
+        
+        imageFiles.forEachIndexed { index, file ->
             val expectedName = "image_$index.jpg"
             if (file.name != expectedName) {
                 val newFile = File(file.parent, expectedName)
@@ -1589,9 +1619,14 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         }
     }
     
-    private fun findNextImageIndex(locationId: String): Int {
-        val existingImages = ImageUtils.getLocationImages(this, locationId)
-        Log.d("EditLocationActivity", "findNextImageIndex for $locationId: found ${existingImages.size} existing images")
+    private fun findNextImageIndex(id: String, isTemporary: Boolean): Int {
+        val existingImages = if (isTemporary) {
+            ImageUtils.getTempImageDirectory(this, id).listFiles()?.filter { it.extension == "jpg" }?.sortedBy { it.name } ?: emptyList()
+        } else {
+            ImageUtils.getLocationImages(this, id)
+        }
+        
+        Log.d("EditLocationActivity", "findNextImageIndex for $id (isTemporary=$isTemporary): found ${existingImages.size} existing images")
         existingImages.forEach { img ->
             Log.d("EditLocationActivity", "    existing: ${img.name}")
         }
@@ -1789,5 +1824,16 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Not needed for this use case
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!submittedSuccessfully) {
+            // If the activity is destroyed without successful submission, delete temporary images
+            currentEditLocationId?.let { sessionId ->
+                ImageUtils.deleteTempImages(this, sessionId)
+                Log.d("EditLocationActivity", "Deleted temporary images for session: $sessionId")
+            }
+        }
     }
 }
