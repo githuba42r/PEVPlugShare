@@ -29,9 +29,17 @@ object ImageUtils {
         return locationDir
     }
     
-    fun resizeAndSaveImage(context: Context, sourceFile: File, locationId: String, imageIndex: Int): File? {
+    fun getTempImageDirectory(context: Context, sessionId: String): File {
+        val tempDir = File(context.cacheDir, "temp_images/$sessionId")
+        if (!tempDir.exists()) {
+            tempDir.mkdirs()
+        }
+        return tempDir
+    }
+    
+    fun resizeAndSaveImage(context: Context, sourceFile: File, id: String, imageIndex: Int, isTemporary: Boolean = false): File? {
         try {
-            android.util.Log.d("ImageUtils", "resizeAndSaveImage: locationId=$locationId, imageIndex=$imageIndex, sourceFile=${sourceFile.name}")
+            android.util.Log.d("ImageUtils", "resizeAndSaveImage: id=$id, imageIndex=$imageIndex, sourceFile=${sourceFile.name}, isTemporary=$isTemporary")
             
             // Read the image
             val bitmap = decodeSampledBitmap(sourceFile.absolutePath, MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION)
@@ -40,8 +48,12 @@ object ImageUtils {
             // Rotate if needed based on EXIF data
             val rotatedBitmap = rotateImageIfRequired(sourceFile.absolutePath, bitmap)
             
-            // Save to app directory
-            val outputDir = getLocationImageDirectory(context, locationId)
+            // Determine output directory
+            val outputDir = if (isTemporary) {
+                getTempImageDirectory(context, id)
+            } else {
+                getLocationImageDirectory(context, id)
+            }
             val outputFile = File(outputDir, "image_$imageIndex.jpg")
             
             android.util.Log.d("ImageUtils", "  - outputDir: ${outputDir.absolutePath}")
@@ -151,6 +163,40 @@ object ImageUtils {
         } catch (e: Exception) {
             android.util.Log.e("ImageUtils", "Error deleting image file: $imagePath", e)
             false
+        }
+    }
+
+    fun moveTempImagesToPermanent(context: Context, sessionId: String, locationId: String): List<String> {
+        val tempDir = getTempImageDirectory(context, sessionId)
+        val permanentDir = getLocationImageDirectory(context, locationId)
+        val newImagePaths = mutableListOf<String>()
+
+        if (tempDir.exists() && tempDir.isDirectory) {
+            tempDir.listFiles()?.forEachIndexed { index, tempFile ->
+                if (tempFile.extension == "jpg") {
+                    val newFileName = "image_$index.jpg"
+                    val newPermanentFile = File(permanentDir, newFileName)
+                    try {
+                        tempFile.renameTo(newPermanentFile)
+                        newImagePaths.add(newPermanentFile.absolutePath)
+                        android.util.Log.d("ImageUtils", "Moved temp image ${tempFile.name} to ${newPermanentFile.absolutePath}")
+                    } catch (e: Exception) {
+                        android.util.Log.e("ImageUtils", "Error moving temp image ${tempFile.name}", e)
+                    }
+                }
+            }
+            // Delete the temporary directory after moving files
+            tempDir.deleteRecursively()
+            android.util.Log.d("ImageUtils", "Deleted temporary directory: ${tempDir.absolutePath}")
+        }
+        return newImagePaths
+    }
+
+    fun deleteTempImages(context: Context, sessionId: String) {
+        val tempDir = getTempImageDirectory(context, sessionId)
+        if (tempDir.exists() && tempDir.isDirectory) {
+            tempDir.deleteRecursively()
+            android.util.Log.d("ImageUtils", "Deleted temporary directory: ${tempDir.absolutePath}")
         }
     }
 
