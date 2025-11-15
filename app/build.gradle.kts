@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.annotation:annotation:1.7.0") // Explicitly added annotation dependency
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
