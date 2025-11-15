@@ -39,7 +39,8 @@ data class PhotoEntity(
     val filePath: String,
     val timestamp: Long,
     val exifMetadata: String? = null,
-    val gpxData: String? = null
+    val gpxData: String? = null,
+    val focusRectString: String? = null
 )
 
 @Entity(tableName = "sync_state")

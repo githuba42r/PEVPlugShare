@@ -31,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.runBlocking
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -41,6 +42,8 @@ import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import com.a42r.pevplugshare.domain.repository.PhotoRepository
+import com.a42r.pevplugshare.data.db.entity.PhotoEntity
 
 @AndroidEntryPoint
 class EditLocationActivity : AppCompatActivity(), SensorEventListener {
@@ -53,6 +56,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     
     @Inject
     lateinit var photoAnalyzer: com.a42r.pevplugshare.ai.PhotoAnalyzer
+
+    @Inject
+    lateinit var photoRepository: PhotoRepository
     
     private var mapView: MapView? = null
     private var locationMarker: Marker? = null
@@ -66,7 +72,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     
     // Photo related fields
     private val photoUris = mutableListOf<String>()
-    private val photoFocusAreas = mutableMapOf<String, android.graphics.RectF>() // filePath -> focusRect
     private val photoMetadata = mutableMapOf<String, com.a42r.pevplugshare.data.model.PhotoMetadata>() // filePath -> metadata
     private val maxPhotos = 5
     private var currentEditLocationId: String? = null
@@ -127,69 +132,37 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private val imageEditor = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val editedPhotoPath = result.data?.getStringExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH)
-            val focusRect = result.data?.getParcelableExtra<android.graphics.RectF>(ImageEditorActivity.EXTRA_FOCUS_RECT)
+            val focusRectString = result.data?.getStringExtra(ImageEditorActivity.EXTRA_FOCUS_RECT)
             val metadata = result.data?.getParcelableExtra<com.a42r.pevplugshare.data.model.PhotoMetadata>(ImageEditorActivity.EXTRA_METADATA)
             val isSaveNew = result.data?.getBooleanExtra(ImageEditorActivity.EXTRA_IS_SAVE_NEW, false) ?: false
 
+            Log.d("EditLocationActivity", "")
+            Log.d("EditLocationActivity", "📥 IMAGE EDITOR RESULT RECEIVED")
+            Log.d("EditLocationActivity", "   Edited path: $editedPhotoPath")
+            Log.d("EditLocationActivity", "   Focus string from editor: $focusRectString")
+            Log.d("EditLocationActivity", "   Is save new: $isSaveNew")
+            Log.d("EditLocationActivity", "   editingPhotoIndex: $editingPhotoIndex")
+            Log.d("EditLocationActivity", "   photoUris.size: ${photoUris.size}")
+
             if (editedPhotoPath != null) {
+                // Simply update the in-memory list and UI
+                // Focus is now stored in SharedPreferences and will be persisted to DB when location is saved
                 if (isSaveNew) {
-                    // Add the new photo to the list
                     photoUris.add(editedPhotoPath)
-                    addPhotoThumbnail(File(editedPhotoPath))
-                    viewModel.updatePhotoPaths(photoUris)
                     Toast.makeText(this, "New photo added", Toast.LENGTH_SHORT).show()
                 } else if (editingPhotoIndex >= 0 && editingPhotoIndex < photoUris.size) {
-                    // Replace the existing photo
                     val originalPhotoPath = photoUris[editingPhotoIndex]
                     // Delete the original file if it's different from the edited path
                     if (originalPhotoPath != editedPhotoPath) {
                         File(originalPhotoPath).delete()
                     }
                     photoUris[editingPhotoIndex] = editedPhotoPath
-                    refreshPhotoThumbnails() // Refresh all thumbnails to reflect changes
-                    viewModel.updatePhotoPaths(photoUris)
                     Toast.makeText(this, "Photo updated", Toast.LENGTH_SHORT).show()
                 }
 
-                // Update focus rect and metadata for the (new or updated) photo
-                // Try to load focus from intent extra first, then fall back to SharedPreferences
-                var focusRectToUse = focusRect
-                if (focusRectToUse == null) {
-                    // Try to load from SharedPreferences
-                    val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
-                    val focusRectString = sharedPref.getString(editedPhotoPath, null)
-                    if (focusRectString != null) {
-                        focusRectToUse = com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)
-                        Log.d("EditLocationActivity", "Loaded focus area from SharedPreferences: $focusRectString")
-                    }
-                }
-
-                if (focusRectToUse != null) {
-                    photoFocusAreas[editedPhotoPath] = focusRectToUse
-                    Log.d("EditLocationActivity", "Updated photoFocusAreas with focus area for: $editedPhotoPath")
-                    Toast.makeText(this, "Focus area saved", Toast.LENGTH_SHORT).show()
-                } else {
-                    photoFocusAreas.remove(editedPhotoPath) // Clear focus if none returned
-                    Log.d("EditLocationActivity", "No focus area found for: $editedPhotoPath")
-                }
-
-                if (metadata != null) {
-                    photoMetadata[editedPhotoPath] = metadata
-                    // Check if metadata location differs significantly from current location
-                    if (metadata.hasGpsData) {
-                        checkLocationUpdate(metadata)
-                    }
-                    // Show bearing info if available
-                    if (metadata.hasBearingData) {
-                        Toast.makeText(
-                            this,
-                            "Direction detected: ${metadata.getBearingString()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                } else {
-                    photoMetadata.remove(editedPhotoPath) // Clear metadata if none returned
-                }
+                photoMetadata[editedPhotoPath] = metadata ?: com.a42r.pevplugshare.data.model.PhotoMetadata()
+                refreshPhotoThumbnails()
+                viewModel.updatePhotoPaths(photoUris)
             }
         }
         editingPhotoIndex = -1
@@ -262,18 +235,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 photoUris.addAll(it)
                 refreshPhotoThumbnails()
                 viewModel.updatePhotoPaths(photoUris)
-            }
-        }
-
-        // Load focus areas from SharedPreferences
-        val sharedPref = getSharedPreferences("focus_areas", Context.MODE_PRIVATE)
-        for (photoPath in photoUris) {
-            val focusRectString = sharedPref.getString(photoPath, null)
-            if (focusRectString != null) {
-                com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)?.let { rectF ->
-                    photoFocusAreas[photoPath] = rectF
-                    Log.d("EditLocationActivity", "Loaded focus area from SharedPreferences for: $photoPath")
-                }
             }
         }
 
@@ -828,27 +789,167 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             return
         }
 
-        lifecycleScope.launch {
-            val finalLocationId = if (isAddMode) currentEditLocationId ?: UUID.randomUUID().toString() else locationId!!
-            
-            // Move temporary images to permanent storage
-            val newPermanentPaths = ImageUtils.moveTempImagesToPermanent(
-                this@EditLocationActivity,
-                currentEditLocationId ?: "temp_fallback", // Use currentEditLocationId as session ID
-                finalLocationId
-            )
-            
-            // Update photoUris with the new permanent paths
-            photoUris.clear()
-            photoUris.addAll(newPermanentPaths)
-            viewModel.updatePhotoPaths(photoUris)
+        lifecycleScope.launch(Dispatchers.IO) {
+            Log.d("EditLocationActivity", "")
+            Log.d("EditLocationActivity", "💾 SUBMITTING LOCATION UPDATE")
 
-            if (isAddMode) {
-                viewModel.addLocation(finalLocationId)
+            val finalLocationId = if (isAddMode) currentEditLocationId ?: UUID.randomUUID().toString() else locationId!!
+            Log.d("EditLocationActivity", "   Final location ID: $finalLocationId")
+            Log.d("EditLocationActivity", "   Is add mode: $isAddMode")
+            Log.d("EditLocationActivity", "   Current photoUris: $photoUris")
+
+            // Move temporary images to permanent storage
+            val newPermanentPaths: List<String> = if (isAddMode) {
+                // Add mode: Move from temp directory structure
+                ImageUtils.moveTempImagesToPermanent(
+                    this@EditLocationActivity,
+                    currentEditLocationId ?: "temp_fallback",
+                    finalLocationId
+                )
             } else {
-                viewModel.submitUpdates(finalLocationId)
+                // Edit mode: Move images from photoUris that are not in permanent storage
+                val permanentDir = ImageUtils.getLocationImageDirectory(this@EditLocationActivity, finalLocationId)
+                val migratedPaths = mutableListOf<String>()
+
+                photoUris.forEach { photoPath ->
+                    Log.d("EditLocationActivity", "   Checking photo: $photoPath")
+                    val photoFile = File(photoPath)
+
+                    // If the image is in cache (edited/temp), move it to permanent storage
+                    if (photoPath.contains("cache")) {
+                        // Calculate next index for permanent storage
+                        val existingImages = permanentDir.listFiles()?.filter { it.extension == "jpg" } ?: emptyList()
+                        val nextIndex = if (existingImages.isEmpty()) 0 else {
+                            existingImages.mapNotNull { file ->
+                                file.name.removePrefix("image_").removeSuffix(".jpg").toIntOrNull()
+                            }.maxOrNull()?.plus(1) ?: 0
+                        }
+
+                        val permanentFile = File(permanentDir, "image_$nextIndex.jpg")
+                        try {
+                            photoFile.renameTo(permanentFile)
+                            migratedPaths.add(permanentFile.absolutePath)
+                            Log.d("EditLocationActivity", "   ✓ Moved to permanent: ${permanentFile.absolutePath}")
+                        } catch (e: Exception) {
+                            Log.e("EditLocationActivity", "   ✗ Error moving photo: ${e.message}", e)
+                        }
+                    } else {
+                        // Already in permanent storage, keep as is
+                        migratedPaths.add(photoPath)
+                        Log.d("EditLocationActivity", "   ✓ Already permanent: $photoPath")
+                    }
+                }
+                migratedPaths
             }
-            submittedSuccessfully = true
+
+            Log.d("EditLocationActivity", "📸 PHOTO MIGRATION COMPLETE")
+            Log.d("EditLocationActivity", "   Total paths: ${newPermanentPaths.size}")
+            newPermanentPaths.forEachIndexed { index, path ->
+                Log.d("EditLocationActivity", "   [$index] $path")
+            }
+
+            // Update photoUris with the new permanent paths
+            withContext(Dispatchers.Main) {
+                photoUris.clear()
+                photoUris.addAll(newPermanentPaths)
+                viewModel.updatePhotoPaths(photoUris)
+            }
+
+            // Persist focus regions from SharedPreferences to database
+            val sharedPref = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this@EditLocationActivity)
+            Log.d("EditLocationActivity", "")
+            Log.d("EditLocationActivity", "🔍 SEARCHING FOR FOCUS IN SharedPreferences")
+            Log.d("EditLocationActivity", "   Total SharedPref keys: ${sharedPref.all.size}")
+
+            for (permanentPath in newPermanentPaths) {
+                // Try to find focus for this path in SharedPreferences
+                // It might be stored under either the permanent path or a temp/edited path
+                var focusString: String? = sharedPref.getString("focus_$permanentPath", null)
+
+                if (focusString == null) {
+                    // If not found, it might have been stored under an old path
+                    // Check all focus_ keys in SharedPreferences
+                    Log.d("EditLocationActivity", "   Not found for $permanentPath, searching all keys...")
+                    for ((key, value) in sharedPref.all) {
+                        if (key.startsWith("focus_") && value is String) {
+                            Log.d("EditLocationActivity", "   Found: key=$key")
+                            // This is a focus entry, check if it should apply to this path
+                            focusString = value as String
+                            break // Use the first one found
+                        }
+                    }
+                }
+
+                if (focusString != null) {
+                    Log.d("EditLocationActivity", "💾 SAVING PHOTO WITH FOCUS")
+                    Log.d("EditLocationActivity", "   Path: $permanentPath")
+                    Log.d("EditLocationActivity", "   Focus: $focusString")
+
+                    try {
+                        // Create PhotoEntity with the permanent path and focus
+                        val photoId = UUID.randomUUID().toString()
+                        val photoEntity = PhotoEntity(
+                            id = photoId,
+                            locationId = finalLocationId,
+                            filePath = permanentPath,
+                            timestamp = System.currentTimeMillis(),
+                            exifMetadata = null,
+                            gpxData = null,
+                            focusRectString = focusString
+                        )
+                        photoRepository.insertPhoto(photoEntity)
+                        Log.d("EditLocationActivity", "   ✅ Saved to database")
+                    } catch (e: Exception) {
+                        Log.e("EditLocationActivity", "   ❌ ERROR saving photo: ${e.message}", e)
+                    }
+                } else {
+                    Log.d("EditLocationActivity", "📸 SAVING PHOTO WITHOUT FOCUS")
+                    Log.d("EditLocationActivity", "   Path: $permanentPath")
+
+                    try {
+                        // Insert photo without focus
+                        val photoId = UUID.randomUUID().toString()
+                        val photoEntity = PhotoEntity(
+                            id = photoId,
+                            locationId = finalLocationId,
+                            filePath = permanentPath,
+                            timestamp = System.currentTimeMillis(),
+                            exifMetadata = null,
+                            gpxData = null,
+                            focusRectString = null
+                        )
+                        photoRepository.insertPhoto(photoEntity)
+                        Log.d("EditLocationActivity", "   ✅ Saved to database")
+                    } catch (e: Exception) {
+                        Log.e("EditLocationActivity", "   ❌ ERROR saving photo: ${e.message}", e)
+                    }
+                }
+            }
+
+            // Clear focus SharedPreferences after saving
+            sharedPref.edit().apply {
+                for ((key, _) in sharedPref.all) {
+                    if (key.startsWith("focus_")) {
+                        remove(key)
+                    }
+                }
+            }.apply()
+            Log.d("EditLocationActivity", "🧹 Cleared focus from SharedPreferences")
+
+            // Continue with location save on Main dispatcher
+            withContext(Dispatchers.Main) {
+                // Update locationId for all photos associated with this session
+                if (isAddMode && currentEditLocationId != null) {
+                    photoRepository.updatePhotoLocationId(currentEditLocationId!!, finalLocationId)
+                }
+
+                if (isAddMode) {
+                    viewModel.addLocation(finalLocationId)
+                } else {
+                    viewModel.submitUpdates(finalLocationId)
+                }
+                submittedSuccessfully = true
+            }
         }
     }
 
@@ -1290,10 +1391,10 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     Log.d("EditLocationActivity", "After resizeAndSaveImage: file=${resizedFile?.absolutePath ?: "NULL"}")
                     
                     withContext(Dispatchers.Main) {
-                        resizedFile?.let {
-                            Log.d("EditLocationActivity", "✓ Gallery photo saved successfully to temp: ${it.absolutePath}")
-                            photoUris.add(it.absolutePath)
-                            addPhotoThumbnail(it)
+                        resizedFile?.let { file ->
+                            Log.d("EditLocationActivity", "✓ Gallery photo saved successfully to temp: ${file.absolutePath}")
+                            photoUris.add(file.absolutePath)
+                            addPhotoThumbnail(file)
                             viewModel.updatePhotoPaths(photoUris)
                             Toast.makeText(
                                 this@EditLocationActivity,
@@ -1308,7 +1409,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                        
+
                         photosBeingProcessed--
                         Log.d("EditLocationActivity", "✓ Gallery photo complete: photosBeingProcessed=$photosBeingProcessed")
                         updateSubmitButtonState()
@@ -1350,77 +1451,138 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         val focusIndicator = thumbnailView.findViewById<ImageView>(R.id.focusIndicator)
 
         val filePath = file.absolutePath
+        // Store current path in tag so it can be updated later
+        imageView.tag = filePath
+        Log.d("EditLocationActivity", "   Setting imageView tag: $filePath")
 
-        Glide.with(this)
-            .asBitmap()
-            .load(file)
-            .fitCenter() // Changed from centerCrop() to fitCenter()
-            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Bypass disk cache
-            .skipMemoryCache(true) // Bypass memory cache
-            .into(object : com.bumptech.glide.request.target.CustomTarget<android.graphics.Bitmap>() {
-                override fun onResourceReady(bitmap: android.graphics.Bitmap, transition: com.bumptech.glide.request.transition.Transition<in android.graphics.Bitmap>?) {
-                    val focusRect = photoFocusAreas[filePath]
-                    Log.d("EditLocationActivity", "Focus rect for $filePath: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+        lifecycleScope.launch(Dispatchers.IO) {
+            Log.d("EditLocationActivity", "")
+            Log.d("EditLocationActivity", "🖼️  THUMBNAIL LOADING STARTED")
+            Log.d("EditLocationActivity", "   File: $filePath")
 
-                    if (focusRect != null) {
-                        Log.d("EditLocationActivity", "Drawing yellow rectangle for $filePath")
-                        val mutableBitmap = bitmap.copy(android.graphics.Bitmap.Config.ARGB_8888, true)
-                        val canvas = android.graphics.Canvas(mutableBitmap)
-                        val paint = android.graphics.Paint().apply {
-                            color = android.graphics.Color.YELLOW
-                            style = android.graphics.Paint.Style.STROKE
-                            strokeWidth = 5f
-                        }
-                        // Scale the focusRect to the thumbnail size
-                        val scaleX = mutableBitmap.width.toFloat() / bitmap.width
-                        val scaleY = mutableBitmap.height.toFloat() / bitmap.height
-                        val scaledRect = android.graphics.RectF(
-                            focusRect.left * scaleX,
-                            focusRect.top * scaleY,
-                            focusRect.right * scaleX,
-                            focusRect.bottom * scaleY
-                        )
-                        Log.d("EditLocationActivity", "Scaled rect: ${scaledRect.left},${scaledRect.top},${scaledRect.right},${scaledRect.bottom} (scale: $scaleX x $scaleY)")
-                        canvas.drawRect(scaledRect, paint)
-                        imageView.setImageBitmap(mutableBitmap)
-                    } else {
-                        Log.d("EditLocationActivity", "No focus rect for $filePath, displaying plain bitmap")
-                        imageView.setImageBitmap(bitmap)
+            // Check for focus in SharedPreferences first (during editing)
+            val sharedPref = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this@EditLocationActivity)
+            var focusRectString: String? = sharedPref.getString("focus_$filePath", null)
+
+            Log.d("EditLocationActivity", "📋 FOCUS LOOKUP")
+            Log.d("EditLocationActivity", "   Checking SharedPreferences: $filePath")
+            Log.d("EditLocationActivity", "   Focus from SharedPreferences: $focusRectString")
+
+            // Denormalize focus rect from normalized coordinates
+            val focusRect = focusRectString?.let { rectString ->
+                Log.d("EditLocationActivity", "🔄 DENORMALIZATION PROCESS")
+                // First, we need to get the actual image dimensions to denormalize
+                val file = File(filePath)
+                if (file.exists()) {
+                    val options = android.graphics.BitmapFactory.Options().apply {
+                        inJustDecodeBounds = true
                     }
-                    focusIndicator.visibility = android.view.View.GONE // Hide since we draw directly
-                }
+                    android.graphics.BitmapFactory.decodeFile(filePath, options)
+                    val imageWidth = options.outWidth
+                    val imageHeight = options.outHeight
 
-                override fun onLoadCleared(placeholder: android.graphics.drawable.Drawable?) {
-                    // Do nothing
-                }
-            })
+                    Log.d("EditLocationActivity", "   Original image size: $imageWidth x $imageHeight")
+                    Log.d("EditLocationActivity", "   Normalized string: $rectString")
 
-        val index = photoUris.size - 1
+                    // Denormalize the focus rectangle using actual image dimensions
+                    val denormalized = com.a42r.pevplugshare.util.PhotoUtils.normalizedStringToFocusRect(rectString, imageWidth, imageHeight)
+                    Log.d("EditLocationActivity", "   Denormalized: ${denormalized?.let { "L=${it.left} T=${it.top} R=${it.right} B=${it.bottom}" } ?: "null"}")
+                    denormalized
+                } else {
+                    Log.e("EditLocationActivity", "❌ Image file not found: $filePath")
+                    null
+                }
+            }
+            Log.d("EditLocationActivity", "🖼️  THUMBNAIL LOADING COMPLETE - Focus ready: ${focusRect != null}")
+
+
+
+            withContext(Dispatchers.Main) {
+                Glide.with(this@EditLocationActivity)
+                    .asBitmap()
+                    .load(file)
+                    .fitCenter() // Changed from centerCrop() to fitCenter()
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Bypass disk cache
+                    .skipMemoryCache(true) // Bypass memory cache
+                    .into(object : com.bumptech.glide.request.target.CustomTarget<android.graphics.Bitmap>() {
+                        override fun onResourceReady(bitmap: android.graphics.Bitmap, transition: com.bumptech.glide.request.transition.Transition<in android.graphics.Bitmap>?) {
+                            Log.d("EditLocationActivity", "Focus rect for $filePath: ${focusRect?.let { "${it.left},${it.top},${it.right},${it.bottom}" } ?: "null"}")
+
+                            if (focusRect != null) {
+                                Log.d("EditLocationActivity", "Drawing yellow rectangle for $filePath")
+                                val mutableBitmap = bitmap.copy(android.graphics.Bitmap.Config.ARGB_8888, true)
+                                val canvas = android.graphics.Canvas(mutableBitmap)
+                                val paint = android.graphics.Paint().apply {
+                                    color = android.graphics.Color.YELLOW
+                                    style = android.graphics.Paint.Style.STROKE
+                                    strokeWidth = 5f
+                                }
+                                // Scale the focusRect to the thumbnail size
+                                val scaleX = mutableBitmap.width.toFloat() / bitmap.width
+                                val scaleY = mutableBitmap.height.toFloat() / bitmap.height
+                                val scaledRect = android.graphics.RectF(
+                                    focusRect.left * scaleX,
+                                    focusRect.top * scaleY,
+                                    focusRect.right * scaleX,
+                                    focusRect.bottom * scaleY
+                                )
+                                Log.d("EditLocationActivity", "Scaled rect: ${scaledRect.left},${scaledRect.top},${scaledRect.right},${scaledRect.bottom} (scale: $scaleX x $scaleY)")
+                                canvas.drawRect(scaledRect, paint)
+                                imageView.setImageBitmap(mutableBitmap)
+                            } else {
+                                Log.d("EditLocationActivity", "No focus rect for $filePath, displaying plain bitmap")
+                                imageView.setImageBitmap(bitmap)
+                            }
+                            focusIndicator.visibility = android.view.View.GONE // Hide since we draw directly
+                        }
+
+                        override fun onLoadCleared(placeholder: android.graphics.drawable.Drawable?) {
+                            // Do nothing
+                        }
+                    })
+            }
+        }
 
         // Click to edit image
         imageView.setOnClickListener {
-            // Use photoUris[index] instead of file parameter because photoUris may have been updated
-            // after editing (temp file paths change on each edit)
-            if (index >= 0 && index < photoUris.size) {
-                editPhoto(index, File(photoUris[index]))
+            // Get the current path from the tag (which may have been updated)
+            val currentPath = imageView.tag as? String ?: file.absolutePath
+            Log.d("EditLocationActivity", "   Click listener - imageView.tag=${imageView.tag}, currentPath=$currentPath")
+            Log.d("EditLocationActivity", "   photoUris=$photoUris")
+            val currentIndex = photoUris.indexOfFirst { it == currentPath }
+            if (currentIndex >= 0) {
+                Log.d("EditLocationActivity", "   Click to edit - found index=$currentIndex for path=$currentPath")
+                editPhoto(currentIndex, File(photoUris[currentIndex]))
             } else {
-                Log.e("EditLocationActivity", "Invalid index for edit: $index, photoUris.size=${photoUris.size}")
+                Log.e("EditLocationActivity", "❌ Could not find photo in photoUris: $currentPath")
             }
         }
-        
+
         // Long click shows info
         imageView.setOnLongClickListener {
-            val hasFocus = photoFocusAreas.containsKey(file.absolutePath)
-            Toast.makeText(
-                this,
-                if (hasFocus) "Focus area set - tap to edit" else "Tap to edit, long press for info",
-                Toast.LENGTH_SHORT
-            ).show()
+            val currentPath = imageView.tag as? String ?: file.absolutePath
+            lifecycleScope.launch(Dispatchers.IO) {
+                val photoEntity = photoRepository.getPhotoByFilePath(currentPath)
+                val hasFocus = photoEntity?.focusRectString != null
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@EditLocationActivity,
+                        if (hasFocus) "Focus area set - tap to edit" else "Tap to edit, long press for info",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
             true
         }
-        
+
         removeButton.setOnClickListener {
-            removePhoto(index)
+            val currentPath = imageView.tag as? String ?: file.absolutePath
+            val removeIndex = photoUris.indexOfFirst { it == currentPath }
+            if (removeIndex >= 0) {
+                removePhoto(removeIndex)
+            } else {
+                Log.e("EditLocationActivity", "❌ Could not find photo index for removal: $currentPath")
+            }
         }
         
         binding.photosContainer.addView(thumbnailView, binding.photosContainer.childCount)
@@ -1436,11 +1598,15 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             // Delete the actual file
             File(path).delete()
             
-            photoFocusAreas.remove(path)
             photoMetadata.remove(path)
             photoUris.removeAt(index)
             viewModel.updatePhotoPaths(photoUris)
             
+            // Delete from database
+            lifecycleScope.launch(Dispatchers.IO) {
+                photoRepository.deletePhotoByFilePath(path)
+            }
+
             // Renumber remaining images to ensure continuous indexing
             renumberPhotos(sessionId, isTemporary = isAddMode) // Renumber in temp if add mode, else permanent
             
@@ -1456,7 +1622,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         } else {
             ImageUtils.getLocationImages(this, id)
         }
-        
+
         imageFiles.forEachIndexed { index, file ->
             val expectedName = "image_$index.jpg"
             if (file.name != expectedName) {
@@ -1464,7 +1630,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 file.renameTo(newFile)
                 // Update photoUris with new path
                 val oldPath = file.absolutePath
-                photoUris.replaceAll { if (it == oldPath) newFile.absolutePath else it }
+                val newPath = newFile.absolutePath
+                photoUris.replaceAll { if (it == oldPath) newPath else it }
+
+                // Update database with new file path
+                lifecycleScope.launch(Dispatchers.IO) {
+                    photoRepository.updatePhotoFilePath(oldPath, newPath)
+                }
             }
         }
     }
@@ -1472,13 +1644,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private fun editPhoto(index: Int, file: File) {
         try {
             Log.d("EditLocationActivity", "editPhoto called: index=$index, file=${file.absolutePath}")
-            
+
             if (!file.exists()) {
                 Toast.makeText(this, "Photo file no longer exists", Toast.LENGTH_SHORT).show()
                 Log.e("EditLocationActivity", "Photo file does not exist: ${file.absolutePath}")
                 return
             }
-            
+
             // Create temp file first
             val editOutputFile = try {
                 File.createTempFile("edited_", ".jpg", cacheDir)
@@ -1487,21 +1659,49 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 Toast.makeText(this, "Error creating temp file: ${e.message}", Toast.LENGTH_SHORT).show()
                 return
             }
-            
+
             editingPhotoIndex = index
-            val intent = android.content.Intent(this, ImageEditorActivity::class.java).apply {
-                putExtra(ImageEditorActivity.EXTRA_IMAGE_PATH, file.absolutePath)
-                putExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH, editOutputFile.absolutePath)
-            }
-            
-            Log.d("EditLocationActivity", "Opening image editor with output: ${editOutputFile.absolutePath}")
-            
-            try {
-                imageEditor.launch(intent)
-                Log.d("EditLocationActivity", "Image editor launched successfully")
-            } catch (e: Exception) {
-                Log.e("EditLocationActivity", "Error launching image editor", e)
-                Toast.makeText(this, "Error opening image editor: ${e.message}", Toast.LENGTH_SHORT).show()
+
+            // Load focus from database if this is an existing image
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val filePath = file.absolutePath
+                    Log.d("EditLocationActivity", "📌 Loading focus from database for: $filePath")
+
+                    // Query database for focus information
+                    val photoEntity = photoRepository.getPhotoByFilePath(filePath)
+
+                    if (photoEntity != null && !photoEntity.focusRectString.isNullOrEmpty()) {
+                        Log.d("EditLocationActivity", "✓ Found focus in database: ${photoEntity.focusRectString}")
+
+                        // Store focus in SharedPreferences using the output file path as key
+                        val sharedPref = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this@EditLocationActivity)
+                        sharedPref.edit().putString("focus_${editOutputFile.absolutePath}", photoEntity.focusRectString).apply()
+                        Log.d("EditLocationActivity", "✓ Stored focus in SharedPreferences for editing")
+                    } else {
+                        Log.d("EditLocationActivity", "- No focus in database for this image")
+                    }
+                } catch (e: Exception) {
+                    Log.e("EditLocationActivity", "Error loading focus from database: ${e.message}", e)
+                }
+
+                // Launch image editor on main thread
+                withContext(Dispatchers.Main) {
+                    val intent = android.content.Intent(this@EditLocationActivity, ImageEditorActivity::class.java).apply {
+                        putExtra(ImageEditorActivity.EXTRA_IMAGE_PATH, file.absolutePath)
+                        putExtra(ImageEditorActivity.EXTRA_OUTPUT_PATH, editOutputFile.absolutePath)
+                    }
+
+                    Log.d("EditLocationActivity", "Opening image editor with output: ${editOutputFile.absolutePath}")
+
+                    try {
+                        imageEditor.launch(intent)
+                        Log.d("EditLocationActivity", "Image editor launched successfully")
+                    } catch (e: Exception) {
+                        Log.e("EditLocationActivity", "Error launching image editor", e)
+                        Toast.makeText(this@EditLocationActivity, "Error opening image editor: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error opening image editor: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -1611,6 +1811,29 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         locationId?.let { id ->
             val existingPhotos = ImageUtils.getLocationImages(this, id)
             Log.d("EditLocationActivity", "Loading existing photos for location $id: found ${existingPhotos.size} photos")
+
+            // Load focus information from database into SharedPreferences SYNCHRONOUSLY
+            Log.d("EditLocationActivity", "📌 Loading focus from database for all existing photos")
+            val sharedPref = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this@EditLocationActivity)
+
+            // Use runBlocking to perform the database queries synchronously on IO thread
+            runBlocking(Dispatchers.IO) {
+                existingPhotos.forEach { file ->
+                    try {
+                        val photoEntity = photoRepository.getPhotoByFilePath(file.absolutePath)
+                        if (photoEntity != null && !photoEntity.focusRectString.isNullOrEmpty()) {
+                            sharedPref.edit().putString("focus_${file.absolutePath}", photoEntity.focusRectString).apply()
+                            Log.d("EditLocationActivity", "✓ Loaded focus from DB for ${file.name}: ${photoEntity.focusRectString}")
+                        } else {
+                            Log.d("EditLocationActivity", "- No focus in DB for ${file.name}")
+                        }
+                    } catch (e: Exception) {
+                        Log.e("EditLocationActivity", "Error loading focus from database: ${e.message}", e)
+                    }
+                }
+            }
+
+            // Now add photos to UI after focus is loaded
             existingPhotos.forEach { file ->
                 Log.d("EditLocationActivity", "  - ${file.absolutePath}")
                 photoUris.add(file.absolutePath)
@@ -1665,7 +1888,16 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         lifecycleScope.launch {
             try {
                 val photoFiles = photoUris.map { File(it) }
-                val result = photoAnalyzer.analyzePhotos(photoFiles, apiKey, photoFocusAreas)
+                val focusAreasMap = mutableMapOf<String, android.graphics.RectF>()
+                for (path in photoUris) {
+                    val photoEntity = photoRepository.getPhotoByFilePath(path)
+                    photoEntity?.focusRectString?.let { focusRectString ->
+                        com.a42r.pevplugshare.util.PhotoUtils.parseFocusRectString(focusRectString)?.let { rectF ->
+                            focusAreasMap[path] = rectF
+                        }
+                    }
+                }
+                val result = photoAnalyzer.analyzePhotos(photoFiles, apiKey, focusAreasMap)
                 
                 progressDialog.dismiss()
                 
