@@ -128,6 +128,7 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
 
         setupUI()
         updateUI() // Initial UI update
+        adapter.notifyDataSetChanged() // Notify adapter after initial data load
     }
 
     private fun setupUI() {
@@ -151,6 +152,7 @@ class PhotoGalleryEditorActivity : AppCompatActivity() {
             layoutManager = GridLayoutManager(this@PhotoGalleryEditorActivity, 3)
             adapter = this@PhotoGalleryEditorActivity.adapter
         }
+        adapter.notifyDataSetChanged() // Notify adapter after setting it to RecyclerView
 
         // Setup next button
         binding.nextButton.setOnClickListener {
