@@ -6,6 +6,7 @@ import com.a42r.pevplugshare.data.model.SyncStatus
 import com.a42r.pevplugshare.data.remote.OsmandApiClient
 import com.a42r.pevplugshare.data.remote.TokenManager
 import com.a42r.pevplugshare.data.remote.safeApiCall
+import com.a42r.pevplugshare.domain.repository.LocationRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,12 +14,12 @@ import javax.inject.Singleton
 class OsmandLocationSyncService @Inject constructor(
     private val apiClient: OsmandApiClient,
     private val tokenManager: TokenManager,
-    private val localRepository: LocalLocationRepository
+    private val localRepository: LocationRepository
 ) {
     companion object {
         private const val TAG = "OsmandLocationSync"
     }
-    
+
     /**
      * Update a location in OSMAnd favorites
      */
@@ -30,19 +31,19 @@ class OsmandLocationSyncService @Inject constructor(
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "Updating location to OSMAnd: ${location.name}")
         Log.d(TAG, "Category: $categoryName")
-        
+
         val apiResult = safeApiCall {
             val webApiService = apiClient.getWebApiRetrofit()
                 .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
-            
+
             val groupName = "favorites-${categoryName}.gpx"
             val currentTime = System.currentTimeMillis()
-            
+
             Log.d(TAG, "Calling fav/update endpoint")
             Log.d(TAG, "wptName: ${location.name}")
             Log.d(TAG, "groupName: $groupName")
             Log.d(TAG, "lat: ${location.latitude}, lon: ${location.longitude}")
-            
+
             webApiService.updateFavorite(
                 wptName = location.name,
                 oldGroupName = groupName,
@@ -55,12 +56,12 @@ class OsmandLocationSyncService @Inject constructor(
                 desc = location.description,
                 color = location.color
             )
-            
+
             Log.d(TAG, "Location updated successfully")
-            
+
             Unit
         }
-        
+
         return when (apiResult) {
             is com.a42r.pevplugshare.data.remote.ApiResult.Success -> {
                 // Update local database to mark as synced
@@ -76,7 +77,7 @@ class OsmandLocationSyncService @Inject constructor(
             }
         }
     }
-    
+
     /**
      * Mark a location as pending sync
      */

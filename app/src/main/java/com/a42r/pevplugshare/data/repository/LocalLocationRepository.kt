@@ -7,13 +7,19 @@ import com.a42r.pevplugshare.data.model.Location
 import com.a42r.pevplugshare.data.model.LocationAccessType
 import com.a42r.pevplugshare.data.model.SocketType
 import com.a42r.pevplugshare.data.model.SyncStatus
+import com.a42r.pevplugshare.data.remote.GeocodingService
 import com.a42r.pevplugshare.domain.repository.LocationRepository
 import com.a42r.pevplugshare.util.DistanceCalculator
 import kotlinx.coroutines.flow.first
 
 class LocalLocationRepository(
-    private val locationDao: LocationDao
+    private val locationDao: LocationDao,
+    private val geocodingService: GeocodingService
 ) : LocationRepository {
+
+    companion object {
+        private const val TAG = "LocalLocationRepository"
+    }
 
     override suspend fun getCategories(): Result<List<OsmandCategory>> {
         // OSMAnd doesn't provide a way to query categories via API
@@ -35,9 +41,44 @@ class LocalLocationRepository(
 
     override suspend fun addLocation(location: Location, categoryName: String): Result<Location> {
         return try {
-            val entity = location.toLocationEntity()
+            // Perform reverse geocoding to get address information
+            android.util.Log.d(TAG, "Adding location: ${location.name} at (${location.latitude}, ${location.longitude})")
+            android.util.Log.d(TAG, "Performing reverse geocoding for new location")
+
+            val geocodingResult = geocodingService.reverseGeocode(location.latitude, location.longitude)
+            android.util.Log.d(TAG, "Geocoding result for new location: $geocodingResult")
+
+            val locationWithAddress = when (geocodingResult) {
+                is com.a42r.pevplugshare.data.remote.GeocodingResult.Success -> {
+                    // Use displayName for businessName, and if location name is empty, use displayName for location name too
+                    val businessName = geocodingResult.displayName ?: geocodingResult.businessName
+                    val locationName = if (location.name.isBlank() && geocodingResult.displayName != null) {
+                        geocodingResult.displayName
+                    } else {
+                        location.name
+                    }
+
+                    val updatedLocation = location.copy(
+                        name = locationName,
+                        businessName = businessName,
+                        streetAddress = geocodingResult.streetAddress,
+                        suburb = geocodingResult.suburb,
+                        state = geocodingResult.state,
+                        postcode = geocodingResult.postcode
+                    )
+                    android.util.Log.d(TAG, "Location updated with geocoded data: name='$locationName', businessName='$businessName', streetAddress=${geocodingResult.streetAddress}, suburb=${geocodingResult.suburb}, state=${geocodingResult.state}, postcode=${geocodingResult.postcode}")
+                    updatedLocation
+                }
+                is com.a42r.pevplugshare.data.remote.GeocodingResult.Error -> {
+                    // Log the error but continue with the location as-is
+                    android.util.Log.w(TAG, "Geocoding failed for new location: ${geocodingResult.message}")
+                    location
+                }
+            }
+
+            val entity = locationWithAddress.toLocationEntity()
             locationDao.insertLocation(entity)
-            Result.success(location)
+            Result.success(locationWithAddress)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -55,7 +96,7 @@ class LocalLocationRepository(
             Result.failure(e)
         }
     }
-    
+
     override suspend fun updateLocationToOsmand(
         location: Location,
         categoryName: String,
@@ -78,7 +119,7 @@ class LocalLocationRepository(
     override suspend fun syncLocations(categoryName: String): Result<List<Location>> {
         return getLocationsByCategory(categoryName)
     }
-    
+
     override suspend fun findNearbyLocations(
         latitude: Double,
         longitude: Double,
@@ -128,7 +169,12 @@ class LocalLocationRepository(
             syncStatus = SyncStatus.valueOf(syncStatus),
             photos = emptyList(),
             imagePaths = if (imagePaths.isNotBlank()) imagePaths.split(",") else emptyList(), // Map imagePaths
-            distanceMeters = null
+            distanceMeters = null,
+            businessName = businessName,
+            streetAddress = streetAddress,
+            suburb = suburb,
+            state = state,
+            postcode = postcode
         )
     }
 
@@ -156,7 +202,12 @@ class LocalLocationRepository(
             imagePaths = imagePaths.joinToString(","), // Map imagePaths
             descriptionHash = null,
             aiParsed = false,
-            aiParsedAt = null
+            aiParsedAt = null,
+            businessName = businessName,
+            streetAddress = streetAddress,
+            suburb = suburb,
+            state = state,
+            postcode = postcode
         )
     }
 
@@ -164,7 +215,7 @@ class LocalLocationRepository(
         return if (socketTypeString.isBlank()) {
             emptyList()
         } else {
-            socketTypeString.split(",").mapNotNull { 
+            socketTypeString.split(",").mapNotNull {
                 try {
                     SocketType.valueOf(it.trim())
                 } catch (e: Exception) {
