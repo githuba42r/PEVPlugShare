@@ -3,7 +3,12 @@ package com.a42r.pevplugshare.ui.add
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -11,24 +16,37 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.CancellationTokenSource
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.data.model.LocationAccessType
 import com.a42r.pevplugshare.data.model.SocketType
 import com.a42r.pevplugshare.databinding.ActivityAddLocationBinding
 import com.a42r.pevplugshare.ui.quicklocation.PhotoGalleryEditorActivity
 import com.a42r.pevplugshare.util.DistanceCalculator
+import com.a42r.pevplugshare.util.PhotoUtils
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 @AndroidEntryPoint
 class AddLocationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddLocationBinding
     private val viewModel: AddLocationViewModel by viewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var photoThumbnailAdapter: PhotoThumbnailAdapter
+
+    companion object {
+        const val EXTRA_LATITUDE = "extra_latitude"
+        const val EXTRA_LONGITUDE = "extra_longitude"
+    }
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -63,7 +81,17 @@ class AddLocationActivity : AppCompatActivity() {
 
         setupUI()
         setupObservers()
-        requestLocationAndPopulate()
+
+        val initialLatitude = intent.getDoubleExtra(EXTRA_LATITUDE, 0.0)
+        val initialLongitude = intent.getDoubleExtra(EXTRA_LONGITUDE, 0.0)
+
+        if (initialLatitude != 0.0 || initialLongitude != 0.0) {
+            viewModel.setCurrentLocation(initialLatitude, initialLongitude)
+            binding.locationCoordinates.text =
+                "📍 ${String.format("%.4f", initialLatitude)}, ${String.format("%.4f", initialLongitude)}"
+        } else {
+            requestLocationAndPopulate()
+        }
         updateSubmitButtonState()
     }
 
@@ -81,6 +109,13 @@ class AddLocationActivity : AppCompatActivity() {
                     putStringArrayListExtra("photo_paths", ArrayList(viewModel.formData.value.photoPaths))
                 }
                 photoGalleryEditorLauncher.launch(intent)
+            }
+
+            // Setup photo thumbnail RecyclerView
+            photoThumbnailAdapter = PhotoThumbnailAdapter(emptyList())
+            photoThumbnailRecyclerView.apply {
+                layoutManager = LinearLayoutManager(this@AddLocationActivity, LinearLayoutManager.HORIZONTAL, false)
+                adapter = photoThumbnailAdapter
             }
 
             // Socket type spinners
@@ -179,6 +214,13 @@ class AddLocationActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.formData.collect { formData ->
+                photoThumbnailAdapter.updatePhotos(formData.photoPaths)
+                binding.photoThumbnailRecyclerView.visibility = if (formData.photoPaths.isNotEmpty()) View.VISIBLE else View.GONE
+            }
+        }
     }
     
     private fun showNearbyLocationsDialog(nearbyLocations: List<Pair<com.a42r.pevplugshare.data.model.Location, Double>>) {
@@ -256,5 +298,53 @@ class AddLocationActivity : AppCompatActivity() {
     private fun updateSubmitButtonState() {
         // Disable submit button if no photos are selected
         binding.submitButton.isEnabled = viewModel.formData.value.photoPaths.isNotEmpty()
+    }
+
+    // Inner adapter for displaying photo thumbnails
+    private class PhotoThumbnailAdapter(private var photos: List<String>) :
+        RecyclerView.Adapter<PhotoThumbnailAdapter.PhotoThumbnailViewHolder>() {
+
+        inner class PhotoThumbnailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val imageView: ImageView = itemView.findViewById(R.id.thumbnailImage) // Assuming item_photo_thumbnail has this ID
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoThumbnailViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_photo_thumbnail, parent, false)
+            return PhotoThumbnailViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: PhotoThumbnailViewHolder, position: Int) {
+            val photoPath = photos[position]
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    val options = BitmapFactory.Options().apply {
+                        inSampleSize = 8 // Load very small sample for thumbnails
+                    }
+                    val bitmap = PhotoUtils.rotateImageIfNeeded(photoPath, options)
+                    withContext(Dispatchers.Main) {
+                        if (bitmap != null) {
+                            holder.imageView.setImageBitmap(bitmap)
+                        } else {
+                            holder.imageView.setImageResource(R.drawable.ic_add) // Fallback
+                        }
+                        // Hide remove button and focus indicator for simple display
+                        holder.itemView.findViewById<ImageView>(R.id.removePhotoButton)?.visibility = View.GONE
+                        holder.itemView.findViewById<ImageView>(R.id.focusIndicator)?.visibility = View.GONE
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    withContext(Dispatchers.Main) {
+                        holder.imageView.setImageResource(R.drawable.ic_add)
+                    }
+                }
+            }
+        }
+
+        override fun getItemCount(): Int = photos.size
+
+        fun updatePhotos(newPhotos: List<String>) {
+            photos = newPhotos
+            notifyDataSetChanged()
+        }
     }
 }
