@@ -17,6 +17,7 @@ sealed class EditLocationState {
     object Ready : EditLocationState()  // For add mode - form ready for input
     object Updating : EditLocationState()
     object UpdateSuccess : EditLocationState()
+    object DeleteSuccess : EditLocationState()
     data class Error(val message: String) : EditLocationState()
 }
 
@@ -346,5 +347,29 @@ class EditLocationViewModel @Inject constructor(
     fun resetForm() {
         _formData.value = EditLocationFormData()
         _editState.value = EditLocationState.Loading
+    }
+
+    fun deleteLocation(locationId: String) {
+        viewModelScope.launch {
+            _editState.value = EditLocationState.Updating
+            try {
+                val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+                val location = locationRepository.getLocationsByCategory(category).getOrNull()?.find { it.id == locationId }
+
+                if (location != null) {
+                    // Delete physical image files
+                    location.imagePaths.forEach { imagePath ->
+                        com.a42r.pevplugshare.util.ImageUtils.deleteImageFile(imagePath)
+                    }
+                    // Delete location from repository
+                    locationRepository.deleteLocation(locationId)
+                    _editState.value = EditLocationState.DeleteSuccess
+                } else {
+                    _editState.value = EditLocationState.Error("Location not found for deletion")
+                }
+            } catch (e: Exception) {
+                _editState.value = EditLocationState.Error(e.message ?: "Failed to delete location")
+            }
+        }
     }
 }
