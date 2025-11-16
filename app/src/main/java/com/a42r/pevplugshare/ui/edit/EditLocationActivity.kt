@@ -360,11 +360,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             // Reverse geocoding button
             reverseGeocodeButton.setOnClickListener { performReverseGeocoding() }
 
-            // Expandable section handlers
-            descriptionHeader.setOnClickListener { toggleDescriptionSection() }
-            additionalInfoHeader.setOnClickListener { toggleAdditionalInfoSection() }
-            additionalLocationInfoHeader.setOnClickListener { toggleAdditionalLocationInfoSection() }
-
             // Add name field text watcher to enable/disable submit button
             nameInput.addTextChangedListener(object : android.text.TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -2294,47 +2289,5 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 Log.d("EditLocationActivity", "Deleted temporary images for session: $sessionId")
             }
         }
-    }
-
-    private fun toggleDescriptionSection() {
-        val isVisible = binding.descriptionInput.visibility == android.view.View.VISIBLE
-        val newVisibility = if (isVisible) android.view.View.GONE else android.view.View.VISIBLE
-
-        binding.descriptionInput.visibility = newVisibility
-
-        // Rotate the expand icon
-        val rotation = if (isVisible) 0f else 180f
-        binding.descriptionExpandIcon.animate().rotation(rotation).setDuration(200).start()
-    }
-
-    private fun toggleAdditionalInfoSection() {
-        val isVisible = binding.additionalInfoInput.visibility == android.view.View.VISIBLE
-        val newVisibility = if (isVisible) android.view.View.GONE else android.view.View.VISIBLE
-
-        binding.additionalInfoInput.visibility = newVisibility
-        binding.additionalInfoNote.visibility = newVisibility
-
-        // Rotate the expand icon
-        val rotation = if (isVisible) 0f else 180f
-        binding.additionalInfoExpandIcon.animate().rotation(rotation).setDuration(200).start()
-    }
-
-    private fun toggleAdditionalLocationInfoSection() {
-        val isVisible = binding.businessNameLayout.visibility == android.view.View.VISIBLE
-        val newVisibility = if (isVisible) android.view.View.GONE else android.view.View.VISIBLE
-
-        // Toggle visibility of all address field layouts
-        binding.businessNameLayout.visibility = newVisibility
-        binding.streetAddressLayout.visibility = newVisibility
-        binding.suburbLayout.visibility = newVisibility
-        binding.stateLayout.visibility = newVisibility
-        binding.postcodeLayout.visibility = newVisibility
-
-        // Toggle visibility of reverse geocoding button
-        binding.reverseGeocodeButton.visibility = newVisibility
-
-        // Rotate the expand icon
-        val rotation = if (isVisible) 0f else 180f
-        binding.additionalLocationInfoExpandIcon.animate().rotation(rotation).setDuration(200).start()
     }
 }
