@@ -2155,8 +2155,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 }
             }
 
-            analysis.locationDescription?.let {
-                append("\n📍 Location:\n$it\n")
+            analysis.socketLocationDescription?.let {
+                append("\n📍 Socket Location:\n$it\n")
+            }
+
+            analysis.locationDetails?.let {
+                append("\n🏞️ Location Details:\n$it\n")
             }
 
             analysis.powerRating?.let {
@@ -2197,23 +2201,31 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 }
             }
 
-            // Handle location description - use for main description if empty, otherwise additional info
-            analysis.locationDescription?.let { location ->
+            // Handle socket location description - use for main description (helps find sockets)
+            analysis.socketLocationDescription?.let { socketLocation ->
                 if (descriptionInput.text.toString().isBlank()) {
                     // Use for main description if it's empty
-                    descriptionInput.setText(location)
-                    viewModel.updateDescription(location)
+                    descriptionInput.setText(socketLocation)
+                    viewModel.updateDescription(socketLocation)
                 } else {
-                    // Append to additional info if main description already exists
-                    val existing = additionalInfoInput.text.toString()
-                    val updated = if (existing.isBlank()) {
-                        "Location: $location"
-                    } else {
-                        "$existing\n\nLocation: $location"
-                    }
-                    additionalInfoInput.setText(updated)
-                    viewModel.updateAdditionalInfo(updated)
+                    // Prepend to existing description if it already has content
+                    val existing = descriptionInput.text.toString()
+                    val updated = "$socketLocation\n\n$existing"
+                    descriptionInput.setText(updated)
+                    viewModel.updateDescription(updated)
                 }
+            }
+
+            // Handle location details - add to additional info (descriptive details)
+            analysis.locationDetails?.let { locationDetails ->
+                val existing = additionalInfoInput.text.toString()
+                val updated = if (existing.isBlank()) {
+                    locationDetails
+                } else {
+                    "$existing\n\n$locationDetails"
+                }
+                additionalInfoInput.setText(updated)
+                viewModel.updateAdditionalInfo(updated)
             }
 
             // Append power rating and warnings to additional info
