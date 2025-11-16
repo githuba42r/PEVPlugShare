@@ -13,6 +13,7 @@ import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -1073,6 +1074,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             return
         }
 
+        // Show loading modal
+        showDescriptionGenerationModal()
+
         val gpoCount = viewModel.formData.value.gpoCount
         val openingHours = binding.openingHoursSpinner.selectedItem?.toString()
         val additionalInfo = binding.additionalInfoInput.text.toString().takeIf { it.isNotBlank() }
@@ -1123,12 +1127,36 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
             result.onSuccess { generatedDescription ->
                 Log.d("EditLocationActivity", "Description generated for sync: $generatedDescription")
+                // Hide loading modal
+                hideDescriptionGenerationModal()
+                // Show confirmation dialog with generated description
                 showSyncDescriptionModal(generatedDescription)
             }.onFailure { error ->
                 Log.e("EditLocationActivity", "Description generation failed: ${error.message}")
+                hideDescriptionGenerationModal()
                 Toast.makeText(this@EditLocationActivity, "Failed to generate description: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private var descriptionGenerationDialog: androidx.appcompat.app.AlertDialog? = null
+
+    private fun showDescriptionGenerationModal() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_loading, null)
+        val messageText = dialogView.findViewById<TextView>(R.id.loadingMessage)
+        messageText?.text = "Generating description for OSMAnd sync..."
+
+        descriptionGenerationDialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        descriptionGenerationDialog?.show()
+    }
+
+    private fun hideDescriptionGenerationModal() {
+        descriptionGenerationDialog?.dismiss()
+        descriptionGenerationDialog = null
     }
 
     private fun showSyncDescriptionModal(generatedDescription: String) {
@@ -1136,15 +1164,16 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             .setTitle("Generated Description for OSMAnd Sync")
             .setMessage("Generated Description:\n\n$generatedDescription\n\nProceed with OSMAnd sync?")
             .setPositiveButton("Sync") { _, _ ->
-                // Apply the generated description
-                binding.descriptionInput.setText(generatedDescription as CharSequence)
-                viewModel.updateDescription(generatedDescription)
-                Toast.makeText(this, "Description updated and syncing to OSMAnd", Toast.LENGTH_SHORT).show()
-                // Now sync to OSMAnd
-                locationId?.let { viewModel.syncToOsmand(it) }
+                syncToOsmandWithDescription(generatedDescription)
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun syncToOsmandWithDescription(generatedDescription: String) {
+        // Sync to OSMAnd with the generated description (without modifying form fields)
+        locationId?.let { viewModel.syncToOsmandWithDescription(it, generatedDescription) }
+        Toast.makeText(this, "Syncing to OSMAnd with generated description", Toast.LENGTH_SHORT).show()
     }
 
     private fun showAiDescriptionDialog() {
