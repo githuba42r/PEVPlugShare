@@ -37,6 +37,7 @@ Details:
 * Sockets: [number and type of sockets, OR "at least 1 charging point is available" if number is 0 or unknown]
 * Available: [opening hours]
 * Cost: [Free/Paid]
+* Additional Information: [any additional details about the location]
 * Type: PEV Charging Location
 
 IMPORTANT RULES:
@@ -55,6 +56,7 @@ Details:
 * Sockets: at least 1 AU GPO
 * Available: 24x7
 * Cost: Free
+* Additional Information: Located in public park area with nearby amenities
 * Type: PEV Charging Location"
 
 Another example:
@@ -65,6 +67,7 @@ Details:
 * Sockets: 4 Type 2 EV chargers (7kW each)
 * Available: 9am-6pm Mon-Fri
 * Cost: Paid (app required)
+* Additional Information: Requires parking permit during business hours
 * Type: PEV Charging Location"
 
 Generate a description following this EXACT format."""
@@ -84,8 +87,9 @@ Follow the EXACT format from the system prompt with:
 1. Brief contextual description (1-2 sentences)
 2. Blank line
 3. "Details:" header
-4. Bullet points for all charging details
+4. Bullet points for all charging details including Additional Information
 5. If charging points is 0, use "at least 1 [socket type] is available"
+6. Include Additional Information in the Details section with the label "Additional Information:"
 
 Return ONLY the formatted description, no additional commentary."""
     }
