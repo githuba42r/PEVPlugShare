@@ -401,6 +401,31 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             socketTypeSpinner.adapter = socketAdapter
             socketTypeSpinner.setSelection(0)
 
+            // Add listener to update socket count when socket type changes
+            socketTypeSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                    val selectedType = socketTypes[position]
+                    val defaultCount = when {
+                        selectedType.contains("Wall") -> 1  // Wall sockets typically have 1
+                        selectedType.contains("Tesla") -> 1  // Tesla chargers typically have 1
+                        selectedType.contains("Type 2") -> 2  // Type 2 chargers often have 2
+                        selectedType.contains("CCS") -> 1    // CCS chargers typically have 1
+                        selectedType.contains("CHAdeMO") -> 1 // CHAdeMO typically have 1
+                        selectedType.contains("Type 1") -> 1  // Type 1 typically have 1
+                        selectedType.contains("Caravan") -> 1 // Caravan plugs typically have 1
+                        else -> 1 // Default to 1 for AU GPO and Other
+                    }
+                    // Only update if this is a user selection (not during initial setup)
+                    if (view != null) {
+                        selectSocketCount(defaultCount)
+                    }
+                }
+
+                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
+                    // Do nothing
+                }
+            }
+
             // Setup opening hours spinner with common options
             val openingHoursList = arrayOf(
                 "24/7",
@@ -1042,15 +1067,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
                 viewModel.updateHasFee(binding.feeCheckbox.isChecked)
 
-                // Extract GPO count from which socket button is selected (based on stroke width)
-                val gpoCount = when {
-                    binding.socket1Button.strokeWidth == 3 -> 1
-                    binding.socket2Button.strokeWidth == 3 -> 2
-                    binding.socket4Button.strokeWidth == 3 -> 4
-                    binding.socket10Button.strokeWidth == 3 -> 10
-                    binding.socket10PlusButton.strokeWidth == 3 -> 11
-                    else -> 1 // Default fallback
-                }
+                // Extract GPO count from ViewModel (already updated by selectSocketCount calls)
+                val gpoCount = viewModel.formData.value.gpoCount
+                Log.d("EditLocationActivity", "   GPO count from ViewModel: $gpoCount")
                 viewModel.updateGpoCount(gpoCount)
 
                 val isPublic = binding.accessTypeText.text == "Public"

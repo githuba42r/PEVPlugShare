@@ -24,6 +24,9 @@ import com.a42r.pevplugshare.databinding.ActivityMainBinding
 import com.a42r.pevplugshare.ui.edit.EditLocationActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -293,31 +296,27 @@ class MainActivity : AppCompatActivity() {
     private fun showCategorySelectionDialog(mandatory: Boolean = false) {
         lifecycleScope.launch {
             binding.loadingProgressBar.visibility = android.view.View.VISIBLE
-            
-            // Refresh categories from server if not mandatory (mandatory means we already have them)
+
+            // Refresh categories from server if not mandatory
             if (!mandatory) {
                 viewModel.refreshCategories()
             }
-            
-            // Wait for categories to be available (up to 5 seconds)
-            var categories = viewModel.categories.value
-            var attempts = 0
-            while (categories.isEmpty() && attempts < 50) {
-                kotlinx.coroutines.delay(100)
-                categories = viewModel.categories.value
-                attempts++
-                android.util.Log.d("MainActivity", "Waiting for categories... attempt $attempts, current size: ${categories.size}")
-            }
-            
+
+            // Wait for non-empty categories list with a timeout of 15 seconds
+            // This replaces the polling mechanism and waits for the Flow to emit non-empty categories
+            val categories = withTimeoutOrNull(15.seconds) {
+                viewModel.categories.first { it.isNotEmpty() }
+            } ?: emptyList()
+
             binding.loadingProgressBar.visibility = android.view.View.GONE
-            
+
             android.util.Log.d("MainActivity", "Final categories count: ${categories.size}, list: ${categories.joinToString()}")
-            
+
             if (categories.isEmpty()) {
                 AlertDialog.Builder(this@MainActivity)
                     .setTitle("No Categories Found")
                     .setMessage("No OsmAnd favorites categories found. Please ensure you are logged in and have favorites saved in OsmAnd.")
-                    .setPositiveButton("OK") { dialog, _ -> 
+                    .setPositiveButton("OK") { dialog, _ ->
                         dialog.dismiss()
                         if (mandatory) {
                             viewModel.dismissCategorySelectionPrompt()
@@ -327,17 +326,17 @@ class MainActivity : AppCompatActivity() {
                     .show()
                 return@launch
             }
-            
+
             android.util.Log.d("MainActivity", "Showing dialog with ${categories.size} categories: ${categories.joinToString()}")
-            
+
             val categoryNames = categories.toTypedArray()
             val currentCategory = viewModel.selectedCategory.value
             val selectedIndex = categoryNames.indexOf(currentCategory).takeIf { it >= 0 } ?: -1
-            
+
             android.util.Log.d("MainActivity", "Current category: $currentCategory, selected index: $selectedIndex")
-            
+
             var tempSelectedIndex = selectedIndex
-            
+
             val dialogBuilder = AlertDialog.Builder(this@MainActivity)
                 .setTitle("Select Favorites Category")
                 .setSingleChoiceItems(categoryNames, selectedIndex) { _, which ->
@@ -356,11 +355,11 @@ class MainActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
                 .setCancelable(!mandatory)
-            
+
             if (!mandatory) {
                 dialogBuilder.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             }
-            
+
             dialogBuilder.show()
             android.util.Log.d("MainActivity", "Dialog shown successfully")
         }
