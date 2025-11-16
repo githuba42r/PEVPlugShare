@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -62,11 +63,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
     @Inject
     lateinit var descriptionGenerator: com.a42r.pevplugshare.ai.LocationDescriptionGenerator
-
-    private var mapView: MapView? = null
-    private var locationMarker: Marker? = null
-    private var selectedLatitude: Double = 0.0
-    private var selectedLongitude: Double = 0.0
 
     // Sensor related fields
     private lateinit var sensorManager: SensorManager
@@ -197,7 +193,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = if (isAddMode) "Add Location" else "Edit Location"
         binding.toolbar.setNavigationOnClickListener {
-            finish()
+            onBackPressed()
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -207,7 +203,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
         setupUI()
-        setupMapModal()
         setupPhotoSection()
         setupObservers()
 
@@ -267,8 +262,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             viewModel.initializeForAddMode()
             if (intentLatitude != 0.0 || intentLongitude != 0.0) {
                 viewModel.updateLocation(intentLatitude, intentLongitude)
-                selectedLatitude = intentLatitude
-                selectedLongitude = intentLongitude
             } else {
                 requestLocationAndPopulate()
             }
@@ -300,8 +293,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             ).addOnSuccessListener { location ->
                 location?.let {
                                     viewModel.updateLocation(it.latitude, it.longitude)
-                                    selectedLatitude = it.latitude
-                                    selectedLongitude = it.longitude
                 }
             }.addOnFailureListener {
                 Toast.makeText(this, "Failed to get location", Toast.LENGTH_SHORT).show()
@@ -470,84 +461,25 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    private fun setupMapModal() {
-        // Find modal components
-        val mapModalOverlay = findViewById<android.view.View>(com.a42r.pevplugshare.R.id.mapModalOverlay)
-        mapView = findViewById(com.a42r.pevplugshare.R.id.mapView)
-        val buttonAccept = findViewById<com.google.android.material.button.MaterialButton>(com.a42r.pevplugshare.R.id.buttonAcceptLocation)
-        val buttonCancel = findViewById<com.google.android.material.button.MaterialButton>(com.a42r.pevplugshare.R.id.buttonCancelLocation)
 
-        // Setup map
-        mapView?.apply {
-            setTileSource(TileSourceFactory.MAPNIK)
-            setMultiTouchControls(true)
-            controller.setZoom(tokenManager.getMapZoomLevel().toDouble())
-
-            // Add tap listener to update marker position
-            setOnClickListener {
-                // Map click will be handled by the map's touch events
-            }
-        }
-
-        // Accept button
-        buttonAccept.setOnClickListener {
-            // Update the location with selected coordinates
-            viewModel.updateLocation(selectedLatitude, selectedLongitude)
-            Toast.makeText(this, "Location updated", Toast.LENGTH_SHORT).show()
-            hideMapModal()
-        }
-
-        // Cancel button
-        buttonCancel.setOnClickListener {
-            hideMapModal()
-        }
-
-        // Setup map tap listener
-        mapView?.overlays?.add(object : org.osmdroid.views.overlay.Overlay() {
-            override fun onSingleTapConfirmed(e: android.view.MotionEvent, mapView: MapView): Boolean {
-                val projection = mapView.projection
-                val geoPoint = projection.fromPixels(e.x.toInt(), e.y.toInt()) as GeoPoint
-                updateMapMarker(geoPoint.latitude, geoPoint.longitude)
-                return true
-            }
-        })
-    }
 
     private fun showMapModal() {
-        val mapModalOverlay = findViewById<android.view.View>(com.a42r.pevplugshare.R.id.mapModalOverlay)
-        mapModalOverlay.visibility = android.view.View.VISIBLE
-
-        // Initialize map with current location
+        // Use a DialogFragment for proper modal behavior that blocks all background interaction
         val currentLat = viewModel.formData.value.latitude
         val currentLon = viewModel.formData.value.longitude
 
-        if (currentLat != 0.0 && currentLon != 0.0) {
-            updateMapMarker(currentLat, currentLon)
-            mapView?.controller?.setCenter(GeoPoint(currentLat, currentLon))
+        val mapDialog = MapLocationPickerDialogFragment.newInstance(currentLat, currentLon).apply {
+            setOnLocationSelectedListener { latitude, longitude ->
+                viewModel.updateLocation(latitude, longitude)
+                Toast.makeText(this@EditLocationActivity, "Location updated", Toast.LENGTH_SHORT).show()
+            }
         }
+        mapDialog.show(supportFragmentManager, "map_picker")
     }
 
-    private fun hideMapModal() {
-        val mapModalOverlay = findViewById<android.view.View>(com.a42r.pevplugshare.R.id.mapModalOverlay)
-        mapModalOverlay.visibility = android.view.View.GONE
-    }
 
-    private fun updateMapMarker(latitude: Double, longitude: Double) {
-        selectedLatitude = latitude
-        selectedLongitude = longitude
 
-        // Remove existing marker
-        locationMarker?.let { mapView?.overlays?.remove(it) }
 
-        // Add new marker
-        locationMarker = Marker(mapView).apply {
-            position = GeoPoint(latitude, longitude)
-            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            title = "Selected Location"
-        }
-        mapView?.overlays?.add(locationMarker)
-        mapView?.invalidate()
-    }
 
     private fun setupObservers() {
         lifecycleScope.launch {
@@ -661,8 +593,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
 
             viewModel.updateLocation(location.latitude, location.longitude)
-            selectedLatitude = location.latitude
-            selectedLongitude = location.longitude
         }
 
         viewModel.updateName(location.name)
@@ -2161,7 +2091,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
         // Calculate distance from current location
         val distance = com.a42r.pevplugshare.util.DistanceCalculator.calculateDistance(
-            selectedLatitude, selectedLongitude,
+            viewModel.formData.value.latitude, viewModel.formData.value.longitude,
             photoLat, photoLon
         )
 
@@ -2171,7 +2101,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 .setTitle("Update Location from Photo GPS?")
                 .setMessage(
                     "Photo GPS location differs by ${String.format("%.0f", distance)}m:\n" +
-                    "Current: $selectedLatitude, $selectedLongitude\n" +
+                    "Current: ${viewModel.formData.value.latitude}, ${viewModel.formData.value.longitude}\n" +
                     "Photo: $photoLat, $photoLon\n\n" +
                     "Update location to photo GPS coordinates?"
                 )
@@ -2188,8 +2118,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         photoLon: Double,
         metadata: com.a42r.pevplugshare.data.model.PhotoMetadata
     ) {
-        selectedLatitude = photoLat
-        selectedLongitude = photoLon
+        viewModel.updateLocation(photoLat, photoLon)
 
         // Update UI fields if they exist
         try {
@@ -2474,9 +2403,24 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
+    override fun onBackPressed() {
+        // Check if there are unsaved changes
+        if (viewModel.hasChanges()) {
+            AlertDialog.Builder(this)
+                .setTitle("Discard Changes")
+                .setMessage("You have unsaved changes. Are you sure you want to cancel and lose your changes?")
+                .setPositiveButton("Discard") { _, _ ->
+                    finish()
+                }
+                .setNegativeButton("Keep Editing", null)
+                .show()
+        } else {
+            finish()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        mapView?.onResume()
         // Start listening to compass sensor in add mode
         if (isAddMode) {
             rotationSensor?.let {
@@ -2487,7 +2431,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onPause() {
         super.onPause()
-        mapView?.onPause()
         // Stop listening to compass sensor
         if (isAddMode) {
             sensorManager.unregisterListener(this)

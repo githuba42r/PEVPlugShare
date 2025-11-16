@@ -507,4 +507,32 @@ class EditLocationViewModel @Inject constructor(
     suspend fun performReverseGeocoding(latitude: Double, longitude: Double): com.a42r.pevplugshare.data.remote.GeocodingResult {
         return geocodingService.reverseGeocode(latitude, longitude)
     }
+
+    fun hasChanges(): Boolean {
+        val original = originalLocation ?: return true // If no original location, consider it as having changes (add mode)
+
+        val current = _formData.value
+
+        // Compare all relevant fields
+        return original.name != current.name ||
+               original.socketTypes.firstOrNull()?.name != current.socketTypes ||
+               original.publicPrivate.name.lowercase() != current.accessType ||
+               original.hasFee != current.hasFee ||
+               (original.providerName ?: "") != current.providerName ||
+               (original.providerWebsite ?: "") != current.providerWebsite ||
+               (original.chargingCosts ?: "") != current.chargingCosts ||
+               (original.description ?: "") != current.description ||
+               (original.openingHours ?: "") != current.openingHours ||
+               (original.additionalInfo ?: "") != current.additionalInfo ||
+               original.latitude != current.latitude ||
+               original.longitude != current.longitude ||
+               original.gpoCount != current.gpoCount ||
+               original.isFavourite != current.isFavorite ||
+               (original.businessName ?: "") != current.businessName ||
+               (original.streetAddress ?: "") != current.streetAddress ||
+               (original.suburb ?: "") != current.suburb ||
+               (original.state ?: "") != current.state ||
+               (original.postcode ?: "") != current.postcode ||
+               original.imagePaths != current.photoPaths
+    }
 }
