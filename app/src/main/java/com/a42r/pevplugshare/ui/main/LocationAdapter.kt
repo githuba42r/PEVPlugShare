@@ -104,17 +104,76 @@ class LocationAdapter(
                 }
                 root.strokeWidth = if (isOpen) 4 else 0
 
-                // Info section - description and additional info only
-                locationDescription.text = location.description ?: "No description"
+                // Info section - comprehensive location details
+                val infoText = buildString {
+                    // Display Name
+                    append("📍 ${location.name}\n\n")
 
-                locationAdditionalInfo.apply {
-                    if (!location.additionalInfo.isNullOrEmpty()) {
-                        text = location.additionalInfo
-                        visibility = android.view.View.VISIBLE
-                    } else {
-                        visibility = android.view.View.GONE
+                    // Address Information
+                    val addressParts = mutableListOf<String>()
+                    location.businessName?.let { addressParts.add(it) }
+                    location.streetAddress?.let { addressParts.add(it) }
+                    val suburbState = listOfNotNull(location.suburb, location.state).joinToString(", ")
+                    if (suburbState.isNotEmpty()) addressParts.add(suburbState)
+                    location.postcode?.let { addressParts.add(it) }
+
+                    if (addressParts.isNotEmpty()) {
+                        append("🏠 Address:\n")
+                        addressParts.forEach { append("   $it\n") }
+                        append("\n")
+                    }
+
+                    // Description
+                    location.description?.let {
+                        append("📝 Description:\n$it\n\n")
+                    }
+
+                    // Additional Information
+                    location.additionalInfo?.let {
+                        append("ℹ️ Additional Information:\n$it\n\n")
+                    }
+
+                    // Technical Details
+                    append("🔧 Technical Details:\n")
+                    append("   • ${location.gpoCount} GPO outlets\n")
+                    append("   • Access: ${location.publicPrivate.displayName}\n")
+                    append("   • Cost: ${if (location.hasFee) "Paid" else "Free"}\n")
+
+                    if (!location.openingHours.isNullOrEmpty()) {
+                        append("   • Hours: ${location.openingHours}\n")
+                    }
+
+                    if (location.socketTypes.isNotEmpty()) {
+                        append("   • Socket Types: ${location.socketTypes.joinToString(", ") { it.displayName }}\n")
+                    }
+
+                    // Provider Information
+                    location.providerName?.let {
+                        append("\n🏢 Provider: $it")
+                        location.providerWebsite?.let { website ->
+                            append(" ($website)")
+                        }
+                        append("\n")
+                    }
+
+                    // Charging Costs
+                    location.chargingCosts?.let {
+                        append("\n💰 Charging Costs: $it\n")
+                    }
+
+                    // Coordinates
+                    append("\n📌 Coordinates: ${String.format("%.6f", location.latitude)}, ${String.format("%.6f", location.longitude)}")
+
+                    // Last Modified
+                    if (location.lastModified > 0) {
+                        val date = java.util.Date(location.lastModified)
+                        val formatter = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault())
+                        append("\n🕒 Last Modified: ${formatter.format(date)}")
                     }
                 }
+
+                locationDescription.text = infoText
+                locationAdditionalInfo.visibility = android.view.View.GONE // Hide the separate additional info since it's now included in the main description
 
                 // Info button - toggle info section visibility
                 infoSection.visibility = if (isDescriptionExpanded) android.view.View.VISIBLE else android.view.View.GONE

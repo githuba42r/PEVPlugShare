@@ -35,11 +35,11 @@ class PhotoAnalyzer @Inject constructor(
     private val tokenManager: com.a42r.pevplugshare.data.remote.TokenManager
 ) {
     private val okHttpClient = OkHttpClient()
-    
+
     private fun buildAnalysisPrompt(hasFocusAreas: Boolean): String {
         val baseFocusInstruction = if (hasFocusAreas) {
             """
-            
+
 IMPORTANT - FOCUS AREAS PROVIDED:
 The user has highlighted specific areas in the images with golden rectangles to help guide your analysis.
 Please pay special attention to the areas marked with golden rectangles as these contain the sockets/outlets
@@ -49,14 +49,14 @@ the full context of the image.
         } else {
             ""
         }
-        
+
         return ANALYSIS_PROMPT + baseFocusInstruction
     }
 
     companion object {
         private const val TAG = "PhotoAnalyzer"
         private const val API_URL = "https://openrouter.ai/api/v1/chat/completions"
-        
+
         private const val ANALYSIS_PROMPT = """You are an expert at analyzing images of electrical charging locations for electric vehicles and personal electric vehicles (PEVs).
 
 Analyze the provided images and extract the following information:
@@ -174,27 +174,27 @@ Image showing multiple outlets in a food court:
             if (imageFiles.isEmpty()) {
                 return@withContext Result.failure(Exception("No images to analyze"))
             }
-            
+
             val modelId = tokenManager.getSelectedAiModel() ?: "google/gemini-flash-1.5"
-            
+
             // Build dynamic prompt based on whether focus areas are provided
             val prompt = buildAnalysisPrompt(focusAreas.isNotEmpty())
 
             // Build message content with text and images
             val contentParts = JSONArray()
-            
+
             // Add text prompt
             contentParts.put(JSONObject().apply {
                 put("type", "text")
                 put("text", prompt)
             })
-            
+
             // Add images as base64
             for (file in imageFiles) {
                 try {
                     val originalBitmap = PhotoUtils.rotateImageIfNeeded(file.absolutePath)
                         ?: throw Exception("Failed to decode or orient image: ${file.name}")
-                    
+
                     // Resize if too large
                     val maxDimension = 768
                     val resizedBitmap = if (originalBitmap.width > maxDimension || originalBitmap.height > maxDimension) {
@@ -208,19 +208,19 @@ Image showing multiple outlets in a food court:
                     } else {
                         originalBitmap
                     }
-                    
+
                     // Convert to base64
                     val outputStream = ByteArrayOutputStream()
                     resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outputStream)
                     val base64Image = Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
-                    
+
                     contentParts.put(JSONObject().apply {
                         put("type", "image_url")
                         put("image_url", JSONObject().apply {
                             put("url", "data:image/jpeg;base64,$base64Image")
                         })
                     })
-                    
+
                     if (resizedBitmap != originalBitmap) {
                         resizedBitmap.recycle()
                     }
@@ -237,15 +237,15 @@ Image showing multiple outlets in a food court:
                 put("role", "user")
                 put("content", contentParts)
             })
-            
+
             val requestBody = JSONObject().apply {
                 put("model", modelId)
                 put("messages", messages)
             }
-            
+
             Log.d(TAG, "Analyzing ${imageFiles.size} images with model: $modelId")
             Log.d(TAG, "Request body: ${requestBody.toString(2)}")
-            
+
             val request = Request.Builder()
                 .url(API_URL)
                 .header("Authorization", "Bearer $apiKey")
@@ -257,11 +257,11 @@ Image showing multiple outlets in a food court:
 
             val response = okHttpClient.newCall(request).execute()
             val responseBody = response.body?.string() ?: throw Exception("Empty response")
-            
+
             Log.d(TAG, "API Response Code: ${response.code}")
             Log.d(TAG, "API Response Headers: ${response.headers}")
             Log.d(TAG, "API Response Body: $responseBody")
-            
+
             if (!response.isSuccessful) {
                 Log.e(TAG, "API error: ${response.code} - $responseBody")
                 val errorMessage = try {
@@ -272,22 +272,22 @@ Image showing multiple outlets in a food court:
                 }
                 throw Exception("API error ${response.code}: $errorMessage")
             }
-            
+
             val jsonResponse = JSONObject(responseBody)
             val choices = jsonResponse.optJSONArray("choices")
             if (choices == null || choices.length() == 0) {
                 Log.e(TAG, "No choices in response: $responseBody")
                 throw Exception("No response from AI model")
             }
-            
+
             val message = choices.getJSONObject(0).getJSONObject("message")
             val responseText = message.getString("content")
-            
+
             Log.d(TAG, "AI Response: $responseText")
-            
+
             // Parse JSON response
             val result = parseAnalysisResponse(responseText)
-            
+
             Result.success(result)
         } catch (e: Exception) {
             Log.e(TAG, "Photo analysis failed", e)
@@ -298,9 +298,9 @@ Image showing multiple outlets in a food court:
     private fun parseAnalysisResponse(jsonText: String): PhotoAnalysisResult {
         try {
             Log.d(TAG, "Raw response text: $jsonText")
-            
+
             var jsonString = jsonText.trim()
-            
+
             // Strip markdown code blocks if present (AI sometimes ignores instructions)
             if (jsonString.startsWith("```")) {
                 Log.d(TAG, "Detected markdown code block, stripping...")
@@ -310,15 +310,15 @@ Image showing multiple outlets in a food court:
                     .trim()
                 Log.d(TAG, "After stripping markdown: $jsonString")
             }
-            
+
             val json = org.json.JSONObject(jsonString)
-            
+
             Log.d(TAG, "Successfully parsed JSON")
-            
+
             val socketCount = if (json.has("socketCount") && !json.isNull("socketCount")) {
                 json.getInt("socketCount")
             } else null
-            
+
             val socketTypes = mutableListOf<String>()
             if (json.has("socketTypes")) {
                 val typesArray = json.getJSONArray("socketTypes")
@@ -326,19 +326,19 @@ Image showing multiple outlets in a food court:
                     socketTypes.add(typesArray.getString(i))
                 }
             }
-            
+
             val socketLocationDescription = if (json.has("socketLocationDescription") && !json.isNull("socketLocationDescription")) {
                 json.getString("socketLocationDescription")
             } else null
-            
+
             val locationDetails = if (json.has("locationDetails") && !json.isNull("locationDetails")) {
                 json.getString("locationDetails")
             } else null
-            
+
             val powerRating = if (json.has("powerRating") && !json.isNull("powerRating")) {
                 json.getString("powerRating")
             } else null
-            
+
             val warnings = mutableListOf<String>()
             if (json.has("warnings")) {
                 val warningsArray = json.getJSONArray("warnings")
@@ -346,7 +346,7 @@ Image showing multiple outlets in a food court:
                     warnings.add(warningsArray.getString(i))
                 }
             }
-            
+
             return PhotoAnalysisResult(
                 socketCount = socketCount,
                 socketTypes = socketTypes,
