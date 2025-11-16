@@ -153,7 +153,7 @@ class AiDescriptionDialogFragment : DialogFragment() {
         Log.d(TAG, "Opening Hours: $openingHours")
         Log.d(TAG, "Capacity: $capacity")
         Log.d(TAG, "Additional Info: $additionalInfo")
-        
+
         lifecycleScope.launch {
             val result = descriptionGenerator.generateDescription(
                 locationName = locationName,
@@ -164,6 +164,7 @@ class AiDescriptionDialogFragment : DialogFragment() {
                 openingHours = openingHours,
                 capacity = capacity,
                 additionalInfo = additionalInfo,
+                description = originalDescription,
                 conversationHistory = emptyList()
             )
 
@@ -181,9 +182,9 @@ class AiDescriptionDialogFragment : DialogFragment() {
                 binding.contentScrollView.visibility = View.VISIBLE
                 binding.buttonContainer.visibility = View.VISIBLE
                 binding.chatInputContainer.visibility = View.GONE
-                
+
                 binding.newDescriptionText.setText("Error: ${error.message ?: "Unknown error"}\n\nPlease check your OpenRouter.ai settings and try again.")
-                
+
                 Toast.makeText(
                     requireContext(),
                     "Failed to generate: ${error.message}",
@@ -200,7 +201,7 @@ class AiDescriptionDialogFragment : DialogFragment() {
         Log.d(TAG, "=== REFINING DESCRIPTION ===")
         Log.d(TAG, "User Message: $userMessage")
         Log.d(TAG, "Current Description: $currentDescription")
-        
+
         // Add current description and user request to history
         conversationHistory.add(Pair(userMessage, currentDescription))
 
@@ -214,6 +215,7 @@ class AiDescriptionDialogFragment : DialogFragment() {
                 openingHours = openingHours,
                 capacity = capacity,
                 additionalInfo = additionalInfo,
+                description = originalDescription,
                 conversationHistory = conversationHistory
             )
 

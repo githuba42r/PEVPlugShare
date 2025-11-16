@@ -30,7 +30,7 @@ Your task is to create a clear, readable description that includes all available
 
 The description MUST follow this EXACT format:
 
-[Brief contextual description of the location - 1-2 sentences]
+[Brief contextual description of the location - 1-2 sentences. If a Description is provided, use it as the base and enhance it with charging details. If no Description, create one from the provided details.]
 
 Details:
 * Public Access: [allowed/restricted]
@@ -41,7 +41,7 @@ Details:
 * Type: PEV Charging Location
 
 IMPORTANT RULES:
-1. Start with a brief, contextual description (1-2 sentences) describing the physical location or key features
+1. Start with a brief, contextual description (1-2 sentences) describing the physical location or key features. If a Description is provided in the input, use it as the foundation and integrate the charging details naturally.
 2. Follow with "Details:" on a new line with a blank line before it
 3. Use bullet points (asterisk + space) for each detail
 4. If the number of charging points is 0 or unknown, use "at least 1 [socket type] is available"
@@ -82,9 +82,10 @@ Socket Types: %s
 Opening Hours: %s
 Power Capacity: %s
 Additional Information: %s
+Description: %s
 
 Follow the EXACT format from the system prompt with:
-1. Brief contextual description (1-2 sentences)
+1. Brief contextual description (1-2 sentences). If a Description is provided, use it as the foundation for the opening description and integrate charging details naturally.
 2. Blank line
 3. "Details:" header
 4. Bullet points for all charging details including Additional Information
@@ -103,6 +104,7 @@ Return ONLY the formatted description, no additional commentary."""
         openingHours: String?,
         capacity: String?,
         additionalInfo: String?,
+        description: String? = null,
         conversationHistory: List<Pair<String, String>> = emptyList()
     ): Result<String> {
         return withContext(Dispatchers.IO) {
@@ -131,6 +133,7 @@ Return ONLY the formatted description, no additional commentary."""
                     openingHours,
                     capacity,
                     additionalInfo,
+                    description,
                     conversationHistory
                 )
 
@@ -222,6 +225,7 @@ Return ONLY the formatted description, no additional commentary."""
         openingHours: String?,
         capacity: String?,
         additionalInfo: String?,
+        description: String?,
         conversationHistory: List<Pair<String, String>>
     ): okhttp3.RequestBody {
         val accessTypeStr = when (accessType) {
@@ -234,6 +238,7 @@ Return ONLY the formatted description, no additional commentary."""
         val hoursStr = openingHours ?: "Hours not specified"
         val capacityStr = capacity ?: "Not specified"
         val additionalStr = additionalInfo ?: "None"
+        val descriptionStr = description ?: "None"
 
         val userPrompt = String.format(
             USER_PROMPT_TEMPLATE,
@@ -244,7 +249,8 @@ Return ONLY the formatted description, no additional commentary."""
             socketTypesStr,
             hoursStr,
             capacityStr,
-            additionalStr
+            additionalStr,
+            descriptionStr
         )
 
         val json = JSONObject().apply {
