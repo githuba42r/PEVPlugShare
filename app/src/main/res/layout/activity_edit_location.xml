@@ -339,18 +339,13 @@
                     android:inputType="textUri" />
             </LinearLayout>
 
-            <!-- Optional Details Section -->
+            <!-- Description Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="?attr/selectableItemBackground"
-                android:padding="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:id="@+id/descriptionHeader">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="0dp"
@@ -360,21 +355,13 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:id="@+id/descriptionExpandIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_expand_more"
-                    android:contentDescription="Expand/collapse description"
-                    android:layout_marginStart="8dp" />
-
-                <ImageView
                     android:id="@+id/buttonParseDescription"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:src="@drawable/ic_parse_description"
                     android:contentDescription="Parse description to extract data"
                     android:padding="4dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless" />
 
                 <ImageView
@@ -394,8 +381,10 @@
                 android:layout_marginTop="8dp"
                 android:hint="Description"
                 android:inputType="textMultiLine"
-                android:lines="3"
-                android:visibility="gone" />
+                android:minLines="3"
+                android:maxLines="10"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="false" />
 
             <!-- Opening Hours Dropdown -->
             <LinearLayout
@@ -419,33 +408,12 @@
             </LinearLayout>
 
             <!-- Additional Information Section -->
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="?attr/selectableItemBackground"
-                android:padding="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:id="@+id/additionalInfoHeader">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Additional Information (Optional)"
-                    android:textStyle="bold" />
-
-                <ImageView
-                    android:id="@+id/additionalInfoExpandIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_expand_more"
-                    android:contentDescription="Expand/collapse additional information"
-                    android:layout_marginStart="8dp" />
-            </LinearLayout>
+                android:text="Additional Information (Optional)"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/additionalInfoInput"
@@ -454,8 +422,10 @@
                 android:layout_marginTop="8dp"
                 android:hint="Additional Information"
                 android:inputType="textMultiLine"
-                android:lines="3"
-                android:visibility="gone" />
+                android:minLines="3"
+                android:maxLines="10"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="false" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -464,9 +434,7 @@
                 android:text="Note: Additional information will not be synchronized to OSMAnd"
                 android:textSize="12sp"
                 android:textStyle="italic"
-                android:textColor="?android:attr/textColorSecondary"
-                android:visibility="gone"
-                android:id="@+id/additionalInfoNote" />
+                android:textColor="?android:attr/textColorSecondary" />
 
             <!-- Photo Section -->
             <LinearLayout
@@ -551,38 +519,17 @@
                 android:textColor="?android:attr/textColorSecondary" />
 
             <!-- Additional Location Info Section -->
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="?attr/selectableItemBackground"
-                android:padding="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:id="@+id/additionalLocationInfoHeader">
+                android:text="Additional Location Information"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="?attr/colorPrimary" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Additional Location Information"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:textColor="?attr/colorPrimary" />
-
-                <ImageView
-                    android:id="@+id/additionalLocationInfoExpandIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_expand_more"
-                    android:contentDescription="Expand/collapse additional location information"
-                    android:layout_marginStart="8dp" />
-            </LinearLayout>
-
-            <!-- Reverse Geocoding Button (shown when expanded) -->
+            <!-- Reverse Geocoding Button -->
             <ImageButton
                 android:id="@+id/reverseGeocodeButton"
                 android:layout_width="48dp"
@@ -593,8 +540,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_refresh"
                 android:contentDescription="Reverse geocode location"
-                android:tint="?attr/colorPrimary"
-                android:visibility="gone" />
+                android:tint="?attr/colorPrimary" />
 
             <!-- Business Name Field -->
             <LinearLayout
@@ -603,8 +549,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:visibility="gone">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="120dp"
@@ -628,8 +573,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:visibility="gone">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="120dp"
@@ -653,8 +597,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:visibility="gone">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="120dp"
@@ -678,8 +621,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:visibility="gone">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="120dp"
@@ -703,8 +645,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:visibility="gone">
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="120dp"
