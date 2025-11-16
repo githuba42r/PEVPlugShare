@@ -266,8 +266,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 viewModel.updateLocation(intentLatitude, intentLongitude)
                 selectedLatitude = intentLatitude
                 selectedLongitude = intentLongitude
-                binding.locationCoordinatesTextView.text =
-                    "📍 ${String.format("%.4f", intentLatitude)}, ${String.format("%.4f", intentLongitude)}"
             } else {
                 requestLocationAndPopulate()
             }
@@ -301,8 +299,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                                     viewModel.updateLocation(it.latitude, it.longitude)
                                     selectedLatitude = it.latitude
                                     selectedLongitude = it.longitude
-                                    binding.locationCoordinatesTextView.text =
-                                        "📍 ${String.format("%.4f", it.latitude)}, ${String.format("%.4f", it.longitude)}"                }
+                }
             }.addOnFailureListener {
                 Toast.makeText(this, "Failed to get location", Toast.LENGTH_SHORT).show()
             }
@@ -641,8 +638,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             viewModel.updateLocation(location.latitude, location.longitude)
             selectedLatitude = location.latitude
             selectedLongitude = location.longitude
-            binding.locationCoordinatesTextView.text =
-                "📍 ${String.format("%.4f", location.latitude)}, ${String.format("%.4f", location.longitude)}"
         }
 
         viewModel.updateName(location.name)
