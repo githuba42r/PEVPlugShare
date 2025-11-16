@@ -23,7 +23,8 @@ import javax.inject.Singleton
 data class PhotoAnalysisResult(
     val socketCount: Int?,
     val socketTypes: List<String>,
-    val locationDescription: String?,
+    val socketLocationDescription: String?,
+    val locationDetails: String?,
     val powerRating: String?,
     val warnings: List<String>
 )
@@ -76,21 +77,28 @@ Analyze the provided images and extract the following information:
    - Industrial outlet
    - Other (describe)
 
-3. **Location Description** - Describe WHERE the sockets are located:
+3. **Socket Location Description** - Describe WHERE the sockets are located (for finding the sockets):
    - "On the wall next to the door"
    - "On a post near the entrance"
    - "Under the shelter on the left side"
    - "Behind the building next to the air conditioning unit"
    - "On the pillar in the car park"
-   - Be specific about landmarks, orientation, and identifying features
+   - Focus on landmarks, orientation, and identifying features that help locate the sockets
 
-4. **Power Rating** - If visible on labels, signs, or the outlets themselves:
+4. **Location Details** - Additional descriptive details about the location (not directly related to finding sockets):
+   - Direction the socket faces (e.g., "Socket faces north towards the street")
+   - Environmental details (e.g., "Located in shaded area under trees")
+   - Access details (e.g., "Easy access from parking area")
+   - Visual landmarks (e.g., "Near the blue recycling bin")
+   - Other contextual information about the site
+
+5. **Power Rating** - If visible on labels, signs, or the outlets themselves:
    - Look for amperage: "10A", "15A", "20A", "32A"
    - Look for voltage: "240V", "415V"
    - Look for wattage/kilowatts: "2.4kW", "7kW", "22kW"
    - Only report if clearly visible in the image
 
-5. **Warnings/Notes** - Important observations:
+6. **Warnings/Notes** - Important observations:
    - "Outlets appear weathered or damaged"
    - "Located in exposed area, may be wet in rain"
    - "Tree lights are plugged in"
@@ -118,7 +126,8 @@ Return your analysis in this JSON format:
 {
   "socketCount": number or null,
   "socketTypes": ["type1", "type2", ...],
-  "locationDescription": "detailed location description",
+  "socketLocationDescription": "description of where sockets are located for finding them",
+  "locationDetails": "additional descriptive details about the location",
   "powerRating": "rating if visible" or null,
   "warnings": ["warning1", "warning2", ...]
 }
@@ -129,7 +138,8 @@ Image showing 2 dual GPO outlets on a wall:
 {
   "socketCount": 4,
   "socketTypes": ["AU/NZ GPO (AS/NZS 3112)"],
-  "locationDescription": "Two dual outlets mounted on the brick wall next to the entrance door",
+  "socketLocationDescription": "Two dual outlets mounted on the brick wall next to the entrance door",
+  "locationDetails": "Outlets face the parking area and are easily accessible from ground level",
   "powerRating": "10A",
   "warnings": ["Outlets appear exposed to weather"]
 }
@@ -138,7 +148,8 @@ Image showing Type 2 EV charger:
 {
   "socketCount": 1,
   "socketTypes": ["Type 2 / Mennekes"],
-  "locationDescription": "Wall-mounted EV charger on the left side of the building next to parking bay 5",
+  "socketLocationDescription": "Wall-mounted EV charger on the left side of the building next to parking bay 5",
+  "locationDetails": "Charger faces south towards the street with good lighting from nearby lamp post",
   "powerRating": "7kW",
   "warnings": []
 }
@@ -147,7 +158,8 @@ Image showing multiple outlets in a food court:
 {
   "socketCount": 8,
   "socketTypes": ["AU/NZ GPO (AS/NZS 3112)"],
-  "locationDescription": "Multiple dual GPO outlets on pillars throughout the food court seating area. Main cluster of 3 dual outlets (6 sockets) on the central pillar, additional outlets on side pillars",
+  "socketLocationDescription": "Multiple dual GPO outlets on pillars throughout the food court seating area. Main cluster of 3 dual outlets (6 sockets) on the central pillar, additional outlets on side pillars",
+  "locationDetails": "Located in covered outdoor seating area with nearby amenities and good visibility from main walkway",
   "powerRating": null,
   "warnings": ["Multiple circuits available", "Some outlets may be in use by food court equipment"]
 }"""
@@ -315,8 +327,12 @@ Image showing multiple outlets in a food court:
                 }
             }
             
-            val locationDescription = if (json.has("locationDescription") && !json.isNull("locationDescription")) {
-                json.getString("locationDescription")
+            val socketLocationDescription = if (json.has("socketLocationDescription") && !json.isNull("socketLocationDescription")) {
+                json.getString("socketLocationDescription")
+            } else null
+            
+            val locationDetails = if (json.has("locationDetails") && !json.isNull("locationDetails")) {
+                json.getString("locationDetails")
             } else null
             
             val powerRating = if (json.has("powerRating") && !json.isNull("powerRating")) {
@@ -334,7 +350,8 @@ Image showing multiple outlets in a food court:
             return PhotoAnalysisResult(
                 socketCount = socketCount,
                 socketTypes = socketTypes,
-                locationDescription = locationDescription,
+                socketLocationDescription = socketLocationDescription,
+                locationDetails = locationDetails,
                 powerRating = powerRating,
                 warnings = warnings
             )
