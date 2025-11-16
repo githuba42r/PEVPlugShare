@@ -773,22 +773,22 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun updateUIFromFormData(data: EditLocationFormData) {
-        Log.d("EditLocationActivity", "Updating UI with form data: $data")
+        Log.d("EditLocationActivity", "Updating UI with form data (preserving focused fields)")
         binding.apply {
-            // Update text fields with current form data values
-            nameInput.setText(data.name)
-            businessNameInput.setText(data.businessName)
-            streetAddressInput.setText(data.streetAddress)
-            suburbInput.setText(data.suburb)
-            stateInput.setText(data.state)
-            postcodeInput.setText(data.postcode)
-            descriptionInput.setText(data.description)
-            additionalInfoInput.setText(data.additionalInfo)
-            providerNameInput.setText(data.providerName)
-            chargingCostsInput.setText(data.chargingCosts)
-            providerWebsiteInput.setText(data.providerWebsite)
+            // Only update text fields if they don't have focus (not being edited by user)
+            if (!nameInput.hasFocus()) nameInput.setText(data.name)
+            if (!businessNameInput.hasFocus()) businessNameInput.setText(data.businessName)
+            if (!streetAddressInput.hasFocus()) streetAddressInput.setText(data.streetAddress)
+            if (!suburbInput.hasFocus()) suburbInput.setText(data.suburb)
+            if (!stateInput.hasFocus()) stateInput.setText(data.state)
+            if (!postcodeInput.hasFocus()) postcodeInput.setText(data.postcode)
+            if (!descriptionInput.hasFocus()) descriptionInput.setText(data.description)
+            if (!additionalInfoInput.hasFocus()) additionalInfoInput.setText(data.additionalInfo)
+            if (!providerNameInput.hasFocus()) providerNameInput.setText(data.providerName)
+            if (!chargingCostsInput.hasFocus()) chargingCostsInput.setText(data.chargingCosts)
+            if (!providerWebsiteInput.hasFocus()) providerWebsiteInput.setText(data.providerWebsite)
 
-            // Update checkbox
+            // Update checkbox (always safe to update)
             feeCheckbox.isChecked = data.hasFee
             feeDetailsSection.visibility = if (data.hasFee) android.view.View.VISIBLE else android.view.View.GONE
 
@@ -1007,6 +1007,63 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
             // Continue with location save on Main dispatcher
             withContext(Dispatchers.Main) {
+                // Sync all current UI field values to ViewModel before submitting
+                Log.d("EditLocationActivity", "")
+                Log.d("EditLocationActivity", "📝 SYNCING UI FIELDS TO VIEWMODEL BEFORE SUBMIT")
+                Log.d("EditLocationActivity", "  Description from UI: '${binding.descriptionInput.text.toString()}'")
+                Log.d("EditLocationActivity", "  Additional Info from UI: '${binding.additionalInfoInput.text.toString()}'")
+
+                viewModel.updateName(binding.nameInput.text.toString())
+                viewModel.updateBusinessName(binding.businessNameInput.text.toString())
+                viewModel.updateStreetAddress(binding.streetAddressInput.text.toString())
+                viewModel.updateSuburb(binding.suburbInput.text.toString())
+                viewModel.updateState(binding.stateInput.text.toString())
+                viewModel.updatePostcode(binding.postcodeInput.text.toString())
+                viewModel.updateDescription(binding.descriptionInput.text.toString())
+                viewModel.updateAdditionalInfo(binding.additionalInfoInput.text.toString())
+                viewModel.updateProviderName(binding.providerNameInput.text.toString())
+                viewModel.updateChargingCosts(binding.chargingCostsInput.text.toString())
+                viewModel.updateProviderWebsite(binding.providerWebsiteInput.text.toString())
+
+                Log.d("EditLocationActivity", "✓ UI fields synced to ViewModel")
+
+                // Sync spinner and checkbox selections to ensure they're captured
+                val selectedSocketType = binding.socketTypeSpinner.selectedItem?.toString() ?: "AU GPO (AS3112)"
+                val socketTypeEnumValue = when {
+                    selectedSocketType.contains("Type 2") -> "TYPE2"
+                    selectedSocketType.contains("Tesla") -> "TESLA"
+                    selectedSocketType.contains("CCS") -> "CCS2"
+                    selectedSocketType.contains("CHAdeMO") -> "CHADEMO"
+                    selectedSocketType.contains("Type 1") -> "TYPE1"
+                    selectedSocketType.contains("Wall") -> "WALL_SOCKET"
+                    selectedSocketType.contains("Caravan") -> "CARAVAN"
+                    selectedSocketType.contains("Other") -> "OTHER"
+                    else -> "AS3112"
+                }
+                viewModel.updateSocketTypes(socketTypeEnumValue)
+
+                val selectedHours = binding.openingHoursSpinner.selectedItem?.toString() ?: "24/7"
+                viewModel.updateOpeningHours(selectedHours)
+
+                viewModel.updateHasFee(binding.feeCheckbox.isChecked)
+
+                // Extract GPO count from which socket button is selected (based on stroke width)
+                val gpoCount = when {
+                    binding.socket1Button.strokeWidth == 3 -> 1
+                    binding.socket2Button.strokeWidth == 3 -> 2
+                    binding.socket4Button.strokeWidth == 3 -> 4
+                    binding.socket10Button.strokeWidth == 3 -> 10
+                    binding.socket10PlusButton.strokeWidth == 3 -> 11
+                    else -> 1 // Default fallback
+                }
+                viewModel.updateGpoCount(gpoCount)
+
+                val isPublic = binding.accessTypeText.text == "Public"
+                viewModel.updateAccessType(if (isPublic) "public" else "private")
+
+                val isFavorite = binding.favoriteIndicator.tag == "favorite"
+                viewModel.updateFavorite(isFavorite)
+
                 // Update locationId for all photos associated with this session
                 if (isAddMode && currentEditLocationId != null) {
                     photoRepository.updatePhotoLocationId(currentEditLocationId!!, finalLocationId)
@@ -1015,7 +1072,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 if (isAddMode) {
                     viewModel.addLocation(finalLocationId)
                 } else {
-                    viewModel.submitUpdates(finalLocationId)
+                    viewModel.submitUpdates()
                 }
                 submittedSuccessfully = true
             }

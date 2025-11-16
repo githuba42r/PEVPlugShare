@@ -31,10 +31,16 @@ class LocalLocationRepository(
 
     override suspend fun getLocationsByCategory(categoryName: String): Result<List<Location>> {
         return try {
+            android.util.Log.d(TAG, "📂 getLocationsByCategory() called for: $categoryName")
             val locationEntities = locationDao.getAllLocations().first()
+            android.util.Log.d(TAG, "  Retrieved ${locationEntities.size} locations from DB")
             val locations = locationEntities.map { it.toLocation() }
+            locations.forEach { loc ->
+                android.util.Log.d(TAG, "    - ${loc.id}: description='${loc.description?.take(50)}...'")
+            }
             Result.success(locations)
         } catch (e: Exception) {
+            android.util.Log.e(TAG, "❌ getLocationsByCategory() failed: ${e.message}", e)
             Result.failure(e)
         }
     }
@@ -89,10 +95,18 @@ class LocalLocationRepository(
         categoryName: String
     ): Result<Location> {
         return try {
+            android.util.Log.d(TAG, "📝 updateLocation() called")
+            android.util.Log.d(TAG, "  Location ID: ${location.id}")
+            android.util.Log.d(TAG, "  Description: '${location.description}'")
+            android.util.Log.d(TAG, "  Additional Info: '${location.additionalInfo}'")
+
             val entity = location.toLocationEntity()
+            android.util.Log.d(TAG, "  Converting to entity...")
             locationDao.updateLocation(entity)
+            android.util.Log.d(TAG, "✓ updateLocation() completed successfully")
             Result.success(location)
         } catch (e: Exception) {
+            android.util.Log.e(TAG, "❌ updateLocation() failed: ${e.message}", e)
             Result.failure(e)
         }
     }
