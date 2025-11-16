@@ -440,6 +440,32 @@ class EditLocationViewModel @Inject constructor(
         }
     }
 
+    fun syncToOsmandWithDescription(locationId: String, description: String) {
+        viewModelScope.launch {
+            try {
+                val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+                val result = locationRepository.getLocationsByCategory(category)
+
+                result.onSuccess { locations ->
+                    val location = locations.find { it.id == locationId }
+                    if (location != null) {
+                        // Create a copy of the location with the generated description
+                        val locationWithGeneratedDescription = location.copy(description = description)
+                        osmandSyncService.updateLocationToOsmand(locationWithGeneratedDescription, category, 0)
+                            .onSuccess {
+                                _editState.value = EditLocationState.UpdateSuccess
+                            }
+                            .onFailure { e ->
+                                _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                            }
+                    }
+                }
+            } catch (e: Exception) {
+                _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+            }
+        }
+    }
+
     fun parseDescription(description: String, onResult: (com.a42r.pevplugshare.ai.ParsedLocationData?, String?) -> Unit) {
         if (description.isBlank()) {
             onResult(null, "Description is empty")
