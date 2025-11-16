@@ -97,10 +97,12 @@ class LocalLocationRepository(
         return try {
             android.util.Log.d(TAG, "📝 updateLocation() called")
             android.util.Log.d(TAG, "  Location ID: ${location.id}")
+            android.util.Log.d(TAG, "  GPO Count: ${location.gpoCount}")
             android.util.Log.d(TAG, "  Description: '${location.description}'")
             android.util.Log.d(TAG, "  Additional Info: '${location.additionalInfo}'")
 
             val entity = location.toLocationEntity()
+            android.util.Log.d(TAG, "  Entity GPO Count: ${entity.gpoCount}")
             android.util.Log.d(TAG, "  Converting to entity...")
             locationDao.updateLocation(entity)
             android.util.Log.d(TAG, "✓ updateLocation() completed successfully")
