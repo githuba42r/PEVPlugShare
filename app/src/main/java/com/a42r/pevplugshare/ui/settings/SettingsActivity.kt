@@ -19,10 +19,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
-    
+
     @Inject
     lateinit var tokenManager: com.a42r.pevplugshare.data.remote.TokenManager
-    
+
     private val okHttpClient = OkHttpClient()
     private var availableModels = listOf<com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>()
     private var modelPricingMap = mutableMapOf<String, com.a42r.pevplugshare.ui.settings.model.ModelPricing>()
@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
         setupUI()
         checkExistingApiKey()
     }
-    
+
     private fun setupToolbar() {
         binding.toolbar.setNavigationOnClickListener {
             finish()
@@ -70,71 +70,81 @@ class SettingsActivity : AppCompatActivity() {
                     apiKeyLayout.error = "Please enter an API key"
                     return@setOnClickListener
                 }
-                
+
                 apiKeyLayout.error = null
                 validateAndSaveApiKey(apiKey)
             }
-            
+                            // Disable validate button if API Key is empty
+                            apiKeyInput.addTextChangedListener(object : android.text.TextWatcher {
+                                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                                override fun afterTextChanged(s: android.text.Editable?) {
+                                    validateSaveButton.isEnabled = !s.isNullOrBlank()
+                                }
+                            })
+                            // Initial state
+                            validateSaveButton.isEnabled = !apiKeyInput.text.isNullOrBlank()
+
             // Reset/Update API Key button
             resetApiKeyButton.setOnClickListener {
                 showApiKeyEntry()
             }
-            
+
             // Model selection card click
             selectedModelCard.setOnClickListener {
                 if (availableModels.isNotEmpty()) {
                     showModelSelectionDialog()
                 }
             }
-            
+
             // Load saved zoom level
             val savedZoom = tokenManager.getMapZoomLevel()
             zoomLevelSlider.value = savedZoom
             zoomLevelValue.text = String.format("%.1f", savedZoom)
-            
+
             // Zoom level slider
             zoomLevelSlider.addOnChangeListener { _, value, _ ->
                 zoomLevelValue.text = String.format("%.1f", value)
             }
-            
+
             // Save button
             saveSettingsButton.setOnClickListener {
                 saveSettings()
             }
-            
+
             // Reset button
             resetButton.setOnClickListener {
                 resetSettings()
             }
         }
     }
-    
+
     private fun saveSettings() {
         binding.apply {
             // Save zoom level
             val zoomLevel = zoomLevelSlider.value
             tokenManager.saveMapZoomLevel(zoomLevel)
-            
+
             Toast.makeText(this@SettingsActivity, "Settings saved", Toast.LENGTH_SHORT).show()
             finish()
         }
     }
-    
+
     private fun resetSettings() {
         binding.apply {
             // Reset to default zoom level (18.0)
             zoomLevelSlider.value = 18.0f
             zoomLevelValue.text = "18.0"
-            
+
             Toast.makeText(this@SettingsActivity, "Settings reset to defaults", Toast.LENGTH_SHORT).show()
         }
     }
-    
+
     private fun showModelSelectionDialog() {
         val dialog = androidx.appcompat.app.AlertDialog.Builder(this).create()
         val dialogView = layoutInflater.inflate(com.a42r.pevplugshare.R.layout.dialog_model_selection, null)
         dialog.setView(dialogView)
-        
+
         val searchInput = dialogView.findViewById<android.widget.EditText>(
             com.a42r.pevplugshare.R.id.searchInput
         )
@@ -153,14 +163,14 @@ class SettingsActivity : AppCompatActivity() {
         val cancelButton = dialogView.findViewById<com.google.android.material.button.MaterialButton>(
             com.a42r.pevplugshare.R.id.cancelButton
         )
-        
+
         // Convert OpenRouterModel objects to AiModel objects
         val aiModels = availableModels.map { openRouterModel ->
             createAiModelFromId(openRouterModel)
         }
-        
+
         val currentSelectedModel = tokenManager.getSelectedAiModel()
-        
+
         val adapter = com.a42r.pevplugshare.ui.settings.model.ModelSelectionAdapter(
             aiModels,
             currentSelectedModel,
@@ -179,11 +189,11 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
         )
-        
+
         val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
-        
+
         // Scroll to selected model if available
         currentSelectedModel?.let { selectedId ->
             val selectedPosition = aiModels.indexOfFirst { it.id == selectedId }
@@ -191,22 +201,22 @@ class SettingsActivity : AppCompatActivity() {
                 layoutManager.scrollToPositionWithOffset(selectedPosition, 0)
             }
         }
-        
+
         // Filter function
         val applyFilter = {
             val query = searchInput.text?.toString() ?: ""
             val freeOnly = freeOnlyCheckbox.isChecked
             adapter.filter(query, freeOnly)
-            
+
             // Show/hide clear button
             clearSearchButton.visibility = if (query.isEmpty()) View.GONE else View.VISIBLE
         }
-        
+
         // Clear search button
         clearSearchButton.setOnClickListener {
             searchInput.setText("")
         }
-        
+
         // Search functionality
         searchInput.addTextChangedListener(object : android.text.TextWatcher {
             override fun afterTextChanged(s: android.text.Editable?) {
@@ -215,12 +225,12 @@ class SettingsActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
-        
+
         // Free only checkbox
         freeOnlyCheckbox.setOnCheckedChangeListener { _, _ ->
             applyFilter()
         }
-        
+
         // Select button
         selectButton.setOnClickListener {
             val selected = adapter.getSelectedModel()
@@ -233,15 +243,15 @@ class SettingsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please select a model", Toast.LENGTH_SHORT).show()
             }
         }
-        
+
         // Cancel button
         cancelButton.setOnClickListener {
             dialog.dismiss()
         }
-        
+
         dialog.show()
     }
-    
+
     private fun updateBottomButtons() {
         binding.bottomButtons.visibility = if (modelChanged) View.VISIBLE else View.GONE
     }
@@ -256,7 +266,7 @@ class SettingsActivity : AppCompatActivity() {
             showApiKeyEntry()
         }
     }
-    
+
     private fun showApiKeyEntry() {
         binding.apply {
             apiKeyEntrySection.visibility = View.VISIBLE
@@ -278,17 +288,17 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     private fun showValidApiKey(models: List<com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>) {
         binding.apply {
             apiKeyEntrySection.visibility = View.GONE
             apiKeyValidSection.visibility = View.VISIBLE
             loadingProgressBar.visibility = View.GONE
             bottomButtons.visibility = View.GONE
-            
+
             // Store available models
             availableModels = models
-            
+
             // Update selected model display
             val savedModelId = tokenManager.getSelectedAiModel()
             if (savedModelId != null) {
@@ -310,18 +320,18 @@ class SettingsActivity : AppCompatActivity() {
                 binding.selectedModelCost.text = ""
                 binding.selectedModelContext.visibility = View.GONE
             }
-            
+
             statusMessage.text = ""
             modelChanged = false
         }
     }
-    
+
     private fun updateSelectedModelDisplay(model: com.a42r.pevplugshare.ui.settings.model.AiModel) {
         binding.apply {
             selectedModelName.text = model.name
             selectedModelProvider.text = model.provider
             selectedModelCost.text = model.cost
-            
+
             if (model.contextSize != null) {
                 selectedModelContext.text = "• ${model.contextSize}"
                 selectedModelContext.visibility = View.VISIBLE
@@ -330,12 +340,12 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     private fun createAiModelFromId(openRouterModel: com.a42r.pevplugshare.ui.settings.model.OpenRouterModel): com.a42r.pevplugshare.ui.settings.model.AiModel {
         val modelId = openRouterModel.id
         val parts = modelId.split("/")
         val provider = parts.getOrNull(0)?.capitalize() ?: "Unknown"
-        
+
         val pricing = openRouterModel.pricing
         val costDisplay = if (pricing != null) {
             if (pricing.prompt == "Free" && pricing.completion == "Free") {
@@ -346,9 +356,9 @@ class SettingsActivity : AppCompatActivity() {
         } else {
             getModelCost(modelId) // Fallback to hardcoded prices
         }
-        
+
         val contextSizeDisplay = openRouterModel.context_length?.let { "${it / 1000}K tokens" }
-        
+
         return com.a42r.pevplugshare.ui.settings.model.AiModel(
             id = modelId,
             name = formatModelDisplayName(modelId).split(" (").first(),
@@ -359,15 +369,15 @@ class SettingsActivity : AppCompatActivity() {
             pricing = pricing
         )
     }
-    
 
-    
+
+
     private fun formatModelDisplayName(modelId: String): String {
         // Extract provider and model name
         val parts = modelId.split("/")
         val provider = parts.getOrNull(0)?.capitalize() ?: ""
         val modelName = parts.getOrNull(1) ?: modelId
-        
+
         // Convert model name to friendly format
         val friendlyName = when {
             modelName.contains("gpt-4o", ignoreCase = true) -> "GPT-4 Omni"
@@ -398,11 +408,11 @@ class SettingsActivity : AppCompatActivity() {
             else -> modelName.replace("-", " ").split(" ")
                 .joinToString(" ") { it.capitalize() }
         }
-        
+
         // Get approximate cost
         val cost = getModelCost(modelId)
-        
-        return if (provider.isNotEmpty() && provider.lowercase() != "openai" && 
+
+        return if (provider.isNotEmpty() && provider.lowercase() != "openai" &&
                    provider.lowercase() != "anthropic" && provider.lowercase() != "google" &&
                    provider.lowercase() != "meta" && provider.lowercase() != "mistralai") {
             "$friendlyName by $provider ($cost)"
@@ -410,14 +420,14 @@ class SettingsActivity : AppCompatActivity() {
             "$friendlyName ($cost)"
         }
     }
-    
+
     private fun getModelCost(modelId: String): String {
         val lowerModelId = modelId.lowercase()
-        
+
         return when {
             // Free models
             lowerModelId.contains("free") -> "Free"
-            
+
             // Premium models - expensive
             lowerModelId.contains("gpt-4o") && !lowerModelId.contains("mini") -> "$5-15/M tokens"
             lowerModelId.contains("gpt-4-turbo") -> "$10-30/M tokens"
@@ -426,7 +436,7 @@ class SettingsActivity : AppCompatActivity() {
             lowerModelId.contains("claude-3.5-sonnet") -> "$3-15/M tokens"
             lowerModelId.contains("claude-3-sonnet") || lowerModelId.contains("claude-sonnet") -> "$3-15/M tokens"
             lowerModelId.contains("llama-3.1-405b") -> "$3-5/M tokens"
-            
+
             // Mid-range models
             lowerModelId.contains("gpt-3.5-turbo") || lowerModelId.contains("gpt-3.5") -> "$0.5-2/M tokens"
             lowerModelId.contains("gpt-4o-mini") -> "$0.15-0.6/M tokens"
@@ -435,7 +445,7 @@ class SettingsActivity : AppCompatActivity() {
             lowerModelId.contains("gemini-1.5-flash") || lowerModelId.contains("gemini-flash") -> "$0.075-0.3/M tokens"
             lowerModelId.contains("mixtral-8x22b") -> "$0.65-0.65/M tokens"
             lowerModelId.contains("mixtral-8x7b") -> "$0.24-0.24/M tokens"
-            
+
             // Budget models
             lowerModelId.contains("llama-3.1-70b") -> "$0.35-0.4/M tokens"
             lowerModelId.contains("llama-3.1-8b") -> "$0.06-0.06/M tokens"
@@ -445,7 +455,7 @@ class SettingsActivity : AppCompatActivity() {
             lowerModelId.contains("mistral-large") -> "$2-6/M tokens"
             lowerModelId.contains("mistral-medium") -> "$2.7-8.1/M tokens"
             lowerModelId.contains("mistral-small") -> "$0.2-0.6/M tokens"
-            
+
             else -> "Varies"
         }
     }
@@ -454,7 +464,7 @@ class SettingsActivity : AppCompatActivity() {
         binding.loadingProgressBar.visibility = View.VISIBLE
         binding.statusMessage.text = "Validating API key..."
         binding.statusMessage.setTextColor(getColor(android.R.color.darker_gray))
-        
+
         lifecycleScope.launch {
             try {
                 val models = fetchAvailableModels(apiKey)
@@ -464,8 +474,8 @@ class SettingsActivity : AppCompatActivity() {
                     showValidApiKey(models)
                     if (!silent) {
                         Toast.makeText(
-                            this@SettingsActivity, 
-                            "API key validated and saved successfully", 
+                            this@SettingsActivity,
+                            "API key validated and saved successfully",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -484,66 +494,66 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     private fun showError(message: String) {
         binding.apply {
             loadingProgressBar.visibility = View.GONE
             statusMessage.text = "⚠ $message"
             statusMessage.setTextColor(getColor(android.R.color.holo_red_dark))
             apiKeyLayout.error = "Validation failed"
-            
+
             // Keep showing entry section
             apiKeyEntrySection.visibility = View.VISIBLE
             apiKeyValidSection.visibility = View.GONE
             bottomButtons.visibility = View.GONE
         }
     }
-    
+
     private suspend fun fetchAvailableModels(apiKey: String): List<com.a42r.pevplugshare.ui.settings.model.OpenRouterModel> {
         return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
             val request = Request.Builder()
                 .url("https://openrouter.ai/api/v1/models")
                 .header("Authorization", "Bearer $apiKey")
                 .build()
-            
+
             val response = okHttpClient.newCall(request).execute()
-            
+
             if (!response.isSuccessful) {
                 throw Exception("HTTP ${response.code}")
             }
-            
+
             val jsonResponse = response.body?.string() ?: throw Exception("Empty response")
             val json = JSONObject(jsonResponse)
             val dataArray = json.getJSONArray("data")
-            
+
             val models = mutableListOf<com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>()
             modelPricingMap.clear()
             modelDataMap.clear() // Clear modelDataMap as well
-            
+
             for (i in 0 until dataArray.length()) {
                 val modelJson = dataArray.getJSONObject(i)
                 val modelId = modelJson.getString("id")
                 val contextLength = modelJson.optInt("context_length", -1).takeIf { it != -1 }
                 val description = modelJson.optString("description", null)
-                
+
                 var pricing: com.a42r.pevplugshare.ui.settings.model.ModelPricing? = null
                 // Extract pricing information
                 if (modelJson.has("pricing")) {
                     val pricingJson = modelJson.getJSONObject("pricing")
                     val promptCost = pricingJson.optString("prompt", "0")
                     val completionCost = pricingJson.optString("completion", "0")
-                    
+
                     // Convert to per million tokens and format
                     val promptPerMillion = (promptCost.toDoubleOrNull() ?: 0.0) * 1000000
                     val completionPerMillion = (completionCost.toDoubleOrNull() ?: 0.0) * 1000000
-                    
+
                     pricing = com.a42r.pevplugshare.ui.settings.model.ModelPricing(
                         prompt = formatCost(promptPerMillion),
                         completion = formatCost(completionPerMillion)
                     )
                     modelPricingMap[modelId] = pricing
                 }
-                
+
                 val openRouterModel = com.a42r.pevplugshare.ui.settings.model.OpenRouterModel(
                     id = modelId,
                     context_length = contextLength,
@@ -551,9 +561,9 @@ class SettingsActivity : AppCompatActivity() {
                     pricing = pricing
                 )
                 modelDataMap[modelId] = openRouterModel
-                
+
                 // Filter for free or commonly used models
-                if (modelId.contains("free", ignoreCase = true) || 
+                if (modelId.contains("free", ignoreCase = true) ||
                     modelId.contains("gpt", ignoreCase = true) ||
                     modelId.contains("claude", ignoreCase = true) ||
                     modelId.contains("llama", ignoreCase = true) ||
@@ -562,7 +572,7 @@ class SettingsActivity : AppCompatActivity() {
                     models.add(openRouterModel)
                 }
             }
-            
+
             // If no filtered models, return first 30
             if (models.isEmpty()) {
                 for (i in 0 until minOf(30, dataArray.length())) {
@@ -570,7 +580,7 @@ class SettingsActivity : AppCompatActivity() {
                     val modelId = modelJson.getString("id")
                     val contextLength = modelJson.optInt("context_length", -1).takeIf { it != -1 }
                     val description = modelJson.optString("description", null)
-                    
+
                     var pricing: com.a42r.pevplugshare.ui.settings.model.ModelPricing? = null
                     if (modelJson.has("pricing")) {
                         val pricingJson = modelJson.getJSONObject("pricing")
@@ -591,11 +601,11 @@ class SettingsActivity : AppCompatActivity() {
                     ))
                 }
             }
-            
+
             models
         }
     }
-    
+
     private fun formatCost(costPerMillion: Double): String {
         return when {
             costPerMillion == 0.0 -> "Free"
