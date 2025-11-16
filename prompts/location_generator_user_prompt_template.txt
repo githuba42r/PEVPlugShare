@@ -18,7 +18,8 @@ Follow the EXACT format from the system prompt with:
 1. Brief contextual description (1-2 sentences)
 2. Blank line
 3. "Details:" header
-4. Bullet points for all charging details
+4. Bullet points for all charging details including Additional Information
 5. If charging points is 0, use "at least 1 [socket type] is available"
+6. Include Additional Information in the Details section with the label "Additional Information:"
 
 Return ONLY the formatted description, no additional commentary.
