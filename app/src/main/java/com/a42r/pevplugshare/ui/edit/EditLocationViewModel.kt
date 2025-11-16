@@ -83,6 +83,9 @@ class EditLocationViewModel @Inject constructor(
         viewModelScope.launch {
             _editState.value = EditLocationState.Loading
             try {
+                Log.d(TAG, "━━━ LOADING LOCATION ━━━")
+                Log.d(TAG, "Location ID: $locationId")
+
                 // Get selected category
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
 
@@ -91,6 +94,10 @@ class EditLocationViewModel @Inject constructor(
                 result.onSuccess { locations ->
                     val location = locations.find { it.id == locationId }
                     if (location != null) {
+                        Log.d(TAG, "✓ Found location in repository")
+                        Log.d(TAG, "  Description from DB: '${location.description}'")
+                        Log.d(TAG, "  Additional info from DB: '${location.additionalInfo}'")
+
                         originalLocation = location
                         val initialFormData = EditLocationFormData(
                             name = location.name,
@@ -322,7 +329,7 @@ class EditLocationViewModel @Inject constructor(
         }
     }
 
-    fun submitUpdates(locationId: String) {
+    fun submitUpdates() {
         val data = _formData.value
 
         if (data.name.isBlank()) {
@@ -344,6 +351,12 @@ class EditLocationViewModel @Inject constructor(
                     return@launch
                 }
 
+                Log.d(TAG, "━━━ SUBMITTING LOCATION UPDATE ━━━")
+                Log.d(TAG, "Original description: '${original.description}'")
+                Log.d(TAG, "New description from form: '${data.description}'")
+                Log.d(TAG, "Original additional info: '${original.additionalInfo}'")
+                Log.d(TAG, "New additional info from form: '${data.additionalInfo}'")
+
                 // Create updated location
                 val updatedLocation = original.copy(
                     name = data.name,
@@ -362,19 +375,33 @@ class EditLocationViewModel @Inject constructor(
                     isFavourite = data.isFavorite,
                     lastModified = System.currentTimeMillis(),
                     syncStatus = com.a42r.pevplugshare.data.model.SyncStatus.PENDING,
-                    imagePaths = data.photoPaths
+                    imagePaths = data.photoPaths,
+                    businessName = data.businessName.ifBlank { null },
+                    streetAddress = data.streetAddress.ifBlank { null },
+                    suburb = data.suburb.ifBlank { null },
+                    state = data.state.ifBlank { null },
+                    postcode = data.postcode.ifBlank { null }
                 )
+
+                Log.d(TAG, "Updated location description after copy: '${updatedLocation.description}'")
+                Log.d(TAG, "Updated location additional info after copy: '${updatedLocation.additionalInfo}'")
 
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
 
                 // Update in local database
+                Log.d(TAG, "Calling locationRepository.updateLocation()...")
                 locationRepository.updateLocation(updatedLocation, category)
+                Log.d(TAG, "✓ locationRepository.updateLocation() completed")
 
                 // Mark as pending sync
+                Log.d(TAG, "Calling osmandSyncService.markLocationPendingSync()...")
                 osmandSyncService.markLocationPendingSync(updatedLocation, category)
+                Log.d(TAG, "✓ osmandSyncService.markLocationPendingSync() completed")
 
                 _editState.value = EditLocationState.UpdateSuccess
+                Log.d(TAG, "✓ Set state to UpdateSuccess")
             } catch (e: Exception) {
+                Log.e(TAG, "❌ Exception during submitUpdates: ${e.message}", e)
                 _editState.value = EditLocationState.Error(e.message ?: "Update failed")
             }
         }
