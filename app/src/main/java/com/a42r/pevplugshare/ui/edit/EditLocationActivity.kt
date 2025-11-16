@@ -60,6 +60,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     @Inject
     lateinit var photoRepository: PhotoRepository
 
+    @Inject
+    lateinit var descriptionGenerator: com.a42r.pevplugshare.ai.LocationDescriptionGenerator
+
     private var mapView: MapView? = null
     private var locationMarker: Marker? = null
     private var selectedLatitude: Double = 0.0
@@ -347,10 +350,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
             // Setup AI buttons - hide if no API key
             val hasApiKey = tokenManager.getOpenRouterApiKey()?.isNotBlank() == true
-            buttonGenerateDescription.visibility = if (hasApiKey) android.view.View.VISIBLE else android.view.View.GONE
             buttonParseDescription.visibility = if (hasApiKey) android.view.View.VISIBLE else android.view.View.GONE
 
-            buttonGenerateDescription.setOnClickListener { showAiDescriptionDialog() }
             buttonParseDescription.setOnClickListener { parseDescriptionToFields() }
             // Parse button visible in both add and edit modes
 
@@ -1131,7 +1132,89 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun syncToOsmand() {
-        locationId?.let { viewModel.syncToOsmand(it) }
+        // First generate AI description
+        generateDescriptionForSync()
+    }
+
+    private fun generateDescriptionForSync() {
+        val name = binding.nameInput.text.toString()
+        if (name.isBlank()) {
+            Toast.makeText(this, "Please enter a location name first", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val gpoCount = viewModel.formData.value.gpoCount
+        val openingHours = binding.openingHoursSpinner.selectedItem?.toString()
+        val additionalInfo = binding.additionalInfoInput.text.toString().takeIf { it.isNotBlank() }
+        val currentDescription = binding.descriptionInput.text.toString()
+
+        // Get socket type from spinner
+        val socketTypeIndex = binding.socketTypeSpinner.selectedItemPosition
+        val socketType = when (socketTypeIndex) {
+            1 -> "TYPE2"
+            2 -> "TESLA"
+            3 -> "CCS2"
+            4 -> "CHADEMO"
+            5 -> "TYPE1"
+            6 -> "WALL_SOCKET"
+            7 -> "CARAVAN"
+            8 -> "OTHER"
+            else -> "AS3112"
+        }
+
+        // Get access type from indicator
+        val accessType = if (binding.accessTypeText.text == "Public") {
+            com.a42r.pevplugshare.data.model.LocationAccessType.PUBLIC
+        } else {
+            com.a42r.pevplugshare.data.model.LocationAccessType.PRIVATE
+        }
+
+        // Get fee status
+        val hasFee = binding.feeCheckbox.isChecked
+
+        // Get capacity if available
+        val capacity = binding.chargingCostsInput.text.toString().takeIf { it.isNotBlank() }
+
+        Log.d("EditLocationActivity", "Generating description for OSMAnd sync")
+
+        lifecycleScope.launch {
+            val result = descriptionGenerator.generateDescription(
+                locationName = "",  // Do not include location name in generated description
+                accessType = accessType,
+                hasFee = hasFee,
+                chargingPoints = gpoCount,
+                socketTypes = listOf(socketType),
+                openingHours = openingHours,
+                capacity = capacity,
+                additionalInfo = additionalInfo,
+                description = currentDescription,  // Pass the current description
+                conversationHistory = emptyList()
+            )
+
+            result.onSuccess { generatedDescription ->
+                Log.d("EditLocationActivity", "Description generated for sync: $generatedDescription")
+                showSyncDescriptionModal(generatedDescription)
+            }.onFailure { error ->
+                Log.e("EditLocationActivity", "Description generation failed: ${error.message}")
+                Toast.makeText(this@EditLocationActivity, "Failed to generate description: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showSyncDescriptionModal(generatedDescription: String) {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Generated Description for OSMAnd Sync")
+            .setMessage("Generated Description:\n\n$generatedDescription\n\nProceed with OSMAnd sync?")
+            .setPositiveButton("Sync") { _, _ ->
+                // Apply the generated description
+                binding.descriptionInput.setText(generatedDescription as CharSequence)
+                viewModel.updateDescription(generatedDescription)
+                Toast.makeText(this, "Description updated and syncing to OSMAnd", Toast.LENGTH_SHORT).show()
+                // Now sync to OSMAnd
+                locationId?.let { viewModel.syncToOsmand(it) }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showAiDescriptionDialog() {
@@ -1190,6 +1273,73 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         }
 
         dialog.show(supportFragmentManager, "AiDescriptionDialog")
+    }
+
+    private fun runAutoDescriptionGeneration() {
+        val name = binding.nameInput.text.toString()
+        if (name.isBlank()) {
+            Log.d("EditLocationActivity", "Cannot run auto description generation: location name is blank")
+            return
+        }
+
+        val gpoCount = viewModel.formData.value.gpoCount
+        val openingHours = binding.openingHoursSpinner.selectedItem?.toString()
+        val additionalInfo = binding.additionalInfoInput.text.toString().takeIf { it.isNotBlank() }
+        val currentDescription = binding.descriptionInput.text.toString()
+
+        // Get socket type from spinner
+        val socketTypeIndex = binding.socketTypeSpinner.selectedItemPosition
+        val socketType = when (socketTypeIndex) {
+            1 -> "TYPE2"
+            2 -> "TESLA"
+            3 -> "CCS2"
+            4 -> "CHADEMO"
+            5 -> "TYPE1"
+            6 -> "WALL_SOCKET"
+            7 -> "CARAVAN"
+            8 -> "OTHER"
+            else -> "AS3112"
+        }
+
+        // Get access type from indicator
+        val accessType = if (binding.accessTypeText.text == "Public") {
+            com.a42r.pevplugshare.data.model.LocationAccessType.PUBLIC
+        } else {
+            com.a42r.pevplugshare.data.model.LocationAccessType.PRIVATE
+        }
+
+        // Get fee status
+        val hasFee = binding.feeCheckbox.isChecked
+
+        // Get capacity if available
+        val capacity = binding.chargingCostsInput.text.toString().takeIf { it.isNotBlank() }
+
+        Log.d("EditLocationActivity", "Running auto description generation for location: $name")
+
+        lifecycleScope.launch {
+            val result = descriptionGenerator.generateDescription(
+                locationName = "",  // Do not include location name in generated description
+                accessType = accessType,
+                hasFee = hasFee,
+                chargingPoints = gpoCount,
+                socketTypes = listOf(socketType),
+                openingHours = openingHours,
+                capacity = capacity,
+                additionalInfo = additionalInfo,
+                description = currentDescription,  // Pass the analysis-generated description
+                conversationHistory = emptyList()
+            )
+
+            result.onSuccess { generatedDescription ->
+                Log.d("EditLocationActivity", "Auto description generation successful: $generatedDescription")
+                binding.descriptionInput.setText(generatedDescription as CharSequence)
+                viewModel.updateDescription(generatedDescription)
+                Toast.makeText(this@EditLocationActivity as android.content.Context, "Description auto-generated and updated", Toast.LENGTH_SHORT).show()
+            }.onFailure { error ->
+                Log.e("EditLocationActivity", "Auto description generation failed: ${error.message}")
+                Toast.makeText(this@EditLocationActivity as android.content.Context, "Failed to auto-generate description: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun parseDescriptionToFields() {
@@ -2236,7 +2386,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             }
 
             analysis.socketLocationDescription?.let {
-                append("\n📍 Socket Location:\n$it\n")
+                append("\n📍 Description:\n$it\n")
             }
 
             analysis.locationDetails?.let {
@@ -2283,17 +2433,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
             // Handle socket location description - use for main description (helps find sockets)
             analysis.socketLocationDescription?.let { socketLocation ->
-                if (descriptionInput.text.toString().isBlank()) {
-                    // Use for main description if it's empty
-                    descriptionInput.setText(socketLocation)
-                    viewModel.updateDescription(socketLocation)
-                } else {
-                    // Prepend to existing description if it already has content
-                    val existing = descriptionInput.text.toString()
-                    val updated = "$socketLocation\n\n$existing"
-                    descriptionInput.setText(updated)
-                    viewModel.updateDescription(updated)
-                }
+                descriptionInput.setText(socketLocation)
+                viewModel.updateDescription(socketLocation)
             }
 
             // Handle location details - add to additional info (descriptive details)
