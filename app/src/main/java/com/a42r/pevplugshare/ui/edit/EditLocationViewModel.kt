@@ -187,8 +187,14 @@ class EditLocationViewModel @Inject constructor(
     }
 
     fun updateGpoCount(count: Int) {
-        if (count in 1..10) {
+        Log.d(TAG, "updateGpoCount() called with count=$count")
+        if (count in 1..11) {
+            val oldValue = _formData.value.gpoCount
             _formData.value = _formData.value.copy(gpoCount = count)
+            Log.d(TAG, "  ✓ gpoCount updated: $oldValue → $count")
+            Log.d(TAG, "  formData.gpoCount is now: ${_formData.value.gpoCount}")
+        } else {
+            Log.d(TAG, "  ✗ Count $count is out of valid range 1..11")
         }
     }
 
@@ -337,8 +343,8 @@ class EditLocationViewModel @Inject constructor(
             return
         }
 
-        if (data.gpoCount < 1 || data.gpoCount > 10) {
-            _editState.value = EditLocationState.Error("GPO count must be between 1 and 10")
+        if (data.gpoCount < 1 || data.gpoCount > 11) {
+            _editState.value = EditLocationState.Error("GPO count must be between 1 and 10+")
             return
         }
 
@@ -352,6 +358,8 @@ class EditLocationViewModel @Inject constructor(
                 }
 
                 Log.d(TAG, "━━━ SUBMITTING LOCATION UPDATE ━━━")
+                Log.d(TAG, "Original gpoCount: ${original.gpoCount}")
+                Log.d(TAG, "New gpoCount from form: ${data.gpoCount}")
                 Log.d(TAG, "Original description: '${original.description}'")
                 Log.d(TAG, "New description from form: '${data.description}'")
                 Log.d(TAG, "Original additional info: '${original.additionalInfo}'")
@@ -383,6 +391,7 @@ class EditLocationViewModel @Inject constructor(
                     postcode = data.postcode.ifBlank { null }
                 )
 
+                Log.d(TAG, "Updated location gpoCount after copy: ${updatedLocation.gpoCount}")
                 Log.d(TAG, "Updated location description after copy: '${updatedLocation.description}'")
                 Log.d(TAG, "Updated location additional info after copy: '${updatedLocation.additionalInfo}'")
 
