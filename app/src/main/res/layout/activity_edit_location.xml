@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="end"
+                android:gravity="start"
                 android:layout_marginBottom="16dp">
 
                 <!-- Map Icon -->
@@ -55,17 +55,9 @@
                     android:id="@+id/mapLocationButton"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_map"
+                    android:src="@drawable/ic_gps_location"
                     android:contentDescription="Select location on map"
                     android:padding="4dp"
-                    android:layout_marginEnd="16dp" />
-
-                <TextView
-                    android:id="@+id/locationCoordinatesTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No location captured"
-                    android:textSize="12sp"
                     android:layout_marginEnd="16dp" />
 
                 <!-- Fee Indicator -->
@@ -85,7 +77,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="4dp"
                     android:layout_marginEnd="16dp">
 
                     <ImageView
@@ -104,6 +95,12 @@
                         android:textStyle="bold"
                         android:layout_marginStart="4dp" />
                 </LinearLayout>
+
+                <!-- Spacer to push favorite icon to the right -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
                 <!-- Favorite Toggle -->
                 <ImageView
