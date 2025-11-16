@@ -435,6 +435,23 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 updateFeeIndicator(hasFee)
                 feeDetailsSection.visibility = if (hasFee) android.view.View.VISIBLE else android.view.View.GONE
             }
+                        // Additional Location Info toggle logic
+                        var additionalInfoVisible = false
+                        additionalLocationInfoSection.visibility = android.view.View.GONE
+                        reverseGeocodeButton.visibility = android.view.View.GONE
+                        toggleAdditionalLocationInfoButton.setImageResource(R.drawable.ic_expand_more)
+                        toggleAdditionalLocationInfoButton.setOnClickListener {
+                            additionalInfoVisible = !additionalInfoVisible
+                            if (additionalInfoVisible) {
+                                additionalLocationInfoSection.visibility = android.view.View.VISIBLE
+                                reverseGeocodeButton.visibility = android.view.View.VISIBLE
+                                toggleAdditionalLocationInfoButton.setImageResource(R.drawable.ic_expand_less)
+                            } else {
+                                additionalLocationInfoSection.visibility = android.view.View.GONE
+                                reverseGeocodeButton.visibility = android.view.View.GONE
+                                toggleAdditionalLocationInfoButton.setImageResource(R.drawable.ic_expand_more)
+                            }
+                        }
 
             // Setup access type toggle click
             accessTypeToggleLayout.setOnClickListener {

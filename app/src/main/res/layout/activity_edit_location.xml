@@ -515,149 +515,168 @@
                 android:textStyle="italic"
                 android:textColor="?android:attr/textColorSecondary" />
 
-            <!-- Additional Location Info Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
-                android:text="Additional Location Information"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="?attr/colorPrimary" />
 
-            <!-- Reverse Geocoding Button -->
-            <ImageButton
-                android:id="@+id/reverseGeocodeButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_refresh"
-                android:contentDescription="Reverse geocode location"
-                android:tint="?attr/colorPrimary" />
-
-            <!-- Business Name Field -->
+            <!-- Additional Location Info Section with toggle -->
             <LinearLayout
-                android:id="@+id/businessNameLayout"
+                android:id="@+id/additionalLocationInfoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
+                android:orientation="vertical"
+                android:layout_marginTop="24dp">
 
-                <TextView
-                    android:layout_width="120dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Business Name"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Additional Location Information"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="?attr/colorPrimary" />
+                    <ImageButton
+                        android:id="@+id/reverseGeocodeButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_autorenew"
+                        android:contentDescription="Refresh location details"
+                        android:tint="?attr/colorPrimary"
+                        android:visibility="gone" />
+                    <ImageButton
+                        android:id="@+id/toggleAdditionalLocationInfoButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_expand_more"
+                        android:contentDescription="Show/hide additional location information"
+                        android:tint="?attr/colorPrimary" />
+                </LinearLayout>
 
-                <EditText
-                    android:id="@+id/businessNameInput"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:id="@+id/additionalLocationInfoSection"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Business Name (Optional)"
-                    android:inputType="text" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <!-- Removed separate reverseGeocodeButton row, now in label row above -->
+                    <!-- Business Name Field -->
+                    <LinearLayout
+                        android:id="@+id/businessNameLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="Business Name"
+                            android:textStyle="bold" />
+                        <EditText
+                            android:id="@+id/businessNameInput"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Business Name (Optional)"
+                            android:inputType="text" />
+                    </LinearLayout>
+
+                    <!-- Street Address Field -->
+                    <LinearLayout
+                        android:id="@+id/streetAddressLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="Street Address"
+                            android:textStyle="bold" />
+                        <EditText
+                            android:id="@+id/streetAddressInput"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Street Address (Optional)"
+                            android:inputType="text" />
+                    </LinearLayout>
+
+                    <!-- Suburb Field -->
+                    <LinearLayout
+                        android:id="@+id/suburbLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="Suburb"
+                            android:textStyle="bold" />
+                        <EditText
+                            android:id="@+id/suburbInput"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Suburb (Optional)"
+                            android:inputType="text" />
+                    </LinearLayout>
+
+                    <!-- State Field -->
+                    <LinearLayout
+                        android:id="@+id/stateLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="State"
+                            android:textStyle="bold" />
+                        <EditText
+                            android:id="@+id/stateInput"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="State (Optional)"
+                            android:inputType="text" />
+                    </LinearLayout>
+
+                    <!-- Postcode Field -->
+                    <LinearLayout
+                        android:id="@+id/postcodeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="Postcode"
+                            android:textStyle="bold" />
+                        <EditText
+                            android:id="@+id/postcodeInput"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Postcode (Optional)"
+                            android:inputType="text" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Street Address Field -->
-            <LinearLayout
-                android:id="@+id/streetAddressLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
+            <!-- Removed duplicate Business Name Field -->
 
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Street Address"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/streetAddressInput"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Street Address (Optional)"
-                    android:inputType="text" />
-            </LinearLayout>
-
-            <!-- Suburb Field -->
-            <LinearLayout
-                android:id="@+id/suburbLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Suburb"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/suburbInput"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Suburb (Optional)"
-                    android:inputType="text" />
-            </LinearLayout>
-
-            <!-- State Field -->
-            <LinearLayout
-                android:id="@+id/stateLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="State"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/stateInput"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="State (Optional)"
-                    android:inputType="text" />
-            </LinearLayout>
-
-            <!-- Postcode Field -->
-            <LinearLayout
-                android:id="@+id/postcodeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:text="Postcode"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/postcodeInput"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Postcode (Optional)"
-                    android:inputType="text" />
-            </LinearLayout>
 
             <!-- Action Buttons -->
             <LinearLayout
