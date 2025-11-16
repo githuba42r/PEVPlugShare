@@ -401,30 +401,10 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             socketTypeSpinner.adapter = socketAdapter
             socketTypeSpinner.setSelection(0)
 
-            // Add listener to update socket count when socket type changes
-            socketTypeSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                    val selectedType = socketTypes[position]
-                    val defaultCount = when {
-                        selectedType.contains("Wall") -> 1  // Wall sockets typically have 1
-                        selectedType.contains("Tesla") -> 1  // Tesla chargers typically have 1
-                        selectedType.contains("Type 2") -> 2  // Type 2 chargers often have 2
-                        selectedType.contains("CCS") -> 1    // CCS chargers typically have 1
-                        selectedType.contains("CHAdeMO") -> 1 // CHAdeMO typically have 1
-                        selectedType.contains("Type 1") -> 1  // Type 1 typically have 1
-                        selectedType.contains("Caravan") -> 1 // Caravan plugs typically have 1
-                        else -> 1 // Default to 1 for AU GPO and Other
-                    }
-                    // Only update if this is a user selection (not during initial setup)
-                    if (view != null) {
-                        selectSocketCount(defaultCount)
-                    }
-                }
-
-                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
-                    // Do nothing
-                }
-            }
+            // NOTE: Socket type and socket count are independent properties
+            // Do NOT automatically change socket count when socket type changes
+            // The user should independently select both the type and count
+            // (Previously this listener was overwriting the socket count, causing data loss)
 
             // Setup opening hours spinner with common options
             val openingHoursList = arrayOf(
@@ -625,7 +605,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             suburbInput.setText(location.suburb ?: "")
             stateInput.setText(location.state ?: "")
             postcodeInput.setText(location.postcode ?: "")
-            selectSocketCount(location.gpoCount)
             descriptionInput.setText(location.description ?: "")
             additionalInfoInput.setText(location.additionalInfo ?: "")
 
@@ -647,6 +626,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
             val socketTypeStr = location.socketTypes.firstOrNull()?.name ?: "AS3112"
             socketTypeSpinner.setSelection(getSocketTypeIndex(socketTypeStr))
+
+            // Now set the actual socket count from the database
+            selectSocketCount(location.gpoCount)
 
             val isPublic = location.publicPrivate == com.a42r.pevplugshare.data.model.LocationAccessType.PUBLIC
             updateAccessTypeIndicator(isPublic)
@@ -750,6 +732,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun selectSocketCount(count: Int) {
+        Log.d("EditLocationActivity", "selectSocketCount($count) called")
         binding.apply {
             // Reset all buttons to default outlined style
             val defaultColor = ContextCompat.getColor(this@EditLocationActivity, android.R.color.darker_gray)
@@ -788,7 +771,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             selectedButton.strokeColor = android.content.res.ColorStateList.valueOf(selectedColor)
             selectedButton.strokeWidth = selectedWidth
 
+            Log.d("EditLocationActivity", "  Calling viewModel.updateGpoCount($count)...")
             viewModel.updateGpoCount(count)
+            Log.d("EditLocationActivity", "  ✓ selectSocketCount($count) completed")
         }
     }
 
@@ -811,6 +796,11 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             // Update checkbox (always safe to update)
             feeCheckbox.isChecked = data.hasFee
             feeDetailsSection.visibility = if (data.hasFee) android.view.View.VISIBLE else android.view.View.GONE
+
+            // NOTE: Do NOT call selectSocketCount here - it causes a feedback loop
+            // where the button click calls updateGpoCount -> updates formData ->
+            // calls updateUIFromFormData -> calls selectSocketCount again,
+            // which can overwrite the user's selection with stale data
 
             // Set up focus change listeners to update ViewModel when user edits
             nameInput.setOnFocusChangeListener { _, _ ->
@@ -1069,7 +1059,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
                 // Extract GPO count from ViewModel (already updated by selectSocketCount calls)
                 val gpoCount = viewModel.formData.value.gpoCount
-                Log.d("EditLocationActivity", "   GPO count from ViewModel: $gpoCount")
+                Log.d("EditLocationActivity", "━━━ CRITICAL CHECK BEFORE SUBMIT ━━━")
+                Log.d("EditLocationActivity", "   Current formData.gpoCount: $gpoCount")
+                Log.d("EditLocationActivity", "   About to call submitUpdates() with this gpoCount")
                 viewModel.updateGpoCount(gpoCount)
 
                 val isPublic = binding.accessTypeText.text == "Public"
