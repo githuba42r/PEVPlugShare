@@ -20,10 +20,10 @@ class LocationDescriptionGenerator @Inject constructor(
     private val tokenManager: TokenManager
 ) {
     private val okHttpClient = OkHttpClient()
-    
+
     companion object {
         private const val TAG = "LocationDescriptionGenerator"
-        
+
         private const val SYSTEM_PROMPT = """You are a specialized AI assistant that generates standardized, informative descriptions for PEV (Personal Electric Vehicle) charging locations.
 
 Your task is to create a clear, readable description that includes all available charging details in a consistent format.
@@ -93,7 +93,7 @@ Follow the EXACT format from the system prompt with:
 
 Return ONLY the formatted description, no additional commentary."""
     }
-    
+
     suspend fun generateDescription(
         locationName: String,
         accessType: LocationAccessType,
@@ -112,15 +112,15 @@ Return ONLY the formatted description, no additional commentary."""
                     Log.e(TAG, "No OpenRouter API key configured")
                     return@withContext Result.failure(Exception("No OpenRouter API key configured. Please add an API key in Settings."))
                 }
-                
+
                 val modelId = tokenManager.getSelectedAiModel()
                 if (modelId.isNullOrEmpty()) {
                     Log.e(TAG, "No AI model selected")
                     return@withContext Result.failure(Exception("No AI model selected. Please select a model in Settings."))
                 }
-                
+
                 Log.d(TAG, "Using model: $modelId")
-                
+
                 val requestBody = buildRequestBody(
                     modelId,
                     locationName,
@@ -133,7 +133,7 @@ Return ONLY the formatted description, no additional commentary."""
                     additionalInfo,
                     conversationHistory
                 )
-                
+
                 val request = Request.Builder()
                     .url("https://openrouter.ai/api/v1/chat/completions")
                     .header("Authorization", "Bearer $apiKey")
@@ -142,7 +142,7 @@ Return ONLY the formatted description, no additional commentary."""
                     .header("X-Title", "PEV PlugShare")
                     .post(requestBody)
                     .build()
-                
+
                 Log.d(TAG, "")
                 Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
                 Log.d(TAG, "║                    GENERATING LOCATION DESCRIPTION                          ║")
@@ -160,11 +160,11 @@ Return ONLY the formatted description, no additional commentary."""
                 Log.d(TAG, "  - Capacity: $capacity")
                 Log.d(TAG, "  - Additional Info: $additionalInfo")
                 Log.d(TAG, "")
-                
+
                 val response = okHttpClient.newCall(request).execute()
                 Log.d(TAG, "Response Code: ${response.code}")
                 Log.d(TAG, "Response Success: ${response.isSuccessful}")
-                
+
                 if (!response.isSuccessful) {
                     val errorBody = response.body?.string()
                     Log.e(TAG, "API request failed: ${response.code} - $errorBody")
@@ -182,10 +182,10 @@ Return ONLY the formatted description, no additional commentary."""
                     }
                     return@withContext Result.failure(Exception(errorMessage))
                 }
-                
+
                 val responseBody = response.body?.string()
                     ?: return@withContext Result.failure(Exception("Empty response"))
-                
+
                 Log.d(TAG, "")
                 Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
                 Log.d(TAG, "║                         RAW API RESPONSE                                     ║")
@@ -193,9 +193,9 @@ Return ONLY the formatted description, no additional commentary."""
                 Log.d(TAG, responseBody)
                 Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
                 Log.d(TAG, "")
-                
+
                 val generatedDescription = parseAiResponse(responseBody)
-                
+
                 Log.d(TAG, "")
                 Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
                 Log.d(TAG, "║                    GENERATED DESCRIPTION RESULT                              ║")
@@ -203,7 +203,7 @@ Return ONLY the formatted description, no additional commentary."""
                 Log.d(TAG, generatedDescription)
                 Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
                 Log.d(TAG, "")
-                
+
                 Result.success(generatedDescription)
             } catch (e: Exception) {
                 Log.e(TAG, "Error generating description with AI", e)
@@ -211,7 +211,7 @@ Return ONLY the formatted description, no additional commentary."""
             }
         }
     }
-    
+
     private fun buildRequestBody(
         modelId: String,
         locationName: String,
@@ -228,13 +228,13 @@ Return ONLY the formatted description, no additional commentary."""
             LocationAccessType.PUBLIC -> "Public access"
             LocationAccessType.PRIVATE -> "Private access"
         }
-        
+
         val costStr = if (hasFee) "Paid charging" else "Free charging"
         val socketTypesStr = if (socketTypes.isNotEmpty()) socketTypes.joinToString(", ") else "Standard outlets"
         val hoursStr = openingHours ?: "Hours not specified"
         val capacityStr = capacity ?: "Not specified"
         val additionalStr = additionalInfo ?: "None"
-        
+
         val userPrompt = String.format(
             USER_PROMPT_TEMPLATE,
             locationName,
@@ -246,7 +246,7 @@ Return ONLY the formatted description, no additional commentary."""
             capacityStr,
             additionalStr
         )
-        
+
         val json = JSONObject().apply {
             put("model", modelId)
             put("messages", JSONArray().apply {
@@ -255,13 +255,13 @@ Return ONLY the formatted description, no additional commentary."""
                     put("role", "system")
                     put("content", SYSTEM_PROMPT)
                 })
-                
+
                 // Initial user request
                 put(JSONObject().apply {
                     put("role", "user")
                     put("content", userPrompt)
                 })
-                
+
                 // Add conversation history for iterative refinement
                 conversationHistory.forEach { (userMsg, assistantMsg) ->
                     put(JSONObject().apply {
@@ -277,9 +277,9 @@ Return ONLY the formatted description, no additional commentary."""
             put("temperature", 0.7) // Balanced for readability and consistency
             put("max_tokens", 500)
         }
-        
+
         val jsonString = json.toString()
-        
+
         Log.d(TAG, "")
         Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
         Log.d(TAG, "║                       REQUEST BODY FOR DESCRIPTION                           ║")
@@ -287,27 +287,27 @@ Return ONLY the formatted description, no additional commentary."""
         Log.d(TAG, jsonString)
         Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
         Log.d(TAG, "")
-        
+
         return jsonString.toRequestBody("application/json".toMediaType())
     }
-    
+
     private fun parseAiResponse(responseBody: String): String {
         Log.d(TAG, "")
         Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
         Log.d(TAG, "║                    PARSING AI RESPONSE                                        ║")
         Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
-        
+
         val json = JSONObject(responseBody)
-        
+
         Log.d(TAG, "Response structure keys: ${json.keys().asSequence().toList()}")
-        
+
         val choices = json.getJSONArray("choices")
         Log.d(TAG, "Number of choices: ${choices.length()}")
-        
+
         val firstChoice = choices.getJSONObject(0)
         val message = firstChoice.getJSONObject("message")
         val content = message.getString("content").trim()
-        
+
         Log.d(TAG, "")
         Log.d(TAG, "Raw AI generated content (length: ${content.length} characters):")
         Log.d(TAG, content)
@@ -318,7 +318,7 @@ Return ONLY the formatted description, no additional commentary."""
         Log.d(TAG, content)
         Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
         Log.d(TAG, "")
-        
+
         return content
     }
 }
