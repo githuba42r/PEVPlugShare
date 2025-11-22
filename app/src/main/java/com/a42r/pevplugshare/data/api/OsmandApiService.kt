@@ -75,10 +75,6 @@ interface OsmandApiService {
     @GET("list-files")
     suspend fun listFiles(): OsmandListFilesResponse
 
-    // Web API - Get list of favorite groups with updatetime
-    @GET("fav/list")
-    suspend fun getFavList(): OsmandFavListResponse
-
     // Web API - Download favorites GPX file
     @GET("download-file")
     suspend fun downloadFile(
@@ -87,7 +83,7 @@ interface OsmandApiService {
         @Query("shared") shared: Boolean = false
     ): okhttp3.ResponseBody
 
-    // Web API - Update favorite waypoint (also used for adding new favorites)
+    // Web API - Update favorite waypoint
     @POST("fav/update")
     suspend fun updateFavorite(
         @Query("wptName") wptName: String,
@@ -96,17 +92,21 @@ interface OsmandApiService {
         @Query("oldGroupUpdatetime") oldGroupUpdatetime: Long,
         @Query("newGroupUpdatetime") newGroupUpdatetime: Long,
         @Query("ind") ind: Int,
+        @Header("Origin") origin: String = "https://osmand.net",
+        @Header("Referer") referer: String = "https://osmand.net/map/mydata/favorites/",
         @Body updateRequest: OsmandUpdateFavoriteRequest
     ): retrofit2.Response<okhttp3.ResponseBody>
 
-    // Web API - Add a new favorite (convenience method using updateFavorite)
+    // Web API - Add a new favorite
+    // NOTE: For ADD, we do NOT include ind or wptName parameters at all
     @POST("fav/update")
     suspend fun addFavorite(
         @Query("oldGroupName") oldGroupName: String,
         @Query("newGroupName") newGroupName: String,
         @Query("oldGroupUpdatetime") oldGroupUpdatetime: Long,
         @Query("newGroupUpdatetime") newGroupUpdatetime: Long,
-        @Query("ind") ind: Int = -1,
+        @Header("Origin") origin: String = "https://osmand.net",
+        @Header("Referer") referer: String = "https://osmand.net/map/mydata/favorites/",
         @Body updateRequest: OsmandUpdateFavoriteRequest
     ): retrofit2.Response<okhttp3.ResponseBody>
 }
