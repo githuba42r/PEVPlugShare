@@ -90,10 +90,10 @@ class SavedForLaterActivity : AppCompatActivity() {
             putExtra("longitude", item.longitude)
             item.bearing?.let { putExtra("bearing", it) }
             putStringArrayListExtra("photo_paths", ArrayList(item.photoPaths))
-            
+
             // Pass the saved for later ID so it can be deleted after successful save
             putExtra("saved_for_later_id", item.id)
-            
+
             // Pass focus areas if available
             val focusBundle = Bundle()
             item.photoMetadata.forEach { (path, metadata) ->
@@ -104,7 +104,7 @@ class SavedForLaterActivity : AppCompatActivity() {
             }
             putExtra("focus_areas", focusBundle)
         }
-        
+
         startActivity(intent)
         finish()
     }

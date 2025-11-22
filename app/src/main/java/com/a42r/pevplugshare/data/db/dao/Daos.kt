@@ -46,7 +46,7 @@ interface LocationDao {
     suspend fun deleteAllLocations()
 
     @Query("""
-        SELECT * FROM locations 
+        SELECT * FROM locations
         WHERE (6371 * acos(cos(radians(:latitude)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(latitude)))) < :radiusKm
     """)
     suspend fun getLocationsNearby(latitude: Double, longitude: Double, radiusKm: Double): List<LocationEntity>

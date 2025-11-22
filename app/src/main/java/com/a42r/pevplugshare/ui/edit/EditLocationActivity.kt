@@ -534,7 +534,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         val message = if (isAddMode) "Location added!" else "Location updated!"
                         Toast.makeText(this@EditLocationActivity, message, Toast.LENGTH_SHORT).show()
                         submittedSuccessfully = true // Set flag on successful submission
-                        
+
                         // Delete the saved for later entry if this was from a saved location
                         savedForLaterId?.let { id ->
                             lifecycleScope.launch {
@@ -546,7 +546,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                                 }
                             }
                         }
-                        
+
                         setResult(RESULT_OK)
                         finish()
                     }
