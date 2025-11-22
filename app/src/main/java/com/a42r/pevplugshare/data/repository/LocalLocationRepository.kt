@@ -201,7 +201,13 @@ class LocalLocationRepository(
             osmandGpxIndex = osmandGpxIndex,
             osmandSyncSource = osmandSyncSource,
             osmandLastSyncedAt = osmandLastSyncedAt,
-            osmandSyncedToServer = osmandSyncedToServer
+            osmandSyncedToServer = osmandSyncedToServer,
+            osmandSyncedUsernames = osmandSyncedUsernames,
+            osmandSyncStatus = try {
+                com.a42r.pevplugshare.data.model.OsmandSyncStatus.valueOf(osmandSyncStatus)
+            } catch (e: Exception) {
+                com.a42r.pevplugshare.data.model.OsmandSyncStatus.LOCAL_ONLY
+            }
         )
     }
 
@@ -241,7 +247,9 @@ class LocalLocationRepository(
             osmandGpxIndex = osmandGpxIndex,
             osmandSyncSource = osmandSyncSource,
             osmandLastSyncedAt = osmandLastSyncedAt,
-            osmandSyncedToServer = osmandSyncedToServer
+            osmandSyncedToServer = osmandSyncedToServer,
+            osmandSyncedUsernames = osmandSyncedUsernames,
+            osmandSyncStatus = osmandSyncStatus.value
         )
     }
 

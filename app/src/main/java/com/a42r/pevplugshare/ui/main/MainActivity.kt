@@ -72,11 +72,14 @@ class MainActivity : AppCompatActivity() {
         setupObservers()
         requestLocationPermission()
 
-        // Validate session token in background and load data
+        // Validate session token in background and load data (if OSMand is connected)
         lifecycleScope.launch {
             val isValid = viewModel.validateSessionAndLoadData()
             if (!isValid) {
-                showAuthenticationFailedDialog()
+                // OSMand not connected or session invalid - still allow local database usage
+                android.util.Log.d("MainActivity", "OSMand not connected, using local database only")
+                // Load categories/locations from local database
+                viewModel.loadFromLocalDatabase()
             }
         }
 
@@ -258,6 +261,30 @@ class MainActivity : AppCompatActivity() {
         val popup = PopupMenu(this, binding.menuButton)
         popup.menuInflater.inflate(R.menu.main_menu, popup.menu)
 
+        // Update menu items based on OSMand connection status
+        lifecycleScope.launch {
+            val isOsmandConnected = viewModel.isOsmandConnected()
+            
+            // Update OSMand connect menu item
+            val osmandConnectItem = popup.menu.findItem(R.id.menu_osmand_connect)
+            osmandConnectItem?.let {
+                if (isOsmandConnected) {
+                    it.title = getString(R.string.osmand_connected)
+                    it.isEnabled = false // Already connected
+                } else {
+                    it.title = getString(R.string.connect_to_osmand)
+                    it.isEnabled = true
+                }
+            }
+            
+            // Disable category selection and logout if not connected to OSMand
+            val categoryItem = popup.menu.findItem(R.id.menu_select_category)
+            categoryItem?.isEnabled = isOsmandConnected
+            
+            val logoutItem = popup.menu.findItem(R.id.menu_logout)
+            logoutItem?.isEnabled = isOsmandConnected
+        }
+
         // Update the saved for later menu item with badge count
         val savedForLaterItem = popup.menu.findItem(R.id.menu_saved_for_later)
         val count = viewModel.savedForLaterCount.value
@@ -271,6 +298,10 @@ class MainActivity : AppCompatActivity() {
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                R.id.menu_osmand_connect -> {
+                    showOsmandConnectionFlow()
+                    true
+                }
                 R.id.menu_select_category -> {
                     showCategorySelectionDialog()
                     true
@@ -299,6 +330,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
         popup.show()
+    }
+
+    private fun showOsmandConnectionFlow() {
+        // Launch the LoginActivity to connect to OSMand
+        val intent = Intent(this, com.a42r.pevplugshare.ui.auth.LoginActivity::class.java)
+        intent.putExtra("isReconnecting", true) // Flag to indicate this is a reconnection
+        startActivity(intent)
+        // When user returns, they will either be connected or have skipped again
     }
 
     private fun showLogoutConfirmation() {

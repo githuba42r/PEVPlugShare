@@ -40,7 +40,9 @@ data class LocationEntity(
     val osmandGpxIndex: Int? = null,             // Last known index in GPX file
     val osmandSyncSource: String = "LOCAL",      // "LOCAL" or "OSMAND"
     val osmandLastSyncedAt: Long? = null,        // Timestamp of last successful sync
-    val osmandSyncedToServer: Boolean = false    // True if exists on OSMAnd server
+    val osmandSyncedToServer: Boolean = false,   // True if exists on OSMAnd server
+    val osmandSyncedUsernames: String? = null,   // Comma-separated list of OSMand usernames this location has been synced with
+    val osmandSyncStatus: String = "LOCAL_ONLY"  // Current sync status: LOCAL_ONLY, SYNCED, MODIFIED
 )
 
 @Entity(tableName = "location_photos")

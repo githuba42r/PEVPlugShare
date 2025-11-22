@@ -85,6 +85,11 @@ class LoginActivity : AppCompatActivity() {
             viewModel.loginWithCredentials(username, password, rememberMe)
         }
 
+        binding.skipLoginButton.setOnClickListener {
+            // Skip login and go to MainActivity with local database only
+            showSkipLoginConfirmation()
+        }
+
         lifecycleScope.launch {
             viewModel.loginState.collect { state ->
                 when (state) {
@@ -223,5 +228,34 @@ class LoginActivity : AppCompatActivity() {
         binding.rememberMeCheckbox.visibility = android.view.View.VISIBLE
         binding.loginButton.visibility = android.view.View.VISIBLE
         binding.statusText.visibility = android.view.View.GONE
+    }
+
+    private fun showSkipLoginConfirmation() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Use Local Database Only?")
+            .setMessage(
+                "You are about to skip OSMAnd login and use the app with local database only.\n\n" +
+                "Features available:\n" +
+                "✓ Add and edit charging locations\n" +
+                "✓ View locations on map\n" +
+                "✓ Navigate to locations\n" +
+                "✓ All data stored locally on your device\n\n" +
+                "Features NOT available without OSMAnd:\n" +
+                "✗ Sync locations across devices\n" +
+                "✗ Cloud backup\n" +
+                "✗ Share with other users\n\n" +
+                "You can connect to OSMAnd later from the menu."
+            )
+            .setPositiveButton("Continue Without OSMAnd") { _, _ ->
+                // Proceed to MainActivity without logging in
+                if (!isFinishing && !isDestroyed) {
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+        
+        dialog.show()
     }
 }
