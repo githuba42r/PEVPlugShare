@@ -22,12 +22,12 @@ def generate_signature(provider: str, timestamp: int, secret: str) -> str:
 
 def test_service(base_url: str, secret: str, provider: str = "openrouter"):
     """Test the OAuth callback service"""
-    
+
     print(f"🧪 Testing OAuth Callback Service")
     print(f"📍 Base URL: {base_url}")
     print(f"🔑 Provider: {provider}")
     print("-" * 60)
-    
+
     # Test 1: Health check
     print("\n1️⃣  Testing health endpoint...")
     try:
@@ -37,45 +37,45 @@ def test_service(base_url: str, secret: str, provider: str = "openrouter"):
     except Exception as e:
         print(f"   ❌ Error: {e}")
         return
-    
+
     # Test 2: Register session
     print("\n2️⃣  Testing session registration...")
     timestamp = int(time.time())
     signature = generate_signature(provider, timestamp, secret)
-    
+
     register_data = {
         "provider": provider,
         "timestamp": timestamp,
         "signature": signature
     }
-    
+
     print(f"   Request: {json.dumps(register_data, indent=2)}")
-    
+
     try:
         response = requests.post(
             f"{base_url}/oauth/register",
             json=register_data
         )
         print(f"   Status: {response.status_code}")
-        
+
         if response.status_code == 200:
             result = response.json()
             print(f"   ✅ Success!")
             print(f"   Response: {json.dumps(result, indent=2)}")
-            
+
             session_id = result.get("session_id")
             callback_url = result.get("callback_url")
-            
+
             # Test 3: Simulate OAuth callback
             print("\n3️⃣  Testing callback endpoint...")
             test_code = "test_authorization_code_123"
             callback_test_url = f"{base_url}/oauth/callback/{session_id}?code={test_code}"
-            
+
             print(f"   URL: {callback_test_url}")
-            
+
             response = requests.get(callback_test_url)
             print(f"   Status: {response.status_code}")
-            
+
             if response.status_code == 200:
                 print(f"   ✅ Callback successful!")
                 print(f"   Content-Type: {response.headers.get('content-type')}")
@@ -90,11 +90,11 @@ def test_service(base_url: str, secret: str, provider: str = "openrouter"):
                 print(f"   ❌ Failed: {response.text}")
         else:
             print(f"   ❌ Failed: {response.text}")
-            
+
     except Exception as e:
         print(f"   ❌ Error: {e}")
         return
-    
+
     # Test 4: Invalid signature
     print("\n4️⃣  Testing invalid signature...")
     bad_data = {
@@ -102,7 +102,7 @@ def test_service(base_url: str, secret: str, provider: str = "openrouter"):
         "timestamp": timestamp,
         "signature": "invalid_signature"
     }
-    
+
     try:
         response = requests.post(
             f"{base_url}/oauth/register",
@@ -116,19 +116,19 @@ def test_service(base_url: str, secret: str, provider: str = "openrouter"):
             print(f"   ⚠️  Unexpected status code")
     except Exception as e:
         print(f"   ❌ Error: {e}")
-    
+
     # Test 5: Unsupported provider
     print("\n5️⃣  Testing unsupported provider...")
     unsupported_provider = "unsupported_provider"
     bad_timestamp = int(time.time())
     bad_signature = generate_signature(unsupported_provider, bad_timestamp, secret)
-    
+
     bad_provider_data = {
         "provider": unsupported_provider,
         "timestamp": bad_timestamp,
         "signature": bad_signature
     }
-    
+
     try:
         response = requests.post(
             f"{base_url}/oauth/register",
@@ -142,7 +142,7 @@ def test_service(base_url: str, secret: str, provider: str = "openrouter"):
             print(f"   ⚠️  Unexpected status code")
     except Exception as e:
         print(f"   ❌ Error: {e}")
-    
+
     print("\n" + "=" * 60)
     print("✅ Test suite complete!")
 
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     BASE_URL = "http://localhost:8000"
     SECRET = "your-shared-secret"  # Update this
     PROVIDER = "openrouter"
-    
+
     # Parse command line arguments
     if len(sys.argv) > 1:
         BASE_URL = sys.argv[1]
@@ -160,7 +160,7 @@ if __name__ == "__main__":
         SECRET = sys.argv[2]
     if len(sys.argv) > 3:
         PROVIDER = sys.argv[3]
-    
+
     print(f"""
 ╔══════════════════════════════════════════════════════════╗
 ║         OAuth Callback Service Test Suite               ║
@@ -174,9 +174,9 @@ Defaults:
   provider: {PROVIDER}
 
 """)
-    
+
     if SECRET == "your-shared-secret":
         print("⚠️  WARNING: Using default secret. Update in test script or pass as argument.")
         print()
-    
+
     test_service(BASE_URL, SECRET, PROVIDER)

@@ -1,0 +1,11 @@
+aws_region = "us-east-1"
+project_name = "oauth-callback"
+
+# REQUIRED: Set these values
+domain_name = "https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/prod"
+shared_secret = "CHANGE-ME-generate-with-python-secrets"
+
+# Optional configurations
+session_ttl_minutes = 10
+oauth_providers = "openrouter,github,google"
+deep_link_scheme = "pevplugshare://oauth/callback"

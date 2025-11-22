@@ -16,7 +16,7 @@ router = APIRouter()
 async def health_check(db: Session = Depends(get_db)):
     """
     Health check endpoint
-    
+
     Returns service status and active session count
     """
     # Count active (non-expired, non-used) sessions
@@ -24,7 +24,7 @@ async def health_check(db: Session = Depends(get_db)):
         OAuthSession.used == False,
         OAuthSession.expires_at > datetime.utcnow()
     ).count()
-    
+
     return HealthResponse(
         status="healthy",
         version="1.0.0",
