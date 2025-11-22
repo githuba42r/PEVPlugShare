@@ -37,6 +37,10 @@ gradle-app.setting
 # Local configuration file (sdk path, etc)
 local.properties
 
+# OAuth secrets (NEVER commit these!)
+secrets.properties
+app/src/main/cpp/native-secrets.local.cpp
+
 # Android Studio
 .idea/
 *.iml
