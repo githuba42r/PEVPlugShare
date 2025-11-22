@@ -13,7 +13,7 @@ Base = declarative_base()
 class OAuthSession(Base):
     """OAuth session model for tracking callback state"""
     __tablename__ = "oauth_sessions"
-    
+
     session_id = Column(String(36), primary_key=True, index=True)
     provider = Column(String(50), nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -21,11 +21,11 @@ class OAuthSession(Base):
     used = Column(Boolean, default=False, nullable=False)
     client_ip = Column(String(45), nullable=True)  # IPv4 or IPv6
     user_agent = Column(String(500), nullable=True)
-    
+
     def is_expired(self) -> bool:
         """Check if session has expired"""
         return datetime.utcnow() > self.expires_at
-    
+
     def is_valid(self) -> bool:
         """Check if session is valid (not used and not expired)"""
         return not self.used and not self.is_expired()

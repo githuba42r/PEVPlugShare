@@ -10,7 +10,7 @@ class RegisterRequest(BaseModel):
     provider: str = Field(..., description="OAuth provider name (e.g., 'openrouter', 'github')")
     timestamp: int = Field(..., description="Unix timestamp for request validation")
     signature: str = Field(..., description="HMAC-SHA256 signature of request data")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -27,7 +27,7 @@ class RegisterResponse(BaseModel):
     callback_url: str = Field(..., description="Full callback URL to use in OAuth flow")
     expires_in: int = Field(..., description="Session TTL in seconds")
     provider: str = Field(..., description="OAuth provider name")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -44,7 +44,7 @@ class ErrorResponse(BaseModel):
     error: str = Field(..., description="Error type")
     message: str = Field(..., description="Human-readable error message")
     details: Optional[dict] = Field(None, description="Additional error details")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -60,7 +60,7 @@ class HealthResponse(BaseModel):
     status: str = Field(..., description="Service status")
     version: str = Field(..., description="API version")
     active_sessions: int = Field(..., description="Number of active sessions")
-    
+
     class Config:
         json_schema_extra = {
             "example": {

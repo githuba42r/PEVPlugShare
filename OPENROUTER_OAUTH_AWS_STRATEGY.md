@@ -20,7 +20,7 @@ Android App → OpenRouter Auth → API Gateway → Lambda → DynamoDB → Deep
   - Registers a new OAuth session
   - Returns temporary callback URL
   - No authentication required (rate-limited)
-  
+
 - `GET /oauth/callback/{session_id}`
   - Handles OpenRouter redirect
   - Validates session and extracts auth code
@@ -44,10 +44,10 @@ from datetime import datetime, timedelta
 def handler(event, context):
     # Generate cryptographically secure session ID
     session_id = str(uuid.uuid4())
-    
+
     # Calculate expiration (10 minutes)
     expires_at = int(time.time()) + 600
-    
+
     # Store in DynamoDB
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('oauth-sessions')
@@ -58,10 +58,10 @@ def handler(event, context):
         'used': False,
         'device_info': event.get('headers', {}).get('User-Agent', 'unknown')
     })
-    
+
     # Return callback URL
     callback_url = f"https://api.pevplugshare.com/oauth/callback/{session_id}"
-    
+
     return {
         'statusCode': 200,
         'headers': {
@@ -92,41 +92,41 @@ def handler(event, context):
     session_id = event['pathParameters']['session_id']
     query_params = event.get('queryStringParameters', {})
     auth_code = query_params.get('code')
-    
+
     if not auth_code:
         return {
             'statusCode': 400,
             'body': 'Missing authorization code'
         }
-    
+
     # Validate session in DynamoDB
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('oauth-sessions')
-    
+
     try:
         response = table.get_item(Key={'session_id': session_id})
         item = response.get('Item')
-        
+
         # Validate session
         if not item:
             return {'statusCode': 404, 'body': 'Session not found'}
-        
+
         if item.get('used'):
             return {'statusCode': 400, 'body': 'Session already used'}
-        
+
         if int(time.time()) > item['expires_at']:
             return {'statusCode': 400, 'body': 'Session expired'}
-        
+
         # Mark session as used
         table.update_item(
             Key={'session_id': session_id},
             UpdateExpression='SET used = :val',
             ExpressionAttributeValues={':val': True}
         )
-        
+
         # Build deep link to Android app
         deep_link = f"pevplugshare://oauth/callback?code={auth_code}"
-        
+
         # Return HTML redirect page
         html = f"""
         <!DOCTYPE html>
@@ -143,7 +143,7 @@ def handler(event, context):
         </body>
         </html>
         """
-        
+
         return {
             'statusCode': 200,
             'headers': {
@@ -152,7 +152,7 @@ def handler(event, context):
             },
             'body': html
         }
-        
+
     except Exception as e:
         return {
             'statusCode': 500,
@@ -252,19 +252,19 @@ private fun startOAuthFlow() {
             // Step 1: Register session with AWS
             val sessionResponse = registerOAuthSession()
             val callbackUrl = sessionResponse.getString("callback_url")
-            
+
             // Step 2: Generate PKCE parameters
             val codeVerifier = PkceUtils.generateCodeVerifier()
             val codeChallenge = PkceUtils.generateCodeChallenge(codeVerifier)
             tokenManager.savePkceCodeVerifier(codeVerifier)
-            
+
             // Step 3: Build OpenRouter auth URL
             val authUrl = Uri.parse(OPENROUTER_AUTH_URL).buildUpon()
                 .appendQueryParameter("callback_url", callbackUrl)
                 .appendQueryParameter("code_challenge", codeChallenge)
                 .appendQueryParameter("code_challenge_method", "S256")
                 .build()
-            
+
             // Step 4: Launch browser
             withContext(Dispatchers.Main) {
                 val customTabsIntent = CustomTabsIntent.Builder()
@@ -274,8 +274,8 @@ private fun startOAuthFlow() {
             }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) {
-                Toast.makeText(this@SettingsActivity, 
-                    "Failed to start OAuth: ${e.message}", 
+                Toast.makeText(this@SettingsActivity,
+                    "Failed to start OAuth: ${e.message}",
                     Toast.LENGTH_LONG).show()
             }
         }
@@ -288,12 +288,12 @@ private suspend fun registerOAuthSession(): JSONObject {
         .url(OAUTH_REGISTER_URL)
         .post(RequestBody.create(null, ""))
         .build()
-    
+
     val response = client.newCall(request).execute()
     if (!response.isSuccessful) {
         throw IOException("Session registration failed: ${response.code}")
     }
-    
+
     return JSONObject(response.body?.string() ?: "{}")
 }
 ```
@@ -305,8 +305,8 @@ private suspend fun registerOAuthSession(): JSONObject {
     <action android:name="android.intent.action.VIEW" />
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
-    <data android:scheme="pevplugshare" 
-          android:host="oauth" 
+    <data android:scheme="pevplugshare"
+          android:host="oauth"
           android:path="/callback" />
 </intent-filter>
 ```

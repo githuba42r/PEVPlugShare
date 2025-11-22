@@ -1,0 +1,117 @@
+"""
+Lambda function: Register OAuth Session
+"""
+import json
+import uuid
+import time
+import os
+import boto3
+from datetime import datetime, timedelta
+
+# Import shared utilities
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
+from security import verify_signature
+from responses import success_response, error_response
+
+
+# Initialize DynamoDB
+dynamodb = boto3.resource('dynamodb')
+table_name = os.environ.get('DYNAMODB_TABLE', 'oauth-sessions')
+table = dynamodb.Table(table_name)
+
+# Configuration from environment
+DOMAIN_NAME = os.environ.get('DOMAIN_NAME', 'https://api.example.com')
+SESSION_TTL_MINUTES = int(os.environ.get('SESSION_TTL_MINUTES', '10'))
+ALLOWED_PROVIDERS = os.environ.get('OAUTH_PROVIDERS', 'openrouter,github,google').split(',')
+
+
+def lambda_handler(event, context):
+    """
+    Handle POST /oauth/register
+
+    Registers a new OAuth session and returns callback URL
+    """
+    try:
+        # Parse request body
+        body = json.loads(event.get('body', '{}'))
+        provider = body.get('provider', '').lower()
+        timestamp = body.get('timestamp')
+        signature = body.get('signature')
+
+        # Validate required fields
+        if not all([provider, timestamp, signature]):
+            return error_response(
+                400,
+                'missing_fields',
+                'Missing required fields: provider, timestamp, signature'
+            )
+
+        # Validate provider
+        if provider not in ALLOWED_PROVIDERS:
+            return error_response(
+                400,
+                'invalid_provider',
+                f"Provider '{provider}' is not supported",
+                {'allowed_providers': ALLOWED_PROVIDERS}
+            )
+
+        # Verify signature
+        is_valid, error_msg = verify_signature(provider, timestamp, signature)
+        if not is_valid:
+            return error_response(
+                400,
+                'invalid_signature',
+                error_msg,
+                {'timestamp': timestamp}
+            )
+
+        # Generate session ID
+        session_id = str(uuid.uuid4())
+
+        # Calculate expiration
+        current_time = int(time.time())
+        expires_at = current_time + (SESSION_TTL_MINUTES * 60)
+
+        # Get client info
+        request_context = event.get('requestContext', {})
+        identity = request_context.get('identity', {})
+        client_ip = identity.get('sourceIp', 'unknown')
+        user_agent = event.get('headers', {}).get('User-Agent', 'unknown')
+
+        # Store session in DynamoDB
+        table.put_item(Item={
+            'session_id': session_id,
+            'provider': provider,
+            'created_at': current_time,
+            'expires_at': expires_at,  # DynamoDB TTL attribute
+            'used': False,
+            'client_ip': client_ip,
+            'user_agent': user_agent
+        })
+
+        # Build callback URL
+        callback_url = f"{DOMAIN_NAME}/oauth/callback/{session_id}"
+
+        # Return response
+        return success_response(200, {
+            'session_id': session_id,
+            'callback_url': callback_url,
+            'expires_in': SESSION_TTL_MINUTES * 60,
+            'provider': provider
+        })
+
+    except json.JSONDecodeError:
+        return error_response(
+            400,
+            'invalid_json',
+            'Request body must be valid JSON'
+        )
+
+    except Exception as e:
+        print(f"Error in register function: {str(e)}")
+        return error_response(
+            500,
+            'internal_error',
+            'An unexpected error occurred'
+        )

@@ -47,13 +47,13 @@ async def lifespan(app: FastAPI):
     logger.info("Starting OAuth Callback Service...")
     init_db()
     logger.info("Database initialized")
-    
+
     # Start cleanup task
     cleanup_task_handle = asyncio.create_task(cleanup_task())
     logger.info(f"Session cleanup task started (interval: {settings.cleanup_interval_minutes} minutes)")
-    
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down OAuth Callback Service...")
     cleanup_task_handle.cancel()
@@ -89,13 +89,13 @@ async def rate_limit_middleware(request: Request, call_next):
     # Skip rate limiting for health check and docs
     if request.url.path in ["/health", "/", "/docs", "/redoc", "/openapi.json"]:
         return await call_next(request)
-    
+
     # Get client IP
     client_ip = request.client.host if request.client else "unknown"
-    
+
     # Check rate limit
     allowed, error_msg = rate_limiter.is_allowed(client_ip)
-    
+
     if not allowed:
         logger.warning(f"Rate limit exceeded for {client_ip}: {error_msg}")
         return JSONResponse(
@@ -106,7 +106,7 @@ async def rate_limit_middleware(request: Request, call_next):
                 "details": rate_limiter.get_stats(client_ip)
             }
         )
-    
+
     response = await call_next(request)
     return response
 

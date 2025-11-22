@@ -32,7 +32,7 @@ async def register_session(
 ):
     """
     Register a new OAuth session and get callback URL
-    
+
     This endpoint creates a temporary session that will be used to track
     the OAuth flow. The returned callback_url should be used as the
     redirect_uri/callback_url in the OAuth authorization request.
@@ -40,7 +40,7 @@ async def register_session(
     # Verify provider is allowed
     provider_lower = request_data.provider.lower()
     allowed_providers = settings.get_oauth_providers_list()
-    
+
     if provider_lower not in allowed_providers:
         raise HTTPException(
             status_code=400,
@@ -50,14 +50,14 @@ async def register_session(
                 "details": {"allowed_providers": allowed_providers}
             }
         )
-    
+
     # Verify signature
     is_valid, error_msg = verify_signature(
         provider_lower,
         request_data.timestamp,
         request_data.signature
     )
-    
+
     if not is_valid:
         raise HTTPException(
             status_code=400,
@@ -67,17 +67,17 @@ async def register_session(
                 "details": {"timestamp": request_data.timestamp}
             }
         )
-    
+
     # Generate unique session ID
     session_id = str(uuid.uuid4())
-    
+
     # Calculate expiration
     expires_at = datetime.utcnow() + timedelta(minutes=settings.session_ttl_minutes)
-    
+
     # Get client info
     client_ip = request.client.host if request.client else "unknown"
     user_agent = request.headers.get("user-agent", "unknown")
-    
+
     # Create session in database
     session = OAuthSession(
         session_id=session_id,
@@ -88,13 +88,13 @@ async def register_session(
         client_ip=client_ip,
         user_agent=user_agent
     )
-    
+
     db.add(session)
     db.commit()
-    
+
     # Build callback URL
     callback_url = f"{settings.domain_name}/oauth/callback/{session_id}"
-    
+
     return RegisterResponse(
         session_id=session_id,
         callback_url=callback_url,
@@ -113,7 +113,7 @@ async def handle_callback(
 ):
     """
     Handle OAuth provider callback
-    
+
     This endpoint receives the callback from the OAuth provider and redirects
     to the mobile app's deep link scheme with the authorization code.
     """
@@ -121,14 +121,14 @@ async def handle_callback(
     session = db.query(OAuthSession).filter(
         OAuthSession.session_id == session_id
     ).first()
-    
+
     if not session:
         return create_error_page(
             "Session Not Found",
             "The OAuth session has expired or does not exist.",
             "Please try connecting your account again from the app."
         )
-    
+
     # Check if session is valid
     if session.used:
         return create_error_page(
@@ -136,31 +136,31 @@ async def handle_callback(
             "This OAuth session has already been completed.",
             "Please start a new connection from the app."
         )
-    
+
     if session.is_expired():
         return create_error_page(
             "Session Expired",
             f"This OAuth session expired at {session.expires_at.strftime('%Y-%m-%d %H:%M:%S UTC')}.",
             "Sessions are valid for 10 minutes. Please try again from the app."
         )
-    
+
     # Mark session as used
     session.used = True
     db.commit()
-    
+
     # Handle OAuth error
     if error:
         deep_link = f"{settings.deep_link_scheme}?error={error}"
         if error_description:
             deep_link += f"&error_description={error_description}"
-        
+
         return create_redirect_page(
             "Authorization Failed",
             f"OAuth authorization failed: {error}",
             deep_link,
             is_error=True
         )
-    
+
     # Handle missing code
     if not code:
         return create_error_page(
@@ -168,10 +168,10 @@ async def handle_callback(
             "No authorization code was provided by the OAuth provider.",
             "This may indicate a problem with the OAuth flow."
         )
-    
+
     # Build deep link with authorization code
     deep_link = f"{settings.deep_link_scheme}?code={code}&provider={session.provider}"
-    
+
     return create_redirect_page(
         "Authorization Successful",
         f"You've successfully authorized with {session.provider.title()}!",
@@ -184,7 +184,7 @@ def create_redirect_page(title: str, message: str, redirect_url: str, is_error: 
     """Create HTML redirect page"""
     status_color = "#dc3545" if is_error else "#28a745"
     icon = "❌" if is_error else "✅"
-    
+
     return f"""
     <!DOCTYPE html>
     <html lang="en">
