@@ -34,7 +34,7 @@ data class LocationEntity(
     val suburb: String? = null,
     val state: String? = null,
     val postcode: String? = null,
-    
+
     // OSMAnd sync tracking fields
     val osmandOriginalName: String? = null,      // Original name from OSMAnd server
     val osmandGpxIndex: Int? = null,             // Last known index in GPX file

@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.annotation:annotation:1.7.0") // Explicitly added annotation dependency
+    implementation("androidx.browser:browser:1.7.0") // For Custom Tabs OAuth flow
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)

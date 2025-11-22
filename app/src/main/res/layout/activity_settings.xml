@@ -26,7 +26,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- API Key Entry Section (shown when no key or invalid) -->
+            <!-- API Key Entry Section (shown when no key) -->
         <LinearLayout
             android:id="@+id/apiKeyEntrySection"
             android:layout_width="match_parent"
@@ -39,58 +39,38 @@
                 android:id="@+id/apiKeyLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="OpenRouter.AI API Key"
-                android:textSize="16sp"
+                android:text="OpenRouter.AI Integration"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:paddingBottom="4dp" />
+                android:paddingBottom="8dp" />
 
             <TextView
                 android:id="@+id/apiKeyDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="This API key enables AI functions for image analysis and description parsing/generation in the location edit process."
-                android:textSize="13sp"
+                android:text="Connect your OpenRouter account to enable AI-powered image analysis and description generation for charging locations."
+                android:textSize="14sp"
                 android:textColor="?android:textColorSecondary"
-                android:paddingBottom="8dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/apiKeyLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:hint="API Key"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/apiKeyInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:maxLines="1" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/validateSaveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="Validate"
-                    style="@style/Widget.MaterialComponents.Button" />
-            </LinearLayout>
+                android:paddingBottom="16dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/getApiKeyButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Get API Key from OpenRouter.ai"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                android:text="Connect OpenRouter Account"
+                android:textSize="16sp"
+                android:paddingVertical="16dp"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="You'll be redirected to OpenRouter.ai to authorize this app. No manual API key entry required."
+                android:textSize="12sp"
+                android:textColor="?android:textColorSecondary"
+                android:gravity="center"
+                android:alpha="0.8" />
         </LinearLayout>
 
         <!-- API Key Valid Section (shown when key is valid) -->
@@ -122,11 +102,9 @@
                     android:id="@+id/resetApiKeyButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:padding="8dp"
-                    android:text="🔄"
-                    android:contentDescription="Reset API Key"
+                    android:text="Disconnect"
+                    android:textSize="12sp"
+                    android:contentDescription="Disconnect OpenRouter"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
             </LinearLayout>
 

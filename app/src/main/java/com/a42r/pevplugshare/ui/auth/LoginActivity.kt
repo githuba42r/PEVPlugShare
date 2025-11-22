@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.a42r.pevplugshare.databinding.ActivityLoginBinding
 import com.a42r.pevplugshare.ui.main.MainActivity
+import com.a42r.pevplugshare.ui.ai.AiWelcomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -34,15 +35,24 @@ class LoginActivity : AppCompatActivity() {
         // Check for existing session token
         lifecycleScope.launch {
             if (viewModel.hasValidSessionToken()) {
-                // Skip login screen and go directly to MainActivity
-                // Validation will happen in background
-                if (!isFinishing && !isDestroyed) {
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                    finish()
+                // Check if user has seen AI welcome screen
+                if (!hasSeenAiWelcome()) {
+                    // Show AI welcome screen first
+                    if (!isFinishing && !isDestroyed) {
+                        startActivity(Intent(this@LoginActivity, AiWelcomeActivity::class.java))
+                        finish()
+                    }
+                } else {
+                    // Skip login screen and go directly to MainActivity
+                    // Validation will happen in background
+                    if (!isFinishing && !isDestroyed) {
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finish()
+                    }
                 }
                 return@launch
             }
-            
+
             // No session token, check for stored credentials
             if (viewModel.hasStoredCredentials()) {
                 showAutoLoginState()
@@ -105,7 +115,13 @@ class LoginActivity : AppCompatActivity() {
                         binding.progressBar.visibility = android.view.View.GONE
                         binding.statusText.visibility = android.view.View.GONE
                         if (!isFinishing && !isDestroyed) {
-                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            // Check if user has seen AI welcome screen
+                            val nextActivity = if (hasSeenAiWelcome()) {
+                                MainActivity::class.java
+                            } else {
+                                AiWelcomeActivity::class.java
+                            }
+                            startActivity(Intent(this@LoginActivity, nextActivity))
                             finish()
                         }
                     }
@@ -117,7 +133,7 @@ class LoginActivity : AppCompatActivity() {
                         binding.progressBar.visibility = android.view.View.GONE
                         binding.statusText.visibility = android.view.View.GONE
                         Toast.makeText(this@LoginActivity, state.message, Toast.LENGTH_LONG).show()
-                        
+
                         // Show login form if auto-login failed
                         showLoginForm()
                     }
@@ -181,7 +197,7 @@ class LoginActivity : AppCompatActivity() {
             }
             .setCancelable(true)
             .create()
-        
+
         dialog.show()
         dialog.findViewById<android.widget.TextView>(android.R.id.message)?.apply {
             maxLines = 8
@@ -200,9 +216,9 @@ class LoginActivity : AppCompatActivity() {
             }
             .setCancelable(false)
             .create()
-        
+
         authErrorDialog?.show()
-        
+
         authErrorDismissTimer = lifecycleScope.launch {
             delay(15000)
             if (!isFinishing && !isDestroyed && authErrorDialog?.isShowing == true) {
@@ -247,15 +263,25 @@ class LoginActivity : AppCompatActivity() {
                 "You can connect to OSMAnd later from the menu."
             )
             .setPositiveButton("Continue Without OSMAnd") { _, _ ->
-                // Proceed to MainActivity without logging in
+                // Proceed to MainActivity or AI welcome screen
                 if (!isFinishing && !isDestroyed) {
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    val nextActivity = if (hasSeenAiWelcome()) {
+                        MainActivity::class.java
+                    } else {
+                        AiWelcomeActivity::class.java
+                    }
+                    startActivity(Intent(this@LoginActivity, nextActivity))
                     finish()
                 }
             }
             .setNegativeButton("Cancel", null)
             .create()
-        
+
         dialog.show()
+    }
+
+    private fun hasSeenAiWelcome(): Boolean {
+        val prefs = getSharedPreferences("ai_welcome_prefs", MODE_PRIVATE)
+        return prefs.getBoolean("has_seen_ai_welcome", false)
     }
 }

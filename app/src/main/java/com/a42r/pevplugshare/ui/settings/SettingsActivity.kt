@@ -9,10 +9,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.a42r.pevplugshare.databinding.ActivitySettingsBinding
+import com.a42r.pevplugshare.util.PkceUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -29,6 +32,16 @@ class SettingsActivity : AppCompatActivity() {
     private var modelDataMap = mutableMapOf<String, com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>()
     private var modelChanged = false
 
+    companion object {
+        // OpenRouter OAuth endpoints
+        private const val OPENROUTER_AUTH_URL = "https://openrouter.ai/auth"
+        private const val OPENROUTER_TOKEN_URL = "https://openrouter.ai/api/v1/auth/keys"
+        // Callback URL - using localhost as recommended for mobile apps
+        private const val CALLBACK_URL = "http://localhost:48621/oauth/callback"
+        // Referrer URL - public GitHub repo to verify app identity
+        private const val REFERRER_URL = "https://github.com/githuba42r/PEVPlugShare"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
@@ -37,6 +50,9 @@ class SettingsActivity : AppCompatActivity() {
         setupToolbar()
         setupUI()
         checkExistingApiKey()
+        
+        // Handle OAuth callback
+        handleOAuthCallback()
     }
 
     private fun setupToolbar() {
@@ -47,47 +63,14 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupUI() {
         binding.apply {
-            // Get API Key button - opens OpenRouter.ai website
+            // Get API Key button - initiates OAuth PKCE flow
             getApiKeyButton.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse("https://openrouter.ai/keys")
-                }
-                try {
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        this@SettingsActivity,
-                        "Could not open browser. Please visit: https://openrouter.ai/keys",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+                startOAuthFlow()
             }
-
-            // Validate & Save button (next to API key input)
-            validateSaveButton.setOnClickListener {
-                val apiKey = apiKeyInput.text?.toString()?.trim()
-                if (apiKey.isNullOrEmpty()) {
-                    apiKeyLayout.error = "Please enter an API key"
-                    return@setOnClickListener
-                }
-
-                apiKeyLayout.error = null
-                validateAndSaveApiKey(apiKey)
-            }
-                            // Disable validate button if API Key is empty
-                            apiKeyInput.addTextChangedListener(object : android.text.TextWatcher {
-                                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-                                override fun afterTextChanged(s: android.text.Editable?) {
-                                    validateSaveButton.isEnabled = !s.isNullOrBlank()
-                                }
-                            })
-                            // Initial state
-                            validateSaveButton.isEnabled = !apiKeyInput.text.isNullOrBlank()
 
             // Reset/Update API Key button
             resetApiKeyButton.setOnClickListener {
-                showApiKeyEntry()
+                showResetApiKeyConfirmation()
             }
 
             // Model selection card click
@@ -312,19 +295,8 @@ class SettingsActivity : AppCompatActivity() {
             apiKeyValidSection.visibility = View.GONE
             bottomButtons.visibility = View.GONE
             loadingProgressBar.visibility = View.GONE
-            statusMessage.text = "Enter your OpenRouter.ai API key to enable AI features"
+            statusMessage.text = "Connect your OpenRouter account to enable AI features"
             statusMessage.setTextColor(getColor(android.R.color.darker_gray))
-            apiKeyInput.setText("")
-
-            // Check clipboard for API key
-            val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
-            if (clipboardManager.hasPrimaryClip() && clipboardManager.primaryClipDescription?.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_PLAIN) == true) {
-                val clipboardText = clipboardManager.primaryClip?.getItemAt(0)?.text?.toString()
-                if (!clipboardText.isNullOrBlank() && clipboardText.startsWith("sk-or-")) {
-                    apiKeyInput.setText(clipboardText)
-                    Toast.makeText(this@SettingsActivity, "API key pasted from clipboard", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 
@@ -539,7 +511,6 @@ class SettingsActivity : AppCompatActivity() {
             loadingProgressBar.visibility = View.GONE
             statusMessage.text = "⚠ $message"
             statusMessage.setTextColor(getColor(android.R.color.holo_red_dark))
-            apiKeyLayout.error = "Validation failed"
 
             // Keep showing entry section
             apiKeyEntrySection.visibility = View.VISIBLE
@@ -651,6 +622,218 @@ class SettingsActivity : AppCompatActivity() {
             costPerMillion < 0.01 -> String.format("$%.4f", costPerMillion)
             costPerMillion < 1.0 -> String.format("$%.2f", costPerMillion)
             else -> String.format("$%.0f", costPerMillion)
+        }
+    }
+
+    /**
+     * Start OAuth PKCE flow for OpenRouter API key retrieval
+     */
+    private fun startOAuthFlow() {
+        // Generate PKCE parameters
+        val codeVerifier = PkceUtils.generateCodeVerifier()
+        val codeChallenge = PkceUtils.generateCodeChallenge(codeVerifier)
+
+        // Store code verifier for later verification
+        tokenManager.savePkceCodeVerifier(codeVerifier)
+
+        // Build authorization URL according to OpenRouter's spec
+        val authUrl = Uri.parse(OPENROUTER_AUTH_URL).buildUpon()
+            .appendQueryParameter("callback_url", CALLBACK_URL)
+            .appendQueryParameter("code_challenge", codeChallenge)
+            .appendQueryParameter("code_challenge_method", "S256")
+            .build()
+
+        // Log the URL for debugging
+        android.util.Log.d("SettingsActivity", "OAuth URL: $authUrl")
+        android.util.Log.d("SettingsActivity", "Code Challenge: $codeChallenge")
+
+        // Create custom tabs intent with referrer
+        val customTabsIntent = androidx.browser.customtabs.CustomTabsIntent.Builder()
+            .setShowTitle(true)
+            .build()
+        
+        // Add referrer header to verify app identity
+        customTabsIntent.intent.putExtra(
+            Intent.EXTRA_REFERRER,
+            Uri.parse("android-app://" + packageName)
+        )
+
+        // Launch browser with authorization URL
+        try {
+            customTabsIntent.launchUrl(this, authUrl)
+            Toast.makeText(
+                this,
+                "Redirecting to OpenRouter for authorization...",
+                Toast.LENGTH_SHORT
+            ).show()
+        } catch (e: Exception) {
+            android.util.Log.e("SettingsActivity", "Failed to open OAuth URL", e)
+            Toast.makeText(
+                this,
+                "Could not open browser for authorization",
+                Toast.LENGTH_LONG
+            ).show()
+            
+            // Clean up stored PKCE data
+            tokenManager.clearPkceCodeVerifier()
+        }
+    }
+
+    /**
+     * Show confirmation dialog before resetting API key
+     */
+    private fun showResetApiKeyConfirmation() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Disconnect OpenRouter?")
+            .setMessage("This will remove your API key and you'll need to reconnect your OpenRouter account to use AI features.\n\nAre you sure you want to continue?")
+            .setPositiveButton("Disconnect") { _, _ ->
+                // Clear the API key
+                tokenManager.saveOpenRouterApiKey("")
+                tokenManager.saveSelectedAiModel("")
+                
+                Toast.makeText(
+                    this,
+                    "OpenRouter disconnected",
+                    Toast.LENGTH_SHORT
+                ).show()
+                
+                // Show entry section again
+                showApiKeyEntry()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    /**
+     * Handle OAuth callback from OpenRouter
+     */
+    private fun handleOAuthCallback() {
+        val data = intent?.data
+        if (data == null || data.scheme != "http" || data.host != "localhost" || data.port != 48621) {
+            return
+        }
+
+        android.util.Log.d("SettingsActivity", "OAuth callback received: $data")
+
+        // Extract authorization code from callback
+        val code = data.getQueryParameter("code")
+        val error = data.getQueryParameter("error")
+
+        // Handle OAuth errors
+        if (error != null) {
+            android.util.Log.e("SettingsActivity", "OAuth error: $error")
+            Toast.makeText(
+                this,
+                "Authorization failed: $error",
+                Toast.LENGTH_LONG
+            ).show()
+            
+            tokenManager.clearPkceCodeVerifier()
+            return
+        }
+
+        // Validate code parameter
+        if (code == null) {
+            android.util.Log.e("SettingsActivity", "Missing code in OAuth callback")
+            Toast.makeText(
+                this,
+                "Invalid OAuth response",
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
+        // Exchange authorization code for API key
+        exchangeCodeForApiKey(code)
+    }
+
+    /**
+     * Exchange authorization code for API key using PKCE
+     */
+    private fun exchangeCodeForApiKey(authCode: String) {
+        val codeVerifier = tokenManager.getPkceCodeVerifier()
+        if (codeVerifier == null) {
+            Toast.makeText(
+                this,
+                "OAuth flow state lost. Please try again.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
+
+        // Show loading state
+        binding.apply {
+            loadingProgressBar.visibility = View.VISIBLE
+            getApiKeyButton.isEnabled = false
+        }
+
+        lifecycleScope.launch {
+            try {
+                // Build token exchange request according to OpenRouter's spec
+                val requestBody = JSONObject().apply {
+                    put("code", authCode)
+                    put("code_verifier", codeVerifier)
+                    put("code_challenge_method", "S256")
+                }.toString()
+
+                val request = Request.Builder()
+                    .url(OPENROUTER_TOKEN_URL)
+                    .post(requestBody.toRequestBody("application/json".toMediaType()))
+                    .header("Content-Type", "application/json")
+                    .build()
+
+                val response = okHttpClient.newCall(request).execute()
+                val responseBody = response.body?.string()
+
+                if (response.isSuccessful && responseBody != null) {
+                    val jsonResponse = JSONObject(responseBody)
+                    val apiKey = jsonResponse.optString("key")
+
+                    if (!apiKey.isNullOrEmpty()) {
+                        // Successfully received API key
+                        runOnUiThread {
+                            tokenManager.saveOpenRouterApiKey(apiKey)
+                            
+                            Toast.makeText(
+                                this@SettingsActivity,
+                                "API key retrieved successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            // Update UI to show API key is configured
+                            checkExistingApiKey()
+                            
+                            // Clean up PKCE state
+                            tokenManager.clearPkceCodeVerifier()
+                        }
+                    } else {
+                        throw Exception("No API key in response")
+                    }
+                } else {
+                    val errorMessage = responseBody ?: "Unknown error"
+                    android.util.Log.e("SettingsActivity", "Token exchange failed: $errorMessage")
+                    throw Exception("Failed to retrieve API key: ${response.code}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("SettingsActivity", "Error exchanging code for API key", e)
+                runOnUiThread {
+                    Toast.makeText(
+                        this@SettingsActivity,
+                        "Failed to retrieve API key: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    
+                    // Clean up PKCE state
+                    tokenManager.clearPkceCodeVerifier()
+                }
+            } finally {
+                runOnUiThread {
+                    binding.apply {
+                        loadingProgressBar.visibility = View.GONE
+                        getApiKeyButton.isEnabled = true
+                    }
+                }
+            }
         }
     }
 }

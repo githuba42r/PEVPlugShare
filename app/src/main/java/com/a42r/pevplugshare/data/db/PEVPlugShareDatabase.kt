@@ -114,7 +114,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
                     ALTER TABLE locations
                     ADD COLUMN osmandSyncStatus TEXT NOT NULL DEFAULT 'LOCAL_ONLY'
                 """)
-                
+
                 // Update existing locations that have been synced to OSMAnd
                 // If osmandSyncedToServer is true, they're SYNCED; otherwise LOCAL_ONLY
                 database.execSQL("""
