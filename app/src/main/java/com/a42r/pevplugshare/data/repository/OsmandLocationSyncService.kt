@@ -156,6 +156,28 @@ class OsmandLocationSyncService @Inject constructor(
     }
 
     /**
+     * Download a GPX file from OsmAnd and return its content.
+     * Returns null if download fails.
+     */
+    private suspend fun downloadGpxFile(fileName: String): String? {
+        return try {
+            val webApiService = apiClient.getWebApiRetrofit()
+                .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
+
+            val response = webApiService.downloadFile(
+                type = "FAVOURITES",
+                name = fileName,
+                shared = false
+            )
+
+            response.string()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to download GPX file $fileName: ${e.message}", e)
+            null
+        }
+    }
+
+    /**
      * Update a location in OSMAnd favorites
      *
      * @deprecated This function does NOT follow the exact OsmAnd algorithm and will likely
@@ -371,25 +393,17 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "✅ Current updatetime: $updatetime")
 
                 // ═══════════════════════════════════════════════════════════
-                // STEP 1.5: Get category defaults (icon and color)
-                // → Use category's default icon/color instead of location's
+                // STEP 1.5: Use hardcoded style attributes
+                // → Always use specific color, icon for consistency
                 // ═══════════════════════════════════════════════════════════
-                Log.d(TAG, "STEP 1.5: Getting category defaults for icon and color")
-                Log.d(TAG, "  Location's stored values:")
-                Log.d(TAG, "    - color: ${location.color}")
-                Log.d(TAG, "    - icon: ${location.icon}")
+                Log.d(TAG, "STEP 1.5: Using hardcoded style attributes")
+                
+                val useColor = "#FF2C2C"
+                val useIcon = "charging_station"
 
-                val (categoryColor, categoryIcon) = getCategoryDefaults(categoryName)
-
-                val useColor = categoryColor ?: location.color
-                val useIcon = categoryIcon ?: location.icon
-
-                Log.d(TAG, "  Category defaults fetched:")
-                Log.d(TAG, "    - categoryColor: $categoryColor")
-                Log.d(TAG, "    - categoryIcon: $categoryIcon")
-                Log.d(TAG, "  Final values to use in request:")
-                Log.d(TAG, "    - useColor: $useColor")
-                Log.d(TAG, "    - useIcon: $useIcon")
+                Log.d(TAG, "  Style values to use in request:")
+                Log.d(TAG, "    - color: $useColor")
+                Log.d(TAG, "    - icon: $useIcon")
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 2: (Optional but recommended) Re-download GPX file
@@ -423,7 +437,7 @@ class OsmandLocationSyncService @Inject constructor(
                     color = useColor,      // Use category color
                     background = "octagon",
                     icon = useIcon,        // Use category icon
-                    hidden = "false",  // Note: "false" means visible
+                    hidden = "true",  // Note: "true" means hidden
                     lat = location.latitude,
                     lon = location.longitude,
                     category = categoryName,  // Must match group without "favorites-" and ".gpx"
@@ -607,25 +621,17 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "✅ Using updatetime: $updatetime")
 
                 // ═══════════════════════════════════════════════════════════
-                // STEP 1.5: Get category defaults (icon and color)
-                // → Use category's default icon/color instead of location's
+                // STEP 1.5: Use hardcoded style attributes
+                // → Always use specific color, icon for consistency
                 // ═══════════════════════════════════════════════════════════
-                Log.d(TAG, "STEP 1.5: Getting category defaults for icon and color")
-                Log.d(TAG, "  Location's stored values:")
-                Log.d(TAG, "    - color: ${location.color}")
-                Log.d(TAG, "    - icon: ${location.icon}")
+                Log.d(TAG, "STEP 1.5: Using hardcoded style attributes")
+                
+                val useColor = "#FF2C2C"
+                val useIcon = "charging_station"
 
-                val (categoryColor, categoryIcon) = getCategoryDefaults(categoryName)
-
-                val useColor = categoryColor ?: location.color
-                val useIcon = categoryIcon ?: location.icon
-
-                Log.d(TAG, "  Category defaults fetched:")
-                Log.d(TAG, "    - categoryColor: $categoryColor")
-                Log.d(TAG, "    - categoryIcon: $categoryIcon")
-                Log.d(TAG, "  Final values to use in request:")
-                Log.d(TAG, "    - useColor: $useColor")
-                Log.d(TAG, "    - useIcon: $useIcon")
+                Log.d(TAG, "  Style values to use in request:")
+                Log.d(TAG, "    - color: $useColor")
+                Log.d(TAG, "    - icon: $useIcon")
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 2: Build request with correct parameters for /fav/add
@@ -646,7 +652,7 @@ class OsmandLocationSyncService @Inject constructor(
                     address = buildAddress(location).takeIf { it.isNotBlank() },
                     desc = location.description?.takeIf { it.isNotBlank() },
                     color = useColor,      // Use category color
-                    background = "circle",  // Web app uses "circle"
+                    background = "octagon",  // Use octagon shape
                     icon = useIcon,        // Use category icon
                     category = null,  // Web app sends null, not category name
                     lat = location.latitude.toString(),   // String, not Double
@@ -697,20 +703,54 @@ class OsmandLocationSyncService @Inject constructor(
                     Log.d(TAG, "Response body: ${formatJsonIfPossible(responseBody)}")
 
                     // ═══════════════════════════════════════════════════════════
-                    // STEP 5: After success, update local DB
+                    // STEP 5: Download GPX file to get the new location's index
+                    // → This is required so future syncs can use UPDATE instead of ADD
                     // ═══════════════════════════════════════════════════════════
-                    Log.d(TAG, "STEP 5: Updating local database")
+                    Log.d(TAG, "STEP 5: Downloading GPX to find new location's index")
+
+                    var gpxIndex: Int? = null
+                    try {
+                        val gpxContent = downloadGpxFile(groupName)
+                        if (gpxContent != null) {
+                            // Parse GPX to find our location's index
+                            val wptPattern = "<wpt\\s+lat=\"([^\"]+)\"\\s+lon=\"([^\"]+)\">.*?<name>([^<]+)</name>".toRegex(RegexOption.DOT_MATCHES_ALL)
+                            val matches = wptPattern.findAll(gpxContent)
+                            
+                            matches.forEachIndexed { index, match ->
+                                val wptName = match.groupValues[3]
+                                if (wptName == location.name) {
+                                    gpxIndex = index
+                                    Log.d(TAG, "✅ Found location at index $index in GPX")
+                                    return@forEachIndexed
+                                }
+                            }
+                            
+                            if (gpxIndex == null) {
+                                Log.w(TAG, "⚠️ Could not find location in GPX - index will remain null")
+                            }
+                        } else {
+                            Log.w(TAG, "⚠️ Could not download GPX - index will remain null")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error finding index in GPX: ${e.message}", e)
+                    }
+
+                    // ═══════════════════════════════════════════════════════════
+                    // STEP 6: Update local DB with OsmAnd metadata
+                    // ═══════════════════════════════════════════════════════════
+                    Log.d(TAG, "STEP 6: Updating local database")
 
                     val syncedLocation = location.copy(
                         syncStatus = SyncStatus.SYNCED,
                         osmandOriginalName = location.name,      // Server now knows this name
-                        osmandSyncSource = "OSMAND",             // Now exists on OSMAnd
+                        osmandSyncSource = "OSMAND",             // Now exists on OsmAnd
                         osmandSyncedToServer = true,             // Confirmed on server
                         osmandLastSyncedAt = System.currentTimeMillis(),
-                        osmandGpxIndex = null  // Index unknown until next GPX download
+                        osmandGpxIndex = gpxIndex                // Index from GPX (may be null)
                     )
                     localRepository.updateLocation(syncedLocation, categoryName)
 
+                    Log.d(TAG, "Local DB updated with osmandGpxIndex=$gpxIndex")
                     Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                     return Result.success(Unit)
 
