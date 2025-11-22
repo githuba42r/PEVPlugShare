@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var adapter: LocationAdapter? = null
+    private var currentGalleryLocation: Location? = null
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -560,6 +561,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // Store location reference for download/share operations
+        currentGalleryLocation = location
+
         // Get modal views
         android.util.Log.d("PhotoGallery", "Looking for modal views...")
         val galleryOverlay = binding.imageGalleryOverlay
@@ -658,6 +662,17 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val sourceFile = java.io.File(imagePath)
+
+                // Add GPS data to the image if location is available
+                if (currentGalleryLocation != null) {
+                    withContext(Dispatchers.IO) {
+                        com.a42r.pevplugshare.util.ImageUtils.addGpsDataToImage(
+                            sourceFile,
+                            currentGalleryLocation!!.latitude,
+                            currentGalleryLocation!!.longitude
+                        )
+                    }
+                }
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                     // Use MediaStore for Android 10+

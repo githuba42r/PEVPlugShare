@@ -193,7 +193,18 @@ class AllImagesGalleryActivity : AppCompatActivity() {
             withContext(Dispatchers.IO) {
                 selectedItems.forEach { item ->
                     try {
-                        downloadImageToGallery(File(item.imagePath))
+                        // Get location data for GPS EXIF embedding
+                        val location = if (!item.isOrphaned) {
+                            locationDao.getLocationById(item.locationId)
+                        } else {
+                            null
+                        }
+
+                        downloadImageToGallery(
+                            File(item.imagePath),
+                            location?.latitude,
+                            location?.longitude
+                        )
                         successCount++
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -259,7 +270,12 @@ class AllImagesGalleryActivity : AppCompatActivity() {
         }
     }
 
-    private fun downloadImageToGallery(imageFile: File) {
+    private fun downloadImageToGallery(imageFile: File, latitude: Double? = null, longitude: Double? = null) {
+        // Add GPS data to the image if location coordinates are provided
+        if (latitude != null && longitude != null) {
+            ImageUtils.addGpsDataToImage(imageFile, latitude, longitude)
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, imageFile.name)
