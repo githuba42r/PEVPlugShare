@@ -34,17 +34,17 @@ sealed class CategoryState {
 data class FilterState(
     val costFilter: CostFilter = CostFilter.ALL,
     val openNowOnly: Boolean = false,
-    val minSockets: Int = 1,
-    val maxSockets: Int = 20,
+    val minSockets: Int = 0,
+    val maxSockets: Int = 10,
     val accessFilter: AccessFilter = AccessFilter.ALL,
-    val socketTypes: Set<SocketType> = SocketType.values().toSet(),
+    val socketTypes: Set<SocketType> = emptySet(),
     val favoritesOnly: Boolean = false
 ) {
     fun isActive(): Boolean {
         return costFilter != CostFilter.ALL ||
                 openNowOnly ||
-                minSockets > 1 ||
-                maxSockets < 20 ||
+                minSockets > 0 ||
+                maxSockets < 10 ||
                 accessFilter != AccessFilter.ALL ||
                 socketTypes.size < SocketType.values().size ||
                 favoritesOnly
@@ -375,11 +375,11 @@ class MainViewModel @Inject constructor(
             try {
                 // Toggle the favorite status
                 val updatedLocation = location.copy(isFavourite = !location.isFavourite)
-                
+
                 // Save to database
                 val categoryName = _selectedCategory.value ?: return@launch
                 val result = locationRepository.updateLocation(updatedLocation, categoryName)
-                
+
                 if (result.isSuccess) {
                     // Update UI state
                     if (_locationListState.value is LocationListState.Success) {
@@ -478,12 +478,7 @@ class MainViewModel @Inject constructor(
                 return@filter location.isFavourite
             }
 
-            // TEMPORARILY DISABLED: All other filters to diagnose issue
-            // When favorites filter is OFF, show ALL locations
-            true
-
-            /* DISABLED FILTERS:
-            // Cost filter
+            // Cost filter - null hasFee matches any filter
             val passesCostFilter = when (filter.costFilter) {
                 CostFilter.ALL -> true
                 CostFilter.FREE -> !location.hasFee
@@ -491,17 +486,26 @@ class MainViewModel @Inject constructor(
             }
             if (!passesCostFilter) return@filter false
 
-            // Opening hours filter (open now)
-            if (filter.openNowOnly && !isOpenNow(location)) {
-                return@filter false
+            // Opening hours filter (open now) - null openingHours always passes
+            if (filter.openNowOnly) {
+                // If no opening hours defined, assume always open (matches the filter)
+                if (!location.openingHours.isNullOrEmpty() && !isOpenNow(location)) {
+                    return@filter false
+                }
             }
 
-            // Socket count filter
-            if (location.gpoCount < filter.minSockets || location.gpoCount > filter.maxSockets) {
-                return@filter false
+            // Socket count filter - maxSockets of 10 means "10 or more"
+            // gpoCount of 0 (or null-equivalent) matches any socket count filter
+            if (location.gpoCount > 0) {
+                if (location.gpoCount < filter.minSockets) {
+                    return@filter false
+                }
+                if (filter.maxSockets < 10 && location.gpoCount > filter.maxSockets) {
+                    return@filter false
+                }
             }
 
-            // Access type filter
+            // Access type filter - null publicPrivate matches any filter
             val passesAccessFilter = when (filter.accessFilter) {
                 AccessFilter.ALL -> true
                 AccessFilter.PUBLIC -> location.publicPrivate == LocationAccessType.PUBLIC
@@ -509,15 +513,17 @@ class MainViewModel @Inject constructor(
             }
             if (!passesAccessFilter) return@filter false
 
-            // Socket types filter - location must have at least one of the selected types
+            // Socket types filter - empty/null socketTypes matches any filter
             // If no socket types are selected, show all locations
             if (filter.socketTypes.isNotEmpty()) {
-                val hasMatchingSocketType = location.socketTypes.any { it in filter.socketTypes }
-                if (!hasMatchingSocketType) return@filter false
+                // If location has no socket types defined, it matches any filter
+                if (location.socketTypes.isNotEmpty()) {
+                    val hasMatchingSocketType = location.socketTypes.any { it in filter.socketTypes }
+                    if (!hasMatchingSocketType) return@filter false
+                }
             }
 
             true
-            */
         }
     }
 

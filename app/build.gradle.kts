@@ -106,6 +106,9 @@ dependencies {
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
+    // FlexboxLayout for flexible UI layouts
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
+
     // Security/Encryption
     implementation(libs.androidx.security.crypto.ktx)
 
