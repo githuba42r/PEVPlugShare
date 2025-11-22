@@ -14,12 +14,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import com.a42r.pevplugshare.databinding.ActivityFullImageViewerBinding
 import com.a42r.pevplugshare.ui.adapter.ImageGalleryAdapter
+import com.a42r.pevplugshare.util.ImageUtils
+import com.a42r.pevplugshare.data.db.dao.LocationDao
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.OutputStream
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FullImageViewerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFullImageViewerBinding
     private lateinit var imagePaths: Array<String>
@@ -28,6 +37,9 @@ class FullImageViewerActivity : AppCompatActivity() {
     private var isOrphaned: Boolean = false
     private var initialPosition: Int = 0
     private var currentPosition: Int = 0
+
+    @Inject
+    lateinit var locationDao: LocationDao
 
     private val storagePermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -138,56 +150,74 @@ class FullImageViewerActivity : AppCompatActivity() {
     }
 
     private fun downloadCurrentImage() {
-        try {
-            val sourceFile = File(imagePaths[currentPosition])
+        lifecycleScope.launch {
+            try {
+                val sourceFile = File(imagePaths[currentPosition])
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // Use MediaStore for Android 10+
-                val values = ContentValues().apply {
-                    put(MediaStore.Images.Media.DISPLAY_NAME, "PEVPlugShare_${System.currentTimeMillis()}.jpg")
-                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/PEVPlugShare")
-                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                // Get location data for GPS EXIF embedding
+                val location = withContext(Dispatchers.IO) {
+                    if (!isOrphaned && locationId != null) {
+                        locationDao.getLocationById(locationId!!)
+                    } else {
+                        null
+                    }
                 }
 
-                val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                uri?.let { imageUri ->
-                    contentResolver.openOutputStream(imageUri)?.use { outputStream ->
-                        FileInputStream(sourceFile).use { inputStream ->
-                            inputStream.copyTo(outputStream)
-                        }
+                // Add GPS data to the image if location coordinates are available
+                if (location != null) {
+                    withContext(Dispatchers.IO) {
+                        ImageUtils.addGpsDataToImage(sourceFile, location.latitude, location.longitude)
+                    }
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    // Use MediaStore for Android 10+
+                    val values = ContentValues().apply {
+                        put(MediaStore.Images.Media.DISPLAY_NAME, "PEVPlugShare_${System.currentTimeMillis()}.jpg")
+                        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                        put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/PEVPlugShare")
+                        put(MediaStore.Images.Media.IS_PENDING, 1)
                     }
 
-                    // Clear IS_PENDING flag to make the image visible in gallery
-                    values.clear()
-                    values.put(MediaStore.Images.Media.IS_PENDING, 0)
-                    contentResolver.update(imageUri, values, null, null)
+                    val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                    uri?.let { imageUri ->
+                        contentResolver.openOutputStream(imageUri)?.use { outputStream ->
+                            FileInputStream(sourceFile).use { inputStream ->
+                                inputStream.copyTo(outputStream)
+                            }
+                        }
 
-                    Toast.makeText(this, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
-                } ?: run {
-                    Toast.makeText(this, "Failed to create image file", Toast.LENGTH_SHORT).show()
+                        // Clear IS_PENDING flag to make the image visible in gallery
+                        values.clear()
+                        values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                        contentResolver.update(imageUri, values, null, null)
+
+                        Toast.makeText(this@FullImageViewerActivity, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
+                    } ?: run {
+                        Toast.makeText(this@FullImageViewerActivity, "Failed to create image file", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // Use legacy approach for Android 9 and below
+                    val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    val appDir = File(picturesDir, "PEVPlugShare")
+                    if (!appDir.exists()) {
+                        appDir.mkdirs()
+                    }
+
+                    val destFile = File(appDir, "PEVPlugShare_${System.currentTimeMillis()}.jpg")
+                    sourceFile.copyTo(destFile, overwrite = true)
+
+                    // Notify media scanner to make image visible in gallery
+                    val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                    mediaScanIntent.data = Uri.fromFile(destFile)
+                    sendBroadcast(mediaScanIntent)
+
+                    Toast.makeText(this@FullImageViewerActivity, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
                 }
-            } else {
-                // Use legacy approach for Android 9 and below
-                val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                val appDir = File(picturesDir, "PEVPlugShare")
-                if (!appDir.exists()) {
-                    appDir.mkdirs()
-                }
-
-                val destFile = File(appDir, "PEVPlugShare_${System.currentTimeMillis()}.jpg")
-                sourceFile.copyTo(destFile, overwrite = true)
-
-                // Notify media scanner to make image visible in gallery
-                val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-                mediaScanIntent.data = Uri.fromFile(destFile)
-                sendBroadcast(mediaScanIntent)
-
-                Toast.makeText(this, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@FullImageViewerActivity, "Failed to save image: ${e.message}", Toast.LENGTH_LONG).show()
+                android.util.Log.e("FullImageViewer", "Error saving image", e)
             }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Failed to save image: ${e.message}", Toast.LENGTH_LONG).show()
-            android.util.Log.e("FullImageViewer", "Error saving image", e)
         }
     }
 
