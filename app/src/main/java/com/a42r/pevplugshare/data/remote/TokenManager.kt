@@ -126,11 +126,11 @@ class TokenManager(context: Context) {
     fun getOpenRouterApiKey(): String? {
         return encryptedPrefs.getString(KEY_OPENROUTER_API_KEY, null)
     }
-    
+
     fun saveSelectedAiModel(modelId: String) {
         encryptedPrefs.edit().putString(KEY_SELECTED_AI_MODEL, modelId).apply()
     }
-    
+
     fun getSelectedAiModel(): String? {
         return encryptedPrefs.getString(KEY_SELECTED_AI_MODEL, null)
     }
@@ -151,11 +151,11 @@ class TokenManager(context: Context) {
     fun getSelectedCategory(): String? {
         return encryptedPrefs.getString(KEY_SELECTED_CATEGORY, null)
     }
-    
+
     fun saveMapZoomLevel(zoomLevel: Float) {
         encryptedPrefs.edit().putFloat(KEY_MAP_ZOOM_LEVEL, zoomLevel).apply()
     }
-    
+
     fun getMapZoomLevel(): Float {
         return encryptedPrefs.getFloat(KEY_MAP_ZOOM_LEVEL, DEFAULT_MAP_ZOOM)
     }
