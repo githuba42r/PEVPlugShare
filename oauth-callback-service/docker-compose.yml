@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  oauth-callback:
+    build: .
+    container_name: oauth-callback-service
+    ports:
+      - "8000:8000"
+    environment:
+      # Override these in .env file or here
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DOMAIN_NAME=${DOMAIN_NAME:-https://localhost:8000}
+      - DEEP_LINK_SCHEME=${DEEP_LINK_SCHEME:-pevplugshare://oauth/callback}
+      - DATABASE_URL=sqlite:////app/data/oauth_sessions.db
+      - SESSION_TTL_MINUTES=${SESSION_TTL_MINUTES:-10}
+      - CLEANUP_INTERVAL_MINUTES=${CLEANUP_INTERVAL_MINUTES:-5}
+      - SHARED_SECRET=${SHARED_SECRET}
+      - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-10}
+      - RATE_LIMIT_PER_HOUR=${RATE_LIMIT_PER_HOUR:-100}
+      - RATE_LIMIT_PER_DAY=${RATE_LIMIT_PER_DAY:-1000}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
+      - OAUTH_PROVIDERS=${OAUTH_PROVIDERS:-openrouter,github,google}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      # Persist database
+      - oauth-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=2)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  oauth-data:
+    driver: local

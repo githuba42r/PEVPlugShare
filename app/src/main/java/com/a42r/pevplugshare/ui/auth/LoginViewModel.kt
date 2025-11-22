@@ -28,7 +28,7 @@ class LoginViewModel @Inject constructor(
     suspend fun hasStoredCredentials(): Boolean {
         return authRepository.hasStoredCredentials()
     }
-    
+
     suspend fun hasValidSessionToken(): Boolean {
         return authRepository.hasSessionToken()
     }
@@ -38,12 +38,12 @@ class LoginViewModel @Inject constructor(
             _loginState.value = LoginState.Loading
             try {
                 val result = authRepository.autoLogin()
-                
+
                 result.onSuccess { userId ->
                     // Verify login by fetching categories
                     android.util.Log.d("LoginViewModel", "Auto-login successful, verifying session...")
                     val verifyResult = authRepository.getFavoritesCategories()
-                    
+
                     if (verifyResult.isSuccess) {
                         android.util.Log.d("LoginViewModel", "Session verified, proceeding to main activity")
                         // Get username and mark OSMand as connected
@@ -68,12 +68,12 @@ class LoginViewModel @Inject constructor(
             _loginState.value = LoginState.Loading
             try {
                 val result = authRepository.loginWithWebApi(username, password, rememberMe)
-                
+
                 result.onSuccess { userId ->
                     // Verify login by fetching categories
                     android.util.Log.d("LoginViewModel", "Login successful, verifying session...")
                     val verifyResult = authRepository.getFavoritesCategories()
-                    
+
                     if (verifyResult.isSuccess) {
                         android.util.Log.d("LoginViewModel", "Session verified, proceeding to main activity")
                         // Mark OSMand as connected

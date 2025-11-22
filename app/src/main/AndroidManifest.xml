@@ -48,7 +48,20 @@
 
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:launchMode="singleTop">
+            <!-- OpenRouter OAuth callback - localhost URL -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="http"
+                    android:host="localhost"
+                    android:port="48621"
+                    android:path="/oauth/callback" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".ui.auth.LoginActivity"
@@ -64,6 +77,10 @@
                     android:path="/callback" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.ai.AiWelcomeActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.edit.EditLocationActivity"
