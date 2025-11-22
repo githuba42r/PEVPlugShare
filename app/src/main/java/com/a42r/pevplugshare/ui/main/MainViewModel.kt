@@ -85,7 +85,7 @@ class MainViewModel @Inject constructor(
             connectivityObserver.observe().collectLatest { status ->
                 _networkStatus.value = status
                 _isOffline.value = status == NetworkStatus.OFFLINE || status == NetworkStatus.UNAVAILABLE
-                
+
                 if (status == NetworkStatus.ONLINE) {
                     checkPendingOperationsAndSync()
                 }
@@ -104,7 +104,7 @@ class MainViewModel @Inject constructor(
     private suspend fun checkPendingOperationsAndSync() {
         val hasPending = syncManager.hasPendingOperations()
         _hasPendingOperations.value = hasPending
-        
+
         if (hasPending) {
             syncManager.syncPendingOperations()
         }
@@ -123,11 +123,11 @@ class MainViewModel @Inject constructor(
                 result.onSuccess { categoryList ->
                     android.util.Log.d("MainViewModel", "Loaded ${categoryList.size} categories from OsmAnd")
                     _categories.value = categoryList
-                    
+
                     // Check if we have a saved category
                     val savedCategory = tokenManager.getSelectedCategory()
                     android.util.Log.d("MainViewModel", "Saved category: $savedCategory")
-                    
+
                     if (categoryList.isNotEmpty()) {
                         if (savedCategory != null && categoryList.contains(savedCategory)) {
                             // Saved category is valid, use it
@@ -165,7 +165,7 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-    
+
     suspend fun validateSessionAndLoadData(): Boolean {
         return try {
             // Try to load categories which will validate the session
@@ -173,11 +173,11 @@ class MainViewModel @Inject constructor(
             result.onSuccess { categoryList ->
                 android.util.Log.d("MainViewModel", "Session valid, loaded ${categoryList.size} categories")
                 _categories.value = categoryList
-                
+
                 // Load data for selected category
                 val savedCategory = tokenManager.getSelectedCategory()
                 android.util.Log.d("MainViewModel", "Saved category: $savedCategory")
-                
+
                 if (categoryList.isNotEmpty()) {
                     if (savedCategory != null && categoryList.contains(savedCategory)) {
                         // Saved category is valid, use it
@@ -200,7 +200,7 @@ class MainViewModel @Inject constructor(
                 }
             }.onFailure { error ->
                 android.util.Log.e("MainViewModel", "Session validation failed: ${error.message}")
-                
+
                 // Try auto-login if we have stored credentials
                 if (authRepository.hasStoredCredentials()) {
                     android.util.Log.d("MainViewModel", "Attempting auto-login...")
@@ -252,16 +252,16 @@ class MainViewModel @Inject constructor(
     fun loadLocations(categoryName: String) {
         viewModelScope.launch {
             _locationListState.value = LocationListState.Loading
-            
+
             try {
                 // First, try to load from local database
                 android.util.Log.d("MainViewModel", "Loading locations for category: $categoryName from local DB")
                 val dbResult = locationRepository.getLocationsByCategory(categoryName)
-                
+
                 if (dbResult.isSuccess) {
                     val dbLocations = dbResult.getOrNull() ?: emptyList()
                     android.util.Log.d("MainViewModel", "Found ${dbLocations.size} locations in local DB")
-                    
+
                     if (dbLocations.isNotEmpty()) {
                         // Have local data, show it immediately
                         val sorted = sortLocationsByDistance(dbLocations)
@@ -270,14 +270,14 @@ class MainViewModel @Inject constructor(
                         return@launch
                     }
                 }
-                
+
                 // No local data or empty, download from GPX
                 android.util.Log.d("MainViewModel", "No local data, downloading GPX for category: $categoryName")
                 val gpxResult = authRepository.downloadFavoritesGpx(categoryName)
-                
+
                 gpxResult.onSuccess { locations ->
                     android.util.Log.d("MainViewModel", "Downloaded ${locations.size} locations from GPX")
-                    
+
                     if (locations.isEmpty()) {
                         _locationListState.value = LocationListState.Empty
                     } else {
@@ -297,7 +297,7 @@ class MainViewModel @Inject constructor(
                             }
                         }
                         android.util.Log.d("MainViewModel", "Saved $savedCount out of ${locations.size} locations")
-                        
+
                         // Sort and display
                         val sorted = sortLocationsByDistance(locations)
                         android.util.Log.d("MainViewModel", "Setting state to Success with ${sorted.size} locations")
@@ -355,7 +355,7 @@ class MainViewModel @Inject constructor(
             authRepository.logout()
         }
     }
-    
+
     fun getMapZoomLevel(): Float {
         return tokenManager.getMapZoomLevel()
     }

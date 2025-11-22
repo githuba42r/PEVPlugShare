@@ -75,17 +75,17 @@ Added a "Save for Later" feature to the quick add wizard that allows users to sa
 
 ### 4. Features Implemented
 
-✅ Save for Later option in photo dialog  
-✅ Stores current location and all captured images  
-✅ Menu option shows count badge  
-✅ Menu option disabled when no saved locations  
-✅ List view with image thumbnails  
-✅ Reverse geocoding for location display names  
-✅ Display suburb, state, postcode  
-✅ Continue button opens add location form with saved data  
-✅ Delete button with confirmation dialog  
-✅ Deletes associated photo files on deletion  
-✅ Passes focus areas and metadata to EditLocationActivity  
+✅ Save for Later option in photo dialog
+✅ Stores current location and all captured images
+✅ Menu option shows count badge
+✅ Menu option disabled when no saved locations
+✅ List view with image thumbnails
+✅ Reverse geocoding for location display names
+✅ Display suburb, state, postcode
+✅ Continue button opens add location form with saved data
+✅ Delete button with confirmation dialog
+✅ Deletes associated photo files on deletion
+✅ Passes focus areas and metadata to EditLocationActivity
 
 ### 5. Technical Details
 

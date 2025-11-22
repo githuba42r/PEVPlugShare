@@ -66,7 +66,7 @@ class SavedForLaterViewModel @Inject constructor(
         return withContext(Dispatchers.IO) {
             val photoPaths = entity.photoPaths.split(",").filter { it.isNotBlank() }
             val photoMetadata = deserializePhotoMetadata(entity.photoMetadata)
-            
+
             // Get location display name using reverse geocoding
             val locationDisplayName = try {
                 val result = geocodingService.reverseGeocode(entity.latitude, entity.longitude)
@@ -97,10 +97,10 @@ class SavedForLaterViewModel @Inject constructor(
                 Log.e("SavedForLaterViewModel", "Error geocoding", e)
                 "Unknown location"
             }
-            
+
             val coordinatesText = "Lat: %.4f, Lng: %.4f".format(entity.latitude, entity.longitude)
             val createdAtText = formatTimeAgo(entity.createdAt)
-            
+
             SavedForLaterItem(
                 id = entity.id,
                 latitude = entity.latitude,
@@ -130,12 +130,12 @@ class SavedForLaterViewModel @Inject constructor(
                         metadataObj.getDouble("bearing").toFloat()
                     } else null
                 )
-                
+
                 if (metadataObj.has("focusRect")) {
                     val focusRectStr = metadataObj.getString("focusRect")
                     metadata.focusRect = PhotoMetadata.deserializeRectF(focusRectStr)
                 }
-                
+
                 result[key] = metadata
             }
         } catch (e: Exception) {
@@ -147,7 +147,7 @@ class SavedForLaterViewModel @Inject constructor(
     private fun formatTimeAgo(timestamp: Long): String {
         val now = System.currentTimeMillis()
         val diff = now - timestamp
-        
+
         return when {
             diff < 60_000 -> "Just now"
             diff < 3600_000 -> "${diff / 60_000} minute(s) ago"
@@ -178,10 +178,10 @@ class SavedForLaterViewModel @Inject constructor(
                         }
                     }
                 }
-                
+
                 // Delete from database
                 savedForLaterRepository.deleteSavedForLater(id)
-                
+
                 // Reload the list
                 loadSavedLocations()
             } catch (e: Exception) {
