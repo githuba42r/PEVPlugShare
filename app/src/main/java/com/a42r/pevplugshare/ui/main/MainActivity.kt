@@ -106,6 +106,12 @@ class MainActivity : AppCompatActivity() {
                 // Launch QuickLocationActivity
                 startActivity(Intent(this@MainActivity, com.a42r.pevplugshare.ui.quicklocation.QuickLocationActivity::class.java))
             }
+            toggleFilterButton.setOnClickListener {
+                showFilterDialog()
+            }
+            filterFavoritesButton.setOnClickListener {
+                viewModel.toggleFavoritesFilter()
+            }
             swipeRefreshLayout.setOnRefreshListener {
                 viewModel.syncLocations()
             }
@@ -114,6 +120,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
+        lifecycleScope.launch {
+            viewModel.filterState.collect { filterState ->
+                updateFilterButtonsAppearance(filterState)
+            }
+        }
+
         lifecycleScope.launch {
             viewModel.locationListState.collect { state ->
                 when (state) {
@@ -272,10 +284,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.menu_settings -> {
                     startActivity(Intent(this, com.a42r.pevplugshare.ui.settings.SettingsActivity::class.java))
-                    true
-                }
-                R.id.menu_search -> {
-                    Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.menu_logout -> {
@@ -772,4 +780,144 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun showFilterDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_filter, null)
+        val currentFilter = viewModel.filterState.value
+
+        // Initialize dialog views with current filter state
+        val costAll = dialogView.findViewById<android.widget.RadioButton>(R.id.costAll)
+        val costFree = dialogView.findViewById<android.widget.RadioButton>(R.id.costFree)
+        val costPaid = dialogView.findViewById<android.widget.RadioButton>(R.id.costPaid)
+        val openNowCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.openNowCheckbox)
+        val socketsRangeSlider = dialogView.findViewById<com.google.android.material.slider.RangeSlider>(R.id.socketsRangeSlider)
+        val minSocketsLabel = dialogView.findViewById<android.widget.TextView>(R.id.minSocketsLabel)
+        val maxSocketsLabel = dialogView.findViewById<android.widget.TextView>(R.id.maxSocketsLabel)
+        val accessAll = dialogView.findViewById<android.widget.RadioButton>(R.id.accessAll)
+        val accessPublic = dialogView.findViewById<android.widget.RadioButton>(R.id.accessPublic)
+        val accessPrivate = dialogView.findViewById<android.widget.RadioButton>(R.id.accessPrivate)
+
+        // Socket type checkboxes
+        val socketAS3112 = dialogView.findViewById<android.widget.CheckBox>(R.id.socketAS3112)
+        val socketType2 = dialogView.findViewById<android.widget.CheckBox>(R.id.socketType2)
+        val socketTesla = dialogView.findViewById<android.widget.CheckBox>(R.id.socketTesla)
+        val socketCCS2 = dialogView.findViewById<android.widget.CheckBox>(R.id.socketCCS2)
+        val socketCHAdeMO = dialogView.findViewById<android.widget.CheckBox>(R.id.socketCHAdeMO)
+        val socketType1 = dialogView.findViewById<android.widget.CheckBox>(R.id.socketType1)
+        val socketWallSocket = dialogView.findViewById<android.widget.CheckBox>(R.id.socketWallSocket)
+        val socketCaravan = dialogView.findViewById<android.widget.CheckBox>(R.id.socketCaravan)
+        val socketOther = dialogView.findViewById<android.widget.CheckBox>(R.id.socketOther)
+
+        // Set current values
+        when (currentFilter.costFilter) {
+            CostFilter.ALL -> costAll.isChecked = true
+            CostFilter.FREE -> costFree.isChecked = true
+            CostFilter.PAID -> costPaid.isChecked = true
+        }
+        openNowCheckbox.isChecked = currentFilter.openNowOnly
+        socketsRangeSlider.values = listOf(currentFilter.minSockets.toFloat(), currentFilter.maxSockets.toFloat())
+        when (currentFilter.accessFilter) {
+            AccessFilter.ALL -> accessAll.isChecked = true
+            AccessFilter.PUBLIC -> accessPublic.isChecked = true
+            AccessFilter.PRIVATE -> accessPrivate.isChecked = true
+        }
+
+        // Set socket type checkboxes
+        socketAS3112.isChecked = com.a42r.pevplugshare.data.model.SocketType.AS3112 in currentFilter.socketTypes
+        socketType2.isChecked = com.a42r.pevplugshare.data.model.SocketType.TYPE2 in currentFilter.socketTypes
+        socketTesla.isChecked = com.a42r.pevplugshare.data.model.SocketType.TESLA in currentFilter.socketTypes
+        socketCCS2.isChecked = com.a42r.pevplugshare.data.model.SocketType.CCS2 in currentFilter.socketTypes
+        socketCHAdeMO.isChecked = com.a42r.pevplugshare.data.model.SocketType.CHADEMO in currentFilter.socketTypes
+        socketType1.isChecked = com.a42r.pevplugshare.data.model.SocketType.TYPE1 in currentFilter.socketTypes
+        socketWallSocket.isChecked = com.a42r.pevplugshare.data.model.SocketType.WALL_SOCKET in currentFilter.socketTypes
+        socketCaravan.isChecked = com.a42r.pevplugshare.data.model.SocketType.CARAVAN in currentFilter.socketTypes
+        socketOther.isChecked = com.a42r.pevplugshare.data.model.SocketType.OTHER in currentFilter.socketTypes
+
+        // Update labels when slider changes
+        socketsRangeSlider.addOnChangeListener { slider, _, _ ->
+            val values = slider.values
+            minSocketsLabel.text = "Min: ${values[0].toInt()}"
+            maxSocketsLabel.text = "Max: ${values[1].toInt()}"
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        // Handle button clicks
+        dialogView.findViewById<android.widget.Button>(R.id.resetButton).setOnClickListener {
+            viewModel.resetFilters()
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<android.widget.Button>(R.id.cancelButton).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogView.findViewById<android.widget.Button>(R.id.applyButton).setOnClickListener {
+            // Gather filter settings
+            val costFilter = when {
+                costFree.isChecked -> CostFilter.FREE
+                costPaid.isChecked -> CostFilter.PAID
+                else -> CostFilter.ALL
+            }
+
+            val accessFilter = when {
+                accessPublic.isChecked -> AccessFilter.PUBLIC
+                accessPrivate.isChecked -> AccessFilter.PRIVATE
+                else -> AccessFilter.ALL
+            }
+
+            val socketTypes = mutableSetOf<com.a42r.pevplugshare.data.model.SocketType>()
+            if (socketAS3112.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.AS3112)
+            if (socketType2.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TYPE2)
+            if (socketTesla.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TESLA)
+            if (socketCCS2.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CCS2)
+            if (socketCHAdeMO.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CHADEMO)
+            if (socketType1.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TYPE1)
+            if (socketWallSocket.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.WALL_SOCKET)
+            if (socketCaravan.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CARAVAN)
+            if (socketOther.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.OTHER)
+
+            val values = socketsRangeSlider.values
+            val newFilter = FilterState(
+                costFilter = costFilter,
+                openNowOnly = openNowCheckbox.isChecked,
+                minSockets = values[0].toInt(),
+                maxSockets = values[1].toInt(),
+                accessFilter = accessFilter,
+                socketTypes = socketTypes,
+                favoritesOnly = false
+            )
+
+            viewModel.updateFilter(newFilter)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun updateFilterButtonsAppearance(filterState: FilterState) {
+        // Update filter button to show if filters are active
+        if (filterState.isActive() && !filterState.favoritesOnly) {
+            binding.toggleFilterButton.setColorFilter(
+                ContextCompat.getColor(this, R.color.md_theme_secondary)
+            )
+        } else {
+            binding.toggleFilterButton.colorFilter = null
+        }
+
+        // Update favorites button icon based on state
+        // OFF = white filled with low opacity (almost invisible), ON = solid black filled
+        if (filterState.favoritesOnly) {
+            // Favorites filter is ON - use solid black filled icon
+            binding.filterFavoritesButton.setImageResource(R.drawable.ic_favourite_filled)
+            binding.filterFavoritesButton.colorFilter = null
+        } else {
+            // Favorites filter is OFF - use faded white icon
+            binding.filterFavoritesButton.setImageResource(R.drawable.ic_favourite_faded)
+            binding.filterFavoritesButton.colorFilter = null
+        }
+    }
 }
+

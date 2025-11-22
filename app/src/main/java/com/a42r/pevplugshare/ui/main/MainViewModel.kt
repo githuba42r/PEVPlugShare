@@ -3,6 +3,8 @@ package com.a42r.pevplugshare.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a42r.pevplugshare.data.model.Location
+import com.a42r.pevplugshare.data.model.SocketType
+import com.a42r.pevplugshare.data.model.LocationAccessType
 import com.a42r.pevplugshare.data.network.ConnectivityObserver
 import com.a42r.pevplugshare.data.network.NetworkStatus
 import com.a42r.pevplugshare.data.repository.SyncManager
@@ -27,6 +29,38 @@ sealed class CategoryState {
     object Loading : CategoryState()
     data class Success(val categories: List<Pair<String, String>>) : CategoryState() // name to color
     data class Error(val message: String) : CategoryState()
+}
+
+data class FilterState(
+    val costFilter: CostFilter = CostFilter.ALL,
+    val openNowOnly: Boolean = false,
+    val minSockets: Int = 1,
+    val maxSockets: Int = 20,
+    val accessFilter: AccessFilter = AccessFilter.ALL,
+    val socketTypes: Set<SocketType> = SocketType.values().toSet(),
+    val favoritesOnly: Boolean = false
+) {
+    fun isActive(): Boolean {
+        return costFilter != CostFilter.ALL ||
+                openNowOnly ||
+                minSockets > 1 ||
+                maxSockets < 20 ||
+                accessFilter != AccessFilter.ALL ||
+                socketTypes.size < SocketType.values().size ||
+                favoritesOnly
+    }
+
+    fun reset(): FilterState {
+        return FilterState()
+    }
+}
+
+enum class CostFilter {
+    ALL, FREE, PAID
+}
+
+enum class AccessFilter {
+    ALL, PUBLIC, PRIVATE
 }
 
 @HiltViewModel
@@ -65,6 +99,11 @@ class MainViewModel @Inject constructor(
 
     private val _savedForLaterCount = MutableStateFlow(0)
     val savedForLaterCount: StateFlow<Int> = _savedForLaterCount
+
+    private val _filterState = MutableStateFlow(FilterState())
+    val filterState: StateFlow<FilterState> = _filterState
+
+    private var allLocations: List<Location> = emptyList()
 
     init {
         observeNetworkStatus()
@@ -264,8 +303,10 @@ class MainViewModel @Inject constructor(
 
                     if (dbLocations.isNotEmpty()) {
                         // Have local data, show it immediately
+                        allLocations = dbLocations
                         val sorted = sortLocationsByDistance(dbLocations)
-                        _locationListState.value = LocationListState.Success(sorted)
+                        val filtered = applyFilters(sorted)
+                        _locationListState.value = LocationListState.Success(filtered)
                         _isOffline.value = false
                         return@launch
                     }
@@ -299,9 +340,11 @@ class MainViewModel @Inject constructor(
                         android.util.Log.d("MainViewModel", "Saved $savedCount out of ${locations.size} locations")
 
                         // Sort and display
+                        allLocations = locations
                         val sorted = sortLocationsByDistance(locations)
-                        android.util.Log.d("MainViewModel", "Setting state to Success with ${sorted.size} locations")
-                        _locationListState.value = LocationListState.Success(sorted)
+                        val filtered = applyFilters(sorted)
+                        android.util.Log.d("MainViewModel", "Setting state to Success with ${filtered.size} locations")
+                        _locationListState.value = LocationListState.Success(filtered)
                     }
                     _isOffline.value = false
                 }.onFailure { error ->
@@ -328,12 +371,35 @@ class MainViewModel @Inject constructor(
     }
 
     fun toggleFavourite(location: Location) {
-        if (_locationListState.value is LocationListState.Success) {
-            val current = (_locationListState.value as LocationListState.Success).locations
-            val updated = current.map {
-                if (it.id == location.id) it.copy(isFavourite = !it.isFavourite) else it
+        viewModelScope.launch {
+            try {
+                // Toggle the favorite status
+                val updatedLocation = location.copy(isFavourite = !location.isFavourite)
+                
+                // Save to database
+                val categoryName = _selectedCategory.value ?: return@launch
+                val result = locationRepository.updateLocation(updatedLocation, categoryName)
+                
+                if (result.isSuccess) {
+                    // Update UI state
+                    if (_locationListState.value is LocationListState.Success) {
+                        val current = (_locationListState.value as LocationListState.Success).locations
+                        val updated = current.map {
+                            if (it.id == location.id) updatedLocation else it
+                        }
+                        // Update allLocations cache
+                        allLocations = updated
+                        // Reapply filters
+                        val filtered = applyFilters(sortLocationsByDistance(updated))
+                        _locationListState.value = LocationListState.Success(filtered)
+                    }
+                    android.util.Log.d("MainViewModel", "Toggled favourite for ${location.name}: ${updatedLocation.isFavourite}")
+                } else {
+                    android.util.Log.e("MainViewModel", "Failed to toggle favourite: ${result.exceptionOrNull()?.message}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("MainViewModel", "Error toggling favourite: ${e.message}", e)
             }
-            _locationListState.value = LocationListState.Success(updated)
         }
     }
 
@@ -368,4 +434,107 @@ class MainViewModel @Inject constructor(
             dx * dx + dy * dy
         }
     }
+
+    fun updateFilter(newFilter: FilterState) {
+        _filterState.value = newFilter
+        applyFiltersAndUpdate()
+    }
+
+    fun toggleFavoritesFilter() {
+        val currentFilter = _filterState.value
+        _filterState.value = if (currentFilter.favoritesOnly) {
+            // Turn off favorites filter
+            currentFilter.copy(favoritesOnly = false)
+        } else {
+            // Turn on favorites filter (reset other filters)
+            FilterState(favoritesOnly = true)
+        }
+        applyFiltersAndUpdate()
+    }
+
+    fun resetFilters() {
+        _filterState.value = FilterState()
+        applyFiltersAndUpdate()
+    }
+
+    private fun applyFiltersAndUpdate() {
+        if (allLocations.isEmpty()) return
+
+        val sorted = sortLocationsByDistance(allLocations)
+        val filtered = applyFilters(sorted)
+        _locationListState.value = if (filtered.isEmpty()) {
+            LocationListState.Empty
+        } else {
+            LocationListState.Success(filtered)
+        }
+    }
+
+    private fun applyFilters(locations: List<Location>): List<Location> {
+        val filter = _filterState.value
+
+        return locations.filter { location ->
+            // Favorites filter - when active, only show favorites
+            if (filter.favoritesOnly) {
+                return@filter location.isFavourite
+            }
+
+            // TEMPORARILY DISABLED: All other filters to diagnose issue
+            // When favorites filter is OFF, show ALL locations
+            true
+
+            /* DISABLED FILTERS:
+            // Cost filter
+            val passesCostFilter = when (filter.costFilter) {
+                CostFilter.ALL -> true
+                CostFilter.FREE -> !location.hasFee
+                CostFilter.PAID -> location.hasFee
+            }
+            if (!passesCostFilter) return@filter false
+
+            // Opening hours filter (open now)
+            if (filter.openNowOnly && !isOpenNow(location)) {
+                return@filter false
+            }
+
+            // Socket count filter
+            if (location.gpoCount < filter.minSockets || location.gpoCount > filter.maxSockets) {
+                return@filter false
+            }
+
+            // Access type filter
+            val passesAccessFilter = when (filter.accessFilter) {
+                AccessFilter.ALL -> true
+                AccessFilter.PUBLIC -> location.publicPrivate == LocationAccessType.PUBLIC
+                AccessFilter.PRIVATE -> location.publicPrivate == LocationAccessType.PRIVATE
+            }
+            if (!passesAccessFilter) return@filter false
+
+            // Socket types filter - location must have at least one of the selected types
+            // If no socket types are selected, show all locations
+            if (filter.socketTypes.isNotEmpty()) {
+                val hasMatchingSocketType = location.socketTypes.any { it in filter.socketTypes }
+                if (!hasMatchingSocketType) return@filter false
+            }
+
+            true
+            */
+        }
+    }
+
+    private fun isOpenNow(location: Location): Boolean {
+        // Simple implementation - check if has opening hours
+        // A more sophisticated implementation would parse opening hours and check current time
+        // For now, if no opening hours specified, assume always open
+        if (location.openingHours.isNullOrBlank()) return true
+
+        // Check for 24/7 indicators
+        val hours = location.openingHours.lowercase()
+        if (hours.contains("24") || hours.contains("24/7") || hours.contains("24x7")) {
+            return true
+        }
+
+        // For other cases, assume open (could be enhanced with time parsing)
+        return true
+    }
 }
+
