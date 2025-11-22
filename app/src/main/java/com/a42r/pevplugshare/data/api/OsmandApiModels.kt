@@ -98,14 +98,6 @@ data class OsmandListFilesResponse(
     val totalFiles: Int? = null
 )
 
-// Response from /fav/groups endpoint (favorite group styles)
-data class OsmandFavGroupStyle(
-    val name: String,           // Group name (e.g., "Charging Locations")
-    val color: String?,         // Hex color (e.g., "#eecc22")
-    val icon: String?,          // Icon name (e.g., "special_star")
-    val background: String?     // Background shape (e.g., "circle", "octagon")
-)
-
 // Request for /fav/add endpoint (simpler structure)
 data class OsmandAddFavoriteRequest(
     val name: String,
