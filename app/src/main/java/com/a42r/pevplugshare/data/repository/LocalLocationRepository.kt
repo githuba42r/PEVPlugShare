@@ -100,6 +100,10 @@ class LocalLocationRepository(
             android.util.Log.d(TAG, "  GPO Count: ${location.gpoCount}")
             android.util.Log.d(TAG, "  Description: '${location.description}'")
             android.util.Log.d(TAG, "  Additional Info: '${location.additionalInfo}'")
+            android.util.Log.d(TAG, "  OsmAnd Metadata:")
+            android.util.Log.d(TAG, "    osmandSyncedToServer: ${location.osmandSyncedToServer}")
+            android.util.Log.d(TAG, "    osmandOriginalName: ${location.osmandOriginalName}")
+            android.util.Log.d(TAG, "    osmandGpxIndex: ${location.osmandGpxIndex}")
 
             val entity = location.toLocationEntity()
             android.util.Log.d(TAG, "  Entity GPO Count: ${entity.gpoCount}")
@@ -191,7 +195,7 @@ class LocalLocationRepository(
             suburb = suburb,
             state = state,
             postcode = postcode,
-            
+
             // OSMAnd sync tracking fields
             osmandOriginalName = osmandOriginalName,
             osmandGpxIndex = osmandGpxIndex,
@@ -231,7 +235,7 @@ class LocalLocationRepository(
             suburb = suburb,
             state = state,
             postcode = postcode,
-            
+
             // OSMAnd sync tracking fields
             osmandOriginalName = osmandOriginalName,
             osmandGpxIndex = osmandGpxIndex,

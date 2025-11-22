@@ -111,6 +111,11 @@ class SettingsActivity : AppCompatActivity() {
             switchPromptOsmandSync.isChecked = tokenManager.getSyncToOsmandOnUpdate()
             switchVerifyDescription.isChecked = tokenManager.getVerifyDescriptionBeforeSync()
 
+            // Load OsmAnd location match distance
+            val savedMatchDistance = tokenManager.getOsmandLocationMatchDistance()
+            osmandMatchDistanceSlider.value = savedMatchDistance.toFloat()
+            osmandMatchDistanceValue.text = "${savedMatchDistance}m"
+
             // OsmAnd sync switches
             switchPromptOsmandSync.setOnCheckedChangeListener { _, isChecked ->
                 tokenManager.setSyncToOsmandOnUpdate(isChecked)
@@ -118,6 +123,12 @@ class SettingsActivity : AppCompatActivity() {
 
             switchVerifyDescription.setOnCheckedChangeListener { _, isChecked ->
                 tokenManager.setVerifyDescriptionBeforeSync(isChecked)
+            }
+
+            // OsmAnd match distance slider
+            osmandMatchDistanceSlider.addOnChangeListener { _, value, _ ->
+                val meters = value.toInt()
+                osmandMatchDistanceValue.text = "${meters}m"
             }
 
             // Save button
@@ -138,6 +149,10 @@ class SettingsActivity : AppCompatActivity() {
             val zoomLevel = zoomLevelSlider.value
             tokenManager.saveMapZoomLevel(zoomLevel)
 
+            // Save OsmAnd match distance
+            val matchDistance = osmandMatchDistanceSlider.value.toInt()
+            tokenManager.setOsmandLocationMatchDistance(matchDistance)
+
             Toast.makeText(this@SettingsActivity, "Settings saved", Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -154,6 +169,11 @@ class SettingsActivity : AppCompatActivity() {
             switchVerifyDescription.isChecked = true
             tokenManager.setSyncToOsmandOnUpdate(true)
             tokenManager.setVerifyDescriptionBeforeSync(true)
+
+            // Reset OsmAnd match distance to default (10m)
+            osmandMatchDistanceSlider.value = 10f
+            osmandMatchDistanceValue.text = "10m"
+            tokenManager.setOsmandLocationMatchDistance(10)
 
             Toast.makeText(this@SettingsActivity, "Settings reset to defaults", Toast.LENGTH_SHORT).show()
         }

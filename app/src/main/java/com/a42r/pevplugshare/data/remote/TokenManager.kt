@@ -22,6 +22,8 @@ class TokenManager(context: Context) {
         private const val DEFAULT_MAP_ZOOM = 18.0f
         private const val KEY_OSMAND_SYNC_ON_UPDATE = "osmand_sync_on_update"
         private const val KEY_OSMAND_VERIFY_DESCRIPTION = "osmand_verify_description"
+        private const val KEY_OSMAND_LOCATION_MATCH_DISTANCE = "osmand_location_match_distance"
+        private const val DEFAULT_OSMAND_MATCH_DISTANCE = 10 // Default 10 meters
     }
 
     enum class AuthType {
@@ -187,5 +189,13 @@ class TokenManager(context: Context) {
 
     fun getVerifyDescriptionBeforeSync(): Boolean {
         return encryptedPrefs.getBoolean(KEY_OSMAND_VERIFY_DESCRIPTION, true) // Default true = verify
+    }
+
+    fun setOsmandLocationMatchDistance(meters: Int) {
+        encryptedPrefs.edit().putInt(KEY_OSMAND_LOCATION_MATCH_DISTANCE, meters).apply()
+    }
+
+    fun getOsmandLocationMatchDistance(): Int {
+        return encryptedPrefs.getInt(KEY_OSMAND_LOCATION_MATCH_DISTANCE, DEFAULT_OSMAND_MATCH_DISTANCE)
     }
 }
