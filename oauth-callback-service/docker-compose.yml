@@ -12,6 +12,12 @@ services:
       - PORT=8000
       - DOMAIN_NAME=${DOMAIN_NAME:-https://localhost:8000}
       - DEEP_LINK_SCHEME=${DEEP_LINK_SCHEME:-pevplugshare://oauth/callback}
+
+      # Cloudflare Tunnel (Optional)
+      - CLOUDFLARE_TUNNEL_ENABLED=${CLOUDFLARE_TUNNEL_ENABLED:-false}
+      - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
+
+      # Database and other settings
       - DATABASE_URL=sqlite:////app/data/oauth_sessions.db
       - SESSION_TTL_MINUTES=${SESSION_TTL_MINUTES:-10}
       - CLEANUP_INTERVAL_MINUTES=${CLEANUP_INTERVAL_MINUTES:-5}
@@ -22,6 +28,9 @@ services:
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
       - OAUTH_PROVIDERS=${OAUTH_PROVIDERS:-openrouter,github,google}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+      # Diagnostic endpoints (for testing/debugging)
+      - ENABLE_DIAGNOSTIC_ENDPOINTS=${ENABLE_DIAGNOSTIC_ENDPOINTS:-false}
     volumes:
       # Persist database
       - oauth-data:/app/data
