@@ -105,7 +105,12 @@ class LocationAdapter(
                 }
 
                 // Always visible badges
-                locationGpoCount.text = "${location.gpoCount} GPO"
+                if (location.gpoCount > 0) {
+                    locationGpoCount.text = "${location.gpoCount} GPO"
+                    locationGpoCount.visibility = android.view.View.VISIBLE
+                } else {
+                    locationGpoCount.visibility = android.view.View.GONE
+                }
                 publicPrivateBadge.text = if (location.publicPrivate.displayName == "Public") "🌍 Public" else "🔒 Private"
 
                 feeIndicator.text = if (location.hasFee) "💰 Paid" else "Free"
@@ -130,8 +135,10 @@ class LocationAdapter(
 
                 // Info section - comprehensive location details
                 val infoText = buildString {
-                    // Display Name
-                    append("📍 ${location.name}\n\n")
+                    // Description (shown first)
+                    location.description?.let {
+                        append("� Description:\n$it\n\n")
+                    }
 
                     // Address Information
                     val addressParts = mutableListOf<String>()
@@ -145,11 +152,6 @@ class LocationAdapter(
                         append("🏠 Address:\n")
                         addressParts.forEach { append("   $it\n") }
                         append("\n")
-                    }
-
-                    // Description
-                    location.description?.let {
-                        append("📝 Description:\n$it\n\n")
                     }
 
                     // Additional Information
