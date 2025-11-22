@@ -27,6 +27,20 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_menu" />
 
+            <TextView
+                android:id="@+id/categoryBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/category_badge_background"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp"
+                android:text="Category"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -49,21 +63,8 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Toggle Filters"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_filter" />
-
-            <TextView
-                android:id="@+id/categoryBadge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/category_badge_background"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="Category"
-                android:textColor="@color/md_theme_primary"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:src="@drawable/ic_filter"
+                android:tint="@android:color/white" />
         </LinearLayout>
 
         <!-- Location List with Pull to Refresh -->
