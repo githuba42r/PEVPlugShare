@@ -24,6 +24,8 @@ class TokenManager(context: Context) {
         private const val KEY_OSMAND_VERIFY_DESCRIPTION = "osmand_verify_description"
         private const val KEY_OSMAND_LOCATION_MATCH_DISTANCE = "osmand_location_match_distance"
         private const val DEFAULT_OSMAND_MATCH_DISTANCE = 10 // Default 10 meters
+        private const val KEY_OSMAND_CONNECTED = "osmand_connected"
+        private const val KEY_OSMAND_CONNECTED_USERNAME = "osmand_connected_username"
     }
 
     enum class AuthType {
@@ -197,5 +199,34 @@ class TokenManager(context: Context) {
 
     fun getOsmandLocationMatchDistance(): Int {
         return encryptedPrefs.getInt(KEY_OSMAND_LOCATION_MATCH_DISTANCE, DEFAULT_OSMAND_MATCH_DISTANCE)
+    }
+
+    // OSMand connection state management
+    fun setOsmandConnected(connected: Boolean, username: String? = null) {
+        encryptedPrefs.edit().apply {
+            putBoolean(KEY_OSMAND_CONNECTED, connected)
+            if (connected && username != null) {
+                putString(KEY_OSMAND_CONNECTED_USERNAME, username)
+            } else if (!connected) {
+                remove(KEY_OSMAND_CONNECTED_USERNAME)
+            }
+            apply()
+        }
+    }
+
+    fun isOsmandConnected(): Boolean {
+        return encryptedPrefs.getBoolean(KEY_OSMAND_CONNECTED, false)
+    }
+
+    fun getOsmandConnectedUsername(): String? {
+        return encryptedPrefs.getString(KEY_OSMAND_CONNECTED_USERNAME, null)
+    }
+
+    fun disconnectOsmand() {
+        encryptedPrefs.edit().apply {
+            putBoolean(KEY_OSMAND_CONNECTED, false)
+            remove(KEY_OSMAND_CONNECTED_USERNAME)
+            apply()
+        }
     }
 }

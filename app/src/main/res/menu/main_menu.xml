@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/menu_osmand_connect"
+        android:title="@string/connect_to_osmand" />
+    <item
         android:id="@+id/menu_select_category"
         android:title="Favourite Category" />
     <item

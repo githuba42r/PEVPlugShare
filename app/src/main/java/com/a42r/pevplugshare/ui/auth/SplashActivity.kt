@@ -30,7 +30,7 @@ class SplashActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                // Check if user has session cookies
+                // Check if user has session cookies (OSMAnd connected)
                 val hasSessionCookie = viewModel.hasSessionCookie()
                 
                 if (hasSessionCookie) {
@@ -79,8 +79,10 @@ class SplashActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    android.util.Log.d("SplashActivity", "No session cookie found, navigating to LoginActivity")
-                    // No session, user needs to log in
+                    android.util.Log.d("SplashActivity", "No session cookie found")
+                    // No session - check if OSMand was previously connected but session expired
+                    // Or if user chose to use local database only
+                    // For now, always show login screen which has skip option
                     if (!isFinishing && !isDestroyed) {
                         startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                         finish()
@@ -88,7 +90,7 @@ class SplashActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 android.util.Log.e("SplashActivity", "Error during splash screen: ${e.message}", e)
-                // Continue to login on error
+                // Continue to login on error (login screen has skip option)
                 if (!isFinishing && !isDestroyed) {
                     startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                     finish()

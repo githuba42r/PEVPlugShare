@@ -23,6 +23,12 @@ enum class SyncStatus(val value: String) {
     FAILED("FAILED")
 }
 
+enum class OsmandSyncStatus(val value: String, val displayName: String) {
+    LOCAL_ONLY("LOCAL_ONLY", "Local Only"),          // Never synced to OSMand
+    SYNCED("SYNCED", "Synced"),                      // Up to date with OSMand
+    MODIFIED("MODIFIED", "Modified")                 // Local changes not pushed to OSMand
+}
+
 data class Location(
     val id: String,
     val name: String,
@@ -57,7 +63,9 @@ data class Location(
     val osmandGpxIndex: Int? = null,             // Last known index in GPX file
     val osmandSyncSource: String = "LOCAL",      // "LOCAL" or "OSMAND"
     val osmandLastSyncedAt: Long? = null,        // Timestamp of last successful sync
-    val osmandSyncedToServer: Boolean = false    // True if exists on OSMAnd server
+    val osmandSyncedToServer: Boolean = false,   // True if exists on OSMAnd server
+    val osmandSyncedUsernames: String? = null,   // Comma-separated list of OSMand usernames this location has been synced with
+    val osmandSyncStatus: OsmandSyncStatus = OsmandSyncStatus.LOCAL_ONLY  // Current sync status relative to OSMand
 )
 
 data class Photo(

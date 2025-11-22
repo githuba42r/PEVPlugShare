@@ -18,7 +18,8 @@ sealed class LoginState {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val tokenManager: com.a42r.pevplugshare.data.remote.TokenManager
 ) : ViewModel() {
 
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
@@ -38,13 +39,16 @@ class LoginViewModel @Inject constructor(
             try {
                 val result = authRepository.autoLogin()
                 
-                result.onSuccess {
+                result.onSuccess { userId ->
                     // Verify login by fetching categories
                     android.util.Log.d("LoginViewModel", "Auto-login successful, verifying session...")
                     val verifyResult = authRepository.getFavoritesCategories()
                     
                     if (verifyResult.isSuccess) {
                         android.util.Log.d("LoginViewModel", "Session verified, proceeding to main activity")
+                        // Get username and mark OSMand as connected
+                        val username = tokenManager.getUsername() ?: userId
+                        tokenManager.setOsmandConnected(true, username)
                         _loginState.value = LoginState.Success
                     } else {
                         android.util.Log.e("LoginViewModel", "Failed to verify session: ${verifyResult.exceptionOrNull()?.message}")
@@ -65,13 +69,15 @@ class LoginViewModel @Inject constructor(
             try {
                 val result = authRepository.loginWithWebApi(username, password, rememberMe)
                 
-                result.onSuccess {
+                result.onSuccess { userId ->
                     // Verify login by fetching categories
                     android.util.Log.d("LoginViewModel", "Login successful, verifying session...")
                     val verifyResult = authRepository.getFavoritesCategories()
                     
                     if (verifyResult.isSuccess) {
                         android.util.Log.d("LoginViewModel", "Session verified, proceeding to main activity")
+                        // Mark OSMand as connected
+                        tokenManager.setOsmandConnected(true, username)
                         _loginState.value = LoginState.Success
                     } else {
                         android.util.Log.e("LoginViewModel", "Failed to verify session: ${verifyResult.exceptionOrNull()?.message}")
