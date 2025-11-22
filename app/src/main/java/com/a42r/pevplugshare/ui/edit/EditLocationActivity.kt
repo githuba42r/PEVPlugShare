@@ -2507,7 +2507,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     onSuccess = { analysis ->
                         Log.d("EditLocationActivity", "AI photo analysis request successful, received analysis result")
                         showAnalysisResults(analysis)
-                        applyAnalysisToForm(analysis)
+                        // Don't apply yet - wait for user to confirm in the modal
                     },
                     onFailure = { error ->
                         Log.d("EditLocationActivity", "AI photo analysis request failed: ${error.message}")
@@ -2571,7 +2571,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             .setTitle("AI Analysis Complete")
             .setMessage(message)
             .setPositiveButton("Apply") { _, _ ->
-                // Already applied
+                // Apply the analysis to the form only when user confirms
+                applyAnalysisToForm(analysis)
                 Toast.makeText(this, "Analysis applied to form", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel", null)
