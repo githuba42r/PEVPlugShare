@@ -72,6 +72,11 @@ class OsmandApiClient(
 
     val api: OsmandApiService = retrofit.create(OsmandApiService::class.java)
 
+    fun getCookiesForUrl(url: String): List<Cookie> {
+        // For OSMAnd web API, we always use osmand.net
+        return cookieManager.loadCookies("osmand.net")
+    }
+
     fun getWebApiRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(OsmandApiService.WEB_API_URL)
@@ -103,7 +108,7 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): ApiResult<T> {
         try {
             val errorBody = e.response()?.errorBody()?.string()
             android.util.Log.e("OsmAndAuth", "Error body: $errorBody")
-            
+
             // Handle plain string error responses (like "error_email")
             if (errorBody != null && !errorBody.startsWith("{")) {
                 // Plain string error response
@@ -116,7 +121,7 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): ApiResult<T> {
                 android.util.Log.e("OsmAndAuth", "Interpreted plain error: $message")
                 return ApiResult.Error(e.code(), message)
             }
-            
+
             // Try to parse as JSON error response
             val errorResponse = Gson().fromJson(errorBody, OsmandErrorResponse::class.java)
             val message = errorResponse.error_description
