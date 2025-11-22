@@ -41,7 +41,7 @@ class OsmandLocationSyncService @Inject constructor(
     private val CATEGORY_CACHE_DURATION = 5 * 60 * 1000L // 5 minutes
 
     /**
-     * Get the default icon and color for a category from OsmAnd API.
+     * Get the default icon and color for a category from OsmAnd by downloading the GPX file.
      * Returns Pair(color, icon) or Pair(null, null) if not found.
      * Uses caching to avoid excessive API calls.
      */
@@ -58,28 +58,63 @@ class OsmandLocationSyncService @Inject constructor(
             Log.d(TAG, "  '$categoryName' NOT in cache")
         }
 
-        // Fetch fresh category data from /fav/groups endpoint
+        // Fetch category defaults by downloading and parsing GPX files
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        Log.d(TAG, "Fetching category defaults from /fav/groups endpoint")
+        Log.d(TAG, "Fetching category defaults by downloading GPX files")
 
         try {
             val webApiService = apiClient.getWebApiRetrofit()
                 .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
 
-            val groups = webApiService.getFavoriteGroups()
+            // Get list of all favorites files
+            val listResponse = webApiService.listFiles()
+            val favoriteFiles = listResponse.uniqueFiles?.filter { 
+                it.type == "FAVOURITES" && it.name.startsWith("favorites-")
+            } ?: emptyList()
 
-            Log.d(TAG, "Received ${groups.size} favorite groups from API:")
-            groups.forEach { group ->
-                Log.d(TAG, "  • ${group.name}: color=${group.color}, icon=${group.icon}, background=${group.background}")
+            Log.d(TAG, "Found ${favoriteFiles.size} favorite files")
+
+            // Download and parse each GPX file to extract group styles
+            val groupStyles = mutableMapOf<String, Pair<String?, String?>>()
+
+            for (file in favoriteFiles) {
+                try {
+                    // Extract group name from filename: "favorites-Charging Locations.gpx" -> "Charging Locations"
+                    val groupName = file.name
+                        .removePrefix("favorites-")
+                        .removeSuffix(".gpx")
+
+                    Log.d(TAG, "  Downloading ${file.name} to extract style...")
+
+                    val response = webApiService.downloadFile(
+                        type = "FAVOURITES",
+                        name = file.name,
+                        shared = false
+                    )
+
+                    val gpxContent = response.string()
+                    
+                    // Parse color and icon from GPX metadata
+                    // Look for first waypoint's color and icon as group defaults
+                    val colorMatch = Regex("""color['"]\s*:\s*['"]([^'"]+)['"]""").find(gpxContent)
+                    val iconMatch = Regex("""icon['"]\s*:\s*['"]([^'"]+)['"]""").find(gpxContent)
+                    
+                    val color = colorMatch?.groupValues?.get(1)
+                    val icon = iconMatch?.groupValues?.get(1)
+
+                    groupStyles[groupName] = Pair(color, icon)
+                    Log.d(TAG, "    ✓ $groupName: color=$color, icon=$icon")
+
+                } catch (e: Exception) {
+                    Log.e(TAG, "    ✗ Failed to download ${file.name}: ${e.message}")
+                }
             }
 
-            // Build cache map
-            categoryDefaultsCache = groups.associate { group ->
-                group.name to Pair(group.color, group.icon)
-            }
+            // Build cache
+            categoryDefaultsCache = groupStyles
             categoryDefaultsCacheTime = now
 
-            Log.d(TAG, "Cached ${groups.size} group defaults")
+            Log.d(TAG, "Cached ${groupStyles.size} group defaults from GPX files")
 
             // Return the requested category's defaults
             val result = categoryDefaultsCache?.get(categoryName) ?: Pair(null, null)
@@ -87,7 +122,7 @@ class OsmandLocationSyncService @Inject constructor(
             Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             return result
         } catch (e: Exception) {
-            Log.e(TAG, "❌ Failed to fetch category defaults from /fav/groups: ${e.message}", e)
+            Log.e(TAG, "❌ Failed to fetch category defaults from GPX files: ${e.message}", e)
             Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         }
 
