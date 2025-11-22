@@ -33,7 +33,7 @@ import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
         PendingOperationEntity::class,
         SavedForLaterEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -52,32 +52,49 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
 
         private val MIGRATION_7_8 = object : Migration(7, 8) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                // Add SavedForLater table - version 7 to 8
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS saved_for_later (
+                        id TEXT PRIMARY KEY NOT NULL,
+                        latitude REAL NOT NULL,
+                        longitude REAL NOT NULL,
+                        bearing REAL,
+                        photoPaths TEXT NOT NULL,
+                        photoMetadata TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL
+                    )
+                """)
+            }
+        }
+
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
                 // Add OSMAnd sync tracking fields
                 database.execSQL("""
-                    ALTER TABLE locations 
+                    ALTER TABLE locations
                     ADD COLUMN osmandOriginalName TEXT DEFAULT NULL
                 """)
                 database.execSQL("""
-                    ALTER TABLE locations 
+                    ALTER TABLE locations
                     ADD COLUMN osmandGpxIndex INTEGER DEFAULT NULL
                 """)
                 database.execSQL("""
-                    ALTER TABLE locations 
+                    ALTER TABLE locations
                     ADD COLUMN osmandSyncSource TEXT NOT NULL DEFAULT 'LOCAL'
                 """)
                 database.execSQL("""
-                    ALTER TABLE locations 
+                    ALTER TABLE locations
                     ADD COLUMN osmandLastSyncedAt INTEGER DEFAULT NULL
                 """)
                 database.execSQL("""
-                    ALTER TABLE locations 
+                    ALTER TABLE locations
                     ADD COLUMN osmandSyncedToServer INTEGER NOT NULL DEFAULT 0
                 """)
-                
+
                 // Set existing synced locations as potentially from OSMAND
                 // We assume locations with syncStatus = 'SYNCED' may have come from OSMAnd
                 database.execSQL("""
-                    UPDATE locations 
+                    UPDATE locations
                     SET osmandSyncSource = 'OSMAND',
                         osmandSyncedToServer = 1,
                         osmandOriginalName = name
@@ -93,7 +110,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
                     PEVPlugShareDatabase::class.java,
                     "pevplugshare.db"
                 )
-                    .addMigrations(MIGRATION_7_8)
+                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9)
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
