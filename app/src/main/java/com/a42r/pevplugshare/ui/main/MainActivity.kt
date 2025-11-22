@@ -601,7 +601,33 @@ class MainActivity : AppCompatActivity() {
         viewPager.setCurrentItem(0, false)
 
         // Set location description
-        locationDescView?.text = location.description ?: "No description available"
+        val description = location.description ?: "No description available"
+        locationDescView?.text = description
+
+        // Setup description toggle button
+        val toggleButton = binding.toggleDescriptionButton
+        var isDescriptionExpanded = false
+
+        // Check if description needs "More" button (more than 2 lines)
+        locationDescView?.post {
+            val lineCount = locationDescView.lineCount
+            if (lineCount > 2 || description.length > 100) {
+                toggleButton?.visibility = android.view.View.VISIBLE
+            } else {
+                toggleButton?.visibility = android.view.View.GONE
+            }
+        }
+
+        toggleButton?.setOnClickListener {
+            isDescriptionExpanded = !isDescriptionExpanded
+            if (isDescriptionExpanded) {
+                locationDescView?.maxLines = Int.MAX_VALUE
+                toggleButton.text = "Less"
+            } else {
+                locationDescView?.maxLines = 2
+                toggleButton.text = "More"
+            }
+        }
 
         // Set toolbar title to location name
         galleryToolbar?.title = location.name
