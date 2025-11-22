@@ -4,7 +4,7 @@
 
 This is a generic OAuth 2.0 callback handler service designed for mobile applications. It solves the problem of OAuth providers requiring publicly accessible callback URLs by providing a temporary session-based redirect service.
 
-**Version**: 1.0.0  
+**Version**: 1.0.0
 **Base URL**: `https://your-domain.com`
 
 ## Architecture
@@ -27,8 +27,8 @@ All requests to `/oauth/register` must include an HMAC-SHA256 signature for secu
 
 ### Generating Signatures
 
-**Algorithm**: HMAC-SHA256  
-**Message Format**: `{provider}|{timestamp}`  
+**Algorithm**: HMAC-SHA256
+**Message Format**: `{provider}|{timestamp}`
 **Secret**: Shared secret key (from `.env`)
 
 **Example (Python)**:
@@ -80,7 +80,7 @@ val signature = generateSignature(provider, timestamp, secret)
 
 Creates a temporary session and returns a callback URL.
 
-**Endpoint**: `POST /oauth/register`  
+**Endpoint**: `POST /oauth/register`
 **Content-Type**: `application/json`
 
 **Request Body**:
@@ -163,7 +163,7 @@ Creates a temporary session and returns a callback URL.
 
 Receives callback from OAuth provider and redirects to mobile app.
 
-**Endpoint**: `GET /oauth/callback/{session_id}`  
+**Endpoint**: `GET /oauth/callback/{session_id}`
 **Response**: HTML page with automatic redirect
 
 **Path Parameters**:
@@ -291,7 +291,7 @@ object OAuthSignature {
         val bytes = mac.doFinal(message.toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }
     }
-    
+
     fun getCurrentTimestamp(): Long = System.currentTimeMillis() / 1000
 }
 ```
@@ -303,13 +303,13 @@ object OAuthSignature {
 private suspend fun registerOAuthSession(provider: String): JSONObject {
     val timestamp = OAuthSignature.getCurrentTimestamp()
     val signature = OAuthSignature.generateSignature(provider, timestamp, OAUTH_SHARED_SECRET)
-    
+
     val requestBody = JSONObject().apply {
         put("provider", provider)
         put("timestamp", timestamp)
         put("signature", signature)
     }
-    
+
     val client = OkHttpClient()
     val request = Request.Builder()
         .url("$OAUTH_SERVICE_URL/oauth/register")
@@ -318,12 +318,12 @@ private suspend fun registerOAuthSession(provider: String): JSONObject {
             requestBody.toString()
         ))
         .build()
-    
+
     val response = client.newCall(request).execute()
     if (!response.isSuccessful) {
         throw IOException("Session registration failed: ${response.code}")
     }
-    
+
     return JSONObject(response.body?.string() ?: "{}")
 }
 ```
@@ -337,19 +337,19 @@ private fun startOAuthFlow() {
             // Step 1: Register session with callback service
             val sessionResponse = registerOAuthSession("openrouter")
             val callbackUrl = sessionResponse.getString("callback_url")
-            
+
             // Step 2: Generate PKCE parameters
             val codeVerifier = PkceUtils.generateCodeVerifier()
             val codeChallenge = PkceUtils.generateCodeChallenge(codeVerifier)
             tokenManager.savePkceCodeVerifier(codeVerifier)
-            
+
             // Step 3: Build OpenRouter auth URL with callback service URL
             val authUrl = Uri.parse("https://openrouter.ai/auth").buildUpon()
                 .appendQueryParameter("callback_url", callbackUrl)
                 .appendQueryParameter("code_challenge", codeChallenge)
                 .appendQueryParameter("code_challenge_method", "S256")
                 .build()
-            
+
             // Step 4: Launch browser
             withContext(Dispatchers.Main) {
                 val customTabsIntent = CustomTabsIntent.Builder()
@@ -376,15 +376,15 @@ private fun startOAuthFlow() {
 <!-- AndroidManifest.xml -->
 <activity android:name=".ui.settings.SettingsActivity">
     <!-- Existing intent filters... -->
-    
+
     <!-- Deep link for OAuth callback -->
     <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-        <data 
-            android:scheme="pevplugshare" 
-            android:host="oauth" 
+        <data
+            android:scheme="pevplugshare"
+            android:host="oauth"
             android:path="/callback" />
     </intent-filter>
 </activity>
@@ -407,13 +407,13 @@ private fun handleOAuthCallback(uri: Uri) {
     val code = uri.getQueryParameter("code")
     val error = uri.getQueryParameter("error")
     val provider = uri.getQueryParameter("provider")
-    
+
     if (error != null) {
         val errorDesc = uri.getQueryParameter("error_description") ?: "Unknown error"
         Toast.makeText(this, "OAuth failed: $errorDesc", Toast.LENGTH_LONG).show()
         return
     }
-    
+
     if (code != null && provider != null) {
         // Exchange code for API key
         lifecycleScope.launch {
@@ -435,28 +435,28 @@ private suspend fun startOpenRouterOAuth() {
         // 1. Register callback session
         val timestamp = System.currentTimeMillis() / 1000
         val signature = OAuthSignature.generateSignature("openrouter", timestamp, OAUTH_SHARED_SECRET)
-        
+
         val registerRequest = JSONObject().apply {
             put("provider", "openrouter")
             put("timestamp", timestamp)
             put("signature", signature)
         }
-        
+
         val sessionResponse = registerSession(registerRequest)
         val callbackUrl = sessionResponse.getString("callback_url")
-        
+
         // 2. Generate PKCE
         val codeVerifier = PkceUtils.generateCodeVerifier()
         val codeChallenge = PkceUtils.generateCodeChallenge(codeVerifier)
         tokenManager.savePkceCodeVerifier(codeVerifier)
-        
+
         // 3. Build auth URL
         val authUrl = Uri.parse("https://openrouter.ai/auth").buildUpon()
             .appendQueryParameter("callback_url", callbackUrl)
             .appendQueryParameter("code_challenge", codeChallenge)
             .appendQueryParameter("code_challenge_method", "S256")
             .build()
-        
+
         // 4. Launch browser
         withContext(Dispatchers.Main) {
             CustomTabsIntent.Builder()
@@ -464,12 +464,12 @@ private suspend fun startOpenRouterOAuth() {
                 .build()
                 .launchUrl(this@SettingsActivity, authUrl)
         }
-        
+
     } catch (e: Exception) {
         Log.e(TAG, "OAuth flow failed", e)
         withContext(Dispatchers.Main) {
-            Toast.makeText(this@SettingsActivity, 
-                "Failed to start OAuth: ${e.message}", 
+            Toast.makeText(this@SettingsActivity,
+                "Failed to start OAuth: ${e.message}",
                 Toast.LENGTH_LONG).show()
         }
     }
@@ -481,20 +481,20 @@ private suspend fun registerSession(request: JSONObject): JSONObject {
         "application/json".toMediaType(),
         request.toString()
     )
-    
+
     val httpRequest = Request.Builder()
         .url("$OAUTH_SERVICE_URL/oauth/register")
         .post(requestBody)
         .build()
-    
+
     val response = client.newCall(httpRequest).execute()
     val body = response.body?.string() ?: "{}"
-    
+
     if (!response.isSuccessful) {
         val error = JSONObject(body)
         throw IOException(error.optString("message", "Registration failed"))
     }
-    
+
     return JSONObject(body)
 }
 
@@ -503,7 +503,7 @@ private suspend fun exchangeCodeForApiKey(code: String) {
         Log.e(TAG, "No code verifier found")
         return
     }
-    
+
     // Exchange code for API key using OpenRouter token endpoint
     val client = OkHttpClient()
     val requestBody = FormBody.Builder()
@@ -511,27 +511,27 @@ private suspend fun exchangeCodeForApiKey(code: String) {
         .add("code_verifier", codeVerifier)
         .add("code_challenge_method", "S256")
         .build()
-    
+
     val request = Request.Builder()
         .url("https://openrouter.ai/api/v1/auth/keys")
         .post(requestBody)
         .build()
-    
+
     try {
         val response = client.newCall(request).execute()
         val responseBody = response.body?.string() ?: ""
-        
+
         if (response.isSuccessful) {
             val json = JSONObject(responseBody)
             val apiKey = json.getString("key")
-            
+
             // Save API key
             tokenManager.saveOpenRouterApiKey(apiKey)
             tokenManager.clearPkceCodeVerifier()
-            
+
             withContext(Dispatchers.Main) {
-                Toast.makeText(this@SettingsActivity, 
-                    "Successfully connected OpenRouter account!", 
+                Toast.makeText(this@SettingsActivity,
+                    "Successfully connected OpenRouter account!",
                     Toast.LENGTH_SHORT).show()
             }
         } else {
@@ -540,8 +540,8 @@ private suspend fun exchangeCodeForApiKey(code: String) {
     } catch (e: Exception) {
         Log.e(TAG, "Token exchange failed", e)
         withContext(Dispatchers.Main) {
-            Toast.makeText(this@SettingsActivity, 
-                "Failed to complete authorization: ${e.message}", 
+            Toast.makeText(this@SettingsActivity,
+                "Failed to complete authorization: ${e.message}",
                 Toast.LENGTH_LONG).show()
         }
     }

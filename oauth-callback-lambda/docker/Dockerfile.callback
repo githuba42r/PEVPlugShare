@@ -1,0 +1,14 @@
+FROM public.ecr.aws/lambda/python:3.12
+
+# Copy shared utilities
+COPY src/shared ${LAMBDA_TASK_ROOT}/shared
+
+# Copy function code
+COPY src/callback/handler.py ${LAMBDA_TASK_ROOT}/
+COPY src/callback/requirements.txt ${LAMBDA_TASK_ROOT}/
+
+# Install dependencies
+RUN pip install --no-cache-dir -r ${LAMBDA_TASK_ROOT}/requirements.txt
+
+# Set the CMD to your handler
+CMD [ "handler.lambda_handler" ]

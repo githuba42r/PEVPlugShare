@@ -50,7 +50,7 @@ class SettingsActivity : AppCompatActivity() {
         setupToolbar()
         setupUI()
         checkExistingApiKey()
-        
+
         // Handle OAuth callback
         handleOAuthCallback()
     }
@@ -651,7 +651,7 @@ class SettingsActivity : AppCompatActivity() {
         val customTabsIntent = androidx.browser.customtabs.CustomTabsIntent.Builder()
             .setShowTitle(true)
             .build()
-        
+
         // Add referrer header to verify app identity
         customTabsIntent.intent.putExtra(
             Intent.EXTRA_REFERRER,
@@ -673,7 +673,7 @@ class SettingsActivity : AppCompatActivity() {
                 "Could not open browser for authorization",
                 Toast.LENGTH_LONG
             ).show()
-            
+
             // Clean up stored PKCE data
             tokenManager.clearPkceCodeVerifier()
         }
@@ -690,13 +690,13 @@ class SettingsActivity : AppCompatActivity() {
                 // Clear the API key
                 tokenManager.saveOpenRouterApiKey("")
                 tokenManager.saveSelectedAiModel("")
-                
+
                 Toast.makeText(
                     this,
                     "OpenRouter disconnected",
                     Toast.LENGTH_SHORT
                 ).show()
-                
+
                 // Show entry section again
                 showApiKeyEntry()
             }
@@ -727,7 +727,7 @@ class SettingsActivity : AppCompatActivity() {
                 "Authorization failed: $error",
                 Toast.LENGTH_LONG
             ).show()
-            
+
             tokenManager.clearPkceCodeVerifier()
             return
         }
@@ -793,7 +793,7 @@ class SettingsActivity : AppCompatActivity() {
                         // Successfully received API key
                         runOnUiThread {
                             tokenManager.saveOpenRouterApiKey(apiKey)
-                            
+
                             Toast.makeText(
                                 this@SettingsActivity,
                                 "API key retrieved successfully!",
@@ -802,7 +802,7 @@ class SettingsActivity : AppCompatActivity() {
 
                             // Update UI to show API key is configured
                             checkExistingApiKey()
-                            
+
                             // Clean up PKCE state
                             tokenManager.clearPkceCodeVerifier()
                         }
@@ -822,7 +822,7 @@ class SettingsActivity : AppCompatActivity() {
                         "Failed to retrieve API key: ${e.message}",
                         Toast.LENGTH_LONG
                     ).show()
-                    
+
                     // Clean up PKCE state
                     tokenManager.clearPkceCodeVerifier()
                 }

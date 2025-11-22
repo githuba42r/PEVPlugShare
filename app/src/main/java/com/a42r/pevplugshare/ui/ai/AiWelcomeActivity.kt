@@ -38,10 +38,10 @@ class AiWelcomeActivity : AppCompatActivity() {
     private fun openOpenRouterSignup() {
         // Open Settings activity which now has OAuth flow
         markAiWelcomeAsSeen()
-        
+
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
-        
+
         // Proceed to main activity - user can configure API key from settings
         proceedToMainActivity()
     }
