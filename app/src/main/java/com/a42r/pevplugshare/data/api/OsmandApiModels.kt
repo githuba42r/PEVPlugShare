@@ -106,6 +106,7 @@ data class OsmandAddFavoriteRequest(
     val color: String,
     val background: String,
     val icon: String,
+    val hidden: String = "true",  // Note: "true" means hidden by default
     val category: String?,  // Can be null
     val lat: String,  // Note: Web app sends as string
     val lon: String,  // Note: Web app sends as string
@@ -120,7 +121,7 @@ data class OsmandUpdateFavoriteRequest(
     val color: String,
     val background: String = "octagon",
     val icon: String,
-    val hidden: String = "false",  // Note: "false" not "true" - this controls visibility
+    val hidden: String = "true",  // Note: "true" means hidden
     val lat: Double,
     val lon: Double,
     val category: String,  // Must match group name without "favorites-" and ".gpx"
