@@ -288,6 +288,42 @@ class MainViewModel @Inject constructor(
         _needsCategorySelection.value = false
     }
 
+    fun loadFromLocalDatabase() {
+        viewModelScope.launch {
+            android.util.Log.d("MainViewModel", "Loading from local database only (OSMand not connected)")
+            _locationListState.value = LocationListState.Loading
+
+            try {
+                // Use saved category or default
+                val categoryName = tokenManager.getSelectedCategory() ?: "Charging Locations"
+                _selectedCategory.value = categoryName
+                
+                // Load from local database only
+                val dbResult = locationRepository.getLocationsByCategory(categoryName)
+                
+                if (dbResult.isSuccess) {
+                    val locations = dbResult.getOrNull() ?: emptyList()
+                    android.util.Log.d("MainViewModel", "Found ${locations.size} locations in local database")
+                    
+                    if (locations.isNotEmpty()) {
+                        allLocations = locations
+                        val sorted = sortLocationsByDistance(locations)
+                        val filtered = applyFilters(sorted)
+                        _locationListState.value = LocationListState.Success(filtered)
+                    } else {
+                        _locationListState.value = LocationListState.Empty
+                    }
+                } else {
+                    _locationListState.value = LocationListState.Empty
+                }
+                _isOffline.value = true // Indicate that we're in local-only mode
+            } catch (e: Exception) {
+                android.util.Log.e("MainViewModel", "Error loading from local database: ${e.message}")
+                _locationListState.value = LocationListState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
     fun loadLocations(categoryName: String) {
         viewModelScope.launch {
             _locationListState.value = LocationListState.Loading
@@ -413,12 +449,18 @@ class MainViewModel @Inject constructor(
     }
 
     suspend fun hasStoredCredentials(): Boolean {
-        return tokenManager.hasStoredCredentials()
+        return authRepository.hasStoredCredentials()
+    }
+
+    fun isOsmandConnected(): Boolean {
+        return tokenManager.isOsmandConnected()
     }
 
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
+            // Disconnect OSMand
+            tokenManager.disconnectOsmand()
         }
     }
 

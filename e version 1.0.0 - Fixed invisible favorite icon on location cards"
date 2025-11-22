@@ -1,0 +1,1246 @@
+commit d17066b21fb841bc6b0288eb5173546b17a5d083
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 21:52:10 2025 +1000
+
+    Bump version to 1.0.0
+    
+    - Increment versionCode from 2 to 3
+    - Bump versionName from 0.1.1 to 1.0.0 (major version release)
+
+commit c980bf1b09207c340e034f19e740e761b955fe87
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 21:50:54 2025 +1000
+
+    Fix invisible favorite icon on location cards
+    
+    - Updated ic_favourite_outline.xml to use solid black fill with 10% opacity
+    - Removed transparent fill color and white stroke that made icon invisible
+    - Icon now visible but subtle when unfavorited (10% opacity)
+    - Icon remains fully visible when favorited (100% opacity via ic_favourite_filled.xml)
+    
+    This improves UX by making the favorite toggle always visible to users.
+
+commit aaa7c5bc5eea746674cd8858c44c13343e354d2b
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 21:47:54 2025 +1000
+
+    Fix image display: Add collapsible description with More/Less toggle
+    
+    Problem:
+    - In the image gallery modal, long location descriptions would push down
+      the ViewPager, causing images to be displayed at a reduced size
+    - The description ScrollView had a maxHeight of 80dp but could still
+      consume significant vertical space
+    
+    Solution:
+    - Replaced ScrollView with LinearLayout for better control
+    - Limited locationDescription TextView to maxLines=2 with ellipsize="end"
+    - Added toggleDescriptionButton that switches between "More" and "Less"
+    - Button only appears when description exceeds 2 lines or 100 characters
+    - Toggle expands/collapses description between 2 lines and full text
+    
+    Changes:
+    1. activity_main.xml:
+       - Converted description ScrollView to LinearLayout
+       - Added maxLines=2 and ellipsize to locationDescription TextView
+       - Added MaterialButton (toggleDescriptionButton) for expand/collapse
+       - Button is hidden by default (visibility="gone")
+    
+    2. MainActivity.kt:
+       - Added description length detection logic
+       - Implemented toggle button click handler
+       - Button text changes between "More" and "Less"
+       - maxLines switches between 2 (collapsed) and Int.MAX_VALUE (expanded)
+    
+    3. modal_image_gallery.xml:
+       - Updated to match activity_main.xml structure (consistency)
+       - Reduced ViewPager top margin from 120dp to 100dp
+    
+    Benefits:
+    - Images display at maximum size by default
+    - Users retain access to full description via toggle
+    - Cleaner interface for locations with short descriptions
+    - No vertical space wasted on collapsed descriptions
+
+commit 8dcbea38d7f58414e65e2ed38b4c54d0eefdfc75
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 21:34:49 2025 +1000
+
+    Fix: Add location GPS data to downloaded images (Issue #2)
+    
+    When downloading images from the image gallery, location metadata is now
+    preserved by embedding GPS coordinates into the image EXIF data before
+    saving to the device gallery.
+    
+    Changes:
+    - Added ImageUtils.addGpsDataToImage() to embed GPS coordinates in EXIF
+    - Added ImageUtils.convertDecimalToDMS() to convert coordinates to EXIF format
+    - Updated AllImagesGalleryActivity.downloadSelectedImages() to fetch location
+      data and pass coordinates to download function
+    - Updated AllImagesGalleryActivity.downloadImageToGallery() to accept optional
+      latitude/longitude parameters and embed GPS data before copying
+    - Updated FullImageViewerActivity to inject LocationDao and fetch location data
+    - Updated FullImageViewerActivity.downloadCurrentImage() to add GPS metadata
+      before download using coroutines for async database access
+    - Updated MainActivity to track current gallery location and add GPS data
+      before download in downloadImage() function
+    
+    Implementation details:
+    - GPS data is only added if the image is linked to a location
+    - Existing GPS data in images is preserved (no overwriting)
+    - Coordinates are converted to DMS (Degrees, Minutes, Seconds) format
+      required by EXIF specification
+    - Works for all download paths: batch download, full viewer, and modal gallery
+    - Handles both Android 10+ MediaStore and legacy file system approaches
+    
+    Fixes #2
+
+commit ddd6716c8a288f1d3d053a3b405da967fb1f50bb
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 21:26:42 2025 +1000
+
+    refactor: improve location card info display and GPO badge visibility
+    
+    - Remove redundant location name from info section (already shown in card header)
+    - Reorder info display: show description before address for better UX
+    - Hide GPO badge when socket count is 0 for cleaner UI
+    - Improve information hierarchy in expandable info section
+    
+    Changes to LocationAdapter.kt:
+    1. Removed duplicate location name (📍) from info section buildString
+    2. Moved description section to appear before address section
+    3. Added conditional visibility for GPO badge based on gpoCount > 0
+
+commit be8410e513b2f4fd9b7a33c2531f1796d632448d
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 21:21:44 2025 +1000
+
+    refactor: Convert filter UI to badge-style toggles with improved UX
+    
+    Major UI/UX improvements:
+    - Replaced cost and access type RadioGroups with toggleable badge-style TextViews
+    - Converted socket type filters from checkboxes to clickable badges
+    - Added FlexboxLayout dependency for responsive badge wrapping
+    
+    Filter Badge System:
+    - Cost filter: Free/Paid badges (both selected or none = show all)
+    - Access filter: Public/Private badges (both selected or none = show all)
+    - Socket types: 9 socket type badges in FlexboxLayout
+    - All badges use isSelected state with custom drawables
+    - Badge styling: selected = primary color fill with white text, unselected = transparent with outline
+    
+    Socket Count Filter Changes:
+    - Changed range from 1-20 to 0-10 sockets
+    - Max value of 10 now means '10 or more' sockets
+    - Label displays 'Max: 10+' when at maximum
+    - Updated FilterState defaults: minSockets=0, maxSockets=10
+    
+    Null Value Handling:
+    - Locations with null/empty values now match any filter
+    - Null openingHours passes 'Open Now' filter
+    - Zero gpoCount passes socket count filters
+    - Empty socketTypes list passes socket type filters
+    - Makes filtering more inclusive for incomplete location data
+    
+    Top Bar Layout:
+    - Moved filter buttons to right side of toolbar
+    - Filter icon now solid white (100% opacity) via XML tint
+    - Removed dynamic color filter for better visibility
+    - Category badge moved next to menu button
+    
+    Filter Dialog Improvements:
+    - All filters now scrollable in dialog
+    - Reset and Cancel buttons styled as MaterialButtons with white background and green border
+    - Square corners matching Material Design
+    - Normal-sized button text consistent across all buttons
+    - Apply button remains filled for visual hierarchy
+    
+    Resource Updates:
+    - socket_badge_background.xml: State selector for badge backgrounds
+    - socket_badge_text_color.xml: Color selector for badge text
+    - Fixed color references to use existing theme colors
+    - Updated arrays.xml with new default socket range [0.0, 10.0]
+    
+    Technical Changes:
+    - Added FlexboxLayout dependency (com.google.android.flexbox:flexbox:3.0.0)
+    - Updated applyFilters() logic for null-tolerant filtering
+    - Badge click handlers toggle isSelected state
+    - Simplified filter button appearance management
+
+commit c0576365572cff9cbe9458010b8ec216dca8474b
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 20:51:24 2025 +1000
+
+    feat: Add location filtering with favorites toggle
+    
+    - Removed search menu item from main menu
+    - Removed 'PEV PlugShare' title from top bar
+    - Added filter toggle button with modal dialog
+    - Added favorites quick filter toggle button
+    
+    Filter Features:
+    - Cost filter (All/Free/Paid)
+    - Opening hours filter (Open Now checkbox)
+    - Socket count range slider (1-20)
+    - Access type filter (All/Public/Private)
+    - Socket types multi-select (all 9 types)
+    - Scrollable filter dialog with Apply/Cancel/Reset buttons
+    
+    Favorites Filter:
+    - Toggle button with visual states:
+      * OFF: Faded white heart (30% opacity)
+      * ON: Solid black heart
+    - When enabled, shows only favorited locations
+    - When disabled, shows all locations
+    - Disables other filters when active
+    - Persists favorite status to database
+    
+    Filter State Management:
+    - FilterState data class with isActive() helper
+    - All filters applied reactively via MainViewModel
+    - Smart socket type filtering (empty = show all)
+    - Visual indicators on filter buttons when active
+    - Filters temporarily disabled (non-favorites) for testing
+    
+    Bug Fixes:
+    - Fixed favorite toggle to persist to database
+    - Fixed allLocations cache updates when toggling favorites
+    - Fixed filter reapplication after favorite changes
+    
+    UI Improvements:
+    - Custom filter icon (ic_filter.xml)
+    - Faded favorite icon (ic_favourite_faded.xml)
+    - Updated favorite icons to use proper colors
+    - Buttons show active state with color tints
+
+commit 8cd6256460e8987a29ebd233dcca6bf1178bb1d0
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 20:16:05 2025 +1000
+
+    feat(edit): fix sync button state and discard changes detection
+    
+    Fix critical issues with change detection on the edit screen where the
+    "Sync to OsmAnd" button was incorrectly disabled and the discard changes
+    dialog was showing even when no user changes were made.
+    
+    Changes:
+    - Add real-time change tracking with TextWatcher for all input fields
+    - Fix socket type comparison by normalizing display strings (e.g., "AU GPO (AS3112)" vs "AS3112")
+    - Prevent spinner listeners from firing during UI initialization
+    - Initialize photoPaths in EditLocationFormData to prevent false change detection
+    - Update originalLocation after reverse geocoding to maintain consistency
+    - Refactor cancel/back button to use shared handleCancel() method
+    
+    Implementation Details:
+    
+    EditLocationActivity.kt:
+    - Added TextWatcher listeners for all text inputs (business name, address, suburb, etc.)
+    - Added onCheckedChangeListener for fee checkbox
+    - Added onItemSelectedListener for opening hours and socket type spinners
+    - Added isInitializingUI flag to prevent listeners from firing during setup
+    - Wrapped populateFormFromLocation() and initializeUIForAddMode() with flag
+    - Removed duplicate listener setup from updateUIFromFormData()
+    - Created handleCancel() method for consistent back/cancel behavior
+    - Enhanced updateSyncButtonState() with detailed logging
+    
+    EditLocationViewModel.kt:
+    - Added photoPaths initialization in loadLocation() to match database imagePaths
+    - Update originalLocation after reverse geocoding completes
+    - Added normalizeSocketType() helper to extract socket codes from display strings
+    - Updated hasChanges() to use normalized socket type comparison
+    - Added comprehensive logging showing which fields changed and their values
+    
+    Behavior:
+    ✓ Sync to OsmAnd button enabled when no changes made
+    ✓ Sync to OsmAnd button disabled and grayed out when any field modified
+    ✓ Back/Cancel buttons only show discard dialog when changes exist
+    ✓ Real-time change detection as user types
+    ✓ Accurate comparison of socket types regardless of display format
+
+commit a9b35b8f683dbe8146002cff7355d817e6f4b7d9
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 19:50:19 2025 +1000
+
+    feat: Implement background OsmAnd sync service with comprehensive validation
+    
+    PROBLEM:
+    - UPDATE button with 'Sync to OsmAnd' would show success but fail to update osmand.net
+    - Activity was finishing before sync completed, causing JobCancellationException
+    - Sync was using stale data due to race condition between DB update and sync
+    
+    SOLUTION:
+    1. Background Service Architecture:
+       - Created OsmandBackgroundSyncService with independent coroutine scope
+       - Service survives Activity lifecycle, prevents sync cancellation
+       - Uses Intent-based triggering and LocalBroadcastManager for results
+       - Registered in AndroidManifest with exported=false
+    
+    2. Race Condition Fix:
+       - Refactored UPDATE flow to wait for UpdateSuccess state before triggering sync
+       - Added pendingSyncWithVerification and pendingSyncWithoutVerification flags
+       - All sync paths now query DB for authoritative location data
+       - Activity only finishes after sync completes or if not syncing
+    
+    3. Data Integrity:
+       - All sync paths (UPDATE+verify, UPDATE+no-verify, Sync button) use DB values
+       - AI description generation uses DB location fields, not UI bindings
+       - Generated description only for OsmAnd, never saved back to local DB
+       - Form description saved separately to DB before sync
+    
+    4. Security & Validation:
+       BroadcastReceiver (Client):
+       - Only processes when waitingForSyncVerification flag is true
+       - Validates intent action matches expected ACTION_SYNC_RESULT
+       - Ensures message and success flag are present and valid
+       - Uses LocalBroadcastManager for app-internal communication
+    
+       OsmandBackgroundSyncService (Server):
+       - Validates location ID is non-empty and valid UUID format
+       - Requires either description OR generation flag, not both empty
+       - Validates location name is not blank
+       - Validates coordinates are not (0,0)
+       - Ensures final description is not empty before sync
+       - Sets package restriction on broadcast Intent
+       - All validation failures return early with error broadcast
+    
+    5. ViewModel Changes:
+       - Added descriptionGenerator to constructor for injection
+       - Created generateDescriptionFromLocation() to query DB and generate
+       - syncToOsmandWithDescription() creates temp location copy with generated desc
+       - Detailed logging for debugging sync flow
+    
+    TECHNICAL DETAILS:
+    - Service runs in SupervisorJob + Dispatchers.IO coroutine scope
+    - Activity uses lifecycleScope only for UI updates, not sync
+    - BroadcastReceiver registered/unregistered in onCreate/onDestroy
+    - Service validates UUID format using java.util.UUID.fromString()
+    - All error cases broadcast failure message before stopping service
+    
+    FILES MODIFIED:
+    - app/src/main/AndroidManifest.xml: Added OsmandBackgroundSyncService
+    - EditLocationActivity.kt: BroadcastReceiver, Intent triggers, validation
+    - EditLocationViewModel.kt: generateDescriptionFromLocation(), descriptionGenerator injection
+    - OsmandSyncService.kt: New background service with validation
+    - LocalLocationRepository.kt: Enhanced getLocationsByCategory logging
+    - OsmandLocationSyncService.kt: Logging improvements
+    
+    TESTING:
+    Ready for testing all sync scenarios to verify description updates on osmand.net
+
+commit adaf6872a6bbdcbadb5a229efc010a8818a0aaa7
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 16:30:58 2025 +1000
+
+    fix: Update local DB with GPX index after ADD to prevent duplicate syncs
+    
+    - Added downloadGpxFile() helper function to download and return GPX content
+    - After successful ADD, download GPX file and parse to find new location's index
+    - Update local DB with osmandGpxIndex so future syncs use UPDATE instead of ADD
+    - Prevents creating duplicate locations on subsequent sync operations
+
+commit 9bdcd6fdc400fe1656a3da02d952a38cd8e1cd92
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 16:15:39 2025 +1000
+
+    fix: Extract category styles from GPX files instead of non-existent /fav/groups endpoint
+    
+    The /fav/groups endpoint doesn't exist (returns 404). Changed approach to
+    extract category default icon and color by downloading and parsing the
+    actual GPX files from the favorites list.
+    
+    Changes:
+    
+    1. OsmandApiService.kt:
+       - Removed getFavoriteGroups() endpoint (doesn't exist)
+    
+    2. OsmandApiModels.kt:
+       - Removed OsmandFavGroupStyle data class (not needed)
+    
+    3. OsmandLocationSyncService.kt:
+       - Updated getCategoryDefaults() to:
+         * Call /list-files to get all FAVOURITES files
+         * Download each favorites-*.gpx file
+         * Parse GPX content to extract color and icon from waypoint metadata
+         * Extract group name from filename (favorites-Charging Locations.gpx)
+         * Cache all group styles (still 5 minute cache)
+       - More robust: Gets actual styles from the source GPX files
+       - Works with existing /download-file endpoint
+    
+    Implementation:
+    - Lists all favorite files via existing /list-files endpoint
+    - Downloads GPX files using existing /download-file endpoint
+    - Parses color and icon from GPX metadata using regex
+    - Caches results for 5 minutes to avoid repeated downloads
+    - Falls back gracefully if parsing fails
+    
+    This approach is more reliable since it reads the actual GPX files that
+    contain the style information, rather than relying on a non-existent API
+    endpoint.
+
+commit 5889d24baccef24637f694486f36178247ede17b
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 16:09:08 2025 +1000
+
+    fix: Use correct /fav/groups endpoint to fetch favorite category styles
+    
+    Changed from using the OAuth API /v1/favorites/categories endpoint to the
+    correct web API /fav/groups endpoint which returns the actual favorite
+    group styles (icon, color, background) that are used in the OsmAnd web app.
+    
+    Changes:
+    
+    1. OsmandApiService.kt:
+       - Added getFavoriteGroups() endpoint for GET /fav/groups
+       - No authentication headers needed (uses session cookie)
+    
+    2. OsmandApiModels.kt:
+       - Added OsmandFavGroupStyle data class with:
+         * name: Group name (e.g., "Charging Locations")
+         * color: Hex color (e.g., "#eecc22")
+         * icon: Icon name (e.g., "special_star")
+         * background: Background shape (e.g., "circle", "octagon")
+    
+    3. OsmandLocationSyncService.kt:
+       - Updated getCategoryDefaults() to call /fav/groups instead of /v1/favorites/categories
+       - Removed auth header requirement (uses session cookie automatically)
+       - Returns actual favorite group styles from the web API
+       - Enhanced logging to show background shape as well
+    
+    Why this matters:
+    - The OAuth API /v1/favorites/categories returns categories from the mobile API
+    - The web API /fav/groups returns the actual favorite groups with their styles
+    - These are what the web app uses and what gets synced to favorites-*.gpx files
+    - Using the correct endpoint ensures we get the right icon/color for each group
+    
+    Now when syncing locations, the app will use the exact same icon and color
+    that is configured for that favorite group in the OsmAnd web interface.
+
+commit 144a64a23cef958283129452c4e92e8bf49f2119
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 15:55:47 2025 +1000
+
+    feat: Add OsmAnd sync prompt on location update with configurable settings
+    
+    Implemented comprehensive OsmAnd sync workflow when updating locations,
+    with user preferences for sync behavior and description verification.
+    
+    Changes:
+    
+    1. EditLocationActivity:
+       - Always show "Sync to OsmAnd" button in edit mode (not just when pending)
+       - Show sync prompt dialog when user clicks Update button
+       - Dialog offers two options: "Skip Sync" or "Sync to OsmAnd"
+       - Checkbox to enable/disable description verification before syncing
+       - Checkbox to remember settings for future updates
+       - If verification enabled, shows description for confirmation before sync
+       - If no description exists, prompts to generate one via AI or skip
+    
+    2. TokenManager:
+       - Added getSyncToOsmandOnUpdate()/setSyncToOsmandOnUpdate()
+         Controls whether to prompt for sync (default: true)
+       - Added getVerifyDescriptionBeforeSync()/setVerifyDescriptionBeforeSync()
+         Controls whether to verify description before sync (default: true)
+    
+    3. SettingsActivity:
+       - Added "OsmAnd Sync Settings" section
+       - Toggle: "Prompt to sync when updating locations"
+       - Toggle: "Verify description before syncing"
+       - Settings are saved immediately on change
+       - Reset button restores defaults (both enabled)
+    
+    4. dialog_osmand_sync_prompt.xml:
+       - Custom dialog layout with two checkboxes
+       - Verify description checkbox (pre-checked based on saved preference)
+       - Remember settings checkbox
+       - "Skip Sync" and "Sync to OsmAnd" buttons
+    
+    User Flow:
+    1. User edits location and clicks Update
+    2. If prompt enabled: Dialog asks "Sync to OsmAnd?"
+    3. User can choose to verify description or sync directly
+    4. User can check "Remember these settings" to save preferences
+    5. Update saves to local DB, then optionally syncs to OsmAnd
+    6. All preferences configurable in Settings screen
+    
+    This gives users full control over OsmAnd sync behavior while providing
+    sensible defaults and the ability to customize the workflow.
+
+commit fdec01cd0d19dc4731f06095d735182def9f9134
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 15:48:36 2025 +1000
+
+    debug: Add detailed logging for category icon/color selection in OsmAnd sync
+    
+    Added comprehensive debugging to trace icon and color values through the
+    entire ADD/UPDATE sync process to diagnose why locations aren't getting
+    the expected category styling.
+    
+    Enhanced logging includes:
+    
+    getCategoryDefaults():
+    - Shows all categories received from API with their colors and icons
+    - Logs cache hits/misses
+    - Shows the specific category being looked up
+    - Displays final returned values
+    
+    addFavorite() and updateFavorite():
+    - Location's original stored color and icon values
+    - Category defaults fetched from API
+    - Final values chosen (category defaults or fallback to location values)
+    - Complete request payload with color/icon highlighted with ✨
+    - Full JSON body being sent to server
+    
+    This will help identify:
+    1. If category defaults are being fetched correctly from OsmAnd API
+    2. Whether the category name matches what's in the API response
+    3. What values are actually being sent in the request
+    4. If the fallback logic is working as expected
+    
+    Next step: Check logs when syncing a location to see what icon/color
+    values are being retrieved and sent.
+
+commit f2febb9f3635a1a0a037131954bf9ede0d3ac010
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 15:42:59 2025 +1000
+
+    fix: Use category default icon and color when syncing locations to OsmAnd
+    
+    Previously, ADD and UPDATE operations were using the location's stored icon
+    and color values, which would reset the icon/color on the server to whatever
+    was stored locally instead of respecting the category's default styling.
+    
+    Changes:
+    - Added getCategoryDefaults() method to fetch and cache category icon/color
+      from OsmAnd API (/v1/favorites/categories endpoint)
+    - Cache expires after 5 minutes to balance freshness vs API calls
+    - Both addFavorite() and updateFavorite() now:
+      1. Fetch category defaults (icon and color)
+      2. Use category values if available, fallback to location values
+      3. Send correct category styling in the request
+    
+    This ensures that locations synced to OsmAnd maintain the category's
+    visual consistency (e.g., all "Charging Locations" have the same icon
+    and color) rather than having mixed/random icons.
+    
+    Example: If "Charging Locations" category has a lightning bolt icon and
+    yellow color, all locations added/updated to that category will use
+    those values instead of potentially different local values.
+
+commit 16c5ebdb47607b639805d78d25d14b2bee0e6424
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 15:39:22 2025 +1000
+
+    docs: Update OsmAnd API documentation to reflect /fav/add endpoint
+    
+    Updated documentation files to reflect the correct /fav/add endpoint
+    discovered through web app analysis. Previous docs incorrectly stated
+    both ADD and UPDATE used /fav/update with GET method.
+    
+    Corrected information:
+    - ADD uses POST /fav/add with fileName and updatetime parameters
+    - UPDATE uses POST /fav/update with complex parameters
+    - Different JSON structures for each endpoint
+    - Different data types (strings vs doubles for coordinates)
+
+commit 90c742843bffcdc707e5a1b0c807756b35318632
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 15:39:12 2025 +1000
+
+    fix: Correct OsmAnd /fav/add endpoint implementation based on web app analysis
+    
+    Fixed the ADD favorite implementation by analyzing actual web app requests.
+    The previous implementation incorrectly used /fav/update for both ADD and UPDATE.
+    
+    Changes:
+    - OsmandApiService.kt:
+      * Changed addFavorite() to use POST /fav/add endpoint (not /fav/update)
+      * Updated parameters: fileName and updatetime (simpler than UPDATE params)
+      * Changed Referer header to https://osmand.net/map/ (matches web app)
+      * Created separate OsmandAddFavoriteRequest for simpler JSON structure
+    
+    - OsmandApiModels.kt:
+      * Added OsmandAddFavoriteRequest data class matching web app:
+        - lat/lon as Strings (not Doubles like UPDATE)
+        - category as nullable (web app sends null)
+        - ext as nullable (web app sends null)
+        - address and desc as nullable
+    
+    - OsmandLocationSyncService.kt:
+      * Updated addFavorite() to use /fav/add endpoint
+      * Simplified parameters: just fileName and updatetime
+      * Adjusted JSON payload to match web app:
+        - background: "circle" (matches web app default)
+        - category: null (web app sends null for ADD)
+        - ext: null (web app sends null for ADD)
+        - Convert lat/lon to strings
+    
+    Key differences ADD vs UPDATE:
+    - ADD: /fav/add with fileName+updatetime params, simpler JSON
+    - UPDATE: /fav/update with oldGroupName+newGroupName+timestamps+wptName+ind params
+    
+    Verified working: Successfully syncs new locations to OsmAnd server.
+
+commit 0fdabcb34891e23f25c11e0eefb9d30490844cd2
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 15:27:57 2025 +1000
+
+    Fix OsmAnd favorites update implementation
+    
+    PROBLEM FIXED:
+    - Update operations were failing with HTTP 404 error
+    - Code was attempting to use non-existent /mapapi/fav/list endpoint
+    - Initially misunderstood the API to use GET requests with JSON bodies
+    
+    CORRECT IMPLEMENTATION:
+    1. Get updatetime: GET /mapapi/list-files (returns file metadata)
+       - Filters for FAVOURITES type matching target group name
+       - Extracts updatetimems field (millisecond timestamp)
+    
+    2. Update favorite: POST /mapapi/fav/update
+       - Query params: wptName, oldGroupName, newGroupName, oldGroupUpdatetime, newGroupUpdatetime, ind
+       - JSON body: Complete waypoint data (name, desc, lat, lon, color, icon, etc.)
+       - Headers: Origin and Referer for CORS
+    
+    CHANGES:
+    - OsmandApiService.kt: Use POST for update/add, removed getFavList()
+    - OsmandApiModels.kt: Added updatetimems/clienttimems fields, removed obsolete OsmandFavListResponse/OsmandFavGroup
+    - OsmandLocationSyncService.kt: Updated getCurrentGroupUpdatetime() to use listFiles() endpoint
+    - OsmandApiClient.kt: Removed unnecessary POST-to-GET interceptor
+    
+    TESTED: Update existing location now working successfully
+
+commit 4224f39a8c338f54250ac2138c9cc8f3ecc8bcba
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 11:54:43 2025 +1000
+
+    Implement comprehensive OSMAnd sync tracking with database schema enhancement
+    
+    This commit implements a complete OSMAnd sync state tracking system to enable
+    efficient, reliable synchronization without requiring GPX downloads for every
+    sync operation.
+    
+    ## Core Features
+    
+    ### 1. Database Schema Enhancement (Migration 7→8)
+    - Added 5 new fields to LocationEntity and Location model:
+      * osmandOriginalName: Tracks server-side name for update API
+      * osmandGpxIndex: Cached GPX position (0-based) for efficient updates
+      * osmandSyncSource: Origin tracking ("LOCAL" or "OSMAND")
+      * osmandLastSyncedAt: Timestamp of last successful sync
+      * osmandSyncedToServer: Boolean flag for sync state
+    - Created MIGRATION_7_8 with ALTER TABLE statements
+    - Migrated existing SYNCED locations to set osmandSyncSource='OSMAND'
+    
+    ### 2. Enhanced Sync Functions
+    - updateFavorite(): Now updates metadata after successful server update
+      * Sets osmandOriginalName to current location name
+      * Confirms osmandGpxIndex
+      * Updates osmandLastSyncedAt timestamp
+    - addFavorite(): Sets metadata after successful add
+      * Initializes all 5 OSMAnd fields
+      * Marks location as synced to server
+    
+    ### 3. GPX Parser Metadata Tracking
+    - Modified GpxParser.build() to track gpxIndex during iteration
+    - Sets all 5 OSMAnd metadata fields on parsed locations
+    - Ensures imported favorites have complete sync tracking
+    
+    ### 4. ViewModel Optimization
+    - EditLocationViewModel.syncToOsmand() now uses fast path:
+      * Checks for cached metadata (osmandSyncedToServer, osmandOriginalName, osmandGpxIndex)
+      * Uses cached values for direct update (no GPX download)
+      * Falls back to GPX download only when metadata missing
+    - Supports renamed locations via osmandOriginalName tracking
+    
+    ## Benefits
+    - Fast sync: No GPX download when metadata cached
+    - Rename support: Updates work even after local name changes
+    - Efficient: Direct index lookup with proper updatetime handling
+    - Clear attribution: Track location origin (local vs imported)
+    - Backwards compatible: Migration handles existing data
+    
+    ## Modified Files
+    - OsmandApiModels.kt: Added fav/list response models
+    - OsmandApiService.kt: Added getFavList endpoint
+    - PEVPlugShareDatabase.kt: Added MIGRATION_7_8, bumped to version 8
+    - Entities.kt: Added 5 OSMAnd tracking fields to LocationEntity
+    - Models.kt: Added 5 OSMAnd tracking fields to Location
+    - LocalLocationRepository.kt: Updated toLocation/toLocationEntity conversions
+    - GpxParser.kt: Track gpxIndex and set metadata on parsed locations
+    - OsmandLocationSyncService.kt: Update metadata in addFavorite/updateFavorite
+    - EditLocationViewModel.kt: Optimized sync with metadata fast path
+    
+    ## Documentation
+    - OSMAND_UPDATE_ADD_IMPLEMENTATION.md: Original API implementation details
+    - OSMAND_UPDATE_ADD_COMPLETE.md: Initial completion status
+    - OSMAND_SYNC_TRACKING_PROPOSAL.md: Analysis and enhancement proposal
+    - OSMAND_SYNC_TRACKING_IMPLEMENTATION_COMPLETE.md: Implementation summary
+    - OSMAND_API_QUICK_REFERENCE.md: Quick reference guide
+
+commit 9bf555227d73377befa5d7cc2eb1e65660e507ce
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 14:46:52 2025 +1000
+
+    feat: Skip confirmation modal for auto-triggered AI photo analysis
+    
+    Modified AI photo analysis flow to differentiate between auto-triggered
+    and manually-triggered analysis, providing a better UX for different use cases.
+    
+    Changes:
+    - Added `autoTriggered` boolean parameter to analyzePhotosWithAI() function
+    - Auto-triggered analysis (quick add wizard, saved locations):
+      * Applies results directly to form without confirmation modal
+      * Shows simple toast notification when complete
+      * Streamlined for new locations where fields are blank
+    - Manually-triggered analysis (analyze photos button):
+      * Shows confirmation modal with detailed results
+      * User can review and choose to Apply or Cancel changes
+      * Preserves user control over existing form data
+    
+    Implementation details:
+    - Line ~747: Auto-trigger calls analyzePhotosWithAI(autoTriggered = true)
+    - Line ~1754: Manual trigger calls analyzePhotosWithAI(autoTriggered = false)
+    - Lines 2507-2517: Success handler branches on autoTriggered flag
+      * true: applyAnalysisToForm() + toast
+      * false: showAnalysisResults() modal with confirmation
+    
+    This improves UX by:
+    - Reducing unnecessary clicks for new locations
+    - Maintaining confirmation safety for existing data
+    - Providing appropriate feedback for each scenario
+
+commit 0d27383b607375aaf5b57f28fe73b3a914c2f4a7
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 14:42:46 2025 +1000
+
+    Fix AI photo analysis applying changes before user confirmation
+    
+    The AI photo analysis results were being applied to the form immediately
+    upon analysis completion, before the user had a chance to review and
+    confirm or cancel the suggested changes in the modal dialog.
+    
+    Changes:
+    - Removed premature applyAnalysisToForm() call after analysis success
+    - Moved applyAnalysisToForm() to only execute when user clicks "Apply"
+      button in the confirmation modal
+    - Added explanatory comment about waiting for user confirmation
+    
+    This ensures that:
+    - Description and additional details fields remain unchanged until confirmed
+    - Clicking "Cancel" in the modal preserves the original form values
+    - Only clicking "Apply" updates the form with AI-generated content
+    
+    Also cleaned up trailing whitespace in QuickLocationActivity.kt
+
+commit dbb7be9f35a7bddde67d1c5f1c23e41ff2e2f135
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 14:37:22 2025 +1000
+
+    feat: Add loading overlays to improve UX during photo processing workflows
+    
+    Implemented loading screens throughout the Quick Add wizard and Edit Location
+    activity to prevent confusing UI states and provide better user feedback during
+    photo processing operations.
+    
+    Quick Add Wizard Loading Improvements:
+    - Show loading overlay immediately when "Select Photos" is clicked
+    - Loading overlay remains visible throughout entire workflow:
+      * "Loading images..." - when image picker launches
+      * "Processing X photo(s)..." - while processing selected images
+      * "Extracting location data..." - during GPS metadata extraction
+      * "Loading photo editor..." - when launching PhotoGalleryEditorActivity
+    - Hide main content (select/take photos screen) while loading overlay is visible
+    - Restore content only when user returns from photo editor or cancels selection
+    - Added white opaque background with elevation to ensure overlay covers all content
+    - Prevents flash of "select images/take photos" screen during transitions
+    
+    Edit Location Activity Loading Improvements:
+    - Show loading overlay when processing photos from QuickLocationActivity
+    - Display "Loading location images editor..." message with spinner
+    - Hide overlay only after photos are fully processed and form is ready
+    - Set flag before setupObservers to prevent state observer from showing form prematurely
+    - Ensures smooth transition from QuickLocationActivity to EditLocationActivity
+    
+    Layout Changes:
+    - activity_quick_location.xml: Added contentContainer ID and loadingText ID
+    - activity_quick_location.xml: Enhanced loading overlay with opaque background
+    - activity_edit_location.xml: Updated loading overlay message text
+    
+    Code Changes:
+    - QuickLocationActivity: Show/hide loading at appropriate lifecycle points
+    - QuickLocationActivity: Update loading text as workflow progresses
+    - QuickLocationActivity: Handle cancellation by restoring content
+    - EditLocationActivity: Set isProcessingQuickAddPhotos flag early in onCreate
+    - EditLocationActivity: Show loading overlay immediately after setContentView
+    - EditLocationActivity: Added debug logging for troubleshooting
+    
+    Bug Fixes:
+    - Fixed issue where "select images/take photos" screen appeared for 2-5 seconds
+      between image selection and photo editor appearing
+    - Fixed timing issues with loading overlay visibility during activity transitions
+    - Fixed state observer overriding loading overlay visibility
+    
+    Technical Notes:
+    - Used binding.root.post{} to ensure UI updates before activity launches
+    - Loading overlay persists across activity lifecycle (pause/resume)
+    - White background ensures overlay is fully opaque during transitions
+    - Elevation ensures overlay appears above all other content
+
+commit b94c0d2a7672a9938f5c8d5721ce84f54976d14c
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 14:02:49 2025 +1000
+
+    feat: Add automatic AI photo analysis when opening add location form
+    
+    Implemented automatic AI-generated descriptions when the add location form
+    is opened with attached images and an empty description field.
+    
+    Key Features:
+    - Auto-analyze photos on form load if conditions are met:
+      * Has attached images
+      * Description field is empty
+      * AI is enabled and configured with valid API key and model
+    - Works for both new locations and saved-for-later locations
+    - Seamless integration with existing AI analysis workflow
+    
+    Bug Fixes:
+    1. Fixed images disappearing from saved locations when canceling add form
+       - Modified photo loading logic to preserve original cache paths for saved locations
+       - Only process cache photos to permanent storage on form submission
+       - Prevents premature deletion of source images
+    
+    2. Fixed AI analysis not triggering for saved locations
+       - Added auto-analysis call after photos are loaded asynchronously
+       - Ensures analysis runs regardless of photo loading source (cache vs processed)
+    
+    3. Fixed app crashes when loading saved location photos
+       - Added comprehensive file validation before photo operations
+       - Added Glide `.override(800, 800)` to prevent Canvas bitmap size exceptions
+       - Prevents crashes from non-existent files and oversized bitmaps
+       - Full-resolution cache photos now downsampled before loading into thumbnails
+    
+    Implementation Details:
+    - New method `autoAnalyzePhotosIfReady()` validates all conditions before triggering analysis
+    - Photo loading branched based on `savedForLaterId` to handle different workflows
+    - File existence checks added to `addPhotoThumbnail()` and `analyzePhotosWithAI()`
+    - Bitmap size limited to 800x800px max to prevent 199MB+ uncompressed bitmaps
+    - Maintains focus rectangle visualization on downsampled thumbnails
+    
+    Technical Notes:
+    - Glide downsampling prevents Canvas exception: "trying to draw too large bitmap"
+    - Cache photos from camera can be 4000x3000+ pixels (~190MB uncompressed)
+    - 800x800px limit provides high-quality thumbnails while staying within Canvas limits
+    - File validation prevents crashes from race conditions in async photo operations
+
+commit 1f3729ecf484fc3d1e61acb09fe8f9266bd071a1
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 13:35:42 2025 +1000
+
+    Refine save for later feature
+    
+    - Change dialog button from 'Take Another Photo' to 'Add Photo'
+    - Update menu item from 'Complete Saved Locations' to 'Saved' with count badge
+    - Increase button text size (16sp) for better readability
+    - Fix image loss on continue: only delete saved location on successful save
+    - Auto-populate location name with business name first, suburb as fallback
+    - Pass saved_for_later_id to EditLocationActivity for deferred deletion
+    - Add deletePhotoFiles parameter to control file cleanup behavior
+
+commit b4b3860c470d370379d7077ffc4277e8f027db59
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 13:34:51 2025 +1000
+
+    Add save for later feature to quick add wizard
+    
+    - Add SavedForLaterEntity, DAO, and repository for draft locations
+    - Modify QuickLocationActivity dialog to include 'Save for Later' option
+    - Create SavedForLaterActivity to display and manage saved locations
+    - Show location thumbnails, geocoded address, and timestamp
+    - Add 'Saved' menu item with count badge (disabled when empty)
+    - Support continue (opens EditLocationActivity) and delete actions
+    - Only delete saved location when successfully saved, not on continue
+    - Preserve photo files when continuing to prevent data loss
+    - Auto-populate location name with business name or suburb
+    - Update database version to 8 for new saved_for_later table
+
+commit 023090dfc2642e619a58fd2e51e7a020d6ffc38f
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 13:02:43 2025 +1000
+
+    fix: Handle back button in modal image gallery to prevent app closure
+    
+    Implemented proper back button handling for the modal image gallery displayed
+    when viewing location photos, preventing unexpected app closure and providing
+    intuitive navigation behavior.
+    
+    Issue:
+    When viewing location images in the modal gallery (opened by tapping the camera
+    icon on a location card), pressing the device back button would close the entire
+    app instead of just closing the modal overlay. This violated Android navigation
+    patterns and created a poor user experience.
+    
+    Solution:
+    Implemented OnBackPressedCallback to intercept back button presses when the
+    modal gallery is visible and close only the modal instead of the activity.
+    
+    Technical Implementation:
+    - Added OnBackPressedCallback as a class property in MainActivity
+    - Callback initially disabled (isEnabled = false)
+    - Handles back press by:
+      * Hiding imageGalleryOverlay (setting visibility to GONE)
+      * Showing FAB buttons (addLocationFab and quickLocationButton)
+      * Callback automatically disables itself after handling
+    
+    Lifecycle Management:
+    - Callback registered in onCreate() via onBackPressedDispatcher.addCallback()
+    - Enabled when modal opens (backPressedCallback.isEnabled = true)
+    - Disabled when modal closes via:
+      * Toolbar navigation click (close button)
+      * Overlay click (tap outside)
+      * Back button press (in callback handler itself)
+    
+    User Experience:
+    Before Fix:
+    - Open location → tap camera icon → view images → press back → app closes ❌
+    
+    After Fix:
+    - Open location → tap camera icon → view images → press back → modal closes ✓
+    - Location list remains visible
+    - User can continue browsing locations
+    - Consistent with Android back navigation patterns
+    
+    Modal Closing Methods (all now work consistently):
+    1. Toolbar back button (X icon)
+    2. Tap overlay background
+    3. Device back button (NEW)
+    
+    Modified Files:
+    - MainActivity.kt - Added OnBackPressedCallback and enable/disable logic
+    
+    Dependencies:
+    - androidx.activity.OnBackPressedCallback (modern back press handling)
+    - Replaces deprecated onBackPressed() method
+    - Works with Android's predictive back gesture (Android 13+)
+
+commit 5501971c3016dbad4e602a0227adc814cce9a92d
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 12:56:26 2025 +1000
+
+    feat: Add "Go to Location" navigation with highlighting and location name display
+    
+    Implemented navigation from image viewer to location list with visual highlighting
+    and improved image viewer UI with location name header.
+    
+    Navigation Feature:
+    - Added "Go to Location" button in full image viewer toolbar
+    - Icon-only button (location pin icon) positioned in top-right of toolbar
+    - Hidden for orphaned images (only shown for images linked to locations)
+    - Taps button to navigate back to MainActivity
+    - Automatically scrolls to and highlights the associated location
+    - Uses CLEAR_TOP and SINGLE_TOP flags to reuse existing MainActivity instance
+    
+    Location Highlighting:
+    - Orange background (#FFF3E0) applied to highlighted location card
+    - Orange border (4dp stroke, #FF9800) for visual emphasis
+    - Highlight positioned in center of screen using scrollToPositionWithOffset
+    - Auto-dismiss after 10 seconds with smooth transition back to normal styling
+    - Centered positioning calculates offset as (screen_height / 2) - 200px
+    
+    Location Name Header:
+    - Added location name display below toolbar in full image viewer
+    - Semi-transparent black background (#AA000000) matching toolbar
+    - White, bold, 16sp text centered in header
+    - 16dp horizontal padding, 8dp vertical padding
+    - Only shown for images linked to valid locations
+    - Hidden for orphaned images or unknown locations
+    - Provides context about which location the image belongs to
+    
+    Technical Implementation:
+    MainActivity:
+    - Added onNewIntent() to handle navigation intent when activity already exists
+    - Added handleHighlightIntent() to process HIGHLIGHT_LOCATION_ID extra
+    - Added highlightLocation() method with coroutine-based timing
+    - Uses LinearLayoutManager.scrollToPositionWithOffset() for centered positioning
+    - 500ms delay before highlight to ensure list is populated
+    - 10-second auto-clear using coroutine delay
+    
+    LocationAdapter:
+    - Added highlightedLocationId property to track highlighted item
+    - Added highlightLocation() and clearHighlight() methods
+    - Updated bind() to accept isHighlighted parameter
+    - Applies background color and stroke styling when highlighted
+    - notifyDataSetChanged() called to refresh all items when highlight changes
+    
+    FullImageViewerActivity:
+    - Added locationId and isOrphaned properties
+    - Receives EXTRA_LOCATION_ID and EXTRA_IS_ORPHANED from gallery
+    - Added navigateToLocation() method creating intent with highlight flag
+    - Button visibility controlled by isOrphaned flag
+    - Location name header shown only for valid, linked locations
+    - Finishes activity after launching MainActivity to prevent back stack buildup
+    
+    AllImagesGalleryActivity:
+    - Added EXTRA_LOCATION_ID and EXTRA_IS_ORPHANED constants
+    - Passes locationId and isOrphaned flag when opening full viewer
+    - Enables viewer to know if navigation button should be shown
+    
+    Modified Files:
+    - MainActivity.kt - Navigation handling, highlight logic, centered scrolling
+    - LocationAdapter.kt - Highlight state management and styling
+    - FullImageViewerActivity.kt - Navigation button and location header
+    - AllImagesGalleryActivity.kt - Pass location metadata to viewer
+    - activity_full_image_viewer.xml - Added goto button and location header
+    
+    User Experience Flow:
+    1. User views image in full-screen viewer from gallery
+    2. Sees location name in header bar below toolbar
+    3. Taps location pin icon in top-right corner
+    4. App navigates to main screen location list
+    5. List scrolls to center the associated location on screen
+    6. Location highlighted with orange background and border
+    7. User can see location details, edit, navigate, etc.
+    8. After 10 seconds, highlight fades back to normal appearance
+
+commit f3e4e146539c7aafa687e515ce37af9202d47f67
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 12:39:53 2025 +1000
+
+    refactor: Optimize selection checkbox positioning in gallery thumbnails
+    
+    Improved the positioning of the selection checkbox to be flush with the
+    top-right corner of image thumbnails, reducing visual obstruction of
+    image content during multi-select mode.
+    
+    Changes:
+    - Reduced checkbox margins from 8dp to 0dp for both top and end
+    - Checkbox now positioned directly in corner with no spacing
+    - Matches tight corner positioning of delete button for consistency
+    - Maintains full functionality while minimizing interference with image viewing
+    - Checkbox still clearly visible with white tint against overlay
+    
+    Technical Details:
+    - Changed from uniform layout_margin="8dp" to explicit margins
+    - Set layout_marginTop="0dp" and layout_marginEnd="0dp"
+    - Checkbox appears only during selection mode with semi-transparent overlay
+    - Positioned using layout_gravity="top|end" for corner alignment
+    
+    User Experience:
+    - Less visual obstruction when selecting multiple images
+    - Checkbox tightly hugs corner edge for cleaner appearance
+    - Consistent positioning with delete button (both at 0-4dp from edges)
+    - Still easily tappable while taking up minimal screen space
+    - White checkbox clearly visible against dark selection overlay
+    
+    Modified Files:
+    - item_gallery_thumbnail.xml - Optimized checkbox margin values
+
+commit b5e5346bb0ff68623b9efe44d8dc4b6fa1a0260b
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 12:36:23 2025 +1000
+
+    feat: Add delete functionality for orphaned images with confirmation dialogs
+    
+    Implemented comprehensive delete capability for images that are no longer
+    linked to existing locations, with both individual and batch deletion support.
+    
+    Features Added:
+    - Orphaned image detection (images whose parent location no longer exists)
+    - Visual delete button indicator on orphaned images only
+    - Individual image deletion with confirmation dialog
+    - Batch deletion in selection mode with smart filtering
+    - Protective measures to prevent deletion of images linked to active locations
+    - Detailed confirmation dialogs showing orphaned vs linked image counts
+    
+    Orphaned Image Detection:
+    - Images marked as orphaned when locationDao.getLocationById() returns null
+    - Orphaned images display as "Unknown Location (Deleted)" in gallery
+    - Only orphaned images show delete button and can be deleted
+    - Prevents accidental data loss for images still linked to locations
+    
+    Delete Functionality:
+    Individual Deletion:
+    - Red circular delete button appears in top-right corner of orphaned images
+    - Tap delete button triggers confirmation dialog
+    - Dialog warns that action cannot be undone
+    - Images linked to locations show toast message preventing deletion
+    - Gallery automatically reloads after successful deletion
+    
+    Batch Deletion:
+    - Added "Delete Orphaned" menu item in selection mode action bar
+    - Confirmation dialog shows count of orphaned vs linked images in selection
+    - Only orphaned images from selection are deleted (linked images protected)
+    - Detailed message explains which images will be deleted
+    - Success/failure counts displayed in toast after operation
+    - Selection mode exits and gallery reloads after deletion
+    
+    UI Implementation:
+    - Replaced FloatingActionButton with ImageView for tighter corner positioning
+    - Custom circular red background drawable (delete_button_background.xml)
+    - 32dp x 32dp button with 6dp internal padding
+    - Positioned with 4dp margins from top-right corner
+    - White delete icon (#FFFFFF) on red background (#F44336)
+    - 4dp elevation for visibility against image content
+    - Delete button hidden during selection mode (replaced by checkbox)
+    
+    Technical Details:
+    - Added isOrphaned boolean flag to GalleryImageItem data class
+    - Updated collectAllImages() to check location existence in database
+    - Added confirmDeleteSingleImage() and deleteSingleImage() methods
+    - Added confirmDeleteSelectedImages() and deleteSelectedImages() methods
+    - Added onDeleteClick callback to AllImagesAdapter
+    - File deletion performed on Dispatchers.IO with error handling
+    - Gallery reloads after deletion to reflect updated state
+    - Toast notifications for success/failure feedback
+    
+    Modified Files:
+    - AllImagesGalleryActivity.kt - Added orphan detection and delete logic
+    - AllImagesAdapter.kt - Added delete callback and button visibility control
+    - item_gallery_thumbnail.xml - Added ImageView delete button
+    - menu_selection_mode.xml - Added delete menu item
+    
+    New Files:
+    - delete_button_background.xml - Circular red background drawable
+    
+    User Experience Flow:
+    1. Gallery displays all images with orphaned ones marked
+    2. Orphaned images show red delete button in top-right corner
+    3. Tap delete → confirmation dialog → delete single image
+    4. Or long press → select multiple → tap delete menu icon
+    5. Dialog shows orphaned vs linked counts and confirms deletion
+    6. Only orphaned images deleted, linked images protected
+    7. Success message and gallery refresh
+
+commit b350859427171c8fca97cfe59db4af503324dbe1
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 12:27:05 2025 +1000
+
+    feat: Add comprehensive image gallery with multi-select batch operations
+    
+    Implemented a complete image gallery system with download, share, and
+    multi-select capabilities for charging location images.
+    
+    Features Added:
+    - About dialog now displays image statistics (count and total size)
+    - New "Image Gallery" menu option to view all stored location images
+    - AllImagesGalleryActivity with 3-column grid layout showing all images
+    - FullImageViewerActivity with ViewPager2 for swipeable full-screen viewing
+    - Download functionality saves images to Pictures/PEVPlugShare in phone gallery
+    - Share functionality using FileProvider for secure cross-app sharing
+    - Multi-select mode triggered by long press on any image
+    - Batch download/share operations for multiple selected images
+    - Visual selection indicators (overlay, checkbox, blue stroke border)
+    - Selection mode action bar with count display and action buttons
+    
+    Technical Implementation:
+    - MediaStore API with IS_PENDING flag for Android 10+ scoped storage
+    - Legacy file operations for Android 9 and below
+    - Glide for efficient image loading and caching
+    - Material Design 3 components throughout
+    - Coroutines with lifecycle-aware scopes
+    - RecyclerView with ListAdapter and DiffUtil
+    - FileProvider for secure URI sharing
+    
+    New Files:
+    - AllImagesGalleryActivity.kt - Main gallery screen
+    - AllImagesAdapter.kt - RecyclerView adapter with multi-select support
+    - FullImageViewerActivity.kt - Full-screen image viewer
+    - activity_all_images_gallery.xml - Gallery layout
+    - activity_full_image_viewer.xml - Full viewer layout
+    - item_gallery_thumbnail.xml - Thumbnail card with selection UI
+    - menu_selection_mode.xml - Selection mode menu actions
+    - gradient_overlay.xml - Text overlay gradient drawable
+    - ic_download.xml, ic_share.xml - Vector icons
+    
+    Modified Files:
+    - MainActivity.kt - Added image statistics, download/share in modal gallery
+    - main_menu.xml - Added Image Gallery menu item
+    - modal_image_gallery.xml - Added download/share buttons
+    - activity_main.xml - Added download/share button references
+    - AndroidManifest.xml - Registered new activities
+    
+    User Experience:
+    - Tap gallery menu to view all images in grid
+    - Tap thumbnail to view full-screen with swipe navigation
+    - Single image download/share from full viewer or modal gallery
+    - Long press thumbnail to enter multi-select mode
+    - Tap to toggle selection, use menu for batch operations
+    - Downloaded images appear immediately in phone gallery
+    - Share intent supports single or multiple images
+
+commit b6424c9a570c4197c8f0ccd461ad8d69eac0a9e9
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 10:44:34 2025 +1000
+
+    Enhance .gitignore and remove build artifacts from tracking
+    
+    - Remove local.properties from git tracking (contains local SDK paths)
+    - Add **/build/ pattern to catch all build directories recursively
+    - Add .gradle-cache/ and .kotlin/ directories
+    - Consolidate and organize .idea/ patterns for better IDE file handling
+    - Add additional Android Studio IDE files (misc.xml, jarRepositories.xml, etc.)
+    - Add patterns for native build artifacts (*.so, *.o, *.a)
+    - Add test output directories (test-results/, androidTest-results/)
+    - Add coverage report patterns (coverage/, *.gcno, *.gcda)
+    - Add signing file patterns (*.jks, *.keystore, key.properties)
+    - Add editor temporary files (*.swp, *~)
+    - Improve organization with clearer section comments
+    
+    This ensures all build artifacts, IDE-specific files, and local configuration
+    files are properly ignored by git, preventing them from being committed.
+
+commit 897dca2ed8175ad525b9e43273fe483be034f568
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 10:31:49 2025 +1000
+
+    Refactor OSMAnd Web API integration for favorite updates
+    
+    - Add OsmandUpdateFavoriteRequest and OsmandFavoriteExtension data models
+      for structured favorite waypoint updates with complete metadata support
+    
+    - Update OsmandApiService.updateFavorite() to use @Body with structured
+      request object instead of individual @Field parameters, changing from
+      @FormUrlEncoded to JSON request body
+    
+    - Add getCookiesForUrl() helper method to OsmandApiClient for debugging
+      authentication issues
+    
+    - Enhance OsmandLocationSyncService with comprehensive logging:
+      * Add formatJsonIfPossible() utility for readable JSON output in logs
+      * Add buildAddress() helper to construct formatted address strings
+      * Log complete request details including URL, cookies, and JSON payload
+      * Log detailed response information including status, body, and errors
+      * Properly handle and log API error responses
+    
+    - Use structured OsmandUpdateFavoriteRequest with all fields including
+      name, description, address, color, icon, coordinates, category, and
+      extension metadata with timestamps
+    
+    - Set appropriate icon ("charging_station") for PEV charging locations
+    
+    - Fix whitespace inconsistencies in QuickLocationActivity.kt
+    
+    This refactoring improves API integration reliability and debugging
+    capabilities for syncing charging locations to OSMAnd favorites.
+
+commit 60018591fa465142b9d5062b61ab808fae231e4c
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 10:28:40 2025 +1000
+
+    Feature: Auto-populate location name via reverse geocoding
+    
+    - Add autoPopulateLocationName() function to automatically set location name
+    - Perform reverse geocoding when coordinates are set in add mode
+    - Use displayName from geocoding result, fallback to suburb if not available
+    - Works with both photo EXIF coordinates and device GPS location
+    - Silently handles errors to avoid interrupting user workflow
+
+commit 3121ebc13718970acfb23705b6787aacf0605561
+Author: Dev <dev@pevplugshare.local>
+Date:   Sat Nov 22 10:21:46 2025 +1000
+
+    Fix: Preserve captured photos during orientation changes
+    
+    - Add onSaveInstanceState to save photo state across configuration changes
+    - Restore currentPhotoUri, selectedPhotoPaths, and photoMetadata in onCreate
+    - Preserve workflow step and location data (latitude, longitude, bearing)
+    - Fixes issue where captured photos were lost when device orientation changed

@@ -6,6 +6,13 @@
     <string name="login_title">Login to OSMAnd</string>
     <string name="login_button">Login</string>
     <string name="logout_button">Logout</string>
+    <string name="skip_login_button">Skip - Use Local Database Only</string>
+    <string name="osmand_login_benefits">Connect to OSMAnd to:\n• Sync charging locations across devices\n• Backup locations to the cloud\n• Share with other OSMAnd users\n• Navigate using OSMAnd</string>
+    <string name="osmand_login_optional">You can skip login and use the app with local database only. You can connect to OSMAnd later from the menu.</string>
+    <string name="connect_to_osmand">Connect to OSMAnd</string>
+    <string name="osmand_connected">OSMAnd Connected</string>
+    <string name="osmand_not_connected">OSMAnd Not Connected</string>
+    <string name="disconnect_osmand">Disconnect OSMAnd</string>
 
     <!-- Main Screen -->
     <string name="main_title">Charging Locations</string>

@@ -33,7 +33,7 @@ import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
         PendingOperationEntity::class,
         SavedForLaterEntity::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -103,6 +103,30 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add new OSMand sync tracking fields for optional OSMand integration
+                database.execSQL("""
+                    ALTER TABLE locations
+                    ADD COLUMN osmandSyncedUsernames TEXT DEFAULT NULL
+                """)
+                database.execSQL("""
+                    ALTER TABLE locations
+                    ADD COLUMN osmandSyncStatus TEXT NOT NULL DEFAULT 'LOCAL_ONLY'
+                """)
+                
+                // Update existing locations that have been synced to OSMAnd
+                // If osmandSyncedToServer is true, they're SYNCED; otherwise LOCAL_ONLY
+                database.execSQL("""
+                    UPDATE locations
+                    SET osmandSyncStatus = CASE
+                        WHEN osmandSyncedToServer = 1 THEN 'SYNCED'
+                        ELSE 'LOCAL_ONLY'
+                    END
+                """)
+            }
+        }
+
         fun getDatabase(context: Context): PEVPlugShareDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
@@ -110,7 +134,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
                     PEVPlugShareDatabase::class.java,
                     "pevplugshare.db"
                 )
-                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9)
+                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
