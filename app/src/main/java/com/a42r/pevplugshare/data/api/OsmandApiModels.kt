@@ -98,6 +98,21 @@ data class OsmandListFilesResponse(
     val totalFiles: Int? = null
 )
 
+// Request for /fav/add endpoint (simpler structure)
+data class OsmandAddFavoriteRequest(
+    val name: String,
+    val address: String?,
+    val desc: String?,
+    val color: String,
+    val background: String,
+    val icon: String,
+    val category: String?,  // Can be null
+    val lat: String,  // Note: Web app sends as string
+    val lon: String,  // Note: Web app sends as string
+    val ext: OsmandFavoriteExtension? = null  // Can be null
+)
+
+// Request for /fav/update endpoint (more complex structure)
 data class OsmandUpdateFavoriteRequest(
     val name: String,
     val desc: String = "",
