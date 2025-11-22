@@ -219,22 +219,53 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         incomingPhotoPaths?.let {
             // In add mode, check if these are cache paths that need processing
             if (isAddMode) {
-                // If photos are from QuickLocationActivity, they're in cache and need processing
-                // Process them now before adding to photoUris
-                // Note: currentEditLocationId will be set after this block, so we generate temp ID now
-                // and will use it throughout add mode for consistency
-                if (currentEditLocationId == null) {
-                    currentEditLocationId = UUID.randomUUID().toString()
-                }
-
-                lifecycleScope.launch {
-                    val processedPaths = withContext(Dispatchers.IO) {
-                        processCachePhotos(it, currentEditLocationId!!)
+                // Check if coming from saved location - if so, use photos directly without processing
+                // This prevents deleting the original cache files from saved location
+                if (savedForLaterId != null) {
+                    Log.d("EditLocationActivity", "Loading photos from saved location - using original paths")
+                    // Validate and filter photos to ensure they exist
+                    val validPhotos = it.filter { path ->
+                        val file = File(path)
+                        val exists = file.exists()
+                        if (!exists) {
+                            Log.e("EditLocationActivity", "Skipping non-existent saved photo: $path")
+                        }
+                        exists
                     }
-
-                    photoUris.addAll(processedPaths)
+                    
+                    if (validPhotos.isEmpty() && it.isNotEmpty()) {
+                        Log.e("EditLocationActivity", "All ${it.size} saved photos are invalid/missing!")
+                        Toast.makeText(this, "Warning: Saved photos not found", Toast.LENGTH_LONG).show()
+                    } else if (validPhotos.size < it.size) {
+                        Log.w("EditLocationActivity", "${it.size - validPhotos.size} saved photos were invalid/missing")
+                        Toast.makeText(this, "${validPhotos.size}/${it.size} photos loaded", Toast.LENGTH_SHORT).show()
+                    }
+                    
+                    // Use photos directly without processing - they'll be moved to permanent storage on submit
+                    photoUris.addAll(validPhotos)
                     refreshPhotoThumbnails()
                     viewModel.updatePhotoPaths(photoUris)
+
+                    // Don't set currentEditLocationId yet - it will be generated on submit
+                    // This ensures we don't create temp folders unnecessarily
+                } else {
+                    // If photos are from QuickLocationActivity workflow (not saved location), process them now
+                    // Process them now before adding to photoUris
+                    // Note: currentEditLocationId will be set after this block, so we generate temp ID now
+                    // and will use it throughout add mode for consistency
+                    if (currentEditLocationId == null) {
+                        currentEditLocationId = UUID.randomUUID().toString()
+                    }
+
+                    lifecycleScope.launch {
+                        val processedPaths = withContext(Dispatchers.IO) {
+                            processCachePhotos(it, currentEditLocationId!!)
+                        }
+
+                        photoUris.addAll(processedPaths)
+                        refreshPhotoThumbnails()
+                        viewModel.updatePhotoPaths(photoUris)
+                    }
                 }
             } else {
                 // Edit mode: photos already have stable paths (stored in database)
@@ -664,6 +695,28 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             // Set favorite to false
             updateFavoriteIndicator(false)
         }
+
+        // Automatically trigger AI photo analysis if conditions are met
+        // This handles the case where photos are already loaded synchronously (from saved location)
+        autoAnalyzePhotosIfReady()
+    }
+
+    private fun autoAnalyzePhotosIfReady() {
+        // Check if all conditions are met for automatic AI analysis
+        val hasPhotos = photoUris.isNotEmpty()
+        val descriptionEmpty = binding.descriptionInput.text.toString().isBlank()
+        val hasApiKey = tokenManager.getOpenRouterApiKey()?.isNotBlank() == true
+        val hasValidModel = tokenManager.getSelectedAiModel()?.isNotBlank() == true
+
+        Log.d("EditLocationActivity", "Auto-analyze check: hasPhotos=$hasPhotos, descriptionEmpty=$descriptionEmpty, hasApiKey=$hasApiKey, hasValidModel=$hasValidModel")
+
+        if (isAddMode && hasPhotos && descriptionEmpty && hasApiKey && hasValidModel) {
+            Log.d("EditLocationActivity", "Auto-triggering AI photo analysis for ${photoUris.size} photos")
+            // Post this to the message queue to ensure UI is fully initialized
+            binding.root.post {
+                analyzePhotosWithAI()
+            }
+        }
     }
 
     private fun updateFavoriteIndicator(isFavorite: Boolean) {
@@ -852,12 +905,47 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
             // Move temporary images to permanent storage
             val newPermanentPaths: List<String> = if (isAddMode) {
-                // Add mode: Move from temp directory structure
-                ImageUtils.moveTempImagesToPermanent(
-                    this@EditLocationActivity,
-                    currentEditLocationId ?: "temp_fallback",
-                    finalLocationId
-                )
+                // Check if photos are from saved location (in cache) or already processed (in temp)
+                val hasProcessedPhotos = currentEditLocationId != null && photoUris.any { it.contains("/temp_") }
+
+                if (hasProcessedPhotos) {
+                    // Photos were already processed into temp storage (from QuickLocationActivity workflow)
+                    // Move from temp directory structure
+                    ImageUtils.moveTempImagesToPermanent(
+                        this@EditLocationActivity,
+                        currentEditLocationId ?: "temp_fallback",
+                        finalLocationId
+                    )
+                } else {
+                    // Photos are from saved location (still in cache) - need to process and move
+                    Log.d("EditLocationActivity", "Processing cache photos from saved location")
+                    val processedPaths = mutableListOf<String>()
+
+                    photoUris.forEachIndexed { index, cachePath ->
+                        try {
+                            val cacheFile = File(cachePath)
+                            if (cacheFile.exists()) {
+                                // Resize and save to permanent storage
+                                val resizedFile = ImageUtils.resizeAndSaveImage(
+                                    this@EditLocationActivity,
+                                    cacheFile,
+                                    finalLocationId,
+                                    index,
+                                    isTemporary = false // Save directly to permanent
+                                )
+
+                                resizedFile?.let {
+                                    processedPaths.add(it.absolutePath)
+                                    Log.d("EditLocationActivity", "   ✓ Processed cache photo to permanent: ${it.absolutePath}")
+                                    // Don't delete cache file - it belongs to saved location
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Log.e("EditLocationActivity", "Error processing cache photo $index", e)
+                        }
+                    }
+                    processedPaths
+                }
             } else {
                 // Edit mode: Move images from photoUris that are not in permanent storage
                 val permanentDir = ImageUtils.getLocationImageDirectory(this@EditLocationActivity, finalLocationId)
@@ -1916,11 +2004,20 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         // Store current path in tag so it can be updated later
         imageView.tag = filePath
         Log.d("EditLocationActivity", "   Setting imageView tag: $filePath")
+        
+        // Validate file exists before attempting to load
+        if (!file.exists()) {
+            Log.e("EditLocationActivity", "❌ Photo file does not exist: $filePath")
+            // Skip adding this thumbnail
+            return
+        }
 
         lifecycleScope.launch(Dispatchers.IO) {
             Log.d("EditLocationActivity", "")
             Log.d("EditLocationActivity", "🖼️  THUMBNAIL LOADING STARTED")
             Log.d("EditLocationActivity", "   File: $filePath")
+            Log.d("EditLocationActivity", "   File exists: ${file.exists()}")
+            Log.d("EditLocationActivity", "   File readable: ${file.canRead()}")
 
             // Check for focus in SharedPreferences first (during editing)
             val sharedPref = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this@EditLocationActivity)
@@ -1963,6 +2060,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 Glide.with(this@EditLocationActivity)
                     .asBitmap()
                     .load(file)
+                    .override(800, 800) // Downsample large images to prevent Canvas bitmap size exceptions
                     .fitCenter() // Changed from centerCrop() to fitCenter()
                     .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Bypass disk cache
                     .skipMemoryCache(true) // Bypass memory cache
@@ -2337,18 +2435,37 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             Toast.makeText(this, "No photos to analyze", Toast.LENGTH_SHORT).show()
             return
         }
+        
+        // Validate that photo files exist before attempting analysis
+        val validPhotoFiles = photoUris.mapNotNull { path ->
+            val file = File(path)
+            if (file.exists() && file.canRead()) {
+                file
+            } else {
+                Log.e("EditLocationActivity", "Skipping non-existent/unreadable photo: $path")
+                null
+            }
+        }
+        
+        if (validPhotoFiles.isEmpty()) {
+            Toast.makeText(this, "No valid photos found to analyze", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        if (validPhotoFiles.size < photoUris.size) {
+            Log.w("EditLocationActivity", "Some photos were skipped: ${photoUris.size - validPhotoFiles.size} invalid out of ${photoUris.size}")
+        }
 
         // Show progress dialog
         val progressDialog = androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Analyzing Photos")
-            .setMessage("AI is analyzing ${photoUris.size} photo(s)...\nThis may take a moment.")
+            .setMessage("AI is analyzing ${validPhotoFiles.size} photo(s)...\nThis may take a moment.")
             .setCancelable(false)
             .create()
         progressDialog.show()
 
         lifecycleScope.launch {
             try {
-                val photoFiles = photoUris.map { File(it) }
                 val focusAreasMap = mutableMapOf<String, android.graphics.RectF>()
                 for (path in photoUris) {
                     val photoEntity = photoRepository.getPhotoByFilePath(path)
@@ -2358,8 +2475,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         }
                     }
                 }
-                Log.d("EditLocationActivity", "Starting AI photo analysis request for ${photoUris.size} photos")
-                val result = photoAnalyzer.analyzePhotos(photoFiles, apiKey, focusAreasMap)
+                Log.d("EditLocationActivity", "Starting AI photo analysis request for ${validPhotoFiles.size} photos")
+                val result = photoAnalyzer.analyzePhotos(validPhotoFiles, apiKey, focusAreasMap)
 
                 progressDialog.dismiss()
 
