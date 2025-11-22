@@ -76,6 +76,8 @@ data class OsmandFileInfo(
     val type: String,
     val clienttime: String? = null,  // API returns date string like "Oct 13, 2025, 10:38:25 AM"
     val updatetime: String? = null,  // API returns date string like "Oct 13, 2025, 10:38:25 AM"
+    val updatetimems: Long? = null,  // API also returns millisecond timestamp
+    val clienttimems: Long? = null,  // API also returns millisecond timestamp
     val filesize: Long? = null,
     val zipSize: Long? = null,
     val details: OsmandFileDetails? = null
@@ -98,48 +100,34 @@ data class OsmandListFilesResponse(
 
 data class OsmandUpdateFavoriteRequest(
     val name: String,
-    val desc: String? = null,
-    val address: String? = null,
+    val desc: String = "",
+    val address: String = "",
     val color: String,
     val background: String = "octagon",
-    val hidden: String = "true",
     val icon: String,
+    val hidden: String = "false",  // Note: "false" not "true" - this controls visibility
     val lat: Double,
     val lon: Double,
-    val category: String,
+    val category: String,  // Must match group name without "favorites-" and ".gpx"
     val ext: OsmandFavoriteExtension = OsmandFavoriteExtension()
 )
 
 data class OsmandFavoriteExtension(
     val firstPoint: Boolean = false,
     val lastPoint: Boolean = false,
-    val lat: Double = 0.0,
-    val lon: Double = 0.0,
+    val deleted: Boolean = false,
     val time: Long = System.currentTimeMillis(),
     val ele: Double = 6.0,
     val speed: Double = 0.0,
     val hdop: Double? = null,
     val heading: Double? = null,
     val bearing: Double? = null,
-    val deleted: Boolean = false,
     val speedColor: Int = 0,
     val altitudeColor: Int = 0,
     val slopeColor: Int = 0,
     val colourARGB: Int = 0,
     val distance: Double = 0.0,
     val extensions: Map<String, Any> = emptyMap()
-)
-
-// Response from /mapapi/fav/list endpoint
-data class OsmandFavListResponse(
-    val favGroups: List<OsmandFavGroup>? = null
-)
-
-data class OsmandFavGroup(
-    val name: String,
-    val updatetime: Long,  // Milliseconds since epoch
-    val clienttime: Long? = null,
-    val filesize: Long? = null
 )
 
 // Error response from fav/update endpoint

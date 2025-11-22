@@ -55,8 +55,31 @@ class OsmandApiClient(
         }
     }
 
+    // Interceptor to convert POST to GET for OsmAnd's non-standard API
+    // OsmAnd expects GET requests with JSON bodies, which is non-standard
+    private val postToGetInterceptor = object : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val originalRequest = chain.request()
+            
+            // Check if we should convert POST to GET
+            if (originalRequest.header("X-Use-GET-Method") == "true") {
+                // Build new GET request preserving the body (non-standard but required by OsmAnd)
+                val newRequest = originalRequest.newBuilder()
+                    .method("GET", originalRequest.body)  // Preserve the JSON body
+                    .removeHeader("X-Use-GET-Method")
+                    .build()
+                
+                android.util.Log.d("OsmandApiClient", "Converting POST to GET (with body) for ${newRequest.url}")
+                return chain.proceed(newRequest)
+            }
+            
+            return chain.proceed(originalRequest)
+        }
+    }
+
     private val httpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(postToGetInterceptor)  // Add BEFORE authInterceptor
         .addInterceptor(authInterceptor)
         .cookieJar(cookieJar)
         .connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
