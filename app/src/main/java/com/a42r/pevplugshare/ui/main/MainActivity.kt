@@ -25,7 +25,9 @@ import com.a42r.pevplugshare.ui.edit.EditLocationActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.Dispatchers
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
@@ -225,6 +227,10 @@ class MainActivity : AppCompatActivity() {
                     showCategorySelectionDialog()
                     true
                 }
+                R.id.menu_image_gallery -> {
+                    startActivity(Intent(this, com.a42r.pevplugshare.ui.gallery.AllImagesGalleryActivity::class.java))
+                    true
+                }
                 R.id.menu_settings -> {
                     startActivity(Intent(this, com.a42r.pevplugshare.ui.settings.SettingsActivity::class.java))
                     true
@@ -372,22 +378,58 @@ class MainActivity : AppCompatActivity() {
             "1.0"
         }
         
-        val message = "A charging location finder for Personal Electric Vehicles.\n\n" +
-                "Version: $versionName\n" +
-                "Integration: OSMAnd (via Intent API)\n" +
-                "Storage: Local database\n\n" +
-                "Features:\n" +
-                "• Find nearby charging locations\n" +
-                "• Add new charging spots\n" +
-                "• Navigate with OSMAnd\n" +
-                "• Offline support"
+        // Calculate image statistics
+        lifecycleScope.launch {
+            val (imageCount, totalSizeBytes) = withContext(kotlinx.coroutines.Dispatchers.IO) {
+                calculateImageStatistics()
+            }
+            
+            val totalSizeMB = totalSizeBytes / (1024.0 * 1024.0)
+            val sizeString = if (totalSizeMB < 1.0) {
+                String.format("%.2f KB", totalSizeBytes / 1024.0)
+            } else {
+                String.format("%.2f MB", totalSizeMB)
+            }
+            
+            val message = "A charging location finder for Personal Electric Vehicles.\n\n" +
+                    "Version: $versionName\n" +
+                    "Integration: OSMAnd (via Intent API)\n" +
+                    "Storage: Local database\n\n" +
+                    "Image Storage:\n" +
+                    "• Images stored: $imageCount\n" +
+                    "• Total size: $sizeString\n\n" +
+                    "Features:\n" +
+                    "• Find nearby charging locations\n" +
+                    "• Add new charging spots\n" +
+                    "• Navigate with OSMAnd\n" +
+                    "• Offline support"
+            
+            AlertDialog.Builder(this@MainActivity)
+                .setTitle("PEVPlugShare")
+                .setIcon(R.mipmap.ic_launcher)
+                .setMessage(message)
+                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                .show()
+        }
+    }
+    
+    private fun calculateImageStatistics(): Pair<Int, Long> {
+        val imagesDir = com.a42r.pevplugshare.util.ImageUtils.getAppImagesDirectory(this)
+        var totalCount = 0
+        var totalSize = 0L
         
-        AlertDialog.Builder(this)
-            .setTitle("PEVPlugShare")
-            .setIcon(R.mipmap.ic_launcher)
-            .setMessage(message)
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-            .show()
+        if (imagesDir.exists() && imagesDir.isDirectory) {
+            imagesDir.listFiles()?.forEach { locationDir ->
+                if (locationDir.isDirectory) {
+                    locationDir.listFiles()?.filter { it.extension == "jpg" }?.forEach { imageFile ->
+                        totalCount++
+                        totalSize += imageFile.length()
+                    }
+                }
+            }
+        }
+        
+        return Pair(totalCount, totalSize)
     }
 
     private fun navigateToLocation(location: Location) {
@@ -513,14 +555,28 @@ class MainActivity : AppCompatActivity() {
         // Update counter
         imageCounter?.text = "1 / ${imagePaths.size}"
         
+        // Track current image position
+        var currentImagePosition = 0
+        
         android.util.Log.d("PhotoGallery", "Setting up page change listener")
         // Handle page changes
         viewPager.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 android.util.Log.d("PhotoGallery", "Page selected: ${position + 1} / ${imagePaths.size}")
                 imageCounter?.text = "${position + 1} / ${imagePaths.size}"
+                currentImagePosition = position
             }
         })
+        
+        // Download button
+        binding.downloadImageButton?.setOnClickListener {
+            downloadImage(imagePaths[currentImagePosition])
+        }
+        
+        // Share button
+        binding.shareImageButton?.setOnClickListener {
+            shareImage(imagePaths[currentImagePosition])
+        }
         
         // Close button
         android.util.Log.d("PhotoGallery", "Setting up close button")
@@ -542,5 +598,94 @@ class MainActivity : AppCompatActivity() {
         }
         
         android.util.Log.d("PhotoGallery", "=== Modal opened successfully ===")
+    }
+    
+    private fun downloadImage(imagePath: String) {
+        lifecycleScope.launch {
+            try {
+                val sourceFile = java.io.File(imagePath)
+                
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    // Use MediaStore for Android 10+
+                    val values = android.content.ContentValues().apply {
+                        put(android.provider.MediaStore.Images.Media.DISPLAY_NAME, "PEVPlugShare_${System.currentTimeMillis()}.jpg")
+                        put(android.provider.MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                        put(android.provider.MediaStore.Images.Media.RELATIVE_PATH, android.os.Environment.DIRECTORY_PICTURES + "/PEVPlugShare")
+                        put(android.provider.MediaStore.Images.Media.IS_PENDING, 1)
+                    }
+
+                    val uri = contentResolver.insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                    uri?.let { imageUri ->
+                        contentResolver.openOutputStream(imageUri)?.use { outputStream ->
+                            java.io.FileInputStream(sourceFile).use { inputStream ->
+                                inputStream.copyTo(outputStream)
+                            }
+                        }
+                        
+                        // Clear IS_PENDING flag to make the image visible
+                        values.clear()
+                        values.put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
+                        contentResolver.update(imageUri, values, null, null)
+                        
+                        Toast.makeText(this@MainActivity, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
+                    } ?: run {
+                        Toast.makeText(this@MainActivity, "Failed to create image file", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // Use legacy approach for Android 9 and below (requires permission)
+                    if (androidx.core.content.ContextCompat.checkSelfPermission(
+                            this@MainActivity,
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        Toast.makeText(this@MainActivity, "Storage permission required", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+                    
+                    val picturesDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_PICTURES)
+                    val appDir = java.io.File(picturesDir, "PEVPlugShare")
+                    if (!appDir.exists()) {
+                        appDir.mkdirs()
+                    }
+                    
+                    val destFile = java.io.File(appDir, "PEVPlugShare_${System.currentTimeMillis()}.jpg")
+                    sourceFile.copyTo(destFile, overwrite = true)
+                    
+                    // Notify media scanner to make image visible in gallery
+                    val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                    mediaScanIntent.data = Uri.fromFile(destFile)
+                    sendBroadcast(mediaScanIntent)
+                    
+                    Toast.makeText(this@MainActivity, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, "Failed to save image: ${e.message}", Toast.LENGTH_LONG).show()
+                android.util.Log.e("MainActivity", "Error saving image", e)
+            }
+        }
+    }
+    
+    private fun shareImage(imagePath: String) {
+        try {
+            val imageFile = java.io.File(imagePath)
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                imageFile
+            )
+
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(Intent.EXTRA_TEXT, "Charging location image from PEVPlugShare")
+                type = "image/jpeg"
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            startActivity(Intent.createChooser(shareIntent, "Share image"))
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to share image: ${e.message}", Toast.LENGTH_SHORT).show()
+            android.util.Log.e("MainActivity", "Error sharing image", e)
+        }
     }
 }
