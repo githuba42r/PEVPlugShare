@@ -24,6 +24,7 @@ class GpxParser {
             var currentLocation: LocationBuilder? = null
             var currentTag: String? = null
             var wptCount = 0
+            var gpxIndex = 0  // Track zero-based index for OSMAnd updates
             
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 when (eventType) {
@@ -61,10 +62,11 @@ class GpxParser {
                     }
                     XmlPullParser.END_TAG -> {
                         if (parser.name == "wpt" && currentLocation != null) {
-                            val location = currentLocation.build()
+                            val location = currentLocation.build(gpxIndex)
                             if (location != null) {
                                 locations.add(location)
-                                android.util.Log.d("GpxParser", "Added location: ${location.name}")
+                                android.util.Log.d("GpxParser", "Added location at index $gpxIndex: ${location.name}")
+                                gpxIndex++  // Increment index for next waypoint
                             } else {
                                 android.util.Log.w("GpxParser", "Failed to build location (missing name?)")
                             }
@@ -93,8 +95,9 @@ class GpxParser {
         var description: String? = null
         var timestamp: String? = null
         
-        fun build(): Location? {
+        fun build(gpxIndex: Int): Location? {
             val finalName = name ?: return null
+            val currentTime = System.currentTimeMillis()
             return Location(
                 id = finalName,
                 name = finalName,
@@ -112,10 +115,17 @@ class GpxParser {
                 chargingCosts = null,
                 color = "#FF0000",
                 icon = "special_star",
-                lastModified = System.currentTimeMillis(),
+                lastModified = currentTime,
                 isFavourite = false,
                 syncStatus = com.a42r.pevplugshare.data.model.SyncStatus.SYNCED,
-                photos = emptyList()
+                photos = emptyList(),
+                
+                // Set OSMAnd sync metadata
+                osmandOriginalName = finalName,       // Store original server name
+                osmandGpxIndex = gpxIndex,            // Store GPX index
+                osmandSyncSource = "OSMAND",          // Came from OSMAnd
+                osmandSyncedToServer = true,          // Exists on server
+                osmandLastSyncedAt = currentTime      // Downloaded just now
             )
         }
     }

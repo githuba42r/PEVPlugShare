@@ -50,6 +50,7 @@ data class EditLocationFormData(
 @HiltViewModel
 class EditLocationViewModel @Inject constructor(
     private val locationRepository: com.a42r.pevplugshare.domain.repository.LocationRepository,
+    private val authRepository: com.a42r.pevplugshare.domain.repository.AuthRepository,
     private val osmandSyncService: com.a42r.pevplugshare.data.repository.OsmandLocationSyncService,
     private val tokenManager: com.a42r.pevplugshare.data.remote.TokenManager,
     private val descriptionParser: com.a42r.pevplugshare.ai.LocationDescriptionParser,
@@ -425,13 +426,49 @@ class EditLocationViewModel @Inject constructor(
                 result.onSuccess { locations ->
                     val location = locations.find { it.id == locationId }
                     if (location != null) {
-                        osmandSyncService.updateLocationToOsmand(location, category, 0)
-                            .onSuccess {
-                                _editState.value = EditLocationState.UpdateSuccess
+                        // Check if we have cached OSMAnd metadata
+                        if (location.osmandSyncedToServer == true && 
+                            location.osmandOriginalName != null && 
+                            location.osmandGpxIndex != null) {
+                            // Use cached metadata for fast sync
+                            Log.d(TAG, "Using cached metadata: index=${location.osmandGpxIndex}, original name=${location.osmandOriginalName}")
+                            osmandSyncService.updateFavorite(location, category, location.osmandOriginalName!!, location.osmandGpxIndex!!)
+                                .onSuccess {
+                                    _editState.value = EditLocationState.UpdateSuccess
+                                }
+                                .onFailure { e ->
+                                    _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                                }
+                        } else {
+                            // No cached metadata - need to download GPX to determine add vs update
+                            Log.d(TAG, "No cached metadata, downloading GPX to determine sync strategy")
+                            val gpxResult = authRepository.downloadFavoritesGpx(category)
+                            gpxResult.onSuccess { favorites ->
+                                val index = favorites.indexOfFirst { it.id == location.id || it.name == location.name }
+                                if (index >= 0) {
+                                    val currentName = favorites[index].name
+                                    // Use the new updateFavorite function with proper updatetime handling
+                                    osmandSyncService.updateFavorite(location, category, currentName, index)
+                                        .onSuccess {
+                                            _editState.value = EditLocationState.UpdateSuccess
+                                        }
+                                        .onFailure { e ->
+                                            _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                                        }
+                                } else {
+                                    // Location not found in GPX, try adding as new
+                                    osmandSyncService.addFavorite(location, category)
+                                        .onSuccess {
+                                            _editState.value = EditLocationState.UpdateSuccess
+                                        }
+                                        .onFailure { e ->
+                                            _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                                        }
+                                }
+                            }.onFailure { e ->
+                                _editState.value = EditLocationState.Error("Failed to get current state: ${e.message}")
                             }
-                            .onFailure { e ->
-                                _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
-                            }
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -451,13 +488,34 @@ class EditLocationViewModel @Inject constructor(
                     if (location != null) {
                         // Create a copy of the location with the generated description
                         val locationWithGeneratedDescription = location.copy(description = description)
-                        osmandSyncService.updateLocationToOsmand(locationWithGeneratedDescription, category, 0)
-                            .onSuccess {
-                                _editState.value = EditLocationState.UpdateSuccess
+                        
+                        // Download current favorites to get index and current name
+                        val gpxResult = authRepository.downloadFavoritesGpx(category)
+                        gpxResult.onSuccess { favorites ->
+                            val index = favorites.indexOfFirst { it.id == location.id || it.name == location.name }
+                            if (index >= 0) {
+                                val currentName = favorites[index].name
+                                // Use the new updateFavorite function with proper updatetime handling
+                                osmandSyncService.updateFavorite(locationWithGeneratedDescription, category, currentName, index)
+                                    .onSuccess {
+                                        _editState.value = EditLocationState.UpdateSuccess
+                                    }
+                                    .onFailure { e ->
+                                        _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                                    }
+                            } else {
+                                // Location not found in GPX, try adding as new
+                                osmandSyncService.addFavorite(locationWithGeneratedDescription, category)
+                                    .onSuccess {
+                                        _editState.value = EditLocationState.UpdateSuccess
+                                    }
+                                    .onFailure { e ->
+                                        _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                                    }
                             }
-                            .onFailure { e ->
-                                _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
-                            }
+                        }.onFailure { e ->
+                            _editState.value = EditLocationState.Error("Failed to get current state: ${e.message}")
+                        }
                     }
                 }
             } catch (e: Exception) {

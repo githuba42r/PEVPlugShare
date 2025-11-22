@@ -190,7 +190,14 @@ class LocalLocationRepository(
             streetAddress = streetAddress,
             suburb = suburb,
             state = state,
-            postcode = postcode
+            postcode = postcode,
+            
+            // OSMAnd sync tracking fields
+            osmandOriginalName = osmandOriginalName,
+            osmandGpxIndex = osmandGpxIndex,
+            osmandSyncSource = osmandSyncSource,
+            osmandLastSyncedAt = osmandLastSyncedAt,
+            osmandSyncedToServer = osmandSyncedToServer
         )
     }
 
@@ -223,7 +230,14 @@ class LocalLocationRepository(
             streetAddress = streetAddress,
             suburb = suburb,
             state = state,
-            postcode = postcode
+            postcode = postcode,
+            
+            // OSMAnd sync tracking fields
+            osmandOriginalName = osmandOriginalName,
+            osmandGpxIndex = osmandGpxIndex,
+            osmandSyncSource = osmandSyncSource,
+            osmandLastSyncedAt = osmandLastSyncedAt,
+            osmandSyncedToServer = osmandSyncedToServer
         )
     }
 
