@@ -98,15 +98,13 @@ interface OsmandApiService {
     ): retrofit2.Response<okhttp3.ResponseBody>
 
     // Web API - Add a new favorite
-    // NOTE: For ADD, we do NOT include ind or wptName parameters at all
-    @POST("fav/update")
+    // NOTE: Uses /fav/add endpoint with fileName and updatetime parameters
+    @POST("fav/add")
     suspend fun addFavorite(
-        @Query("oldGroupName") oldGroupName: String,
-        @Query("newGroupName") newGroupName: String,
-        @Query("oldGroupUpdatetime") oldGroupUpdatetime: Long,
-        @Query("newGroupUpdatetime") newGroupUpdatetime: Long,
+        @Query("fileName") fileName: String,
+        @Query("updatetime") updatetime: Long,
         @Header("Origin") origin: String = "https://osmand.net",
-        @Header("Referer") referer: String = "https://osmand.net/map/mydata/favorites/",
-        @Body updateRequest: OsmandUpdateFavoriteRequest
+        @Header("Referer") referer: String = "https://osmand.net/map/",
+        @Body addRequest: OsmandAddFavoriteRequest
     ): retrofit2.Response<okhttp3.ResponseBody>
 }

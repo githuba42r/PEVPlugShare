@@ -60,7 +60,7 @@ class OsmandApiClient(
     private val postToGetInterceptor = object : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val originalRequest = chain.request()
-            
+
             // Check if we should convert POST to GET
             if (originalRequest.header("X-Use-GET-Method") == "true") {
                 // Build new GET request preserving the body (non-standard but required by OsmAnd)
@@ -68,11 +68,11 @@ class OsmandApiClient(
                     .method("GET", originalRequest.body)  // Preserve the JSON body
                     .removeHeader("X-Use-GET-Method")
                     .build()
-                
+
                 android.util.Log.d("OsmandApiClient", "Converting POST to GET (with body) for ${newRequest.url}")
                 return chain.proceed(newRequest)
             }
-            
+
             return chain.proceed(originalRequest)
         }
     }
