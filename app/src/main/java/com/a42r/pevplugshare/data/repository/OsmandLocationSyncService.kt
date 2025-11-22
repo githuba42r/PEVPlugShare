@@ -50,10 +50,16 @@ class OsmandLocationSyncService @Inject constructor(
         
         // Check if cache is valid
         if (categoryDefaultsCache != null && (now - categoryDefaultsCacheTime) < CATEGORY_CACHE_DURATION) {
-            categoryDefaultsCache?.get(categoryName)?.let { return it }
+            Log.d(TAG, "Using cached category defaults")
+            categoryDefaultsCache?.get(categoryName)?.let { 
+                Log.d(TAG, "  Found '$categoryName' in cache: color=${it.first}, icon=${it.second}")
+                return it 
+            }
+            Log.d(TAG, "  '$categoryName' NOT in cache")
         }
 
         // Fetch fresh category data
+        Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "Fetching category defaults from OsmAnd API")
         val authHeader = tokenManager.getAuthHeader()
         
@@ -61,6 +67,11 @@ class OsmandLocationSyncService @Inject constructor(
             try {
                 val categoriesResponse = apiClient.api.getCategories(authHeader)
                 val categories = categoriesResponse.categories ?: emptyList()
+                
+                Log.d(TAG, "Received ${categories.size} categories from API:")
+                categories.forEach { category ->
+                    Log.d(TAG, "  • ${category.name}: color=${category.color}, icon=${category.icon}")
+                }
                 
                 // Build cache map
                 categoryDefaultsCache = categories.associate { category ->
@@ -71,10 +82,17 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "Cached ${categories.size} category defaults")
                 
                 // Return the requested category's defaults
-                return categoryDefaultsCache?.get(categoryName) ?: Pair(null, null)
+                val result = categoryDefaultsCache?.get(categoryName) ?: Pair(null, null)
+                Log.d(TAG, "Category '$categoryName' defaults: color=${result.first}, icon=${result.second}")
+                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                return result
             } catch (e: Exception) {
-                Log.w(TAG, "Failed to fetch category defaults: ${e.message}")
+                Log.e(TAG, "❌ Failed to fetch category defaults: ${e.message}", e)
+                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             }
+        } else {
+            Log.e(TAG, "❌ No auth header available to fetch categories")
+            Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         }
         
         return Pair(null, null)
@@ -326,13 +344,21 @@ class OsmandLocationSyncService @Inject constructor(
                 // → Use category's default icon/color instead of location's
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 1.5: Getting category defaults for icon and color")
+                Log.d(TAG, "  Location's stored values:")
+                Log.d(TAG, "    - color: ${location.color}")
+                Log.d(TAG, "    - icon: ${location.icon}")
+                
                 val (categoryColor, categoryIcon) = getCategoryDefaults(categoryName)
                 
                 val useColor = categoryColor ?: location.color
                 val useIcon = categoryIcon ?: location.icon
                 
-                Log.d(TAG, "  Category color: $categoryColor -> Using: $useColor")
-                Log.d(TAG, "  Category icon: $categoryIcon -> Using: $useIcon")
+                Log.d(TAG, "  Category defaults fetched:")
+                Log.d(TAG, "    - categoryColor: $categoryColor")
+                Log.d(TAG, "    - categoryIcon: $categoryIcon")
+                Log.d(TAG, "  Final values to use in request:")
+                Log.d(TAG, "    - useColor: $useColor")
+                Log.d(TAG, "    - useIcon: $useIcon")
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 2: (Optional but recommended) Re-download GPX file
@@ -389,7 +415,21 @@ class OsmandLocationSyncService @Inject constructor(
                     )
                 )
 
-                Log.d(TAG, "JSON payload:\n${gson.toJson(updateRequest)}")
+                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                Log.d(TAG, "UPDATE REQUEST PAYLOAD:")
+                Log.d(TAG, "  name: ${updateRequest.name}")
+                Log.d(TAG, "  desc: ${updateRequest.desc}")
+                Log.d(TAG, "  address: ${updateRequest.address}")
+                Log.d(TAG, "  ✨ color: ${updateRequest.color}")
+                Log.d(TAG, "  background: ${updateRequest.background}")
+                Log.d(TAG, "  ✨ icon: ${updateRequest.icon}")
+                Log.d(TAG, "  hidden: ${updateRequest.hidden}")
+                Log.d(TAG, "  lat: ${updateRequest.lat}")
+                Log.d(TAG, "  lon: ${updateRequest.lon}")
+                Log.d(TAG, "  category: ${updateRequest.category}")
+                Log.d(TAG, "Full JSON:")
+                Log.d(TAG, gson.toJson(updateRequest))
+                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 6: Send request as GET + JSON body with proper headers
@@ -540,13 +580,21 @@ class OsmandLocationSyncService @Inject constructor(
                 // → Use category's default icon/color instead of location's
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 1.5: Getting category defaults for icon and color")
+                Log.d(TAG, "  Location's stored values:")
+                Log.d(TAG, "    - color: ${location.color}")
+                Log.d(TAG, "    - icon: ${location.icon}")
+                
                 val (categoryColor, categoryIcon) = getCategoryDefaults(categoryName)
                 
                 val useColor = categoryColor ?: location.color
                 val useIcon = categoryIcon ?: location.icon
                 
-                Log.d(TAG, "  Category color: $categoryColor -> Using: $useColor")
-                Log.d(TAG, "  Category icon: $categoryIcon -> Using: $useIcon")
+                Log.d(TAG, "  Category defaults fetched:")
+                Log.d(TAG, "    - categoryColor: $categoryColor")
+                Log.d(TAG, "    - categoryIcon: $categoryIcon")
+                Log.d(TAG, "  Final values to use in request:")
+                Log.d(TAG, "    - useColor: $useColor")
+                Log.d(TAG, "    - useIcon: $useIcon")
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 2: Build request with correct parameters for /fav/add
@@ -575,7 +623,21 @@ class OsmandLocationSyncService @Inject constructor(
                     ext = null  // Web app sends null for ADD
                 )
 
-                Log.d(TAG, "JSON payload:\n${gson.toJson(addRequest)}")
+                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                Log.d(TAG, "ADD REQUEST PAYLOAD:")
+                Log.d(TAG, "  name: ${addRequest.name}")
+                Log.d(TAG, "  desc: ${addRequest.desc}")
+                Log.d(TAG, "  address: ${addRequest.address}")
+                Log.d(TAG, "  ✨ color: ${addRequest.color}")
+                Log.d(TAG, "  background: ${addRequest.background}")
+                Log.d(TAG, "  ✨ icon: ${addRequest.icon}")
+                Log.d(TAG, "  category: ${addRequest.category}")
+                Log.d(TAG, "  lat: ${addRequest.lat}")
+                Log.d(TAG, "  lon: ${addRequest.lon}")
+                Log.d(TAG, "  ext: ${addRequest.ext}")
+                Log.d(TAG, "Full JSON:")
+                Log.d(TAG, gson.toJson(addRequest))
+                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 4: Send POST request to /fav/add
