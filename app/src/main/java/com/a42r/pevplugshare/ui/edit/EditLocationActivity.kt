@@ -744,7 +744,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             Log.d("EditLocationActivity", "Auto-triggering AI photo analysis for ${photoUris.size} photos")
             // Post this to the message queue to ensure UI is fully initialized
             binding.root.post {
-                analyzePhotosWithAI()
+                analyzePhotosWithAI(autoTriggered = true)
             }
         }
     }
@@ -1751,7 +1751,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         // Setup analyze photos button
         binding.analyzePhotosButton.setOnClickListener {
             if (photoUris.isNotEmpty()) {
-                analyzePhotosWithAI()
+                analyzePhotosWithAI(autoTriggered = false)
             } else {
                 Toast.makeText(this, "Add photos first to analyze", Toast.LENGTH_SHORT).show()
             }
@@ -2447,7 +2447,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         return highestIndex + 1
     }
 
-    private fun analyzePhotosWithAI() {
+    private fun analyzePhotosWithAI(autoTriggered: Boolean = false) {
         val apiKey = tokenManager.getOpenRouterApiKey()
         if (apiKey.isNullOrBlank()) {
             Toast.makeText(this, "API key not configured", Toast.LENGTH_SHORT).show()
@@ -2506,8 +2506,14 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 result.fold(
                     onSuccess = { analysis ->
                         Log.d("EditLocationActivity", "AI photo analysis request successful, received analysis result")
-                        showAnalysisResults(analysis)
-                        // Don't apply yet - wait for user to confirm in the modal
+                        if (autoTriggered) {
+                            // Auto-triggered: apply directly without confirmation modal
+                            applyAnalysisToForm(analysis)
+                            Toast.makeText(this@EditLocationActivity, "AI analysis applied to form", Toast.LENGTH_SHORT).show()
+                        } else {
+                            // Manual trigger: show confirmation modal
+                            showAnalysisResults(analysis)
+                        }
                     },
                     onFailure = { error ->
                         Log.d("EditLocationActivity", "AI photo analysis request failed: ${error.message}")
