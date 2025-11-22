@@ -102,6 +102,29 @@ class QuickLocationActivity : AppCompatActivity() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        // Restore state if activity was recreated (e.g., orientation change)
+        savedInstanceState?.let {
+            currentPhotoUri = it.getParcelable(KEY_CURRENT_PHOTO_URI)
+            selectedPhotoPaths.clear()
+            selectedPhotoPaths.addAll(it.getStringArrayList(KEY_SELECTED_PHOTO_PATHS) ?: emptyList())
+            currentStep = Step.valueOf(it.getString(KEY_CURRENT_STEP, Step.SELECT_PHOTOS.name))
+            selectedLatitude = if (it.containsKey(KEY_SELECTED_LATITUDE)) it.getDouble(KEY_SELECTED_LATITUDE) else null
+            selectedLongitude = if (it.containsKey(KEY_SELECTED_LONGITUDE)) it.getDouble(KEY_SELECTED_LONGITUDE) else null
+            selectedBearing = if (it.containsKey(KEY_SELECTED_BEARING)) it.getFloat(KEY_SELECTED_BEARING) else null
+            
+            // Restore photo metadata
+            val metadataKeys = it.getStringArrayList(KEY_METADATA_KEYS) ?: emptyList()
+            photoMetadata.clear()
+            for (key in metadataKeys) {
+                val metadata = it.getParcelable<PhotoMetadata>("${KEY_METADATA_PREFIX}$key")
+                if (metadata != null) {
+                    photoMetadata[key] = metadata
+                }
+            }
+            
+            Log.d("QuickLocationActivity", "Restored state: ${selectedPhotoPaths.size} photos, currentPhotoUri=$currentPhotoUri, step=$currentStep")
+        }
+
         // Check and request ACCESS_MEDIA_LOCATION permission on Android 10+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_MEDIA_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -449,5 +472,38 @@ class QuickLocationActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        
+        // Save current state to survive configuration changes (e.g., orientation change)
+        currentPhotoUri?.let { outState.putParcelable(KEY_CURRENT_PHOTO_URI, it) }
+        outState.putStringArrayList(KEY_SELECTED_PHOTO_PATHS, ArrayList(selectedPhotoPaths))
+        outState.putString(KEY_CURRENT_STEP, currentStep.name)
+        
+        selectedLatitude?.let { outState.putDouble(KEY_SELECTED_LATITUDE, it) }
+        selectedLongitude?.let { outState.putDouble(KEY_SELECTED_LONGITUDE, it) }
+        selectedBearing?.let { outState.putFloat(KEY_SELECTED_BEARING, it) }
+        
+        // Save photo metadata
+        val metadataKeys = ArrayList(photoMetadata.keys)
+        outState.putStringArrayList(KEY_METADATA_KEYS, metadataKeys)
+        for ((key, metadata) in photoMetadata) {
+            outState.putParcelable("${KEY_METADATA_PREFIX}$key", metadata)
+        }
+        
+        Log.d("QuickLocationActivity", "Saved state: ${selectedPhotoPaths.size} photos, currentPhotoUri=$currentPhotoUri, step=$currentStep")
+    }
+
+    companion object {
+        private const val KEY_CURRENT_PHOTO_URI = "current_photo_uri"
+        private const val KEY_SELECTED_PHOTO_PATHS = "selected_photo_paths"
+        private const val KEY_CURRENT_STEP = "current_step"
+        private const val KEY_SELECTED_LATITUDE = "selected_latitude"
+        private const val KEY_SELECTED_LONGITUDE = "selected_longitude"
+        private const val KEY_SELECTED_BEARING = "selected_bearing"
+        private const val KEY_METADATA_KEYS = "metadata_keys"
+        private const val KEY_METADATA_PREFIX = "metadata_"
     }
 }
