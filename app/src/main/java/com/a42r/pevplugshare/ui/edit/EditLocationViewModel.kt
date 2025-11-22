@@ -120,7 +120,8 @@ class EditLocationViewModel @Inject constructor(
                             streetAddress = location.streetAddress ?: "",
                             suburb = location.suburb ?: "",
                             state = location.state ?: "",
-                            postcode = location.postcode ?: ""
+                            postcode = location.postcode ?: "",
+                            photoPaths = location.imagePaths
                         )
                         _formData.value = initialFormData
                         _editState.value = EditLocationState.Loaded(location)
@@ -154,6 +155,16 @@ class EditLocationViewModel @Inject constructor(
                                         }
 
                                         _formData.value = _formData.value.copy(
+                                            name = locationName,
+                                            businessName = businessName,
+                                            streetAddress = geocodingResult.streetAddress ?: "",
+                                            suburb = geocodingResult.suburb ?: "",
+                                            state = geocodingResult.state ?: "",
+                                            postcode = geocodingResult.postcode ?: ""
+                                        )
+
+                                        // Update originalLocation to reflect geocoded data so hasChanges() works correctly
+                                        originalLocation = originalLocation?.copy(
                                             name = locationName,
                                             businessName = businessName,
                                             streetAddress = geocodingResult.streetAddress ?: "",
@@ -611,14 +622,33 @@ class EditLocationViewModel @Inject constructor(
         return geocodingService.reverseGeocode(latitude, longitude)
     }
 
+    private fun normalizeSocketType(socketType: String): String {
+        // Extract the socket type code from display strings like "AU GPO (AS3112)" -> "AS3112"
+        return when {
+            socketType.contains("AS3112", ignoreCase = true) -> "AS3112"
+            socketType.contains("Type 2", ignoreCase = true) || socketType.contains("TYPE2", ignoreCase = true) -> "TYPE2_EV"
+            socketType.contains("Tesla", ignoreCase = true) -> "TESLA"
+            socketType.contains("CCS2", ignoreCase = true) || socketType.contains("Combo", ignoreCase = true) -> "CCS2"
+            socketType.contains("CHAdeMO", ignoreCase = true) -> "CHADEMO"
+            socketType.contains("Type 1", ignoreCase = true) || socketType.contains("J1772", ignoreCase = true) -> "TYPE1"
+            socketType.contains("Wall Socket", ignoreCase = true) || socketType.contains("15A", ignoreCase = true) -> "WALL_SOCKET"
+            socketType.contains("Caravan", ignoreCase = true) -> "CARAVAN"
+            else -> "OTHER"
+        }.uppercase()
+    }
+
     fun hasChanges(): Boolean {
         val original = originalLocation ?: return true // If no original location, consider it as having changes (add mode)
 
         val current = _formData.value
 
+        // Normalize socket types for comparison (e.g., "AU GPO (AS3112)" -> "AS3112")
+        val originalSocketType = normalizeSocketType(original.socketTypes.firstOrNull()?.name ?: "AS3112")
+        val currentSocketType = normalizeSocketType(current.socketTypes)
+
         // Compare all relevant fields
-        return original.name != current.name ||
-               original.socketTypes.firstOrNull()?.name != current.socketTypes ||
+        val hasChanges = original.name != current.name ||
+               originalSocketType != currentSocketType ||
                original.publicPrivate.name.lowercase() != current.accessType ||
                original.hasFee != current.hasFee ||
                (original.providerName ?: "") != current.providerName ||
@@ -637,5 +667,32 @@ class EditLocationViewModel @Inject constructor(
                (original.state ?: "") != current.state ||
                (original.postcode ?: "") != current.postcode ||
                original.imagePaths != current.photoPaths
+
+        if (hasChanges) {
+            Log.d(TAG, "hasChanges() = true - Detected differences:")
+            if (original.name != current.name) Log.d(TAG, "  name: '${original.name}' -> '${current.name}'")
+            if (originalSocketType != currentSocketType) Log.d(TAG, "  socketTypes: '$originalSocketType' (from '${original.socketTypes.firstOrNull()?.name}') -> '$currentSocketType' (from '${current.socketTypes}')")
+            if (original.publicPrivate.name.lowercase() != current.accessType) Log.d(TAG, "  accessType: '${original.publicPrivate.name.lowercase()}' -> '${current.accessType}'")
+            if (original.hasFee != current.hasFee) Log.d(TAG, "  hasFee: ${original.hasFee} -> ${current.hasFee}")
+            if ((original.providerName ?: "") != current.providerName) Log.d(TAG, "  providerName: '${original.providerName}' -> '${current.providerName}'")
+            if ((original.providerWebsite ?: "") != current.providerWebsite) Log.d(TAG, "  providerWebsite: '${original.providerWebsite}' -> '${current.providerWebsite}'")
+            if ((original.chargingCosts ?: "") != current.chargingCosts) Log.d(TAG, "  chargingCosts: '${original.chargingCosts}' -> '${current.chargingCosts}'")
+            if ((original.description ?: "") != current.description) Log.d(TAG, "  description: '${original.description}' -> '${current.description}'")
+            if ((original.openingHours ?: "") != current.openingHours) Log.d(TAG, "  openingHours: '${original.openingHours}' -> '${current.openingHours}'")
+            if ((original.additionalInfo ?: "") != current.additionalInfo) Log.d(TAG, "  additionalInfo: '${original.additionalInfo}' -> '${current.additionalInfo}'")
+            if (original.latitude != current.latitude || original.longitude != current.longitude) Log.d(TAG, "  location: (${original.latitude}, ${original.longitude}) -> (${current.latitude}, ${current.longitude})")
+            if (original.gpoCount != current.gpoCount) Log.d(TAG, "  gpoCount: ${original.gpoCount} -> ${current.gpoCount}")
+            if (original.isFavourite != current.isFavorite) Log.d(TAG, "  isFavorite: ${original.isFavourite} -> ${current.isFavorite}")
+            if ((original.businessName ?: "") != current.businessName) Log.d(TAG, "  businessName: '${original.businessName}' -> '${current.businessName}'")
+            if ((original.streetAddress ?: "") != current.streetAddress) Log.d(TAG, "  streetAddress: '${original.streetAddress}' -> '${current.streetAddress}'")
+            if ((original.suburb ?: "") != current.suburb) Log.d(TAG, "  suburb: '${original.suburb}' -> '${current.suburb}'")
+            if ((original.state ?: "") != current.state) Log.d(TAG, "  state: '${original.state}' -> '${current.state}'")
+            if ((original.postcode ?: "") != current.postcode) Log.d(TAG, "  postcode: '${original.postcode}' -> '${current.postcode}'")
+            if (original.imagePaths != current.photoPaths) Log.d(TAG, "  photos: ${original.imagePaths.size} images -> ${current.photoPaths.size} images")
+        } else {
+            Log.d(TAG, "hasChanges() = false - No changes detected")
+        }
+
+        return hasChanges
     }
 }
