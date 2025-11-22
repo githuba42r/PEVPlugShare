@@ -263,6 +263,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             viewModel.initializeForAddMode()
             if (intentLatitude != 0.0 || intentLongitude != 0.0) {
                 viewModel.updateLocation(intentLatitude, intentLongitude)
+                // Automatically perform reverse geocoding to set location name
+                autoPopulateLocationName(intentLatitude, intentLongitude)
             } else {
                 requestLocationAndPopulate()
             }
@@ -293,7 +295,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 com.google.android.gms.tasks.CancellationTokenSource().token
             ).addOnSuccessListener { location ->
                 location?.let {
-                                    viewModel.updateLocation(it.latitude, it.longitude)
+                    viewModel.updateLocation(it.latitude, it.longitude)
+                    // Automatically perform reverse geocoding to set location name
+                    autoPopulateLocationName(it.latitude, it.longitude)
                 }
             }.addOnFailureListener {
                 Toast.makeText(this, "Failed to get location", Toast.LENGTH_SHORT).show()
@@ -1457,6 +1461,44 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 // Re-enable button
                 binding.reverseGeocodeButton.isEnabled = true
                 binding.reverseGeocodeButton.alpha = 1.0f
+            }
+        }
+    }
+
+    /**
+     * Automatically performs reverse geocoding and populates the location name field
+     * when adding a new location. Uses displayName if available, otherwise suburb.
+     */
+    private fun autoPopulateLocationName(latitude: Double, longitude: Double) {
+        if (!isAddMode) {
+            return // Only auto-populate in add mode
+        }
+
+        Log.d("EditLocationActivity", "autoPopulateLocationName: lat=$latitude, lon=$longitude")
+
+        lifecycleScope.launch {
+            try {
+                val result = viewModel.performReverseGeocoding(latitude, longitude)
+                when (result) {
+                    is com.a42r.pevplugshare.data.remote.GeocodingResult.Success -> {
+                        // Set location name to displayName if available, otherwise suburb
+                        val locationName = result.displayName ?: result.suburb
+                        if (!locationName.isNullOrBlank()) {
+                            Log.d("EditLocationActivity", "Auto-setting location name to: $locationName")
+                            viewModel.updateName(locationName)
+                            binding.nameInput.setText(locationName)
+                        } else {
+                            Log.w("EditLocationActivity", "No displayName or suburb available from geocoding")
+                        }
+                    }
+                    is com.a42r.pevplugshare.data.remote.GeocodingResult.Error -> {
+                        Log.w("EditLocationActivity", "Auto-geocoding failed: ${result.message}")
+                        // Don't show error toast for automatic geocoding - it's not critical
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("EditLocationActivity", "Error during auto-geocoding", e)
+                // Don't show error toast for automatic geocoding - it's not critical
             }
         }
     }
