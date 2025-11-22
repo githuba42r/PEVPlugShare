@@ -47,54 +47,50 @@ class OsmandLocationSyncService @Inject constructor(
      */
     private suspend fun getCategoryDefaults(categoryName: String): Pair<String?, String?> {
         val now = System.currentTimeMillis()
-        
+
         // Check if cache is valid
         if (categoryDefaultsCache != null && (now - categoryDefaultsCacheTime) < CATEGORY_CACHE_DURATION) {
             Log.d(TAG, "Using cached category defaults")
-            categoryDefaultsCache?.get(categoryName)?.let { 
+            categoryDefaultsCache?.get(categoryName)?.let {
                 Log.d(TAG, "  Found '$categoryName' in cache: color=${it.first}, icon=${it.second}")
-                return it 
+                return it
             }
             Log.d(TAG, "  '$categoryName' NOT in cache")
         }
 
-        // Fetch fresh category data
+        // Fetch fresh category data from /fav/groups endpoint
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        Log.d(TAG, "Fetching category defaults from OsmAnd API")
-        val authHeader = tokenManager.getAuthHeader()
-        
-        if (authHeader != null) {
-            try {
-                val categoriesResponse = apiClient.api.getCategories(authHeader)
-                val categories = categoriesResponse.categories ?: emptyList()
-                
-                Log.d(TAG, "Received ${categories.size} categories from API:")
-                categories.forEach { category ->
-                    Log.d(TAG, "  • ${category.name}: color=${category.color}, icon=${category.icon}")
-                }
-                
-                // Build cache map
-                categoryDefaultsCache = categories.associate { category ->
-                    category.name to Pair(category.color, category.icon)
-                }
-                categoryDefaultsCacheTime = now
-                
-                Log.d(TAG, "Cached ${categories.size} category defaults")
-                
-                // Return the requested category's defaults
-                val result = categoryDefaultsCache?.get(categoryName) ?: Pair(null, null)
-                Log.d(TAG, "Category '$categoryName' defaults: color=${result.first}, icon=${result.second}")
-                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                return result
-            } catch (e: Exception) {
-                Log.e(TAG, "❌ Failed to fetch category defaults: ${e.message}", e)
-                Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        Log.d(TAG, "Fetching category defaults from /fav/groups endpoint")
+
+        try {
+            val webApiService = apiClient.getWebApiRetrofit()
+                .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
+
+            val groups = webApiService.getFavoriteGroups()
+
+            Log.d(TAG, "Received ${groups.size} favorite groups from API:")
+            groups.forEach { group ->
+                Log.d(TAG, "  • ${group.name}: color=${group.color}, icon=${group.icon}, background=${group.background}")
             }
-        } else {
-            Log.e(TAG, "❌ No auth header available to fetch categories")
+
+            // Build cache map
+            categoryDefaultsCache = groups.associate { group ->
+                group.name to Pair(group.color, group.icon)
+            }
+            categoryDefaultsCacheTime = now
+
+            Log.d(TAG, "Cached ${groups.size} group defaults")
+
+            // Return the requested category's defaults
+            val result = categoryDefaultsCache?.get(categoryName) ?: Pair(null, null)
+            Log.d(TAG, "Category '$categoryName' defaults: color=${result.first}, icon=${result.second}")
+            Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            return result
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ Failed to fetch category defaults from /fav/groups: ${e.message}", e)
             Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         }
-        
+
         return Pair(null, null)
     }
 
@@ -347,12 +343,12 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "  Location's stored values:")
                 Log.d(TAG, "    - color: ${location.color}")
                 Log.d(TAG, "    - icon: ${location.icon}")
-                
+
                 val (categoryColor, categoryIcon) = getCategoryDefaults(categoryName)
-                
+
                 val useColor = categoryColor ?: location.color
                 val useIcon = categoryIcon ?: location.icon
-                
+
                 Log.d(TAG, "  Category defaults fetched:")
                 Log.d(TAG, "    - categoryColor: $categoryColor")
                 Log.d(TAG, "    - categoryIcon: $categoryIcon")
@@ -583,12 +579,12 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "  Location's stored values:")
                 Log.d(TAG, "    - color: ${location.color}")
                 Log.d(TAG, "    - icon: ${location.icon}")
-                
+
                 val (categoryColor, categoryIcon) = getCategoryDefaults(categoryName)
-                
+
                 val useColor = categoryColor ?: location.color
                 val useIcon = categoryIcon ?: location.icon
-                
+
                 Log.d(TAG, "  Category defaults fetched:")
                 Log.d(TAG, "    - categoryColor: $categoryColor")
                 Log.d(TAG, "    - categoryIcon: $categoryIcon")
