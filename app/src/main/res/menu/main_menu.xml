@@ -4,6 +4,9 @@
         android:id="@+id/menu_select_category"
         android:title="Favourite Category" />
     <item
+        android:id="@+id/menu_image_gallery"
+        android:title="Image Gallery" />
+    <item
         android:id="@+id/menu_settings"
         android:title="Settings" />
     <item

@@ -108,6 +108,17 @@
             </intent-filter>
         </activity>
 
+        <!-- All Images Gallery Activity -->
+        <activity
+            android:name=".ui.gallery.AllImagesGalleryActivity"
+            android:exported="false" />
+
+        <!-- Full Image Viewer Activity -->
+        <activity
+            android:name=".ui.gallery.FullImageViewerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PEVPlugShare" />
+
         <!-- FileProvider for camera images -->
         <provider
             android:name="androidx.core.content.FileProvider"
