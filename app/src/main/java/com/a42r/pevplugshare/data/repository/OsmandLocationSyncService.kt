@@ -35,6 +35,51 @@ class OsmandLocationSyncService @Inject constructor(
         }
     }
 
+    // Cache for category defaults (icon and color)
+    private var categoryDefaultsCache: Map<String, Pair<String?, String?>>? = null
+    private var categoryDefaultsCacheTime: Long = 0
+    private val CATEGORY_CACHE_DURATION = 5 * 60 * 1000L // 5 minutes
+
+    /**
+     * Get the default icon and color for a category from OsmAnd API.
+     * Returns Pair(color, icon) or Pair(null, null) if not found.
+     * Uses caching to avoid excessive API calls.
+     */
+    private suspend fun getCategoryDefaults(categoryName: String): Pair<String?, String?> {
+        val now = System.currentTimeMillis()
+        
+        // Check if cache is valid
+        if (categoryDefaultsCache != null && (now - categoryDefaultsCacheTime) < CATEGORY_CACHE_DURATION) {
+            categoryDefaultsCache?.get(categoryName)?.let { return it }
+        }
+
+        // Fetch fresh category data
+        Log.d(TAG, "Fetching category defaults from OsmAnd API")
+        val authHeader = tokenManager.getAuthHeader()
+        
+        if (authHeader != null) {
+            try {
+                val categoriesResponse = apiClient.api.getCategories(authHeader)
+                val categories = categoriesResponse.categories ?: emptyList()
+                
+                // Build cache map
+                categoryDefaultsCache = categories.associate { category ->
+                    category.name to Pair(category.color, category.icon)
+                }
+                categoryDefaultsCacheTime = now
+                
+                Log.d(TAG, "Cached ${categories.size} category defaults")
+                
+                // Return the requested category's defaults
+                return categoryDefaultsCache?.get(categoryName) ?: Pair(null, null)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to fetch category defaults: ${e.message}")
+            }
+        }
+        
+        return Pair(null, null)
+    }
+
     /**
      * Build a formatted address string from location data
      */
@@ -277,6 +322,19 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "✅ Current updatetime: $updatetime")
 
                 // ═══════════════════════════════════════════════════════════
+                // STEP 1.5: Get category defaults (icon and color)
+                // → Use category's default icon/color instead of location's
+                // ═══════════════════════════════════════════════════════════
+                Log.d(TAG, "STEP 1.5: Getting category defaults for icon and color")
+                val (categoryColor, categoryIcon) = getCategoryDefaults(categoryName)
+                
+                val useColor = categoryColor ?: location.color
+                val useIcon = categoryIcon ?: location.icon
+                
+                Log.d(TAG, "  Category color: $categoryColor -> Using: $useColor")
+                Log.d(TAG, "  Category icon: $categoryIcon -> Using: $useIcon")
+
+                // ═══════════════════════════════════════════════════════════
                 // STEP 2: (Optional but recommended) Re-download GPX file
                 // → Ensures we have current <wpt> order and exact <name> values
                 // NOTE: Skipping this for now as we're trusting the caller's
@@ -305,9 +363,9 @@ class OsmandLocationSyncService @Inject constructor(
                     name = location.name,  // Can be new/different
                     desc = location.description ?: "",
                     address = buildAddress(location),
-                    color = location.color,
+                    color = useColor,      // Use category color
                     background = "octagon",
-                    icon = location.icon,
+                    icon = useIcon,        // Use category icon
                     hidden = "false",  // Note: "false" means visible
                     lat = location.latitude,
                     lon = location.longitude,
@@ -478,6 +536,19 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "✅ Using updatetime: $updatetime")
 
                 // ═══════════════════════════════════════════════════════════
+                // STEP 1.5: Get category defaults (icon and color)
+                // → Use category's default icon/color instead of location's
+                // ═══════════════════════════════════════════════════════════
+                Log.d(TAG, "STEP 1.5: Getting category defaults for icon and color")
+                val (categoryColor, categoryIcon) = getCategoryDefaults(categoryName)
+                
+                val useColor = categoryColor ?: location.color
+                val useIcon = categoryIcon ?: location.icon
+                
+                Log.d(TAG, "  Category color: $categoryColor -> Using: $useColor")
+                Log.d(TAG, "  Category icon: $categoryIcon -> Using: $useIcon")
+
+                // ═══════════════════════════════════════════════════════════
                 // STEP 2: Build request with correct parameters for /fav/add
                 // Parameters: fileName and updatetime (simpler than /fav/update)
                 // ═══════════════════════════════════════════════════════════
@@ -495,9 +566,9 @@ class OsmandLocationSyncService @Inject constructor(
                     name = location.name,
                     address = buildAddress(location).takeIf { it.isNotBlank() },
                     desc = location.description?.takeIf { it.isNotBlank() },
-                    color = location.color,
+                    color = useColor,      // Use category color
                     background = "circle",  // Web app uses "circle"
-                    icon = location.icon,
+                    icon = useIcon,        // Use category icon
                     category = null,  // Web app sends null, not category name
                     lat = location.latitude.toString(),   // String, not Double
                     lon = location.longitude.toString(),  // String, not Double
