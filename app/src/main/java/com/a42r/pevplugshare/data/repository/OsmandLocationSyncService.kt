@@ -68,7 +68,7 @@ class OsmandLocationSyncService @Inject constructor(
 
             // Get list of all favorites files
             val listResponse = webApiService.listFiles()
-            val favoriteFiles = listResponse.uniqueFiles?.filter { 
+            val favoriteFiles = listResponse.uniqueFiles?.filter {
                 it.type == "FAVOURITES" && it.name.startsWith("favorites-")
             } ?: emptyList()
 
@@ -93,12 +93,12 @@ class OsmandLocationSyncService @Inject constructor(
                     )
 
                     val gpxContent = response.string()
-                    
+
                     // Parse color and icon from GPX metadata
                     // Look for first waypoint's color and icon as group defaults
                     val colorMatch = Regex("""color['"]\s*:\s*['"]([^'"]+)['"]""").find(gpxContent)
                     val iconMatch = Regex("""icon['"]\s*:\s*['"]([^'"]+)['"]""").find(gpxContent)
-                    
+
                     val color = colorMatch?.groupValues?.get(1)
                     val icon = iconMatch?.groupValues?.get(1)
 
@@ -297,6 +297,132 @@ class OsmandLocationSyncService @Inject constructor(
     }
 
     /**
+     * Smart sync function that automatically determines whether to ADD or UPDATE.
+     * Downloads GPX file and uses intelligent matching to find if location exists in OsmAnd.
+     *
+     * Matching strategy:
+     * 1. Name match with GPS verification (name matches AND within match distance)
+     * 2. GPS proximity match (closest location within match distance)
+     *
+     * @param location The location to sync
+     * @param categoryName The category/group name
+     * @return Result indicating success or failure
+     */
+    suspend fun smartSync(
+        location: Location,
+        categoryName: String
+    ): Result<Unit> {
+        Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        Log.d(TAG, "SMART SYNC - Auto-detecting ADD vs UPDATE")
+        Log.d(TAG, "Location: ${location.name}")
+        Log.d(TAG, "Category: $categoryName")
+        Log.d(TAG, "Coordinates: ${location.latitude}, ${location.longitude}")
+
+        val groupName = "favorites-${categoryName}.gpx"
+
+        // Download current GPX to check if location exists
+        val gpxContent = downloadGpxFile(groupName)
+
+        if (gpxContent == null) {
+            Log.w(TAG, "GPX file doesn't exist yet - will ADD as new location")
+            return addFavorite(location, categoryName)
+        }
+
+        // Parse all waypoints from GPX
+        val wptPattern = "<wpt\\s+lat=\"([^\"]+)\"\\s+lon=\"([^\"]+)\">.*?<name>([^<]+)</name>".toRegex(RegexOption.DOT_MATCHES_ALL)
+        val matches = wptPattern.findAll(gpxContent).toList()
+
+        Log.d(TAG, "Found ${matches.size} existing locations in OsmAnd")
+
+        val matchDistanceMeters = tokenManager.getOsmandLocationMatchDistance()
+        val matchDistanceDegrees = matchDistanceMeters / 111000.0
+
+        Log.d(TAG, "Using match distance: ${matchDistanceMeters}m (~${String.format("%.6f", matchDistanceDegrees)}°)")
+
+        // Strategy 1: Try name match with GPS verification
+        var matchedIndex: Int? = null
+        var matchedName: String? = null
+
+        matches.forEachIndexed { idx, match ->
+            val wptLat = match.groupValues[1].toDoubleOrNull() ?: return@forEachIndexed
+            val wptLon = match.groupValues[2].toDoubleOrNull() ?: return@forEachIndexed
+            val wptName = match.groupValues[3]
+
+            // Check name match
+            if (wptName == location.name) {
+                // Verify GPS proximity
+                val latDiff = Math.abs(wptLat - location.latitude)
+                val lonDiff = Math.abs(wptLon - location.longitude)
+
+                if (latDiff < matchDistanceDegrees && lonDiff < matchDistanceDegrees) {
+                    matchedIndex = idx
+                    matchedName = wptName
+                    Log.d(TAG, "✓ MATCHED by name with GPS verification at index $idx")
+                    Log.d(TAG, "  Name: '$wptName'")
+                    Log.d(TAG, "  OsmAnd: $wptLat, $wptLon")
+                    Log.d(TAG, "  App:    ${location.latitude}, ${location.longitude}")
+                    return@forEachIndexed
+                } else {
+                    Log.d(TAG, "⚠️ Name matches but GPS too far: '$wptName' (lat diff: ${latDiff}, lon diff: ${lonDiff})")
+                }
+            }
+        }
+
+        // Strategy 2: If no name match, find closest location within match distance
+        if (matchedIndex == null) {
+            Log.d(TAG, "No name match found, searching by GPS proximity...")
+
+            var closestDistance = Double.MAX_VALUE
+            var closestIndex: Int? = null
+            var closestName: String? = null
+            var closestLat: Double? = null
+            var closestLon: Double? = null
+
+            matches.forEachIndexed { idx, match ->
+                val wptLat = match.groupValues[1].toDoubleOrNull() ?: return@forEachIndexed
+                val wptLon = match.groupValues[2].toDoubleOrNull() ?: return@forEachIndexed
+                val wptName = match.groupValues[3]
+
+                val latDiff = Math.abs(wptLat - location.latitude)
+                val lonDiff = Math.abs(wptLon - location.longitude)
+
+                // Simple Euclidean distance in degrees
+                val distance = Math.sqrt(latDiff * latDiff + lonDiff * lonDiff)
+
+                if (distance < closestDistance && latDiff < matchDistanceDegrees && lonDiff < matchDistanceDegrees) {
+                    closestDistance = distance
+                    closestIndex = idx
+                    closestName = wptName
+                    closestLat = wptLat
+                    closestLon = wptLon
+                }
+            }
+
+            if (closestIndex != null) {
+                matchedIndex = closestIndex
+                matchedName = closestName
+                Log.d(TAG, "✓ MATCHED by GPS proximity at index $closestIndex")
+                Log.d(TAG, "  Name: '$closestName'")
+                Log.d(TAG, "  OsmAnd: $closestLat, $closestLon")
+                Log.d(TAG, "  App:    ${location.latitude}, ${location.longitude}")
+                Log.d(TAG, "  Distance: ~${String.format("%.6f", closestDistance)}° (~${String.format("%.1f", closestDistance * 111000)}m)")
+            }
+        }
+
+        // Decide: ADD or UPDATE
+        val finalMatchedIndex = matchedIndex
+        val finalMatchedName = matchedName
+
+        return if (finalMatchedIndex != null && finalMatchedName != null) {
+            Log.d(TAG, "→ Location EXISTS in OsmAnd - using UPDATE")
+            updateFavorite(location, categoryName, finalMatchedName, finalMatchedIndex)
+        } else {
+            Log.d(TAG, "→ Location NOT FOUND in OsmAnd - using ADD")
+            addFavorite(location, categoryName)
+        }
+    }
+
+    /**
      * Get the current updatetime for a favorites group from the server.
      * This MUST be called immediately before every update/add operation.
      *
@@ -397,7 +523,7 @@ class OsmandLocationSyncService @Inject constructor(
                 // → Always use specific color, icon for consistency
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 1.5: Using hardcoded style attributes")
-                
+
                 val useColor = "#FF2C2C"
                 val useIcon = "charging_station"
 
@@ -406,13 +532,91 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "    - icon: $useIcon")
 
                 // ═══════════════════════════════════════════════════════════
-                // STEP 2: (Optional but recommended) Re-download GPX file
-                // → Ensures we have current <wpt> order and exact <name> values
-                // NOTE: Skipping this for now as we're trusting the caller's
-                // currentName and index values. In production, you should
-                // re-download and verify.
+                // STEP 2: Re-download GPX file to verify current state
+                // → Ensures we have the EXACT current <wpt> order and <name>
+                // → Critical when location was modified in OsmAnd app/web
                 // ═══════════════════════════════════════════════════════════
-                Log.d(TAG, "STEP 2: (Skipped - trusting provided currentName and index)")
+                Log.d(TAG, "STEP 2: Re-downloading GPX to verify current name and index")
+
+                val gpxContent = downloadGpxFile(groupName)
+                if (gpxContent == null) {
+                    Log.e(TAG, "❌ FAILED: Could not download GPX file: $groupName")
+                    return Result.failure(Exception("Could not download GPX file to verify current state"))
+                }
+
+                // Parse GPX to find all waypoints and verify our location
+                val wptPattern = "<wpt\\s+lat=\"([^\"]+)\"\\s+lon=\"([^\"]+)\">.*?<name>([^<]+)</name>".toRegex(RegexOption.DOT_MATCHES_ALL)
+                val matches = wptPattern.findAll(gpxContent).toList()
+
+                Log.d(TAG, "Found ${matches.size} waypoints in GPX:")
+                matches.forEachIndexed { idx, match ->
+                    val wptName = match.groupValues[3]
+                    Log.d(TAG, "  [$idx] $wptName")
+                }
+
+                // Try to find the location by name or by lat/lon proximity
+                var verifiedIndex: Int? = null
+                var verifiedName: String? = null
+
+                // First try: exact name match
+                matches.forEachIndexed { idx, match ->
+                    val wptName = match.groupValues[3]
+                    if (wptName == currentName || wptName == location.name) {
+                        verifiedIndex = idx
+                        verifiedName = wptName
+                        Log.d(TAG, "✓ Found by name match at index $idx: '$wptName'")
+                        return@forEachIndexed
+                    }
+                }
+
+                // Second try: lat/lon proximity using configured match distance
+                if (verifiedIndex == null) {
+                    val matchDistanceMeters = tokenManager.getOsmandLocationMatchDistance()
+                    Log.d(TAG, "Using match distance: ${matchDistanceMeters}m")
+
+                    // Convert meters to approximate degrees
+                    // At equator: 1 degree latitude ≈ 111km, 1 degree longitude ≈ 111km * cos(latitude)
+                    // For simplicity, use 111,000 meters per degree as approximation
+                    val matchDistanceDegrees = matchDistanceMeters / 111000.0
+
+                    matches.forEachIndexed { idx, match ->
+                        val wptLat = match.groupValues[1].toDoubleOrNull() ?: return@forEachIndexed
+                        val wptLon = match.groupValues[2].toDoubleOrNull() ?: return@forEachIndexed
+                        val wptName = match.groupValues[3]
+
+                        val latDiff = Math.abs(wptLat - location.latitude)
+                        val lonDiff = Math.abs(wptLon - location.longitude)
+
+                        if (latDiff < matchDistanceDegrees && lonDiff < matchDistanceDegrees) {
+                            verifiedIndex = idx
+                            verifiedName = wptName
+                            Log.d(TAG, "✓ Found by lat/lon proximity at index $idx: '$wptName'")
+                            Log.d(TAG, "  GPX: $wptLat, $wptLon")
+                            Log.d(TAG, "  App: ${location.latitude}, ${location.longitude}")
+                            Log.d(TAG, "  Distance threshold: ${matchDistanceMeters}m (~${String.format("%.6f", matchDistanceDegrees)}°)")
+                            return@forEachIndexed
+                        }
+                    }
+                }
+
+                if (verifiedIndex == null || verifiedName == null) {
+                    Log.e(TAG, "❌ FAILED: Could not find location in GPX")
+                    Log.e(TAG, "   Searched for name: '$currentName' or '${location.name}'")
+                    Log.e(TAG, "   Searched near: ${location.latitude}, ${location.longitude}")
+                    return Result.failure(Exception("Location not found in GPX - may have been deleted or moved"))
+                }
+
+                // Use verified values instead of caller-provided ones
+                val actualCurrentName = verifiedName!!
+                val actualIndex = verifiedIndex!!
+
+                if (actualCurrentName != currentName || actualIndex != index) {
+                    Log.w(TAG, "⚠️ CORRECTED name/index from GPX verification:")
+                    Log.w(TAG, "   Caller provided: name='$currentName', index=$index")
+                    Log.w(TAG, "   GPX verified:    name='$actualCurrentName', index=$actualIndex")
+                } else {
+                    Log.d(TAG, "✓ Verified: name and index match caller's values")
+                }
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 3: Build request with EXACT query parameters
@@ -422,8 +626,8 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "  newGroupName: $groupName")
                 Log.d(TAG, "  oldGroupUpdatetime: $updatetime")
                 Log.d(TAG, "  newGroupUpdatetime: $updatetime")
-                Log.d(TAG, "  wptName: $currentName (will be URL-encoded)")
-                Log.d(TAG, "  ind: $index")
+                Log.d(TAG, "  wptName: $actualCurrentName (will be URL-encoded)")
+                Log.d(TAG, "  ind: $actualIndex")
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 5: Build JSON payload matching exact structure
@@ -489,12 +693,12 @@ class OsmandLocationSyncService @Inject constructor(
                 Log.d(TAG, "Cookies: ${cookies.joinToString("; ") { "${it.name}=${it.value.take(10)}..." }}")
 
                 val response = webApiService.updateFavorite(
-                    wptName = currentName,  // EXACT current name from GPX
+                    wptName = actualCurrentName,  // EXACT current name from verified GPX
                     oldGroupName = groupName,
                     newGroupName = groupName,
                     oldGroupUpdatetime = updatetime,
                     newGroupUpdatetime = updatetime,
-                    ind = index,  // EXACT zero-based index from GPX
+                    ind = actualIndex,  // EXACT zero-based index from verified GPX
                     // Origin and Referer headers are set in the service interface
                     updateRequest = updateRequest
                 )
@@ -514,7 +718,7 @@ class OsmandLocationSyncService @Inject constructor(
                     val syncedLocation = location.copy(
                         syncStatus = SyncStatus.SYNCED,
                         osmandOriginalName = location.name,  // Update to new server name
-                        osmandGpxIndex = index,              // Confirm index
+                        osmandGpxIndex = actualIndex,        // Update to verified index
                         osmandLastSyncedAt = System.currentTimeMillis()
                     )
                     localRepository.updateLocation(syncedLocation, categoryName)
@@ -594,6 +798,16 @@ class OsmandLocationSyncService @Inject constructor(
         Log.d(TAG, "Name: ${location.name}")
         Log.d(TAG, "Category: $categoryName")
         Log.d(TAG, "Location: ${location.latitude}, ${location.longitude}")
+        Log.d(TAG, "Current OsmAnd metadata:")
+        Log.d(TAG, "  osmandSyncedToServer: ${location.osmandSyncedToServer}")
+        Log.d(TAG, "  osmandOriginalName: ${location.osmandOriginalName}")
+        Log.d(TAG, "  osmandGpxIndex: ${location.osmandGpxIndex}")
+        Log.d(TAG, "  syncStatus: ${location.syncStatus}")
+
+        if (location.osmandSyncedToServer == true && location.osmandGpxIndex != null) {
+            Log.w(TAG, "⚠️⚠️⚠️ WARNING: This location appears to already be synced!")
+            Log.w(TAG, "         Should use UPDATE instead of ADD to avoid duplicates!")
+        }
 
         val groupName = "favorites-${categoryName}.gpx"
         var attempt = 0
@@ -625,7 +839,7 @@ class OsmandLocationSyncService @Inject constructor(
                 // → Always use specific color, icon for consistency
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 1.5: Using hardcoded style attributes")
-                
+
                 val useColor = "#FF2C2C"
                 val useIcon = "charging_station"
 
@@ -715,7 +929,7 @@ class OsmandLocationSyncService @Inject constructor(
                             // Parse GPX to find our location's index
                             val wptPattern = "<wpt\\s+lat=\"([^\"]+)\"\\s+lon=\"([^\"]+)\">.*?<name>([^<]+)</name>".toRegex(RegexOption.DOT_MATCHES_ALL)
                             val matches = wptPattern.findAll(gpxContent)
-                            
+
                             matches.forEachIndexed { index, match ->
                                 val wptName = match.groupValues[3]
                                 if (wptName == location.name) {
@@ -724,7 +938,7 @@ class OsmandLocationSyncService @Inject constructor(
                                     return@forEachIndexed
                                 }
                             }
-                            
+
                             if (gpxIndex == null) {
                                 Log.w(TAG, "⚠️ Could not find location in GPX - index will remain null")
                             }
@@ -750,7 +964,12 @@ class OsmandLocationSyncService @Inject constructor(
                     )
                     localRepository.updateLocation(syncedLocation, categoryName)
 
-                    Log.d(TAG, "Local DB updated with osmandGpxIndex=$gpxIndex")
+                    Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    Log.d(TAG, "LOCAL DB UPDATE COMPLETE:")
+                    Log.d(TAG, "  osmandSyncedToServer: ${syncedLocation.osmandSyncedToServer}")
+                    Log.d(TAG, "  osmandOriginalName: ${syncedLocation.osmandOriginalName}")
+                    Log.d(TAG, "  osmandGpxIndex: ${syncedLocation.osmandGpxIndex}")
+                    Log.d(TAG, "  syncStatus: ${syncedLocation.syncStatus}")
                     Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                     return Result.success(Unit)
 

@@ -124,6 +124,11 @@
             android:name=".ui.savedforlater.SavedForLaterActivity"
             android:exported="false" />
 
+        <!-- OsmAnd Sync Background Service -->
+        <service
+            android:name=".services.OsmandBackgroundSyncService"
+            android:exported="false" />
+
         <!-- FileProvider for camera images -->
         <provider
             android:name="androidx.core.content.FileProvider"
