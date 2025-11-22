@@ -39,7 +39,7 @@ data class GalleryImageItem(
 class AllImagesGalleryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAllImagesGalleryBinding
     private lateinit var adapter: AllImagesAdapter
-    
+
     @Inject
     lateinit var locationDao: LocationDao
 
@@ -119,7 +119,7 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                 confirmDeleteSingleImage(imageItem, position)
             }
         )
-        
+
         binding.imagesRecyclerView.layoutManager = GridLayoutManager(this, 3)
         binding.imagesRecyclerView.adapter = adapter
     }
@@ -165,7 +165,7 @@ class AllImagesGalleryActivity : AppCompatActivity() {
             } else {
                 binding.imagesRecyclerView.visibility = View.VISIBLE
                 adapter.submitList(imageItems)
-                
+
                 val totalSize = imageItems.sumOf { File(it.imagePath).length() }
                 val sizeMB = totalSize / (1024.0 * 1024.0)
                 val sizeString = if (sizeMB < 1.0) {
@@ -173,7 +173,7 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                 } else {
                     String.format("%.2f MB", sizeMB)
                 }
-                
+
                 binding.imageCountText.text = "${imageItems.size} images • $sizeString"
             }
         }
@@ -208,7 +208,7 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                 else -> "Downloaded $successCount, failed $failCount"
             }
             Toast.makeText(this@AllImagesGalleryActivity, message, Toast.LENGTH_SHORT).show()
-            
+
             exitSelectionMode()
         }
     }
@@ -264,7 +264,7 @@ class AllImagesGalleryActivity : AppCompatActivity() {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, imageFile.name)
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, 
+                put(MediaStore.MediaColumns.RELATIVE_PATH,
                     "${Environment.DIRECTORY_PICTURES}/PEVPlugShare")
                 put(MediaStore.MediaColumns.IS_PENDING, 1)
             }
@@ -314,7 +314,7 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                     val locationEntity = locationDao.getLocationById(locationId)
                     val isOrphaned = locationEntity == null
                     val locationName = locationEntity?.name ?: "Unknown Location (Deleted)"
-                    
+
                     locationDir.listFiles()?.filter { it.extension == "jpg" }
                         ?.sortedBy { it.name }
                         ?.forEach { imageFile ->
@@ -338,11 +338,13 @@ class AllImagesGalleryActivity : AppCompatActivity() {
         // Get all images for the same location
         val locationImages = adapter.currentList.filter { it.locationId == imageItem.locationId }
         val imagePosition = locationImages.indexOf(imageItem)
-        
+
         val intent = Intent(this, FullImageViewerActivity::class.java).apply {
             putExtra(EXTRA_IMAGE_PATHS, locationImages.map { it.imagePath }.toTypedArray())
             putExtra(EXTRA_LOCATION_NAME, imageItem.locationName)
             putExtra(EXTRA_INITIAL_POSITION, imagePosition)
+            putExtra(EXTRA_LOCATION_ID, imageItem.locationId)
+            putExtra(EXTRA_IS_ORPHANED, imageItem.isOrphaned)
         }
         startActivity(intent)
     }
@@ -445,7 +447,7 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                 else -> "Deleted $successCount, failed $failCount"
             }
             Toast.makeText(this@AllImagesGalleryActivity, message, Toast.LENGTH_SHORT).show()
-            
+
             exitSelectionMode()
             loadImages() // Reload the gallery
         }
@@ -455,5 +457,7 @@ class AllImagesGalleryActivity : AppCompatActivity() {
         const val EXTRA_IMAGE_PATHS = "extra_image_paths"
         const val EXTRA_LOCATION_NAME = "extra_location_name"
         const val EXTRA_INITIAL_POSITION = "extra_initial_position"
+        const val EXTRA_LOCATION_ID = "extra_location_id"
+        const val EXTRA_IS_ORPHANED = "extra_is_orphaned"
     }
 }

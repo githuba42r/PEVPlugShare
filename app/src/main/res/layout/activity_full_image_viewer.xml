@@ -19,7 +19,37 @@
             android:background="#AA000000"
             app:navigationIcon="@drawable/ic_back"
             app:title=""
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@android:color/white">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/goToLocationButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Go to location"
+                app:icon="@android:drawable/ic_menu_mylocation"
+                app:iconTint="@android:color/white"
+                app:iconPadding="0dp"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
+        </com.google.android.material.appbar.MaterialToolbar>
+
+        <!-- Location name header -->
+        <TextView
+            android:id="@+id/locationNameHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#AA000000"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text=""
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:visibility="gone" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- ViewPager for swipeable images -->
