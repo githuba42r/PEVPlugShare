@@ -50,7 +50,18 @@
             android:name=".ui.settings.SettingsActivity"
             android:exported="true"
             android:launchMode="singleTop">
-            <!-- OpenRouter OAuth callback - localhost URL -->
+            <!-- OpenRouter OAuth callback - Generic callback service deep link -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="pevplugshare"
+                    android:host="oauth"
+                    android:path="/callback" />
+            </intent-filter>
+
+            <!-- Legacy localhost callback - kept for backward compatibility -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -105,6 +116,23 @@
         <activity
             android:name=".ui.quicklocation.LocationPickerMapActivity"
             android:exported="false" />
+
+        <!-- OAuth Activity for OpenRouter authentication -->
+        <activity
+            android:name=".ui.oauth.OAuthActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <!-- OAuth callback deep link -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="pevplugshare"
+                    android:host="oauth"
+                    android:path="/callback" />
+            </intent-filter>
+        </activity>
 
         <!-- Intent filter for JSON file import -->
         <activity
