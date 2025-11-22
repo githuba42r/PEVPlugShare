@@ -13,9 +13,6 @@
         android:id="@+id/menu_settings"
         android:title="Settings" />
     <item
-        android:id="@+id/menu_search"
-        android:title="Search" />
-    <item
         android:id="@+id/menu_logout"
         android:title="Logout" />
     <item

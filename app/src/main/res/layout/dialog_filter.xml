@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter Locations"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+    <!-- Free/Charge Filter -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cost"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp" />
+
+    <RadioGroup
+        android:id="@+id/costFilterGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/costAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="All"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/costFree"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Free Only" />
+
+        <RadioButton
+            android:id="@+id/costPaid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Paid Only" />
+    </RadioGroup>
+
+    <!-- Opening Hours Filter -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Opening Hours"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <CheckBox
+        android:id="@+id/openNowCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Open Now Only" />
+
+    <!-- Number of Sockets Filter -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Number of Sockets"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/minSocketsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Min: 1"
+            android:layout_marginEnd="8dp" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/socketsRangeSlider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:valueFrom="1"
+            android:valueTo="20"
+            android:stepSize="1"
+            app:values="@array/default_socket_range" />
+
+        <TextView
+            android:id="@+id/maxSocketsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Max: 20"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Public/Private Filter -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Access Type"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <RadioGroup
+        android:id="@+id/accessFilterGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/accessAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="All"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/accessPublic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Public" />
+
+        <RadioButton
+            android:id="@+id/accessPrivate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Private" />
+    </RadioGroup>
+
+    <!-- Socket Types Filter -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Socket Types"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <CheckBox
+        android:id="@+id/socketAS3112"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="AS3112 (AU GPO)"
+        android:checked="true" />
+
+    <CheckBox
+        android:id="@+id/socketType2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type2 EV"
+        android:checked="true" />
+
+    <CheckBox
+        android:id="@+id/socketTesla"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tesla Charger"
+        android:checked="true" />
+
+    <CheckBox
+        android:id="@+id/socketCCS2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CCS2/Combo"
+        android:checked="true" />
+
+    <CheckBox
+        android:id="@+id/socketCHAdeMO"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CHAdeMO"
+        android:checked="true" />
+
+    <CheckBox
+        android:id="@+id/socketType1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type 1 (J1772)"
+        android:checked="true" />
+
+    <CheckBox
+        android:id="@+id/socketWallSocket"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wall Socket (15A)"
+        android:checked="true" />
+
+    <CheckBox
+        android:id="@+id/socketCaravan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Caravan Plug"
+        android:checked="true" />
+
+    <CheckBox
+        android:id="@+id/socketOther"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Other EV Charger"
+        android:checked="true" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/resetButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:layout_marginStart="8dp" />
+
+        <Button
+            android:id="@+id/applyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apply"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

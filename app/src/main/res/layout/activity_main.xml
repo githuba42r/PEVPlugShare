@@ -27,24 +27,35 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_menu" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="PEV PlugShare"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
+            <ImageButton
+                android:id="@+id/filterFavoritesButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Filter Favorites"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_favourite_faded" />
+
+            <ImageButton
+                android:id="@+id/toggleFilterButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Toggle Filters"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_filter" />
+
             <TextView
                 android:id="@+id/categoryBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/category_badge_background"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
