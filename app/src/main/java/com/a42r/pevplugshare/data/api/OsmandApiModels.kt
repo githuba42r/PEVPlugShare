@@ -129,3 +129,25 @@ data class OsmandFavoriteExtension(
     val distance: Double = 0.0,
     val extensions: Map<String, Any> = emptyMap()
 )
+
+// Response from /mapapi/fav/list endpoint
+data class OsmandFavListResponse(
+    val favGroups: List<OsmandFavGroup>? = null
+)
+
+data class OsmandFavGroup(
+    val name: String,
+    val updatetime: Long,  // Milliseconds since epoch
+    val clienttime: Long? = null,
+    val filesize: Long? = null
+)
+
+// Error response from fav/update endpoint
+data class OsmandFavUpdateErrorResponse(
+    val error: OsmandFavUpdateError? = null
+)
+
+data class OsmandFavUpdateError(
+    val errorCode: Int,
+    val errorMessage: String? = null
+)
