@@ -148,21 +148,43 @@
             app:titleTextColor="@android:color/white" />
 
         <!-- Location description -->
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxHeight="80dp">
+            android:orientation="vertical"
+            android:background="#66000000">
 
             <TextView
                 android:id="@+id/locationDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
+                android:paddingBottom="4dp"
                 android:text="Location description here"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                android:background="#66000000" />
-        </ScrollView>
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/toggleDescriptionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="More"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:visibility="gone"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
+        </LinearLayout>
 
         <!-- ViewPager for swiping -->
         <androidx.viewpager2.widget.ViewPager2
