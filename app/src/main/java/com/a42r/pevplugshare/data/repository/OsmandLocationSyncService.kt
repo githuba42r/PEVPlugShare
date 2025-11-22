@@ -63,10 +63,10 @@ class OsmandLocationSyncService @Inject constructor(
 
     /**
      * Update a location in OSMAnd favorites
-     * 
+     *
      * @deprecated This function does NOT follow the exact OsmAnd algorithm and will likely
      * fail with error 106. Use updateFavorite() instead which implements the correct algorithm.
-     * 
+     *
      * The problems with this function:
      * - Does not fetch current updatetime from /fav/list before each operation
      * - Uses current system time instead of server updatetime (guaranteed error 106)
@@ -199,12 +199,12 @@ class OsmandLocationSyncService @Inject constructor(
             val response = webApiService.listFiles()
 
             Log.d(TAG, "Received ${response.uniqueFiles?.size ?: 0} files")
-            
+
             // Find the target FAVOURITES file
-            val targetFile = response.uniqueFiles?.find { 
+            val targetFile = response.uniqueFiles?.find {
                 it.name == groupName && it.type == "FAVOURITES"
             }
-            
+
             if (targetFile != null) {
                 Log.d(TAG, "✅ Found group '$groupName' with updatetimems: ${targetFile.updatetimems}")
                 targetFile.updatetimems
@@ -229,7 +229,7 @@ class OsmandLocationSyncService @Inject constructor(
 
     /**
      * Update an existing favorite on osmand.net using the EXACT required algorithm.
-     * 
+     *
      * CRITICAL: This follows the exact 7-step algorithm required by OsmAnd's web API.
      * Any deviation will result in error 106 "File was changed!"
      *
@@ -267,13 +267,13 @@ class OsmandLocationSyncService @Inject constructor(
                 // → Extract the exact updatetime for the target group file
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 1: Getting current updatetime from /fav/list")
-                
+
                 val updatetime = getCurrentGroupUpdatetime(groupName)
                 if (updatetime == null) {
                     Log.e(TAG, "❌ FAILED: Could not get updatetime for group: $groupName")
                     return Result.failure(Exception("Could not get current updatetime for group $groupName"))
                 }
-                
+
                 Log.d(TAG, "✅ Current updatetime: $updatetime")
 
                 // ═══════════════════════════════════════════════════════════
@@ -300,7 +300,7 @@ class OsmandLocationSyncService @Inject constructor(
                 // STEP 5: Build JSON payload matching exact structure
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 5: Building JSON payload")
-                
+
                 val updateRequest = com.a42r.pevplugshare.data.api.OsmandUpdateFavoriteRequest(
                     name = location.name,  // Can be new/different
                     desc = location.description ?: "",
@@ -337,7 +337,7 @@ class OsmandLocationSyncService @Inject constructor(
                 // STEP 6: Send request as GET + JSON body with proper headers
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 6: Sending GET request with JSON body")
-                
+
                 val webApiService = apiClient.getWebApiRetrofit()
                     .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
 
@@ -367,7 +367,7 @@ class OsmandLocationSyncService @Inject constructor(
                     // STEP 7: After success, invalidate cache and update local DB
                     // ═══════════════════════════════════════════════════════════
                     Log.d(TAG, "STEP 7: Updating local database")
-                    
+
                     val syncedLocation = location.copy(
                         syncStatus = SyncStatus.SYNCED,
                         osmandOriginalName = location.name,  // Update to new server name
@@ -378,7 +378,7 @@ class OsmandLocationSyncService @Inject constructor(
 
                     Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                     return Result.success(Unit)
-                    
+
                 } else {
                     // ═══════════════════════════════════════════════════════════
                     // ERROR HANDLING: Check for error 106
@@ -396,7 +396,7 @@ class OsmandLocationSyncService @Inject constructor(
                         if (errorResponse?.error?.errorCode == 106) {
                             Log.w(TAG, "⚠️ ERROR 106: File was changed!")
                             Log.w(TAG, "Timestamp mismatch - will retry with fresh updatetime")
-                            
+
                             if (attempt < maxAttempts) {
                                 Log.d(TAG, "Retrying...")
                                 continue  // Retry loop will fetch fresh updatetime
@@ -409,16 +409,16 @@ class OsmandLocationSyncService @Inject constructor(
 
                     throw Exception("HTTP ${response.code()}: ${response.message()} - $errorBody")
                 }
-                
+
             } catch (e: Exception) {
                 Log.e(TAG, "Exception during update: ${e.message}", e)
-                
+
                 if (attempt >= maxAttempts) {
                     Log.e(TAG, "❌ FAILED after $maxAttempts attempts")
                     Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                     return Result.failure(e)
                 }
-                
+
                 // Continue to next attempt
                 Log.w(TAG, "Will retry...")
             }
@@ -431,7 +431,7 @@ class OsmandLocationSyncService @Inject constructor(
 
     /**
      * Add a new favorite to osmand.net using the EXACT required algorithm.
-     * 
+     *
      * CRITICAL: This follows the exact algorithm for ADD operations.
      * Key differences from UPDATE:
      * - DO NOT include the 'ind' parameter at all
@@ -447,7 +447,7 @@ class OsmandLocationSyncService @Inject constructor(
         categoryName: String
     ): Result<Unit> {
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        Log.d(TAG, "ADD FAVORITE - EXACT ALGORITHM")
+        Log.d(TAG, "ADD FAVORITE - EXACT ALGORITHM (using /fav/add)")
         Log.d(TAG, "Name: ${location.name}")
         Log.d(TAG, "Category: $categoryName")
         Log.d(TAG, "Location: ${location.latitude}, ${location.longitude}")
@@ -468,92 +468,61 @@ class OsmandLocationSyncService @Inject constructor(
                 // → If group doesn't exist, we can still proceed (will be created)
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 1: Getting current updatetime from /fav/list")
-                
+
                 val updatetime: Long = getCurrentGroupUpdatetime(groupName) ?: run {
                     Log.w(TAG, "⚠️ Group doesn't exist yet - will be created")
                     Log.w(TAG, "Using current time as updatetime")
                     System.currentTimeMillis()
                 }
-                
+
                 Log.d(TAG, "✅ Using updatetime: $updatetime")
 
                 // ═══════════════════════════════════════════════════════════
-                // STEP 2: (Optional) Re-download GPX - not needed for ADD
+                // STEP 2: Build request with correct parameters for /fav/add
+                // Parameters: fileName and updatetime (simpler than /fav/update)
                 // ═══════════════════════════════════════════════════════════
-                Log.d(TAG, "STEP 2: (Skipped - not needed for ADD operation)")
+                Log.d(TAG, "STEP 2: Building request parameters for /fav/add")
+                Log.d(TAG, "  fileName: $groupName")
+                Log.d(TAG, "  updatetime: $updatetime")
 
                 // ═══════════════════════════════════════════════════════════
-                // STEP 3: Build request with EXACT query parameters
-                // CRITICAL FOR ADD: NO 'ind' parameter, NO 'wptName' parameter
+                // STEP 3: Build JSON payload matching web app structure
+                // Note: category can be null, ext can be null, lat/lon are strings
                 // ═══════════════════════════════════════════════════════════
-                Log.d(TAG, "STEP 3: Building request parameters")
-                Log.d(TAG, "  oldGroupName: $groupName")
-                Log.d(TAG, "  newGroupName: $groupName")
-                Log.d(TAG, "  oldGroupUpdatetime: $updatetime")
-                Log.d(TAG, "  newGroupUpdatetime: $updatetime")
-                Log.d(TAG, "  wptName: NOT INCLUDED (this is ADD)")
-                Log.d(TAG, "  ind: NOT INCLUDED (this is ADD)")
+                Log.d(TAG, "STEP 3: Building JSON payload")
 
-                // ═══════════════════════════════════════════════════════════
-                // STEP 5: Build JSON payload matching exact structure
-                // ═══════════════════════════════════════════════════════════
-                Log.d(TAG, "STEP 5: Building JSON payload")
-                
-                val addRequest = com.a42r.pevplugshare.data.api.OsmandUpdateFavoriteRequest(
+                val addRequest = com.a42r.pevplugshare.data.api.OsmandAddFavoriteRequest(
                     name = location.name,
-                    desc = location.description ?: "",
-                    address = buildAddress(location),
+                    address = buildAddress(location).takeIf { it.isNotBlank() },
+                    desc = location.description?.takeIf { it.isNotBlank() },
                     color = location.color,
-                    background = "octagon",
+                    background = "circle",  // Web app uses "circle"
                     icon = location.icon,
-                    hidden = "false",  // Note: "false" means visible
-                    lat = location.latitude,
-                    lon = location.longitude,
-                    category = categoryName,  // Must match group without "favorites-" and ".gpx"
-                    ext = com.a42r.pevplugshare.data.api.OsmandFavoriteExtension(
-                        firstPoint = false,
-                        lastPoint = false,
-                        deleted = false,
-                        time = location.lastModified,
-                        ele = 6.0,
-                        speed = 0.0,
-                        hdop = null,
-                        heading = null,
-                        bearing = null,
-                        speedColor = 0,
-                        altitudeColor = 0,
-                        slopeColor = 0,
-                        colourARGB = 0,
-                        distance = 0.0,
-                        extensions = emptyMap()
-                    )
+                    category = null,  // Web app sends null, not category name
+                    lat = location.latitude.toString(),   // String, not Double
+                    lon = location.longitude.toString(),  // String, not Double
+                    ext = null  // Web app sends null for ADD
                 )
 
                 Log.d(TAG, "JSON payload:\n${gson.toJson(addRequest)}")
 
                 // ═══════════════════════════════════════════════════════════
-                // STEP 6: Send request as GET + JSON body with proper headers
-                // NOTE: Using separate addFavorite endpoint that doesn't include
-                // ind or wptName parameters
+                // STEP 4: Send POST request to /fav/add
                 // ═══════════════════════════════════════════════════════════
-                Log.d(TAG, "STEP 6: Sending GET request with JSON body (no ind/wptName)")
-                
+                Log.d(TAG, "STEP 4: Sending POST request to /fav/add")
+
                 val webApiService = apiClient.getWebApiRetrofit()
                     .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
 
                 // Log cookies (SESSION)
-                val cookies = apiClient.getCookiesForUrl("https://osmand.net/mapapi/fav/update")
+                val cookies = apiClient.getCookiesForUrl("https://osmand.net/mapapi/fav/add")
                 Log.d(TAG, "Cookies: ${cookies.joinToString("; ") { "${it.name}=${it.value.take(10)}..." }}")
 
                 val response = webApiService.addFavorite(
-                    oldGroupName = groupName,
-                    newGroupName = groupName,
-                    oldGroupUpdatetime = updatetime,
-                    newGroupUpdatetime = updatetime,
-                    // NO ind parameter
-                    // NO wptName parameter
+                    fileName = groupName,
+                    updatetime = updatetime,
                     // Origin and Referer headers are set in the service interface
-                    updateRequest = addRequest
+                    addRequest = addRequest
                 )
 
                 Log.d(TAG, "Response: HTTP ${response.code()} ${response.message()}")
@@ -564,10 +533,10 @@ class OsmandLocationSyncService @Inject constructor(
                     Log.d(TAG, "Response body: ${formatJsonIfPossible(responseBody)}")
 
                     // ═══════════════════════════════════════════════════════════
-                    // STEP 7: After success, invalidate cache and update local DB
+                    // STEP 5: After success, update local DB
                     // ═══════════════════════════════════════════════════════════
-                    Log.d(TAG, "STEP 7: Updating local database")
-                    
+                    Log.d(TAG, "STEP 5: Updating local database")
+
                     val syncedLocation = location.copy(
                         syncStatus = SyncStatus.SYNCED,
                         osmandOriginalName = location.name,      // Server now knows this name
@@ -580,7 +549,7 @@ class OsmandLocationSyncService @Inject constructor(
 
                     Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                     return Result.success(Unit)
-                    
+
                 } else {
                     // ═══════════════════════════════════════════════════════════
                     // ERROR HANDLING: Check for error 106
@@ -598,7 +567,7 @@ class OsmandLocationSyncService @Inject constructor(
                         if (errorResponse?.error?.errorCode == 106) {
                             Log.w(TAG, "⚠️ ERROR 106: File was changed!")
                             Log.w(TAG, "Timestamp mismatch - will retry with fresh updatetime")
-                            
+
                             if (attempt < maxAttempts) {
                                 Log.d(TAG, "Retrying...")
                                 continue  // Retry loop will fetch fresh updatetime
@@ -611,16 +580,16 @@ class OsmandLocationSyncService @Inject constructor(
 
                     throw Exception("HTTP ${response.code()}: ${response.message()} - $errorBody")
                 }
-                
+
             } catch (e: Exception) {
                 Log.e(TAG, "Exception during add: ${e.message}", e)
-                
+
                 if (attempt >= maxAttempts) {
                     Log.e(TAG, "❌ FAILED after $maxAttempts attempts")
                     Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                     return Result.failure(e)
                 }
-                
+
                 // Continue to next attempt
                 Log.w(TAG, "Will retry...")
             }
