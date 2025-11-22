@@ -270,6 +270,47 @@
                 android:paddingTop="4dp" />
         </LinearLayout>
 
+        <!-- OsmAnd Sync Settings Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OsmAnd Sync Settings"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingBottom="12dp" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchPromptOsmandSync"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Prompt to sync when updating locations"
+                android:checked="true"
+                android:paddingVertical="8dp" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchVerifyDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Verify description before syncing"
+                android:checked="true"
+                android:paddingVertical="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="These settings control OsmAnd synchronization behavior when editing locations"
+                android:textSize="12sp"
+                android:textColor="?android:textColorSecondary"
+                android:paddingTop="4dp" />
+        </LinearLayout>
+
         <!-- Loading indicator -->
         <ProgressBar
             android:id="@+id/loadingProgressBar"

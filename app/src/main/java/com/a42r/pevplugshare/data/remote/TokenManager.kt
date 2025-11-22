@@ -20,6 +20,8 @@ class TokenManager(context: Context) {
         private const val KEY_SELECTED_AI_MODEL = "selected_ai_model"
         private const val KEY_MAP_ZOOM_LEVEL = "map_zoom_level"
         private const val DEFAULT_MAP_ZOOM = 18.0f
+        private const val KEY_OSMAND_SYNC_ON_UPDATE = "osmand_sync_on_update"
+        private const val KEY_OSMAND_VERIFY_DESCRIPTION = "osmand_verify_description"
     }
 
     enum class AuthType {
@@ -168,5 +170,22 @@ class TokenManager(context: Context) {
 
     fun isAiAnalysisEnabled(): Boolean {
         return hasAiApiKeyConfigured() && hasAiModelSelected()
+    }
+
+    // OsmAnd Sync Preferences
+    fun setSyncToOsmandOnUpdate(enabled: Boolean) {
+        encryptedPrefs.edit().putBoolean(KEY_OSMAND_SYNC_ON_UPDATE, enabled).apply()
+    }
+
+    fun getSyncToOsmandOnUpdate(): Boolean {
+        return encryptedPrefs.getBoolean(KEY_OSMAND_SYNC_ON_UPDATE, true) // Default true = prompt
+    }
+
+    fun setVerifyDescriptionBeforeSync(enabled: Boolean) {
+        encryptedPrefs.edit().putBoolean(KEY_OSMAND_VERIFY_DESCRIPTION, enabled).apply()
+    }
+
+    fun getVerifyDescriptionBeforeSync(): Boolean {
+        return encryptedPrefs.getBoolean(KEY_OSMAND_VERIFY_DESCRIPTION, true) // Default true = verify
     }
 }

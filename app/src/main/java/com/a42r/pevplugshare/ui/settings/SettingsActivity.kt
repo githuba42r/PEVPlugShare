@@ -107,6 +107,19 @@ class SettingsActivity : AppCompatActivity() {
                 zoomLevelValue.text = String.format("%.1f", value)
             }
 
+            // Load OsmAnd sync settings
+            switchPromptOsmandSync.isChecked = tokenManager.getSyncToOsmandOnUpdate()
+            switchVerifyDescription.isChecked = tokenManager.getVerifyDescriptionBeforeSync()
+
+            // OsmAnd sync switches
+            switchPromptOsmandSync.setOnCheckedChangeListener { _, isChecked ->
+                tokenManager.setSyncToOsmandOnUpdate(isChecked)
+            }
+
+            switchVerifyDescription.setOnCheckedChangeListener { _, isChecked ->
+                tokenManager.setVerifyDescriptionBeforeSync(isChecked)
+            }
+
             // Save button
             saveSettingsButton.setOnClickListener {
                 saveSettings()
@@ -135,6 +148,12 @@ class SettingsActivity : AppCompatActivity() {
             // Reset to default zoom level (18.0)
             zoomLevelSlider.value = 18.0f
             zoomLevelValue.text = "18.0"
+
+            // Reset OsmAnd sync settings to defaults
+            switchPromptOsmandSync.isChecked = true
+            switchVerifyDescription.isChecked = true
+            tokenManager.setSyncToOsmandOnUpdate(true)
+            tokenManager.setVerifyDescriptionBeforeSync(true)
 
             Toast.makeText(this@SettingsActivity, "Settings reset to defaults", Toast.LENGTH_SHORT).show()
         }
