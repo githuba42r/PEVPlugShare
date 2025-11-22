@@ -297,14 +297,14 @@ class MainViewModel @Inject constructor(
                 // Use saved category or default
                 val categoryName = tokenManager.getSelectedCategory() ?: "Charging Locations"
                 _selectedCategory.value = categoryName
-                
+
                 // Load from local database only
                 val dbResult = locationRepository.getLocationsByCategory(categoryName)
-                
+
                 if (dbResult.isSuccess) {
                     val locations = dbResult.getOrNull() ?: emptyList()
                     android.util.Log.d("MainViewModel", "Found ${locations.size} locations in local database")
-                    
+
                     if (locations.isNotEmpty()) {
                         allLocations = locations
                         val sorted = sortLocationsByDistance(locations)

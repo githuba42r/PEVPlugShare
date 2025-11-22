@@ -264,7 +264,7 @@ class MainActivity : AppCompatActivity() {
         // Update menu items based on OSMand connection status
         lifecycleScope.launch {
             val isOsmandConnected = viewModel.isOsmandConnected()
-            
+
             // Update OSMand connect menu item
             val osmandConnectItem = popup.menu.findItem(R.id.menu_osmand_connect)
             osmandConnectItem?.let {
@@ -276,11 +276,11 @@ class MainActivity : AppCompatActivity() {
                     it.isEnabled = true
                 }
             }
-            
+
             // Disable category selection and logout if not connected to OSMand
             val categoryItem = popup.menu.findItem(R.id.menu_select_category)
             categoryItem?.isEnabled = isOsmandConnected
-            
+
             val logoutItem = popup.menu.findItem(R.id.menu_logout)
             logoutItem?.isEnabled = isOsmandConnected
         }

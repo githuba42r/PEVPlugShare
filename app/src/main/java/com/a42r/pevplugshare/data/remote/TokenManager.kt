@@ -26,6 +26,7 @@ class TokenManager(context: Context) {
         private const val DEFAULT_OSMAND_MATCH_DISTANCE = 10 // Default 10 meters
         private const val KEY_OSMAND_CONNECTED = "osmand_connected"
         private const val KEY_OSMAND_CONNECTED_USERNAME = "osmand_connected_username"
+        private const val KEY_PKCE_CODE_VERIFIER = "pkce_code_verifier"
     }
 
     enum class AuthType {
@@ -228,5 +229,18 @@ class TokenManager(context: Context) {
             remove(KEY_OSMAND_CONNECTED_USERNAME)
             apply()
         }
+    }
+
+    // PKCE OAuth flow state management
+    fun savePkceCodeVerifier(codeVerifier: String) {
+        encryptedPrefs.edit().putString(KEY_PKCE_CODE_VERIFIER, codeVerifier).apply()
+    }
+
+    fun getPkceCodeVerifier(): String? {
+        return encryptedPrefs.getString(KEY_PKCE_CODE_VERIFIER, null)
+    }
+
+    fun clearPkceCodeVerifier() {
+        encryptedPrefs.edit().remove(KEY_PKCE_CODE_VERIFIER).apply()
     }
 }

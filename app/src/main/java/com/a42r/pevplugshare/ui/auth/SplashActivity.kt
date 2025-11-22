@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.a42r.pevplugshare.databinding.ActivitySplashBinding
 import com.a42r.pevplugshare.ui.main.MainActivity
+import com.a42r.pevplugshare.ui.ai.AiWelcomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -32,23 +33,28 @@ class SplashActivity : AppCompatActivity() {
 
                 // Check if user has session cookies (OSMAnd connected)
                 val hasSessionCookie = viewModel.hasSessionCookie()
-                
+
                 if (hasSessionCookie) {
                     android.util.Log.d("SplashActivity", "Session cookie found, validating in background...")
-                    
+
                     // Validate the session by trying to load categories in background
                     val isSessionValid = viewModel.validateSessionInBackground()
-                    
+
                     if (isSessionValid) {
                         android.util.Log.d("SplashActivity", "Session valid, navigating to MainActivity")
-                        // Session is valid, go to main activity
+                        // Session is valid, check if user has seen AI welcome
                         if (!isFinishing && !isDestroyed) {
-                            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                            val nextActivity = if (hasSeenAiWelcome()) {
+                                MainActivity::class.java
+                            } else {
+                                AiWelcomeActivity::class.java
+                            }
+                            startActivity(Intent(this@SplashActivity, nextActivity))
                             finish()
                         }
                     } else {
                         android.util.Log.d("SplashActivity", "Session invalid, checking for stored credentials")
-                        
+
                         // Session invalid - check if we have stored credentials for auto-retry
                         val hasStoredCredentials = viewModel.hasStoredCredentials()
                         if (hasStoredCredentials) {
@@ -58,7 +64,12 @@ class SplashActivity : AppCompatActivity() {
                             if (autoLoginSuccess) {
                                 android.util.Log.d("SplashActivity", "Auto-login successful, navigating to MainActivity")
                                 if (!isFinishing && !isDestroyed) {
-                                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                                    val nextActivity = if (hasSeenAiWelcome()) {
+                                        MainActivity::class.java
+                                    } else {
+                                        AiWelcomeActivity::class.java
+                                    }
+                                    startActivity(Intent(this@SplashActivity, nextActivity))
                                     finish()
                                 }
                             } else {
@@ -97,5 +108,10 @@ class SplashActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun hasSeenAiWelcome(): Boolean {
+        val prefs = getSharedPreferences("ai_welcome_prefs", MODE_PRIVATE)
+        return prefs.getBoolean("has_seen_ai_welcome", false)
     }
 }
