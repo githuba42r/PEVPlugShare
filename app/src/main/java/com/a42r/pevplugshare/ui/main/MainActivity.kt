@@ -244,18 +244,18 @@ class MainActivity : AppCompatActivity() {
     private fun showMenu() {
         val popup = PopupMenu(this, binding.menuButton)
         popup.menuInflater.inflate(R.menu.main_menu, popup.menu)
-        
+
         // Update the saved for later menu item with badge count
         val savedForLaterItem = popup.menu.findItem(R.id.menu_saved_for_later)
         val count = viewModel.savedForLaterCount.value
-        
+
         savedForLaterItem.isEnabled = count > 0
         savedForLaterItem.title = if (count > 0) {
             "Saved ($count)"
         } else {
             "Saved"
         }
-        
+
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.menu_select_category -> {

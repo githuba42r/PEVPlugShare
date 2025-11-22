@@ -496,13 +496,13 @@ class QuickLocationActivity : AppCompatActivity() {
             try {
                 // Create the entity
                 val id = "saved_${System.currentTimeMillis()}"
-                
+
                 // Serialize photo paths
                 val photoPaths = selectedPhotoPaths.joinToString(",")
-                
+
                 // Serialize photo metadata to JSON
                 val metadataJson = serializePhotoMetadata(photoMetadata)
-                
+
                 val savedForLater = com.a42r.pevplugshare.data.db.entity.SavedForLaterEntity(
                     id = id,
                     latitude = lat,
@@ -512,13 +512,13 @@ class QuickLocationActivity : AppCompatActivity() {
                     photoMetadata = metadataJson,
                     createdAt = System.currentTimeMillis()
                 )
-                
+
                 savedForLaterRepository.insertSavedForLater(savedForLater)
-                
+
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
-                        this@QuickLocationActivity, 
-                        "Location saved for later with ${selectedPhotoPaths.size} photo(s)", 
+                        this@QuickLocationActivity,
+                        "Location saved for later with ${selectedPhotoPaths.size} photo(s)",
                         Toast.LENGTH_SHORT
                     ).show()
                     finish()
@@ -527,8 +527,8 @@ class QuickLocationActivity : AppCompatActivity() {
                 Log.e("QuickLocationActivity", "Error saving for later", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
-                        this@QuickLocationActivity, 
-                        "Failed to save location for later", 
+                        this@QuickLocationActivity,
+                        "Failed to save location for later",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -546,11 +546,11 @@ class QuickLocationActivity : AppCompatActivity() {
             jsonBuilder.append("\"latitude\":${entry.value.latitude},")
             jsonBuilder.append("\"longitude\":${entry.value.longitude},")
             jsonBuilder.append("\"bearing\":${entry.value.bearing}")
-            
+
             entry.value.focusRect?.let { rect ->
                 jsonBuilder.append(",\"focusRect\":\"${rect.left},${rect.top},${rect.right},${rect.bottom}\"")
             }
-            
+
             jsonBuilder.append("}")
         }
         jsonBuilder.append("}")
