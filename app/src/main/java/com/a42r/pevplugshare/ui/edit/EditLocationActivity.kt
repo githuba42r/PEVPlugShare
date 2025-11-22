@@ -85,6 +85,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private var photosBeingProcessed = 0  // Count of photos currently being processed/saved
     private var submittedSuccessfully: Boolean = false
     private var savedForLaterId: String? = null  // ID of saved for later entry to delete on success
+    private var isProcessingQuickAddPhotos = false  // Flag to track if we're processing photos from QuickLocationActivity
 
     private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
@@ -193,6 +194,18 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         binding = ActivityEditLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Check if we'll be processing QuickAdd photos - show overlay IMMEDIATELY
+        savedForLaterId = intent.getStringExtra("saved_for_later_id")
+        val incomingPhotoPaths = intent.getStringArrayListExtra("photo_paths")
+        Log.d("EditLocationActivity", "onCreate: isAddMode=$isAddMode, incomingPhotoPaths=${incomingPhotoPaths?.size}, savedForLaterId=$savedForLaterId")
+        if (isAddMode && incomingPhotoPaths != null && savedForLaterId == null) {
+            // We'll be processing photos from QuickLocationActivity
+            isProcessingQuickAddPhotos = true
+            binding.photoLoadingOverlay.visibility = android.view.View.VISIBLE
+            binding.formContainer.visibility = android.view.View.GONE
+            Log.d("EditLocationActivity", "SHOWING LOADING OVERLAY - overlay visible, form hidden")
+        }
+
         // Setup toolbar
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -211,11 +224,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         setupPhotoSection()
         setupObservers()
 
-        // Retrieve saved for later ID if this is from a saved location
-        savedForLaterId = intent.getStringExtra("saved_for_later_id")
-
-        // Retrieve photo paths from intent
-        val incomingPhotoPaths = intent.getStringArrayListExtra("photo_paths")
+        // Retrieve photo paths from intent and process them
         incomingPhotoPaths?.let {
             // In add mode, check if these are cache paths that need processing
             if (isAddMode) {
@@ -232,7 +241,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         }
                         exists
                     }
-                    
+
                     if (validPhotos.isEmpty() && it.isNotEmpty()) {
                         Log.e("EditLocationActivity", "All ${it.size} saved photos are invalid/missing!")
                         Toast.makeText(this, "Warning: Saved photos not found", Toast.LENGTH_LONG).show()
@@ -240,11 +249,14 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         Log.w("EditLocationActivity", "${it.size - validPhotos.size} saved photos were invalid/missing")
                         Toast.makeText(this, "${validPhotos.size}/${it.size} photos loaded", Toast.LENGTH_SHORT).show()
                     }
-                    
+
                     // Use photos directly without processing - they'll be moved to permanent storage on submit
                     photoUris.addAll(validPhotos)
                     refreshPhotoThumbnails()
                     viewModel.updatePhotoPaths(photoUris)
+
+                    // Trigger auto-analysis for saved locations too
+                    autoAnalyzePhotosIfReady()
 
                     // Don't set currentEditLocationId yet - it will be generated on submit
                     // This ensures we don't create temp folders unnecessarily
@@ -257,6 +269,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         currentEditLocationId = UUID.randomUUID().toString()
                     }
 
+                    // Loading overlay was already shown before setupObservers()
                     lifecycleScope.launch {
                         val processedPaths = withContext(Dispatchers.IO) {
                             processCachePhotos(it, currentEditLocationId!!)
@@ -265,6 +278,14 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         photoUris.addAll(processedPaths)
                         refreshPhotoThumbnails()
                         viewModel.updatePhotoPaths(photoUris)
+
+                        // Trigger auto-analysis after photos are loaded
+                        autoAnalyzePhotosIfReady()
+
+                        // Hide loading overlay after processing
+                        isProcessingQuickAddPhotos = false
+                        binding.photoLoadingOverlay.visibility = android.view.View.GONE
+                        binding.formContainer.visibility = android.view.View.VISIBLE
                     }
                 }
             } else {
@@ -535,8 +556,17 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     }
                     is EditLocationState.Ready -> {
                         // Add mode - form is ready for input
+                        Log.d("EditLocationActivity", "State.Ready: isProcessingQuickAddPhotos=$isProcessingQuickAddPhotos")
                         binding.progressBar.visibility = android.view.View.GONE
-                        binding.formContainer.visibility = android.view.View.VISIBLE
+
+                        // Don't show form if we're still processing QuickAdd photos
+                        if (!isProcessingQuickAddPhotos) {
+                            binding.formContainer.visibility = android.view.View.VISIBLE
+                            Log.d("EditLocationActivity", "State.Ready: Showing form (not processing photos)")
+                        } else {
+                            Log.d("EditLocationActivity", "State.Ready: Keeping form hidden (processing photos)")
+                        }
+
                         binding.buttonSubmit.isEnabled = true
 
                         // Initialize UI with default values
@@ -2004,13 +2034,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         // Store current path in tag so it can be updated later
         imageView.tag = filePath
         Log.d("EditLocationActivity", "   Setting imageView tag: $filePath")
-        
-        // Validate file exists before attempting to load
-        if (!file.exists()) {
-            Log.e("EditLocationActivity", "❌ Photo file does not exist: $filePath")
-            // Skip adding this thumbnail
-            return
-        }
 
         lifecycleScope.launch(Dispatchers.IO) {
             Log.d("EditLocationActivity", "")
@@ -2435,7 +2458,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             Toast.makeText(this, "No photos to analyze", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         // Validate that photo files exist before attempting analysis
         val validPhotoFiles = photoUris.mapNotNull { path ->
             val file = File(path)
@@ -2446,12 +2469,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 null
             }
         }
-        
+
         if (validPhotoFiles.isEmpty()) {
             Toast.makeText(this, "No valid photos found to analyze", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         if (validPhotoFiles.size < photoUris.size) {
             Log.w("EditLocationActivity", "Some photos were skipped: ${photoUris.size - validPhotoFiles.size} invalid out of ${photoUris.size}")
         }

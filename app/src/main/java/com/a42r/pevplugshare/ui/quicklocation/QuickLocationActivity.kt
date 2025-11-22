@@ -88,7 +88,12 @@ class QuickLocationActivity : AppCompatActivity() {
     private val selectPhotos = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         if (uris.isNotEmpty()) {
             Log.d("QuickLocationActivity", "Selected ${uris.size} photos")
+            // Keep loading overlay visible - it will be updated in processPhotoUris
             processPhotoUris(uris)
+        } else {
+            // User cancelled - restore the content
+            binding.loadingContainer.visibility = android.view.View.GONE
+            binding.contentContainer.visibility = android.view.View.VISIBLE
         }
     }
 
@@ -141,6 +146,11 @@ class QuickLocationActivity : AppCompatActivity() {
         }
 
         binding.selectPhotosButton.setOnClickListener {
+            // Show loading overlay before launching image picker
+            binding.contentContainer.visibility = android.view.View.GONE
+            binding.loadingContainer.visibility = android.view.View.VISIBLE
+            binding.loadingText.text = "Loading images..."
+            
             selectPhotos.launch("image/*")
         }
         binding.takePhotosButton.setOnClickListener {
@@ -201,6 +211,11 @@ class QuickLocationActivity : AppCompatActivity() {
     }
 
     private fun processPhotoUris(uris: List<Uri>) {
+        // Update loading text while processing
+        runOnUiThread {
+            binding.loadingText.text = "Processing ${uris.size} photo(s)..."
+        }
+        
         scope.launch(Dispatchers.Default) {
             uris.forEach { uri ->
                 try {
@@ -270,6 +285,9 @@ class QuickLocationActivity : AppCompatActivity() {
 
     private fun proceedToLocationPicker() {
         currentStep = Step.PICK_LOCATION
+        
+        // Update loading text
+        binding.loadingText.text = "Extracting location data..."
 
         // Try to get location from image EXIF data
         var photoLat: Double? = null
@@ -376,6 +394,10 @@ class QuickLocationActivity : AppCompatActivity() {
     }
 
     private val photoEditorLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        // Hide loading overlay and restore content when returning from photo editor
+        binding.loadingContainer.visibility = android.view.View.GONE
+        binding.contentContainer.visibility = android.view.View.VISIBLE
+        
         if (result.resultCode == RESULT_OK) {
             // Photos have been edited, proceed with workflow
             val editedPhotoPaths = result.data?.getStringArrayListExtra("edited_photo_paths")
@@ -400,25 +422,35 @@ class QuickLocationActivity : AppCompatActivity() {
 
     private fun proceedToPhotoEditing() {
         currentStep = Step.EDIT_PHOTOS
-        // Filter out deleted/non-existent photo files before launching editor
-        val validPhotoPaths = selectedPhotoPaths.filter { path ->
-            val file = java.io.File(path)
-            file.exists()
-        }
-        val intent = Intent(this, PhotoGalleryEditorActivity::class.java).apply {
-            putStringArrayListExtra("photo_paths", ArrayList(validPhotoPaths))
-            // Pass focus areas if any exist
-            val focusBundle = Bundle()
-            validPhotoPaths.forEach { path ->
-                photoMetadata[path]?.focusRect?.let { rectF ->
-                    // Serialize RectF to a string
-                    val focusRectString = "${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}"
-                    focusBundle.putString(path, focusRectString)
-                }
+        
+        Log.d("QuickLocationActivity", "proceedToPhotoEditing: Updating loading text")
+        // Loading overlay should already be visible - just update the text
+        binding.loadingText.text = "Loading photo editor..."
+        
+        // Force the UI to update before launching the activity
+        binding.root.post {
+            // Filter out deleted/non-existent photo files before launching editor
+            val validPhotoPaths = selectedPhotoPaths.filter { path ->
+                val file = java.io.File(path)
+                file.exists()
             }
-            putExtra("focus_areas", focusBundle)
+            
+            Log.d("QuickLocationActivity", "proceedToPhotoEditing: Launching PhotoGalleryEditorActivity")
+            val intent = Intent(this, PhotoGalleryEditorActivity::class.java).apply {
+                putStringArrayListExtra("photo_paths", ArrayList(validPhotoPaths))
+                // Pass focus areas if any exist
+                val focusBundle = Bundle()
+                validPhotoPaths.forEach { path ->
+                    photoMetadata[path]?.focusRect?.let { rectF ->
+                        // Serialize RectF to a string
+                        val focusRectString = "${rectF.left},${rectF.top},${rectF.right},${rectF.bottom}"
+                        focusBundle.putString(path, focusRectString)
+                    }
+                }
+                putExtra("focus_areas", focusBundle)
+            }
+            photoEditorLauncher.launch(intent)
         }
-        photoEditorLauncher.launch(intent)
     }
 
     private fun proceedAfterPhotoEditing() {
@@ -438,9 +470,7 @@ class QuickLocationActivity : AppCompatActivity() {
 
     private fun proceedToAiAnalysis() {
         currentStep = Step.AI_ANALYSIS
-        // TODO: Launch AI analysis
-        Toast.makeText(this, "AI analysis coming soon", Toast.LENGTH_SHORT).show()
-        // For now, proceed to location
+        // AI analysis will happen automatically in EditLocationActivity when conditions are met
         proceedAfterAiAnalysis()
     }
 

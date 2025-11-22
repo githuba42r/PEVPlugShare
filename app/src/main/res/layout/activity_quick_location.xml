@@ -29,6 +29,7 @@
         android:layout_weight="1">
 
         <LinearLayout
+            android:id="@+id/contentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -125,6 +126,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
+            android:background="@android:color/white"
+            android:elevation="8dp"
             android:visibility="gone">
 
             <ProgressBar
@@ -133,10 +136,12 @@
                 android:layout_marginBottom="16dp" />
 
             <TextView
+                android:id="@+id/loadingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Processing photos..."
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textColor="@android:color/black" />
 
         </LinearLayout>
 
