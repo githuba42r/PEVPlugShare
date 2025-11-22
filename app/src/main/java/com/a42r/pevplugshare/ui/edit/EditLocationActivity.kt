@@ -93,6 +93,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private var waitingForSyncVerification = false  // Flag to prevent auto-close when showing verification dialog
     private var pendingSyncWithVerification = false  // Flag to trigger sync with verification after DB update
     private var pendingSyncWithoutVerification = false  // Flag to trigger sync without verification after DB update
+    private var isInitializingUI = false  // Flag to prevent spinner listeners from firing during initial setup
 
     private val syncResultReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -451,7 +452,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             if (isAddMode) {
                 buttonSubmit.isEnabled = false
             }
-            buttonCancel.setOnClickListener { finish() }
+            buttonCancel.setOnClickListener { handleCancel() }
             buttonSyncToOsmand.setOnClickListener { syncToOsmand() }
             // Hide sync button in add mode
             buttonSyncToOsmand.visibility = if (isAddMode) android.view.View.GONE else android.view.View.VISIBLE
@@ -487,6 +488,122 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     viewModel.updateName(s?.toString() ?: "")
                 }
             })
+
+            // Add text watchers for all other input fields
+            businessNameInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateBusinessName(s?.toString() ?: "")
+                }
+            })
+
+            streetAddressInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateStreetAddress(s?.toString() ?: "")
+                }
+            })
+
+            suburbInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateSuburb(s?.toString() ?: "")
+                }
+            })
+
+            stateInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateState(s?.toString() ?: "")
+                }
+            })
+
+            postcodeInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updatePostcode(s?.toString() ?: "")
+                }
+            })
+
+            descriptionInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateDescription(s?.toString() ?: "")
+                }
+            })
+
+            additionalInfoInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateAdditionalInfo(s?.toString() ?: "")
+                }
+            })
+
+            providerNameInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateProviderName(s?.toString() ?: "")
+                }
+            })
+
+            chargingCostsInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateChargingCosts(s?.toString() ?: "")
+                }
+            })
+
+            providerWebsiteInput.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    viewModel.updateProviderWebsite(s?.toString() ?: "")
+                }
+            })
+
+            // Setup checkbox listener
+            feeCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.updateHasFee(isChecked)
+                feeDetailsSection.visibility = if (isChecked) android.view.View.VISIBLE else android.view.View.GONE
+                updateFeeIndicator(isChecked)
+            }
+
+            // Setup opening hours spinner listener
+            openingHoursSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                    if (isInitializingUI) {
+                        Log.d("EditLocationActivity", "openingHoursSpinner.onItemSelected: Skipping (initializing UI)")
+                        return
+                    }
+                    val selectedHours = parent?.getItemAtPosition(position).toString()
+                    Log.d("EditLocationActivity", "openingHoursSpinner.onItemSelected: $selectedHours")
+                    viewModel.updateOpeningHours(selectedHours)
+                }
+                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+            }
+
+            // Setup socket type spinner listener
+            socketTypeSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                    if (isInitializingUI) {
+                        Log.d("EditLocationActivity", "socketTypeSpinner.onItemSelected: Skipping (initializing UI)")
+                        return
+                    }
+                    val selectedType = parent?.getItemAtPosition(position).toString()
+                    Log.d("EditLocationActivity", "socketTypeSpinner.onItemSelected: $selectedType")
+                    viewModel.updateSocketTypes(selectedType)
+                }
+                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+            }
 
             // Setup socket number buttons
             socket1Button.setOnClickListener { selectSocketCount(1) }
@@ -641,6 +758,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
                         // Always show sync button in edit mode (not add mode)
                         binding.buttonSyncToOsmand.visibility = android.view.View.VISIBLE
+
+                        // Initialize sync button state (should be enabled initially with no changes)
+                        updateSyncButtonState()
                     }
                     is EditLocationState.Updating -> {
                         binding.progressBar.visibility = android.view.View.VISIBLE
@@ -687,6 +807,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         if (!shouldSync && !waitingForSyncVerification) {
                             setResult(RESULT_OK)
                             finish()
+                        } else {
+                            // Re-enable sync button after successful update (no pending changes now)
+                            updateSyncButtonState()
                         }
                     }
                     is EditLocationState.DeleteSuccess -> {
@@ -698,6 +821,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     is EditLocationState.Error -> {
                         binding.progressBar.visibility = android.view.View.GONE
                         binding.buttonSubmit.isEnabled = true
+                        // Re-enable sync button based on current state
+                        updateSyncButtonState()
                         Toast.makeText(this@EditLocationActivity, state.message, Toast.LENGTH_LONG).show()
                     }
                 }
@@ -707,11 +832,16 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         lifecycleScope.launch {
             viewModel.formData.collect { data ->
                 updateUIFromFormData(data)
+
+                // Update Sync to OsmAnd button state based on pending changes
+                updateSyncButtonState()
             }
         }
     }
 
     private fun populateFormFromLocation(location: com.a42r.pevplugshare.data.model.Location) {
+        isInitializingUI = true  // Prevent spinner listeners from firing
+        
         binding.apply {
             nameInput.setText(location.name)
             businessNameInput.setText(location.businessName ?: "")
@@ -779,9 +909,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         // Set favorite state
         updateFavoriteIndicator(location.isFavourite)
         viewModel.updateFavorite(location.isFavourite)
+        
+        isInitializingUI = false  // Re-enable spinner listeners
     }
 
     private fun initializeUIForAddMode() {
+        isInitializingUI = true  // Prevent spinner listeners from firing
+        
         binding.apply {
             // Set socket count to 1
             selectSocketCount(1)
@@ -803,6 +937,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             // Set favorite to false
             updateFavoriteIndicator(false)
         }
+        
+        isInitializingUI = false  // Re-enable spinner listeners
 
         // Automatically trigger AI photo analysis if conditions are met
         // This handles the case where photos are already loaded synchronously (from saved location)
@@ -935,65 +1071,24 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             // where the button click calls updateGpoCount -> updates formData ->
             // calls updateUIFromFormData -> calls selectSocketCount again,
             // which can overwrite the user's selection with stale data
-
-            // Set up focus change listeners to update ViewModel when user edits
-            nameInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateName(nameInput.text.toString())
-            }
-
-            businessNameInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateBusinessName(businessNameInput.text.toString())
-            }
-
-            streetAddressInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateStreetAddress(streetAddressInput.text.toString())
-            }
-
-            suburbInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateSuburb(suburbInput.text.toString())
-            }
-
-            stateInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateState(stateInput.text.toString())
-            }
-
-            postcodeInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updatePostcode(postcodeInput.text.toString())
-            }
-
-            descriptionInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateDescription(descriptionInput.text.toString())
-            }
-
-            openingHoursSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                    val selectedHours = parent?.getItemAtPosition(position).toString()
-                    viewModel.updateOpeningHours(selectedHours)
-                }
-                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-            }
-
-            additionalInfoInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateAdditionalInfo(additionalInfoInput.text.toString())
-            }
-
-            feeCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                viewModel.updateHasFee(isChecked)
-                feeDetailsSection.visibility = if (isChecked) android.view.View.VISIBLE else android.view.View.GONE
-            }
-
-            providerNameInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateProviderName(providerNameInput.text.toString())
-            }
-
-            chargingCostsInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateChargingCosts(chargingCostsInput.text.toString())
-            }
-
-            providerWebsiteInput.setOnFocusChangeListener { _, _ ->
-                viewModel.updateProviderWebsite(providerWebsiteInput.text.toString())
-            }
         }
+    }
+
+    private fun updateSyncButtonState() {
+        // Only update sync button state in edit mode (not add mode)
+        if (isAddMode) {
+            Log.d("EditLocationActivity", "updateSyncButtonState: Skipping (add mode)")
+            return
+        }
+
+        val hasPendingChanges = viewModel.hasChanges()
+
+        binding.buttonSyncToOsmand.isEnabled = !hasPendingChanges
+
+        // Update visual appearance - gray out when disabled
+        binding.buttonSyncToOsmand.alpha = if (hasPendingChanges) 0.5f else 1.0f
+
+        Log.d("EditLocationActivity", "updateSyncButtonState: hasPendingChanges=$hasPendingChanges, isEnabled=${!hasPendingChanges}, alpha=${if (hasPendingChanges) 0.5f else 1.0f}")
     }
 
     private fun submitUpdates() {
@@ -1445,6 +1540,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun syncToOsmand() {
+        // Check for pending changes
+        if (viewModel.hasChanges()) {
+            Toast.makeText(this, "Please save changes before syncing to OsmAnd", Toast.LENGTH_LONG).show()
+            return
+        }
+
         // First generate AI description
         generateDescriptionForSync()
     }
@@ -2837,6 +2938,10 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onBackPressed() {
+        handleCancel()
+    }
+
+    private fun handleCancel() {
         // Check if there are unsaved changes
         if (viewModel.hasChanges()) {
             AlertDialog.Builder(this)
