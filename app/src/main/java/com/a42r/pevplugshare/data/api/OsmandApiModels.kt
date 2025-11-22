@@ -95,3 +95,37 @@ data class OsmandListFilesResponse(
     val totalUniqueFiles: Int? = null,
     val totalFiles: Int? = null
 )
+
+data class OsmandUpdateFavoriteRequest(
+    val name: String,
+    val desc: String? = null,
+    val address: String? = null,
+    val color: String,
+    val background: String = "octagon",
+    val hidden: String = "true",
+    val icon: String,
+    val lat: Double,
+    val lon: Double,
+    val category: String,
+    val ext: OsmandFavoriteExtension = OsmandFavoriteExtension()
+)
+
+data class OsmandFavoriteExtension(
+    val firstPoint: Boolean = false,
+    val lastPoint: Boolean = false,
+    val lat: Double = 0.0,
+    val lon: Double = 0.0,
+    val time: Long = System.currentTimeMillis(),
+    val ele: Double = 6.0,
+    val speed: Double = 0.0,
+    val hdop: Double? = null,
+    val heading: Double? = null,
+    val bearing: Double? = null,
+    val deleted: Boolean = false,
+    val speedColor: Int = 0,
+    val altitudeColor: Int = 0,
+    val slopeColor: Int = 0,
+    val colourARGB: Int = 0,
+    val distance: Double = 0.0,
+    val extensions: Map<String, Any> = emptyMap()
+)

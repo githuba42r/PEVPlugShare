@@ -111,7 +111,7 @@ class QuickLocationActivity : AppCompatActivity() {
             selectedLatitude = if (it.containsKey(KEY_SELECTED_LATITUDE)) it.getDouble(KEY_SELECTED_LATITUDE) else null
             selectedLongitude = if (it.containsKey(KEY_SELECTED_LONGITUDE)) it.getDouble(KEY_SELECTED_LONGITUDE) else null
             selectedBearing = if (it.containsKey(KEY_SELECTED_BEARING)) it.getFloat(KEY_SELECTED_BEARING) else null
-            
+
             // Restore photo metadata
             val metadataKeys = it.getStringArrayList(KEY_METADATA_KEYS) ?: emptyList()
             photoMetadata.clear()
@@ -121,7 +121,7 @@ class QuickLocationActivity : AppCompatActivity() {
                     photoMetadata[key] = metadata
                 }
             }
-            
+
             Log.d("QuickLocationActivity", "Restored state: ${selectedPhotoPaths.size} photos, currentPhotoUri=$currentPhotoUri, step=$currentStep")
         }
 
@@ -476,23 +476,23 @@ class QuickLocationActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        
+
         // Save current state to survive configuration changes (e.g., orientation change)
         currentPhotoUri?.let { outState.putParcelable(KEY_CURRENT_PHOTO_URI, it) }
         outState.putStringArrayList(KEY_SELECTED_PHOTO_PATHS, ArrayList(selectedPhotoPaths))
         outState.putString(KEY_CURRENT_STEP, currentStep.name)
-        
+
         selectedLatitude?.let { outState.putDouble(KEY_SELECTED_LATITUDE, it) }
         selectedLongitude?.let { outState.putDouble(KEY_SELECTED_LONGITUDE, it) }
         selectedBearing?.let { outState.putFloat(KEY_SELECTED_BEARING, it) }
-        
+
         // Save photo metadata
         val metadataKeys = ArrayList(photoMetadata.keys)
         outState.putStringArrayList(KEY_METADATA_KEYS, metadataKeys)
         for ((key, metadata) in photoMetadata) {
             outState.putParcelable("${KEY_METADATA_PREFIX}$key", metadata)
         }
-        
+
         Log.d("QuickLocationActivity", "Saved state: ${selectedPhotoPaths.size} photos, currentPhotoUri=$currentPhotoUri, step=$currentStep")
     }
 
