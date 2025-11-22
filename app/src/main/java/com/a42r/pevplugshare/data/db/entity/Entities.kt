@@ -87,3 +87,15 @@ data class PendingLocationEntity(
     val syncAttempts: Int = 0,
     val lastSyncAttempt: Long? = null
 )
+
+@Entity(tableName = "saved_for_later")
+data class SavedForLaterEntity(
+    @PrimaryKey
+    val id: String,
+    val latitude: Double,
+    val longitude: Double,
+    val bearing: Float? = null,
+    val photoPaths: String, // Comma-separated photo file paths
+    val photoMetadata: String, // JSON-encoded map of path -> metadata
+    val createdAt: Long
+)

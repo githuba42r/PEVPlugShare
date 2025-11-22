@@ -22,6 +22,7 @@ import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.databinding.ActivityQuickLocationBinding
 import com.a42r.pevplugshare.data.model.PhotoMetadata
 import com.a42r.pevplugshare.data.remote.TokenManager
+import com.a42r.pevplugshare.domain.repository.SavedForLaterRepository
 import com.a42r.pevplugshare.ui.edit.EditLocationActivity
 import com.a42r.pevplugshare.util.PhotoUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,6 +52,9 @@ class QuickLocationActivity : AppCompatActivity() {
 
     @Inject
     lateinit var tokenManager: TokenManager
+
+    @Inject
+    lateinit var savedForLaterRepository: SavedForLaterRepository
 
     enum class Step {
         SELECT_PHOTOS,
@@ -179,18 +183,20 @@ class QuickLocationActivity : AppCompatActivity() {
     private fun showPhotoTakenDialog() {
         AlertDialog.Builder(this)
             .setTitle("Photo Saved")
-            .setMessage("${selectedPhotoPaths.size} photo(s) saved")
-            .setNeutralButton("Take Another") { _, _ ->
+            .setMessage("${selectedPhotoPaths.size} photo(s) saved. What would you like to do?")
+            .setNeutralButton("Add Photo") { _, _ ->
                 launchCamera()
             }
-            .setPositiveButton("Done Taking Photos") { _, _ ->
+            .setPositiveButton("Continue") { _, _ ->
                 if (selectedPhotoPaths.isNotEmpty()) {
                     proceedToLocationPicker()
                 } else {
                     finish()
                 }
             }
-            .setNegativeButton("Cancel All", null)
+            .setNegativeButton("Save for Later") { _, _ ->
+                saveForLater()
+            }
             .show()
     }
 
@@ -467,6 +473,88 @@ class QuickLocationActivity : AppCompatActivity() {
         }
         startActivity(intent)
         finish() // Finish QuickLocationActivity after launching EditLocationActivity
+    }
+
+    private fun saveForLater() {
+        scope.launch {
+            try {
+                // Get current location
+                getCurrentLocation { lat, lng ->
+                    scope.launch {
+                        saveForLaterWithLocation(lat, lng)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("QuickLocationActivity", "Error saving for later", e)
+                Toast.makeText(this@QuickLocationActivity, "Failed to save location for later", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private suspend fun saveForLaterWithLocation(lat: Double, lng: Double) {
+        withContext(Dispatchers.IO) {
+            try {
+                // Create the entity
+                val id = "saved_${System.currentTimeMillis()}"
+                
+                // Serialize photo paths
+                val photoPaths = selectedPhotoPaths.joinToString(",")
+                
+                // Serialize photo metadata to JSON
+                val metadataJson = serializePhotoMetadata(photoMetadata)
+                
+                val savedForLater = com.a42r.pevplugshare.data.db.entity.SavedForLaterEntity(
+                    id = id,
+                    latitude = lat,
+                    longitude = lng,
+                    bearing = selectedBearing,
+                    photoPaths = photoPaths,
+                    photoMetadata = metadataJson,
+                    createdAt = System.currentTimeMillis()
+                )
+                
+                savedForLaterRepository.insertSavedForLater(savedForLater)
+                
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@QuickLocationActivity, 
+                        "Location saved for later with ${selectedPhotoPaths.size} photo(s)", 
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                }
+            } catch (e: Exception) {
+                Log.e("QuickLocationActivity", "Error saving for later", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@QuickLocationActivity, 
+                        "Failed to save location for later", 
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun serializePhotoMetadata(metadata: Map<String, PhotoMetadata>): String {
+        // Simple JSON serialization
+        val jsonBuilder = StringBuilder("{")
+        metadata.entries.forEachIndexed { index, entry ->
+            if (index > 0) jsonBuilder.append(",")
+            jsonBuilder.append("\"${entry.key}\":{")
+            jsonBuilder.append("\"hasGpsData\":${entry.value.hasGpsData},")
+            jsonBuilder.append("\"latitude\":${entry.value.latitude},")
+            jsonBuilder.append("\"longitude\":${entry.value.longitude},")
+            jsonBuilder.append("\"bearing\":${entry.value.bearing}")
+            
+            entry.value.focusRect?.let { rect ->
+                jsonBuilder.append(",\"focusRect\":\"${rect.left},${rect.top},${rect.right},${rect.bottom}\"")
+            }
+            
+            jsonBuilder.append("}")
+        }
+        jsonBuilder.append("}")
+        return jsonBuilder.toString()
     }
 
     override fun onDestroy() {

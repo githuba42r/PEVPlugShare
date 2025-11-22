@@ -8,6 +8,7 @@ import com.a42r.pevplugshare.data.network.NetworkStatus
 import com.a42r.pevplugshare.data.repository.SyncManager
 import com.a42r.pevplugshare.domain.repository.LocationRepository
 import com.a42r.pevplugshare.domain.repository.AuthRepository
+import com.a42r.pevplugshare.domain.repository.SavedForLaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +35,8 @@ class MainViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val connectivityObserver: ConnectivityObserver,
     private val syncManager: SyncManager,
-    private val tokenManager: com.a42r.pevplugshare.data.remote.TokenManager
+    private val tokenManager: com.a42r.pevplugshare.data.remote.TokenManager,
+    private val savedForLaterRepository: SavedForLaterRepository
 ) : ViewModel() {
 
     private val _locationListState = MutableStateFlow<LocationListState>(LocationListState.Loading)
@@ -61,9 +63,21 @@ class MainViewModel @Inject constructor(
     private val _isSyncing = MutableStateFlow(false)
     val isSyncing: StateFlow<Boolean> = _isSyncing
 
+    private val _savedForLaterCount = MutableStateFlow(0)
+    val savedForLaterCount: StateFlow<Int> = _savedForLaterCount
+
     init {
         observeNetworkStatus()
         observeSyncStatus()
+        observeSavedForLaterCount()
+    }
+
+    private fun observeSavedForLaterCount() {
+        viewModelScope.launch {
+            savedForLaterRepository.getSavedForLaterCountFlow().collectLatest { count ->
+                _savedForLaterCount.value = count
+            }
+        }
     }
 
     private fun observeNetworkStatus() {
