@@ -50,7 +50,14 @@ data class Location(
     val streetAddress: String? = null,
     val suburb: String? = null,
     val state: String? = null,
-    val postcode: String? = null
+    val postcode: String? = null,
+    
+    // OSMAnd sync tracking fields
+    val osmandOriginalName: String? = null,      // Original name from OSMAnd server
+    val osmandGpxIndex: Int? = null,             // Last known index in GPX file
+    val osmandSyncSource: String = "LOCAL",      // "LOCAL" or "OSMAND"
+    val osmandLastSyncedAt: Long? = null,        // Timestamp of last successful sync
+    val osmandSyncedToServer: Boolean = false    // True if exists on OSMAnd server
 )
 
 data class Photo(

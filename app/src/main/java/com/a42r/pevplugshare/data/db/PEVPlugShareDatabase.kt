@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.a42r.pevplugshare.data.db.converters.Converters
 import com.a42r.pevplugshare.data.db.dao.LocationDao
 import com.a42r.pevplugshare.data.db.dao.PhotoDao
@@ -48,6 +50,42 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
         @Volatile
         private var Instance: PEVPlugShareDatabase? = null
 
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add OSMAnd sync tracking fields
+                database.execSQL("""
+                    ALTER TABLE locations 
+                    ADD COLUMN osmandOriginalName TEXT DEFAULT NULL
+                """)
+                database.execSQL("""
+                    ALTER TABLE locations 
+                    ADD COLUMN osmandGpxIndex INTEGER DEFAULT NULL
+                """)
+                database.execSQL("""
+                    ALTER TABLE locations 
+                    ADD COLUMN osmandSyncSource TEXT NOT NULL DEFAULT 'LOCAL'
+                """)
+                database.execSQL("""
+                    ALTER TABLE locations 
+                    ADD COLUMN osmandLastSyncedAt INTEGER DEFAULT NULL
+                """)
+                database.execSQL("""
+                    ALTER TABLE locations 
+                    ADD COLUMN osmandSyncedToServer INTEGER NOT NULL DEFAULT 0
+                """)
+                
+                // Set existing synced locations as potentially from OSMAND
+                // We assume locations with syncStatus = 'SYNCED' may have come from OSMAnd
+                database.execSQL("""
+                    UPDATE locations 
+                    SET osmandSyncSource = 'OSMAND',
+                        osmandSyncedToServer = 1,
+                        osmandOriginalName = name
+                    WHERE syncStatus = 'SYNCED'
+                """)
+            }
+        }
+
         fun getDatabase(context: Context): PEVPlugShareDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
@@ -55,6 +93,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
                     PEVPlugShareDatabase::class.java,
                     "pevplugshare.db"
                 )
+                    .addMigrations(MIGRATION_7_8)
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
