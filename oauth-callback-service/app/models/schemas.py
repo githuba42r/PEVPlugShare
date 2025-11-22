@@ -8,6 +8,7 @@ from typing import Optional
 class RegisterRequest(BaseModel):
     """Request body for session registration"""
     provider: str = Field(..., description="OAuth provider name (e.g., 'openrouter', 'github')")
+    deep_link_url: str = Field(..., description="Deep link URL to redirect back to your app (e.g., 'myapp://oauth/callback')")
     timestamp: int = Field(..., description="Unix timestamp for request validation")
     signature: str = Field(..., description="HMAC-SHA256 signature of request data")
 
@@ -15,6 +16,7 @@ class RegisterRequest(BaseModel):
         json_schema_extra = {
             "example": {
                 "provider": "openrouter",
+                "deep_link_url": "pevplugshare://oauth/callback",
                 "timestamp": 1700000000,
                 "signature": "abc123..."
             }

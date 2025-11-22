@@ -54,6 +54,7 @@ async def register_session(
     # Verify signature
     is_valid, error_msg = verify_signature(
         provider_lower,
+        request_data.deep_link_url,
         request_data.timestamp,
         request_data.signature
     )
@@ -82,6 +83,7 @@ async def register_session(
     session = OAuthSession(
         session_id=session_id,
         provider=provider_lower,
+        deep_link_url=request_data.deep_link_url,
         created_at=datetime.utcnow(),
         expires_at=expires_at,
         used=False,
@@ -150,7 +152,7 @@ async def handle_callback(
 
     # Handle OAuth error
     if error:
-        deep_link = f"{settings.deep_link_scheme}?error={error}"
+        deep_link = f"{session.deep_link_url}?error={error}"
         if error_description:
             deep_link += f"&error_description={error_description}"
 
@@ -170,7 +172,7 @@ async def handle_callback(
         )
 
     # Build deep link with authorization code
-    deep_link = f"{settings.deep_link_scheme}?code={code}&provider={session.provider}"
+    deep_link = f"{session.deep_link_url}?code={code}&provider={session.provider}"
 
     return create_redirect_page(
         "Authorization Successful",

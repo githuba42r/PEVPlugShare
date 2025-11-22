@@ -108,7 +108,7 @@ docker start oauth-callback
 
 **1. Create `.env` file**:
 ```bash
-cp .env.docker .env
+cp .env.example .env
 # Edit .env and set DOMAIN_NAME and SHARED_SECRET
 ```
 
@@ -132,14 +132,168 @@ docker-compose down
 docker-compose down -v  # Removes volumes (database)
 ```
 
+## Cloudflare Tunnel Integration
+
+The service includes **optional Cloudflare Tunnel support** for automatic HTTPS public access without port forwarding or complex networking.
+
+### Why Use Cloudflare Tunnel?
+
+- ✅ **No Port Forwarding**: No need to expose ports on your router
+- ✅ **Automatic HTTPS**: Free SSL/TLS certificates from Cloudflare
+- ✅ **DDoS Protection**: Built-in Cloudflare security
+- ✅ **Global CDN**: Fast access from anywhere in the world
+- ✅ **Zero Configuration**: Works behind NAT, firewalls, CGNAT
+- ✅ **Free Tier Available**: Perfect for personal projects
+
+### Setting Up Cloudflare Tunnel
+
+**1. Create a Cloudflare Account**:
+- Go to https://dash.cloudflare.com and sign up
+- Add your domain (or use a free Cloudflare subdomain)
+
+**2. Create a Connector**:
+- Go to **Zero Trust** → **Networks** → **Connectors**
+- Click **Create a connector**
+- Choose **Cloudflared** (not WARP Connector)
+  - **Cloudflared**: For hosting services (HTTP/HTTPS) - ✅ Use this
+  - **WARP Connector**: For accessing private networks - ❌ Not for this use case
+- Click **Begin setup**
+- Name your connector: `oauth-callback`
+- Click **Save connector**
+- **Copy the tunnel token** from the installation command (starts with `eyJ...`)
+
+**3. Configure Public Hostname**:
+- In your connector settings, go to the **Public Hostnames** tab
+- Click **Add a public hostname**
+- Configure the hostname:
+  - **Subdomain**: `oauth` (or your choice)
+  - **Domain**: Select your domain from the dropdown
+  - **Service Type**: HTTP
+  - **Service URL**: `localhost:8000`
+- Click **Save hostname**
+
+**4. Enable Tunnel in Docker**:
+
+Edit your `.env` file:
+```env
+# Enable Cloudflare Tunnel
+CLOUDFLARE_TUNNEL_ENABLED=true
+CLOUDFLARE_TUNNEL_TOKEN=eyJhIjoiYmM0ZTM5ZjQwNjNmNDM4YWI5OTI3ZGE5ZjMyYzk3OGEiLCJ0IjoiOTZmYzA5NDAtYjNmYy00MTljLWI3YTMtNjk2ZGQwMjQxNDQ5IiwicyI6Ik9XVmxOelE1Wm1FdE56SmhZaTAwTkRjeExXSTFNV1V0TnpFek1UQTVNR1JpT1RCaiJ9
+
+# Update domain to your Cloudflare public hostname
+DOMAIN_NAME=https://oauth.yourdomain.com
+```
+
+**5. Start the Service**:
+```bash
+docker-compose up -d
+```
+
+**6. Verify Tunnel Connection**:
+```bash
+# Check logs for cloudflared connection
+docker-compose logs -f
+
+# You should see:
+# ☁️  Cloudflare Tunnel is ENABLED
+# ✓ Cloudflare Tunnel configuration validated
+# 🔗 Connecting to Cloudflare Tunnel...
+# Connection registered
+```
+
+**7. Test Public Access**:
+```bash
+# Test from outside your network
+curl https://oauth.yourdomain.com/health
+```
+
+### Cloudflare Tunnel Architecture
+
+The Docker container runs **two processes** managed by `supervisord`:
+1. **FastAPI** (port 8000) - The OAuth callback service
+2. **cloudflared** - Cloudflare Tunnel connector
+
+```
+Internet → Cloudflare CDN → Cloudflare Tunnel → Docker Container (FastAPI)
+```
+
+When enabled:
+- FastAPI starts first and listens on localhost:8000
+- cloudflared waits for FastAPI to be ready
+- cloudflared connects to Cloudflare's network
+- Your public hostname routes to the container
+
+### Process Management with Supervisord
+
+The container uses `supervisord` to manage both processes:
+
+```ini
+[program:fastapi]
+command=uvicorn app.main:app --host 0.0.0.0 --port 8000
+autostart=true
+priority=100
+
+[program:cloudflared]
+command=/app/start-cloudflared.sh
+autostart=false  # Only starts if CLOUDFLARE_TUNNEL_ENABLED=true
+priority=200
+```
+
+View process status:
+```bash
+# Access container
+docker exec -it oauth-callback-service bash
+
+# Check supervisor status
+supervisorctl status
+
+# Output:
+# fastapi                          RUNNING   pid 8, uptime 0:05:23
+# cloudflared                      RUNNING   pid 15, uptime 0:05:20
+```
+
+### Troubleshooting Cloudflare Tunnel
+
+**Tunnel not connecting**:
+```bash
+# Check cloudflared logs
+docker-compose logs -f oauth-callback | grep cloudflared
+
+# Common issues:
+# - Invalid token: Check CLOUDFLARE_TUNNEL_TOKEN is complete
+# - Token expired: Regenerate token in Cloudflare dashboard
+# - Network blocked: Ensure container can reach Cloudflare's servers
+```
+
+**FastAPI not accessible via tunnel**:
+```bash
+# Verify FastAPI is running
+docker exec oauth-callback-service curl http://localhost:8000/health
+
+# Check tunnel configuration in Cloudflare dashboard:
+# - Service should be: http://localhost:8000
+# - NOT http://127.0.0.1:8000
+```
+
+**Disable tunnel temporarily**:
+```env
+# In .env file
+CLOUDFLARE_TUNNEL_ENABLED=false
+```
+```bash
+docker-compose restart
+```
+
 ### Docker Image Details
 
 - **Base**: Python 3.12 slim
-- **Size**: ~150MB
+- **Additional Tools**: cloudflared, supervisor, curl
+- **Size**: ~200MB (with cloudflared)
 - **Port**: 8000
 - **Health Check**: Built-in HTTP health check every 30s
 - **Database**: SQLite stored in `/app/data` volume
 - **Logs**: stdout/stderr (view with `docker logs`)
+- **Process Manager**: supervisord
 
 ### Production Docker Deployment
 
@@ -259,11 +413,13 @@ See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for complete API reference.
 
 **1. Register a session (Android)**:
 ```kotlin
+val deepLinkUrl = "myapp://oauth/callback"  // Your app's deep link scheme
 val timestamp = System.currentTimeMillis() / 1000
-val signature = OAuthSignature.generateSignature("openrouter", timestamp, secret)
+val signature = OAuthSignature.generateSignature("openrouter", deepLinkUrl, timestamp, secret)
 
 val request = JSONObject().apply {
     put("provider", "openrouter")
+    put("deep_link_url", deepLinkUrl)
     put("timestamp", timestamp)
     put("signature", signature)
 }
@@ -348,6 +504,9 @@ oauth-callback-service/
 | `ALLOWED_ORIGINS` | string | `*` | CORS allowed origins (comma-separated) |
 | `OAUTH_PROVIDERS` | string | `openrouter,github,google` | Supported providers (comma-separated) |
 | `LOG_LEVEL` | string | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
+| `CLOUDFLARE_TUNNEL_ENABLED` | boolean | `false` | Enable Cloudflare Tunnel integration |
+| `CLOUDFLARE_TUNNEL_TOKEN` | string | - | Cloudflare Tunnel token (required if tunnel enabled) |
+| `ENABLE_DIAGNOSTIC_ENDPOINTS` | boolean | `false` | Enable /ping and /version endpoints (testing only) |
 
 ### Generating Secrets
 
@@ -571,6 +730,96 @@ Response:
   "active_sessions": 5
 }
 ```
+
+### Diagnostic Endpoints (Testing/Debugging)
+
+The service includes optional diagnostic endpoints for testing and troubleshooting. These are **disabled by default** for security.
+
+**Enable diagnostic endpoints**:
+```env
+# In .env file
+ENABLE_DIAGNOSTIC_ENDPOINTS=true
+```
+
+#### Ping Endpoint
+
+Simple connectivity test:
+```bash
+curl http://localhost:8000/ping
+```
+
+Response:
+```json
+{
+  "status": "pong",
+  "timestamp": "2024-11-23T10:30:45.123456Z",
+  "server_time": 1700737845
+}
+```
+
+**Use cases**:
+- Test network connectivity
+- Verify service is responding
+- Check server clock synchronization
+
+#### Version Endpoint
+
+Detailed version and system information:
+```bash
+curl http://localhost:8000/version
+```
+
+Response:
+```json
+{
+  "service": "OAuth Callback Service",
+  "version": "1.0.0",
+  "python_version": "3.12.0",
+  "platform": "Linux",
+  "platform_release": "6.5.0",
+  "uptime_seconds": 3600,
+  "diagnostic_endpoints_enabled": true,
+  "supported_providers": ["openrouter", "github", "google"],
+  "rate_limits": {
+    "oauth_endpoints": {
+      "per_minute": 10,
+      "per_hour": 100,
+      "per_day": 1000
+    },
+    "diagnostic_endpoints": {
+      "per_minute": 5
+    }
+  }
+}
+```
+
+**Use cases**:
+- Verify correct version is deployed
+- Check Python version compatibility
+- Monitor service uptime
+- Review rate limit configuration
+- Diagnose platform-specific issues
+
+#### Rate Limiting for Diagnostic Endpoints
+
+**Security measures**:
+- **Strict rate limit**: 5 requests per minute per IP
+- **Disabled by default**: Must explicitly enable
+- **Returns 429** when rate limit exceeded
+- **Returns 404** when disabled
+
+**Example rate limit error**:
+```json
+{
+  "detail": "Rate limit exceeded for diagnostic endpoints (5 per minute)"
+}
+```
+
+**Best practices**:
+- Only enable in development/testing environments
+- Disable in production unless actively debugging
+- Monitor access logs for unusual activity
+- Use VPN or internal network for sensitive diagnostics
 
 ### Logs
 

@@ -28,7 +28,7 @@ All requests to `/oauth/register` must include an HMAC-SHA256 signature for secu
 ### Generating Signatures
 
 **Algorithm**: HMAC-SHA256
-**Message Format**: `{provider}|{timestamp}`
+**Message Format**: `{provider}|{deep_link_url}|{timestamp}`
 **Secret**: Shared secret key (from `.env`)
 
 **Example (Python)**:
@@ -37,8 +37,8 @@ import hmac
 import hashlib
 import time
 
-def generate_signature(provider: str, timestamp: int, secret: str) -> str:
-    message = f"{provider.lower()}|{timestamp}"
+def generate_signature(provider: str, deep_link_url: str, timestamp: int, secret: str) -> str:
+    message = f"{provider.lower()}|{deep_link_url}|{timestamp}"
     return hmac.new(
         secret.encode('utf-8'),
         message.encode('utf-8'),
@@ -48,8 +48,9 @@ def generate_signature(provider: str, timestamp: int, secret: str) -> str:
 # Usage
 secret = "your-shared-secret"
 provider = "openrouter"
+deep_link_url = "myapp://oauth/callback"
 timestamp = int(time.time())
-signature = generate_signature(provider, timestamp, secret)
+signature = generate_signature(provider, deep_link_url, timestamp, secret)
 ```
 
 **Example (Kotlin/Android)**:
@@ -58,8 +59,8 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import java.security.MessageDigest
 
-fun generateSignature(provider: String, timestamp: Long, secret: String): String {
-    val message = "${provider.lowercase()}|$timestamp"
+fun generateSignature(provider: String, deepLinkUrl: String, timestamp: Long, secret: String): String {
+    val message = "${provider.lowercase()}|$deepLinkUrl|$timestamp"
     val mac = Mac.getInstance("HmacSHA256")
     val secretKey = SecretKeySpec(secret.toByteArray(), "HmacSHA256")
     mac.init(secretKey)
@@ -70,8 +71,9 @@ fun generateSignature(provider: String, timestamp: Long, secret: String): String
 // Usage
 val secret = "your-shared-secret"
 val provider = "openrouter"
+val deepLinkUrl = "myapp://oauth/callback"
 val timestamp = System.currentTimeMillis() / 1000
-val signature = generateSignature(provider, timestamp, secret)
+val signature = generateSignature(provider, deepLinkUrl, timestamp, secret)
 ```
 
 ## Endpoints
@@ -87,6 +89,7 @@ Creates a temporary session and returns a callback URL.
 ```json
 {
   "provider": "openrouter",
+  "deep_link_url": "myapp://oauth/callback",
   "timestamp": 1700000000,
   "signature": "abc123def456..."
 }
@@ -96,8 +99,9 @@ Creates a temporary session and returns a callback URL.
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `provider` | string | Yes | OAuth provider name (e.g., "openrouter", "github") |
+| `deep_link_url` | string | Yes | Deep link URL to redirect back to your app (e.g., "myapp://oauth/callback") |
 | `timestamp` | integer | Yes | Unix timestamp (seconds). Must be within ±5 minutes of server time |
-| `signature` | string | Yes | HMAC-SHA256 signature of `{provider}\|{timestamp}` |
+| `signature` | string | Yes | HMAC-SHA256 signature of `{provider}\|{deep_link_url}\|{timestamp}` |
 
 **Success Response** (200 OK):
 ```json

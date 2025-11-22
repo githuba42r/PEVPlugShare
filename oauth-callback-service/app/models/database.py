@@ -16,6 +16,7 @@ class OAuthSession(Base):
 
     session_id = Column(String(36), primary_key=True, index=True)
     provider = Column(String(50), nullable=False, index=True)
+    deep_link_url = Column(String(500), nullable=False)  # Client-provided deep link URL
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     expires_at = Column(DateTime, nullable=False, index=True)
     used = Column(Boolean, default=False, nullable=False)
