@@ -841,7 +841,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
     private fun populateFormFromLocation(location: com.a42r.pevplugshare.data.model.Location) {
         isInitializingUI = true  // Prevent spinner listeners from firing
-        
+
         binding.apply {
             nameInput.setText(location.name)
             businessNameInput.setText(location.businessName ?: "")
@@ -909,13 +909,13 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         // Set favorite state
         updateFavoriteIndicator(location.isFavourite)
         viewModel.updateFavorite(location.isFavourite)
-        
+
         isInitializingUI = false  // Re-enable spinner listeners
     }
 
     private fun initializeUIForAddMode() {
         isInitializingUI = true  // Prevent spinner listeners from firing
-        
+
         binding.apply {
             // Set socket count to 1
             selectSocketCount(1)
@@ -937,7 +937,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             // Set favorite to false
             updateFavoriteIndicator(false)
         }
-        
+
         isInitializingUI = false  // Re-enable spinner listeners
 
         // Automatically trigger AI photo analysis if conditions are met
