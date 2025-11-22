@@ -13,7 +13,8 @@ import java.io.File
 
 class AllImagesAdapter(
     private val onImageClick: (GalleryImageItem, Int) -> Unit,
-    private val onImageLongClick: (Int) -> Unit
+    private val onImageLongClick: (Int) -> Unit,
+    private val onDeleteClick: (GalleryImageItem, Int) -> Unit
 ) : ListAdapter<GalleryImageItem, AllImagesAdapter.ImageViewHolder>(ImageDiffCallback()) {
 
     private val selectedItems = mutableSetOf<Int>()
@@ -86,9 +87,12 @@ class AllImagesAdapter(
                 binding.selectionOverlay.visibility = if (isSelected) View.VISIBLE else View.GONE
                 binding.selectionCheckbox.visibility = View.VISIBLE
                 binding.selectionCheckbox.isChecked = isSelected
+                binding.deleteButton.visibility = View.GONE
             } else {
                 binding.selectionOverlay.visibility = View.GONE
                 binding.selectionCheckbox.visibility = View.GONE
+                // Show delete button only for orphaned images
+                binding.deleteButton.visibility = if (item.isOrphaned) View.VISIBLE else View.GONE
             }
             
             // Update card appearance based on selection
@@ -106,6 +110,10 @@ class AllImagesAdapter(
             binding.root.setOnLongClickListener {
                 onImageLongClick(position)
                 true
+            }
+
+            binding.deleteButton.setOnClickListener {
+                onDeleteClick(item, position)
             }
         }
     }

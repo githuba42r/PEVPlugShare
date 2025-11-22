@@ -20,6 +20,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_delete_selected"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="Delete Orphaned"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_cancel_selection"
         android:title="Cancel"
         app:showAsAction="never" />

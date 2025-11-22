@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +31,8 @@ import com.a42r.pevplugshare.data.db.dao.LocationDao
 data class GalleryImageItem(
     val imagePath: String,
     val locationId: String,
-    val locationName: String
+    val locationName: String,
+    val isOrphaned: Boolean = false
 )
 
 @AndroidEntryPoint
@@ -86,6 +88,10 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                 shareSelectedImages()
                 true
             }
+            R.id.menu_delete_selected -> {
+                confirmDeleteSelectedImages()
+                true
+            }
             R.id.menu_cancel_selection -> {
                 exitSelectionMode()
                 true
@@ -108,6 +114,9 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                 if (!adapter.isSelectionMode) {
                     enterSelectionMode(position)
                 }
+            },
+            onDeleteClick = { imageItem, position ->
+                confirmDeleteSingleImage(imageItem, position)
             }
         )
         
@@ -303,7 +312,8 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                 if (locationDir.isDirectory) {
                     val locationId = locationDir.name
                     val locationEntity = locationDao.getLocationById(locationId)
-                    val locationName = locationEntity?.name ?: "Unknown Location"
+                    val isOrphaned = locationEntity == null
+                    val locationName = locationEntity?.name ?: "Unknown Location (Deleted)"
                     
                     locationDir.listFiles()?.filter { it.extension == "jpg" }
                         ?.sortedBy { it.name }
@@ -312,7 +322,8 @@ class AllImagesGalleryActivity : AppCompatActivity() {
                                 GalleryImageItem(
                                     imagePath = imageFile.absolutePath,
                                     locationId = locationId,
-                                    locationName = locationName
+                                    locationName = locationName,
+                                    isOrphaned = isOrphaned
                                 )
                             )
                         }
@@ -334,6 +345,110 @@ class AllImagesGalleryActivity : AppCompatActivity() {
             putExtra(EXTRA_INITIAL_POSITION, imagePosition)
         }
         startActivity(intent)
+    }
+
+    private fun confirmDeleteSingleImage(imageItem: GalleryImageItem, position: Int) {
+        if (!imageItem.isOrphaned) {
+            Toast.makeText(this, "Cannot delete images linked to a location", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Delete Image")
+            .setMessage("Are you sure you want to delete this image? This action cannot be undone.")
+            .setPositiveButton("Delete") { _, _ ->
+                deleteSingleImage(imageItem)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deleteSingleImage(imageItem: GalleryImageItem) {
+        lifecycleScope.launch {
+            val success = withContext(Dispatchers.IO) {
+                try {
+                    val file = File(imageItem.imagePath)
+                    file.delete()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    false
+                }
+            }
+
+            if (success) {
+                Toast.makeText(this@AllImagesGalleryActivity, "Image deleted", Toast.LENGTH_SHORT).show()
+                loadImages() // Reload the gallery
+            } else {
+                Toast.makeText(this@AllImagesGalleryActivity, "Failed to delete image", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun confirmDeleteSelectedImages() {
+        val selectedItems = adapter.getSelectedItems()
+        if (selectedItems.isEmpty()) {
+            Toast.makeText(this, "No images selected", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val orphanedCount = selectedItems.count { it.isOrphaned }
+        val linkedCount = selectedItems.size - orphanedCount
+
+        if (orphanedCount == 0) {
+            Toast.makeText(this, "Cannot delete images linked to locations", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val message = if (linkedCount > 0) {
+            "You have selected $orphanedCount orphaned image${if (orphanedCount != 1) "s" else ""} " +
+            "and $linkedCount linked image${if (linkedCount != 1) "s" else ""}.\n\n" +
+            "Only the orphaned images will be deleted. This action cannot be undone."
+        } else {
+            "Are you sure you want to delete $orphanedCount image${if (orphanedCount != 1) "s" else ""}? " +
+            "This action cannot be undone."
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Delete Images")
+            .setMessage(message)
+            .setPositiveButton("Delete") { _, _ ->
+                deleteSelectedImages(selectedItems.filter { it.isOrphaned })
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deleteSelectedImages(orphanedImages: List<GalleryImageItem>) {
+        lifecycleScope.launch {
+            var successCount = 0
+            var failCount = 0
+
+            withContext(Dispatchers.IO) {
+                orphanedImages.forEach { item ->
+                    try {
+                        val file = File(item.imagePath)
+                        if (file.delete()) {
+                            successCount++
+                        } else {
+                            failCount++
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        failCount++
+                    }
+                }
+            }
+
+            val message = when {
+                failCount == 0 -> "Deleted $successCount image${if (successCount != 1) "s" else ""}"
+                successCount == 0 -> "Failed to delete images"
+                else -> "Deleted $successCount, failed $failCount"
+            }
+            Toast.makeText(this@AllImagesGalleryActivity, message, Toast.LENGTH_SHORT).show()
+            
+            exitSelectionMode()
+            loadImages() // Reload the gallery
+        }
     }
 
     companion object {
