@@ -24,6 +24,8 @@ class FullImageViewerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFullImageViewerBinding
     private lateinit var imagePaths: Array<String>
     private lateinit var locationName: String
+    private var locationId: String? = null
+    private var isOrphaned: Boolean = false
     private var initialPosition: Int = 0
     private var currentPosition: Int = 0
 
@@ -45,6 +47,8 @@ class FullImageViewerActivity : AppCompatActivity() {
         imagePaths = intent.getStringArrayExtra(AllImagesGalleryActivity.EXTRA_IMAGE_PATHS) ?: emptyArray()
         locationName = intent.getStringExtra(AllImagesGalleryActivity.EXTRA_LOCATION_NAME) ?: "Unknown"
         initialPosition = intent.getIntExtra(AllImagesGalleryActivity.EXTRA_INITIAL_POSITION, 0)
+        locationId = intent.getStringExtra(AllImagesGalleryActivity.EXTRA_LOCATION_ID)
+        isOrphaned = intent.getBooleanExtra(AllImagesGalleryActivity.EXTRA_IS_ORPHANED, false)
         currentPosition = initialPosition
 
         if (imagePaths.isEmpty()) {
@@ -88,6 +92,25 @@ class FullImageViewerActivity : AppCompatActivity() {
         binding.shareButton.setOnClickListener {
             shareCurrentImage()
         }
+
+        binding.goToLocationButton.setOnClickListener {
+            navigateToLocation()
+        }
+
+        // Hide "Go to Location" button for orphaned images
+        binding.goToLocationButton.visibility = if (isOrphaned) {
+            android.view.View.GONE
+        } else {
+            android.view.View.VISIBLE
+        }
+
+        // Show location name header for linked images
+        if (!isOrphaned && locationName.isNotEmpty() && locationName != "Unknown") {
+            binding.locationNameHeader.text = locationName
+            binding.locationNameHeader.visibility = android.view.View.VISIBLE
+        } else {
+            binding.locationNameHeader.visibility = android.view.View.GONE
+        }
     }
 
     private fun updateUI() {
@@ -117,7 +140,7 @@ class FullImageViewerActivity : AppCompatActivity() {
     private fun downloadCurrentImage() {
         try {
             val sourceFile = File(imagePaths[currentPosition])
-            
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 // Use MediaStore for Android 10+
                 val values = ContentValues().apply {
@@ -134,12 +157,12 @@ class FullImageViewerActivity : AppCompatActivity() {
                             inputStream.copyTo(outputStream)
                         }
                     }
-                    
+
                     // Clear IS_PENDING flag to make the image visible in gallery
                     values.clear()
                     values.put(MediaStore.Images.Media.IS_PENDING, 0)
                     contentResolver.update(imageUri, values, null, null)
-                    
+
                     Toast.makeText(this, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
                 } ?: run {
                     Toast.makeText(this, "Failed to create image file", Toast.LENGTH_SHORT).show()
@@ -151,15 +174,15 @@ class FullImageViewerActivity : AppCompatActivity() {
                 if (!appDir.exists()) {
                     appDir.mkdirs()
                 }
-                
+
                 val destFile = File(appDir, "PEVPlugShare_${System.currentTimeMillis()}.jpg")
                 sourceFile.copyTo(destFile, overwrite = true)
-                
+
                 // Notify media scanner to make image visible in gallery
                 val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
                 mediaScanIntent.data = Uri.fromFile(destFile)
                 sendBroadcast(mediaScanIntent)
-                
+
                 Toast.makeText(this, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
@@ -190,5 +213,19 @@ class FullImageViewerActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to share image: ${e.message}", Toast.LENGTH_SHORT).show()
             android.util.Log.e("FullImageViewer", "Error sharing image", e)
         }
+    }
+
+    private fun navigateToLocation() {
+        if (locationId.isNullOrEmpty() || isOrphaned) {
+            Toast.makeText(this, "Location not available", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val intent = Intent(this, com.a42r.pevplugshare.ui.main.MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra("HIGHLIGHT_LOCATION_ID", locationId)
+        }
+        startActivity(intent)
+        finish()
     }
 }

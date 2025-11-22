@@ -28,6 +28,18 @@ class LocationAdapter(
     private val userLongitude: Double
 ) : ListAdapter<Location, LocationAdapter.LocationViewHolder>(LocationDiffCallback()) {
 
+    private var highlightedLocationId: String? = null
+
+    fun highlightLocation(locationId: String) {
+        highlightedLocationId = locationId
+        notifyDataSetChanged()
+    }
+
+    fun clearHighlight() {
+        highlightedLocationId = null
+        notifyDataSetChanged()
+    }
+
     private fun isValidUserLocation(): Boolean {
         return !(userLatitude == 0.0 && userLongitude == 0.0)
     }
@@ -38,7 +50,9 @@ class LocationAdapter(
     }
 
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val location = getItem(position)
+        val isHighlighted = location.id == highlightedLocationId
+        holder.bind(location, isHighlighted)
     }
 
     class LocationViewHolder(
@@ -58,8 +72,18 @@ class LocationAdapter(
         private var isDescriptionExpanded = false
         private var isMapExpanded = false
 
-        fun bind(location: Location) {
+        fun bind(location: Location, isHighlighted: Boolean = false) {
             binding.apply {
+                // Apply highlight styling
+                if (isHighlighted) {
+                    root.setBackgroundColor(Color.parseColor("#FFF3E0")) // Light orange background
+                    root.strokeWidth = 4
+                    root.strokeColor = Color.parseColor("#FF9800") // Orange border
+                } else {
+                    root.setBackgroundColor(Color.WHITE)
+                    root.strokeWidth = 0
+                }
+
                 locationName.text = location.name
 
                 // Long press on name to edit

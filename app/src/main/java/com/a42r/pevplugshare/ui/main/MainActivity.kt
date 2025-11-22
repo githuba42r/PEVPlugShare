@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         setupUI()
         setupObservers()
         requestLocationPermission()
-        
+
         // Validate session token in background and load data
         lifecycleScope.launch {
             val isValid = viewModel.validateSessionAndLoadData()
@@ -63,6 +63,14 @@ class MainActivity : AppCompatActivity() {
                 showAuthenticationFailedDialog()
             }
         }
+
+        // Handle highlight intent if coming from image viewer
+        handleHighlightIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let { handleHighlightIntent(it) }
     }
 
     override fun onResume() {
@@ -107,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                         binding.swipeRefreshLayout.isRefreshing = false
 
                         val userLoc = viewModel.userLocation.value ?: Pair(0.0, 0.0)
-                        
+
                         // Always recreate adapter to use current user location
                         adapter = LocationAdapter(
                             onItemClick = { location -> showLocationDetails(location) },
@@ -175,7 +183,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        
+
         // Add long press handler to category badge
         binding.categoryBadge.setOnLongClickListener {
             showCategorySelectionDialog()
@@ -257,7 +265,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             // Check if credentials are stored
             val hasStoredCredentials = viewModel.hasStoredCredentials()
-            
+
             val message = buildString {
                 append("Are you sure you want to logout?\n\n")
                 append("This will:\n")
@@ -271,7 +279,7 @@ class MainActivity : AppCompatActivity() {
                     append("\nYou will need to manually login again next time.")
                 }
             }
-            
+
             AlertDialog.Builder(this@MainActivity)
                 .setTitle("Logout")
                 .setMessage(message)
@@ -290,7 +298,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.logout()
             Toast.makeText(this@MainActivity, "Logged out successfully", Toast.LENGTH_SHORT).show()
-            
+
             // Navigate back to login screen
             val intent = Intent(this@MainActivity, com.a42r.pevplugshare.ui.auth.LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -370,27 +378,27 @@ class MainActivity : AppCompatActivity() {
             android.util.Log.d("MainActivity", "Dialog shown successfully")
         }
     }
-    
+
     private fun showAboutDialog() {
         val versionName = try {
             packageManager.getPackageInfo(packageName, 0).versionName
         } catch (e: Exception) {
             "1.0"
         }
-        
+
         // Calculate image statistics
         lifecycleScope.launch {
             val (imageCount, totalSizeBytes) = withContext(kotlinx.coroutines.Dispatchers.IO) {
                 calculateImageStatistics()
             }
-            
+
             val totalSizeMB = totalSizeBytes / (1024.0 * 1024.0)
             val sizeString = if (totalSizeMB < 1.0) {
                 String.format("%.2f KB", totalSizeBytes / 1024.0)
             } else {
                 String.format("%.2f MB", totalSizeMB)
             }
-            
+
             val message = "A charging location finder for Personal Electric Vehicles.\n\n" +
                     "Version: $versionName\n" +
                     "Integration: OSMAnd (via Intent API)\n" +
@@ -403,7 +411,7 @@ class MainActivity : AppCompatActivity() {
                     "• Add new charging spots\n" +
                     "• Navigate with OSMAnd\n" +
                     "• Offline support"
-            
+
             AlertDialog.Builder(this@MainActivity)
                 .setTitle("PEVPlugShare")
                 .setIcon(R.mipmap.ic_launcher)
@@ -412,12 +420,12 @@ class MainActivity : AppCompatActivity() {
                 .show()
         }
     }
-    
+
     private fun calculateImageStatistics(): Pair<Int, Long> {
         val imagesDir = com.a42r.pevplugshare.util.ImageUtils.getAppImagesDirectory(this)
         var totalCount = 0
         var totalSize = 0L
-        
+
         if (imagesDir.exists() && imagesDir.isDirectory) {
             imagesDir.listFiles()?.forEach { locationDir ->
                 if (locationDir.isDirectory) {
@@ -428,22 +436,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        
+
         return Pair(totalCount, totalSize)
     }
 
     private fun navigateToLocation(location: Location) {
         val success = com.a42r.pevplugshare.util.OsmandIntentHelper.navigateToLocation(
-            this, 
+            this,
             location,
             "bicycle" // Default profile for PEV
         )
-        
+
         if (!success) {
             Toast.makeText(this, R.string.osmand_not_installed, Toast.LENGTH_SHORT).show()
         }
     }
-    
+
     private fun editLocation(location: Location) {
         val intent = Intent(this, com.a42r.pevplugshare.ui.edit.EditLocationActivity::class.java)
         intent.putExtra("location_id", location.id)
@@ -453,19 +461,19 @@ class MainActivity : AppCompatActivity() {
     private fun showLocationDetails(location: Location) {
         Toast.makeText(this, "Location: ${location.name}", Toast.LENGTH_SHORT).show()
     }
-    
+
     private fun loadLocationMap(location: Location) {
         val zoomLevel = viewModel.getMapZoomLevel()
         val mapUrl = "https://www.openstreetmap.org/export/embed.html?bbox=" +
                 "${location.longitude - 0.005},${location.latitude - 0.005}," +
                 "${location.longitude + 0.005},${location.latitude + 0.005}" +
                 "&layer=mapnik&marker=${location.latitude},${location.longitude}"
-        
+
         // The actual map loading will be handled by the adapter's ImageView
         // This is just for logging/debugging
         android.util.Log.d("MainActivity", "Loading map for ${location.name} at zoom $zoomLevel: $mapUrl")
     }
-    
+
     private fun showAuthenticationFailedDialog() {
         val dialog = AlertDialog.Builder(this)
             .setTitle("Authentication Failed")
@@ -475,9 +483,9 @@ class MainActivity : AppCompatActivity() {
                 returnToLogin()
             }
             .create()
-        
+
         dialog.show()
-        
+
         // Auto-close after 15 seconds
         lifecycleScope.launch {
             kotlinx.coroutines.delay(15000)
@@ -487,32 +495,32 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     private fun returnToLogin() {
         val intent = Intent(this, com.a42r.pevplugshare.ui.auth.LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
     }
-    
+
     private fun showPhotoGallery(location: Location) {
         android.util.Log.d("PhotoGallery", "=== showPhotoGallery called ===")
         android.util.Log.d("PhotoGallery", "Location: ${location.name} (ID: ${location.id})")
-        
+
         val imagePaths = com.a42r.pevplugshare.util.ImageUtils.getLocationImages(this, location.id)
             .map { it.absolutePath }
-        
+
         android.util.Log.d("PhotoGallery", "Found ${imagePaths.size} images")
         imagePaths.forEachIndexed { index, path ->
             android.util.Log.d("PhotoGallery", "  Image $index: $path")
         }
-        
+
         if (imagePaths.isEmpty()) {
             android.util.Log.w("PhotoGallery", "No photos found, showing toast")
             Toast.makeText(this, "No photos available for this location", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         // Get modal views
         android.util.Log.d("PhotoGallery", "Looking for modal views...")
         val galleryOverlay = binding.imageGalleryOverlay
@@ -520,44 +528,44 @@ class MainActivity : AppCompatActivity() {
         val imageCounter = binding.imageCounter
         val galleryToolbar = binding.galleryToolbar
         val locationDescView = binding.locationDescription
-        
+
         android.util.Log.d("PhotoGallery", "Views found:")
         android.util.Log.d("PhotoGallery", "  overlay: ${galleryOverlay != null}")
         android.util.Log.d("PhotoGallery", "  viewPager: ${viewPager != null}")
         android.util.Log.d("PhotoGallery", "  counter: ${imageCounter != null}")
         android.util.Log.d("PhotoGallery", "  toolbar: ${galleryToolbar != null}")
         android.util.Log.d("PhotoGallery", "  description: ${locationDescView != null}")
-        
+
         if (galleryOverlay == null || viewPager == null) {
             android.util.Log.e("PhotoGallery", "CRITICAL: Modal views not found!")
             Toast.makeText(this, "Error: Modal not initialized", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         // Show gallery modal
         android.util.Log.d("PhotoGallery", "Setting modal visibility to VISIBLE")
         galleryOverlay.visibility = android.view.View.VISIBLE
         // Hide FABs when gallery is shown
         binding.addLocationFab.hide()
         binding.quickLocationButton.hide()
-        
+
         android.util.Log.d("PhotoGallery", "Creating adapter with ${imagePaths.size} images")
         val adapter = com.a42r.pevplugshare.ui.adapter.ImageGalleryAdapter(imagePaths)
         viewPager.adapter = adapter
         viewPager.setCurrentItem(0, false)
-        
+
         // Set location description
         locationDescView?.text = location.description ?: "No description available"
-        
+
         // Set toolbar title to location name
         galleryToolbar?.title = location.name
-        
+
         // Update counter
         imageCounter?.text = "1 / ${imagePaths.size}"
-        
+
         // Track current image position
         var currentImagePosition = 0
-        
+
         android.util.Log.d("PhotoGallery", "Setting up page change listener")
         // Handle page changes
         viewPager.registerOnPageChangeCallback(object : androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback() {
@@ -567,17 +575,17 @@ class MainActivity : AppCompatActivity() {
                 currentImagePosition = position
             }
         })
-        
+
         // Download button
         binding.downloadImageButton?.setOnClickListener {
             downloadImage(imagePaths[currentImagePosition])
         }
-        
+
         // Share button
         binding.shareImageButton?.setOnClickListener {
             shareImage(imagePaths[currentImagePosition])
         }
-        
+
         // Close button
         android.util.Log.d("PhotoGallery", "Setting up close button")
         galleryToolbar?.setNavigationOnClickListener {
@@ -587,7 +595,7 @@ class MainActivity : AppCompatActivity() {
             binding.addLocationFab.show()
             binding.quickLocationButton.show()
         }
-        
+
         // Also allow clicking overlay to close
         galleryOverlay.setOnClickListener {
             android.util.Log.d("PhotoGallery", "Overlay clicked to close")
@@ -596,15 +604,15 @@ class MainActivity : AppCompatActivity() {
             binding.addLocationFab.show()
             binding.quickLocationButton.show()
         }
-        
+
         android.util.Log.d("PhotoGallery", "=== Modal opened successfully ===")
     }
-    
+
     private fun downloadImage(imagePath: String) {
         lifecycleScope.launch {
             try {
                 val sourceFile = java.io.File(imagePath)
-                
+
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                     // Use MediaStore for Android 10+
                     val values = android.content.ContentValues().apply {
@@ -621,12 +629,12 @@ class MainActivity : AppCompatActivity() {
                                 inputStream.copyTo(outputStream)
                             }
                         }
-                        
+
                         // Clear IS_PENDING flag to make the image visible
                         values.clear()
                         values.put(android.provider.MediaStore.Images.Media.IS_PENDING, 0)
                         contentResolver.update(imageUri, values, null, null)
-                        
+
                         Toast.makeText(this@MainActivity, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
                     } ?: run {
                         Toast.makeText(this@MainActivity, "Failed to create image file", Toast.LENGTH_SHORT).show()
@@ -641,21 +649,21 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity, "Storage permission required", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
-                    
+
                     val picturesDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_PICTURES)
                     val appDir = java.io.File(picturesDir, "PEVPlugShare")
                     if (!appDir.exists()) {
                         appDir.mkdirs()
                     }
-                    
+
                     val destFile = java.io.File(appDir, "PEVPlugShare_${System.currentTimeMillis()}.jpg")
                     sourceFile.copyTo(destFile, overwrite = true)
-                    
+
                     // Notify media scanner to make image visible in gallery
                     val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
                     mediaScanIntent.data = Uri.fromFile(destFile)
                     sendBroadcast(mediaScanIntent)
-                    
+
                     Toast.makeText(this@MainActivity, "Image saved to Pictures/PEVPlugShare", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
@@ -664,7 +672,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     private fun shareImage(imagePath: String) {
         try {
             val imageFile = java.io.File(imagePath)
@@ -686,6 +694,44 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Failed to share image: ${e.message}", Toast.LENGTH_SHORT).show()
             android.util.Log.e("MainActivity", "Error sharing image", e)
+        }
+    }
+
+    private fun handleHighlightIntent(intent: Intent) {
+        val locationId = intent.getStringExtra("HIGHLIGHT_LOCATION_ID")
+        if (!locationId.isNullOrEmpty()) {
+            highlightLocation(locationId)
+        }
+    }
+
+    private fun highlightLocation(locationId: String) {
+        lifecycleScope.launch {
+            // Wait a bit for the list to be populated
+            kotlinx.coroutines.delay(500)
+
+            val currentAdapter = adapter
+            if (currentAdapter != null) {
+                // Find the position of the location in the list
+                val position = currentAdapter.currentList.indexOfFirst { it.id == locationId }
+
+                if (position != -1) {
+                    // Scroll to the location and center it on screen
+                    val layoutManager = binding.locationRecyclerView.layoutManager as? LinearLayoutManager
+                    layoutManager?.scrollToPositionWithOffset(position,
+                        binding.locationRecyclerView.height / 2 - 200)
+
+                    // Highlight the location
+                    currentAdapter.highlightLocation(locationId)
+
+                    // Remove highlight after 10 seconds
+                    lifecycleScope.launch {
+                        kotlinx.coroutines.delay(10000)
+                        currentAdapter.clearHighlight()
+                    }
+                } else {
+                    Toast.makeText(this@MainActivity, "Location not found in list", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }

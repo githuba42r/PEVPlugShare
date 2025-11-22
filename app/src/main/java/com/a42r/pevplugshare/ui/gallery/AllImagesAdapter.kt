@@ -75,7 +75,7 @@ class AllImagesAdapter(
 
         fun bind(item: GalleryImageItem, position: Int) {
             binding.locationNameText.text = item.locationName
-            
+
             Glide.with(binding.root.context)
                 .load(File(item.imagePath))
                 .centerCrop()
@@ -94,7 +94,7 @@ class AllImagesAdapter(
                 // Show delete button only for orphaned images
                 binding.deleteButton.visibility = if (item.isOrphaned) View.VISIBLE else View.GONE
             }
-            
+
             // Update card appearance based on selection
             if (isSelected) {
                 binding.root.strokeWidth = 4
