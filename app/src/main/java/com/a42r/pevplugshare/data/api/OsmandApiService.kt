@@ -75,6 +75,10 @@ interface OsmandApiService {
     @GET("list-files")
     suspend fun listFiles(): OsmandListFilesResponse
 
+    // Web API - Get favorite groups with styles (icon, color, background)
+    @GET("fav/groups")
+    suspend fun getFavoriteGroups(): List<OsmandFavGroupStyle>
+
     // Web API - Download favorites GPX file
     @GET("download-file")
     suspend fun downloadFile(
