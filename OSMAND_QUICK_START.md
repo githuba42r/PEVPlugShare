@@ -55,7 +55,7 @@ The server will append the new point to the group.
 
 ## Category Name Format
 
-✅ Correct: `"Charging Locations"`  
+✅ Correct: `"Charging Locations"`
 ❌ Wrong: `"favorites-Charging Locations.gpx"`
 
 Just the plain category name, no prefix or suffix.
@@ -114,12 +114,12 @@ You'll see:
 
 ## Common Mistakes
 
-❌ Caching updatetime across multiple operations  
-❌ Using `"favorites-Category.gpx"` instead of `"Category"`  
-❌ Wrong index (e.g., using 1-based instead of 0-based)  
-❌ Wrong currentName (e.g., using new name instead of current)  
-❌ Using deprecated `updateLocationToOsmand()` function  
-❌ Including `ind` parameter in ADD operations  
+❌ Caching updatetime across multiple operations
+❌ Using `"favorites-Category.gpx"` instead of `"Category"`
+❌ Wrong index (e.g., using 1-based instead of 0-based)
+❌ Wrong currentName (e.g., using new name instead of current)
+❌ Using deprecated `updateLocationToOsmand()` function
+❌ Including `ind` parameter in ADD operations
 
 ## Full Documentation
 

@@ -1,6 +1,6 @@
 # OsmAnd Favorites ADD/UPDATE - Exact Algorithm Implementation
 
-**Date:** November 22, 2025  
+**Date:** November 22, 2025
 **Status:** ✅ COMPLETE AND PRODUCTION-READY
 
 ## Executive Summary
@@ -338,8 +338,8 @@ val gpxFile = authRepository.downloadFavoritesGpx(categoryName)
 val waypoints = parseGpxFile(gpxFile)
 
 // Find the waypoint (by lat/lon or other identifier)
-val index = waypoints.indexOfFirst { 
-    it.lat == location.latitude && it.lon == location.longitude 
+val index = waypoints.indexOfFirst {
+    it.lat == location.latitude && it.lon == location.longitude
 }
 val currentName = waypoints[index].name
 
