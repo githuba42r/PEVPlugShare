@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -45,12 +46,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val backPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            // Close the image gallery modal if it's open
+            if (binding.imageGalleryOverlay.visibility == android.view.View.VISIBLE) {
+                binding.imageGalleryOverlay.visibility = android.view.View.GONE
+                binding.addLocationFab.show()
+                binding.quickLocationButton.show()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Register back button handler for image gallery modal
+        onBackPressedDispatcher.addCallback(this, backPressedCallback)
 
         setupUI()
         setupObservers()
@@ -548,6 +563,9 @@ class MainActivity : AppCompatActivity() {
         // Hide FABs when gallery is shown
         binding.addLocationFab.hide()
         binding.quickLocationButton.hide()
+        
+        // Enable back button handler for modal
+        backPressedCallback.isEnabled = true
 
         android.util.Log.d("PhotoGallery", "Creating adapter with ${imagePaths.size} images")
         val adapter = com.a42r.pevplugshare.ui.adapter.ImageGalleryAdapter(imagePaths)
@@ -594,6 +612,8 @@ class MainActivity : AppCompatActivity() {
             // Show FABs when gallery is closed
             binding.addLocationFab.show()
             binding.quickLocationButton.show()
+            // Disable back button handler
+            backPressedCallback.isEnabled = false
         }
 
         // Also allow clicking overlay to close
@@ -603,6 +623,8 @@ class MainActivity : AppCompatActivity() {
             // Show FABs when gallery is closed
             binding.addLocationFab.show()
             binding.quickLocationButton.show()
+            // Disable back button handler
+            backPressedCallback.isEnabled = false
         }
 
         android.util.Log.d("PhotoGallery", "=== Modal opened successfully ===")
