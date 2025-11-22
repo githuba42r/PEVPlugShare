@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/dialogMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Would you like to sync these changes to OsmAnd?"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+
+    <CheckBox
+        android:id="@+id/checkboxVerifyDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Verify description before syncing"
+        android:checked="true"
+        android:layout_marginBottom="8dp"/>
+
+    <CheckBox
+        android:id="@+id/checkboxRememberChoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remember these settings"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/buttonCancel"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Skip Sync"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/buttonSyncToOsmand"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sync to OsmAnd"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -580,10 +580,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         Log.d("EditLocationActivity", "EditLocationState.Loaded: photosBeingProcessed=$photosBeingProcessed, buttonSubmit.isEnabled=${binding.buttonSubmit.isEnabled}")
                         populateFormFromLocation(state.location)
 
-                        // Show sync button if pending
-                        binding.buttonSyncToOsmand.visibility =
-                            if (state.location.syncStatus.value == "PENDING") android.view.View.VISIBLE
-                            else android.view.View.GONE
+                        // Always show sync button in edit mode (not add mode)
+                        binding.buttonSyncToOsmand.visibility = android.view.View.VISIBLE
                     }
                     is EditLocationState.Updating -> {
                         binding.progressBar.visibility = android.view.View.VISIBLE
@@ -924,6 +922,61 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             return
         }
 
+        // In edit mode, prompt for OsmAnd sync if enabled
+        if (!isAddMode && tokenManager.getSyncToOsmandOnUpdate()) {
+            showOsmandSyncPrompt()
+            return
+        }
+
+        // Continue with normal submit
+        performActualSubmit(syncToOsmand = false, verifyDescription = false)
+    }
+
+    private fun showOsmandSyncPrompt() {
+        val dialogView = layoutInflater.inflate(com.a42r.pevplugshare.R.layout.dialog_osmand_sync_prompt, null)
+        
+        val checkboxVerify = dialogView.findViewById<android.widget.CheckBox>(com.a42r.pevplugshare.R.id.checkboxVerifyDescription)
+        val checkboxRemember = dialogView.findViewById<android.widget.CheckBox>(com.a42r.pevplugshare.R.id.checkboxRememberChoice)
+        val buttonCancel = dialogView.findViewById<android.widget.Button>(com.a42r.pevplugshare.R.id.buttonCancel)
+        val buttonSync = dialogView.findViewById<android.widget.Button>(com.a42r.pevplugshare.R.id.buttonSyncToOsmand)
+        
+        // Set initial state from saved preferences
+        checkboxVerify.isChecked = tokenManager.getVerifyDescriptionBeforeSync()
+        
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setTitle("Sync to OsmAnd?")
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        
+        buttonCancel.setOnClickListener {
+            // Save preferences if remember is checked
+            if (checkboxRemember.isChecked) {
+                tokenManager.setSyncToOsmandOnUpdate(false) // Don't prompt again
+            }
+            dialog.dismiss()
+            // Continue with update without syncing
+            performActualSubmit(syncToOsmand = false, verifyDescription = false)
+        }
+        
+        buttonSync.setOnClickListener {
+            val verifyDescription = checkboxVerify.isChecked
+            
+            // Save preferences if remember is checked
+            if (checkboxRemember.isChecked) {
+                tokenManager.setVerifyDescriptionBeforeSync(verifyDescription)
+                // Note: We keep prompting enabled, just save the verify preference
+            }
+            
+            dialog.dismiss()
+            // Continue with update and sync to OsmAnd
+            performActualSubmit(syncToOsmand = true, verifyDescription = verifyDescription)
+        }
+        
+        dialog.show()
+    }
+
+    private fun performActualSubmit(syncToOsmand: Boolean, verifyDescription: Boolean) {
         lifecycleScope.launch(Dispatchers.IO) {
             Log.d("EditLocationActivity", "")
             Log.d("EditLocationActivity", "💾 SUBMITTING LOCATION UPDATE")
@@ -1170,9 +1223,59 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                     viewModel.addLocation(finalLocationId)
                 } else {
                     viewModel.submitUpdates()
+                    
+                    // If sync to OsmAnd was requested, do it after successful update
+                    if (syncToOsmand) {
+                        locationId?.let { id ->
+                            if (verifyDescription) {
+                                // Show description verification dialog before syncing
+                                withContext(Dispatchers.Main) {
+                                    showDescriptionVerificationAndSync(id)
+                                }
+                            } else {
+                                // Sync directly without verification
+                                viewModel.syncToOsmand(id)
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(this@EditLocationActivity, "Syncing to OsmAnd...", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    }
                 }
                 submittedSuccessfully = true
             }
+        }
+    }
+
+    private fun showDescriptionVerificationAndSync(locationId: String) {
+        // Generate description first
+        val currentDescription = binding.descriptionInput.text.toString()
+        
+        if (currentDescription.isBlank()) {
+            // No description, ask if they want to generate one
+            android.app.AlertDialog.Builder(this)
+                .setTitle("Generate Description?")
+                .setMessage("No description found. Would you like to generate one for OsmAnd sync?")
+                .setPositiveButton("Generate") { _, _ ->
+                    syncToOsmand() // This will trigger the existing sync flow with description generation
+                }
+                .setNegativeButton("Sync Without") { _, _ ->
+                    viewModel.syncToOsmand(locationId)
+                    Toast.makeText(this, "Syncing to OsmAnd without description...", Toast.LENGTH_SHORT).show()
+                }
+                .setNeutralButton("Cancel", null)
+                .show()
+        } else {
+            // Show description for verification
+            android.app.AlertDialog.Builder(this)
+                .setTitle("Verify Description")
+                .setMessage("The following description will be synced to OsmAnd:\n\n$currentDescription")
+                .setPositiveButton("Sync") { _, _ ->
+                    viewModel.syncToOsmandWithDescription(locationId, currentDescription)
+                    Toast.makeText(this, "Syncing to OsmAnd...", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
     }
 
