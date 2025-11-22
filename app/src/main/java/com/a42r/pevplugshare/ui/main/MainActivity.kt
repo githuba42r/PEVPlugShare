@@ -786,58 +786,66 @@ class MainActivity : AppCompatActivity() {
         val currentFilter = viewModel.filterState.value
 
         // Initialize dialog views with current filter state
-        val costAll = dialogView.findViewById<android.widget.RadioButton>(R.id.costAll)
-        val costFree = dialogView.findViewById<android.widget.RadioButton>(R.id.costFree)
-        val costPaid = dialogView.findViewById<android.widget.RadioButton>(R.id.costPaid)
+        val costFree = dialogView.findViewById<android.widget.TextView>(R.id.costFree)
+        val costPaid = dialogView.findViewById<android.widget.TextView>(R.id.costPaid)
         val openNowCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.openNowCheckbox)
         val socketsRangeSlider = dialogView.findViewById<com.google.android.material.slider.RangeSlider>(R.id.socketsRangeSlider)
         val minSocketsLabel = dialogView.findViewById<android.widget.TextView>(R.id.minSocketsLabel)
         val maxSocketsLabel = dialogView.findViewById<android.widget.TextView>(R.id.maxSocketsLabel)
-        val accessAll = dialogView.findViewById<android.widget.RadioButton>(R.id.accessAll)
-        val accessPublic = dialogView.findViewById<android.widget.RadioButton>(R.id.accessPublic)
-        val accessPrivate = dialogView.findViewById<android.widget.RadioButton>(R.id.accessPrivate)
+        val accessPublic = dialogView.findViewById<android.widget.TextView>(R.id.accessPublic)
+        val accessPrivate = dialogView.findViewById<android.widget.TextView>(R.id.accessPrivate)
 
-        // Socket type checkboxes
-        val socketAS3112 = dialogView.findViewById<android.widget.CheckBox>(R.id.socketAS3112)
-        val socketType2 = dialogView.findViewById<android.widget.CheckBox>(R.id.socketType2)
-        val socketTesla = dialogView.findViewById<android.widget.CheckBox>(R.id.socketTesla)
-        val socketCCS2 = dialogView.findViewById<android.widget.CheckBox>(R.id.socketCCS2)
-        val socketCHAdeMO = dialogView.findViewById<android.widget.CheckBox>(R.id.socketCHAdeMO)
-        val socketType1 = dialogView.findViewById<android.widget.CheckBox>(R.id.socketType1)
-        val socketWallSocket = dialogView.findViewById<android.widget.CheckBox>(R.id.socketWallSocket)
-        val socketCaravan = dialogView.findViewById<android.widget.CheckBox>(R.id.socketCaravan)
-        val socketOther = dialogView.findViewById<android.widget.CheckBox>(R.id.socketOther)
+        // Socket type badges (TextViews acting as toggle buttons)
+        val socketAS3112 = dialogView.findViewById<android.widget.TextView>(R.id.socketAS3112)
+        val socketType2 = dialogView.findViewById<android.widget.TextView>(R.id.socketType2)
+        val socketTesla = dialogView.findViewById<android.widget.TextView>(R.id.socketTesla)
+        val socketCCS2 = dialogView.findViewById<android.widget.TextView>(R.id.socketCCS2)
+        val socketCHAdeMO = dialogView.findViewById<android.widget.TextView>(R.id.socketCHAdeMO)
+        val socketType1 = dialogView.findViewById<android.widget.TextView>(R.id.socketType1)
+        val socketWallSocket = dialogView.findViewById<android.widget.TextView>(R.id.socketWallSocket)
+        val socketCaravan = dialogView.findViewById<android.widget.TextView>(R.id.socketCaravan)
+        val socketOther = dialogView.findViewById<android.widget.TextView>(R.id.socketOther)
 
         // Set current values
-        when (currentFilter.costFilter) {
-            CostFilter.ALL -> costAll.isChecked = true
-            CostFilter.FREE -> costFree.isChecked = true
-            CostFilter.PAID -> costPaid.isChecked = true
-        }
+        costFree.isSelected = currentFilter.costFilter == CostFilter.FREE
+        costPaid.isSelected = currentFilter.costFilter == CostFilter.PAID
         openNowCheckbox.isChecked = currentFilter.openNowOnly
         socketsRangeSlider.values = listOf(currentFilter.minSockets.toFloat(), currentFilter.maxSockets.toFloat())
-        when (currentFilter.accessFilter) {
-            AccessFilter.ALL -> accessAll.isChecked = true
-            AccessFilter.PUBLIC -> accessPublic.isChecked = true
-            AccessFilter.PRIVATE -> accessPrivate.isChecked = true
-        }
+        accessPublic.isSelected = currentFilter.accessFilter == AccessFilter.PUBLIC
+        accessPrivate.isSelected = currentFilter.accessFilter == AccessFilter.PRIVATE
 
-        // Set socket type checkboxes
-        socketAS3112.isChecked = com.a42r.pevplugshare.data.model.SocketType.AS3112 in currentFilter.socketTypes
-        socketType2.isChecked = com.a42r.pevplugshare.data.model.SocketType.TYPE2 in currentFilter.socketTypes
-        socketTesla.isChecked = com.a42r.pevplugshare.data.model.SocketType.TESLA in currentFilter.socketTypes
-        socketCCS2.isChecked = com.a42r.pevplugshare.data.model.SocketType.CCS2 in currentFilter.socketTypes
-        socketCHAdeMO.isChecked = com.a42r.pevplugshare.data.model.SocketType.CHADEMO in currentFilter.socketTypes
-        socketType1.isChecked = com.a42r.pevplugshare.data.model.SocketType.TYPE1 in currentFilter.socketTypes
-        socketWallSocket.isChecked = com.a42r.pevplugshare.data.model.SocketType.WALL_SOCKET in currentFilter.socketTypes
-        socketCaravan.isChecked = com.a42r.pevplugshare.data.model.SocketType.CARAVAN in currentFilter.socketTypes
-        socketOther.isChecked = com.a42r.pevplugshare.data.model.SocketType.OTHER in currentFilter.socketTypes
+        // Set socket type badges selected state
+        socketAS3112.isSelected = com.a42r.pevplugshare.data.model.SocketType.AS3112 in currentFilter.socketTypes
+        socketType2.isSelected = com.a42r.pevplugshare.data.model.SocketType.TYPE2 in currentFilter.socketTypes
+        socketTesla.isSelected = com.a42r.pevplugshare.data.model.SocketType.TESLA in currentFilter.socketTypes
+        socketCCS2.isSelected = com.a42r.pevplugshare.data.model.SocketType.CCS2 in currentFilter.socketTypes
+        socketCHAdeMO.isSelected = com.a42r.pevplugshare.data.model.SocketType.CHADEMO in currentFilter.socketTypes
+        socketType1.isSelected = com.a42r.pevplugshare.data.model.SocketType.TYPE1 in currentFilter.socketTypes
+        socketWallSocket.isSelected = com.a42r.pevplugshare.data.model.SocketType.WALL_SOCKET in currentFilter.socketTypes
+        socketCaravan.isSelected = com.a42r.pevplugshare.data.model.SocketType.CARAVAN in currentFilter.socketTypes
+        socketOther.isSelected = com.a42r.pevplugshare.data.model.SocketType.OTHER in currentFilter.socketTypes
+
+        // Setup badge click handlers to toggle selection
+        costFree.setOnClickListener { it.isSelected = !it.isSelected }
+        costPaid.setOnClickListener { it.isSelected = !it.isSelected }
+        accessPublic.setOnClickListener { it.isSelected = !it.isSelected }
+        accessPrivate.setOnClickListener { it.isSelected = !it.isSelected }
+        socketAS3112.setOnClickListener { it.isSelected = !it.isSelected }
+        socketType2.setOnClickListener { it.isSelected = !it.isSelected }
+        socketTesla.setOnClickListener { it.isSelected = !it.isSelected }
+        socketCCS2.setOnClickListener { it.isSelected = !it.isSelected }
+        socketCHAdeMO.setOnClickListener { it.isSelected = !it.isSelected }
+        socketType1.setOnClickListener { it.isSelected = !it.isSelected }
+        socketWallSocket.setOnClickListener { it.isSelected = !it.isSelected }
+        socketCaravan.setOnClickListener { it.isSelected = !it.isSelected }
+        socketOther.setOnClickListener { it.isSelected = !it.isSelected }
 
         // Update labels when slider changes
         socketsRangeSlider.addOnChangeListener { slider, _, _ ->
             val values = slider.values
             minSocketsLabel.text = "Min: ${values[0].toInt()}"
-            maxSocketsLabel.text = "Max: ${values[1].toInt()}"
+            val maxValue = values[1].toInt()
+            maxSocketsLabel.text = if (maxValue >= 10) "Max: 10+" else "Max: $maxValue"
         }
 
         val dialog = AlertDialog.Builder(this)
@@ -855,29 +863,31 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialogView.findViewById<android.widget.Button>(R.id.applyButton).setOnClickListener {
-            // Gather filter settings
+            // Gather filter settings from badges
             val costFilter = when {
-                costFree.isChecked -> CostFilter.FREE
-                costPaid.isChecked -> CostFilter.PAID
-                else -> CostFilter.ALL
+                costFree.isSelected && costPaid.isSelected -> CostFilter.ALL
+                costFree.isSelected -> CostFilter.FREE
+                costPaid.isSelected -> CostFilter.PAID
+                else -> CostFilter.ALL // If none selected, show all
             }
 
             val accessFilter = when {
-                accessPublic.isChecked -> AccessFilter.PUBLIC
-                accessPrivate.isChecked -> AccessFilter.PRIVATE
-                else -> AccessFilter.ALL
+                accessPublic.isSelected && accessPrivate.isSelected -> AccessFilter.ALL
+                accessPublic.isSelected -> AccessFilter.PUBLIC
+                accessPrivate.isSelected -> AccessFilter.PRIVATE
+                else -> AccessFilter.ALL // If none selected, show all
             }
 
             val socketTypes = mutableSetOf<com.a42r.pevplugshare.data.model.SocketType>()
-            if (socketAS3112.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.AS3112)
-            if (socketType2.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TYPE2)
-            if (socketTesla.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TESLA)
-            if (socketCCS2.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CCS2)
-            if (socketCHAdeMO.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CHADEMO)
-            if (socketType1.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TYPE1)
-            if (socketWallSocket.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.WALL_SOCKET)
-            if (socketCaravan.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CARAVAN)
-            if (socketOther.isChecked) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.OTHER)
+            if (socketAS3112.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.AS3112)
+            if (socketType2.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TYPE2)
+            if (socketTesla.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TESLA)
+            if (socketCCS2.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CCS2)
+            if (socketCHAdeMO.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CHADEMO)
+            if (socketType1.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.TYPE1)
+            if (socketWallSocket.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.WALL_SOCKET)
+            if (socketCaravan.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.CARAVAN)
+            if (socketOther.isSelected) socketTypes.add(com.a42r.pevplugshare.data.model.SocketType.OTHER)
 
             val values = socketsRangeSlider.values
             val newFilter = FilterState(
@@ -898,14 +908,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateFilterButtonsAppearance(filterState: FilterState) {
-        // Update filter button to show if filters are active
-        if (filterState.isActive() && !filterState.favoritesOnly) {
-            binding.toggleFilterButton.setColorFilter(
-                ContextCompat.getColor(this, R.color.md_theme_secondary)
-            )
-        } else {
-            binding.toggleFilterButton.colorFilter = null
-        }
+        // Update filter button - icon is already solid white via XML tint
+        // Just clear any color filter to keep it pure white
+        binding.toggleFilterButton.colorFilter = null
 
         // Update favorites button icon based on state
         // OFF = white filled with low opacity (almost invisible), ON = solid black filled

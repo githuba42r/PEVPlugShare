@@ -28,34 +28,39 @@
         android:textStyle="bold"
         android:layout_marginTop="8dp" />
 
-    <RadioGroup
-        android:id="@+id/costFilterGroup"
+    <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginTop="8dp"
+        app:flexWrap="wrap"
+        app:justifyContent="flex_start">
 
-        <RadioButton
-            android:id="@+id/costAll"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="All"
-            android:checked="true" />
-
-        <RadioButton
+        <TextView
             android:id="@+id/costFree"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Free Only" />
+            android:layout_margin="4dp"
+            android:background="@drawable/socket_badge_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:text="Free"
+            android:textColor="@color/socket_badge_text_color"
+            android:textSize="14sp" />
 
-        <RadioButton
+        <TextView
             android:id="@+id/costPaid"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Paid Only" />
-    </RadioGroup>
+            android:layout_margin="4dp"
+            android:background="@drawable/socket_badge_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:text="Paid"
+            android:textColor="@color/socket_badge_text_color"
+            android:textSize="14sp" />
+    </com.google.android.flexbox.FlexboxLayout>
 
     <!-- Opening Hours Filter -->
     <TextView
@@ -91,7 +96,7 @@
             android:id="@+id/minSocketsLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Min: 1"
+            android:text="Min: 0"
             android:layout_marginEnd="8dp" />
 
         <com.google.android.material.slider.RangeSlider
@@ -99,8 +104,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:valueFrom="1"
-            android:valueTo="20"
+            android:valueFrom="0"
+            android:valueTo="10"
             android:stepSize="1"
             app:values="@array/default_socket_range" />
 
@@ -108,7 +113,7 @@
             android:id="@+id/maxSocketsLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Max: 20"
+            android:text="Max: 10+"
             android:layout_marginStart="8dp" />
     </LinearLayout>
 
@@ -121,34 +126,39 @@
         android:textStyle="bold"
         android:layout_marginTop="16dp" />
 
-    <RadioGroup
-        android:id="@+id/accessFilterGroup"
+    <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginTop="8dp"
+        app:flexWrap="wrap"
+        app:justifyContent="flex_start">
 
-        <RadioButton
-            android:id="@+id/accessAll"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="All"
-            android:checked="true" />
-
-        <RadioButton
+        <TextView
             android:id="@+id/accessPublic"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Public" />
+            android:layout_margin="4dp"
+            android:background="@drawable/socket_badge_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:text="Public"
+            android:textColor="@color/socket_badge_text_color"
+            android:textSize="14sp" />
 
-        <RadioButton
+        <TextView
             android:id="@+id/accessPrivate"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Private" />
-    </RadioGroup>
+            android:layout_margin="4dp"
+            android:background="@drawable/socket_badge_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:text="Private"
+            android:textColor="@color/socket_badge_text_color"
+            android:textSize="14sp" />
+    </com.google.android.flexbox.FlexboxLayout>
 
     <!-- Socket Types Filter -->
     <TextView
@@ -159,68 +169,141 @@
         android:textStyle="bold"
         android:layout_marginTop="16dp" />
 
-    <CheckBox
-        android:id="@+id/socketAS3112"
+    <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AS3112 (AU GPO)"
-        android:checked="true" />
+        app:flexWrap="wrap"
+        app:alignItems="flex_start"
+        app:alignContent="flex_start"
+        android:layout_marginTop="8dp">
 
-    <CheckBox
-        android:id="@+id/socketType2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Type2 EV"
-        android:checked="true" />
+        <TextView
+            android:id="@+id/socketAS3112"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AS3112 (AU GPO)"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/socketTesla"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tesla Charger"
-        android:checked="true" />
+        <TextView
+            android:id="@+id/socketType2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type2 EV"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/socketCCS2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="CCS2/Combo"
-        android:checked="true" />
+        <TextView
+            android:id="@+id/socketTesla"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tesla"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/socketCHAdeMO"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="CHAdeMO"
-        android:checked="true" />
+        <TextView
+            android:id="@+id/socketCCS2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CCS2/Combo"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/socketType1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Type 1 (J1772)"
-        android:checked="true" />
+        <TextView
+            android:id="@+id/socketCHAdeMO"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CHAdeMO"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/socketWallSocket"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Wall Socket (15A)"
-        android:checked="true" />
+        <TextView
+            android:id="@+id/socketType1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type 1 (J1772)"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/socketCaravan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Caravan Plug"
-        android:checked="true" />
+        <TextView
+            android:id="@+id/socketWallSocket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wall Socket (15A)"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
 
-    <CheckBox
-        android:id="@+id/socketOther"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Other EV Charger"
-        android:checked="true" />
+        <TextView
+            android:id="@+id/socketCaravan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Caravan Plug"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/socketOther"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Other EV"
+            android:background="@drawable/socket_badge_background"
+            android:textColor="@color/socket_badge_text_color"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:layout_margin="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="12sp" />
+
+    </com.google.android.flexbox.FlexboxLayout>
 
     <!-- Action Buttons -->
     <LinearLayout
@@ -230,20 +313,26 @@
         android:layout_marginTop="24dp"
         android:gravity="end">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/resetButton"
-            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reset" />
+            android:text="Reset"
+            android:backgroundTint="@android:color/white"
+            android:textColor="@color/md_theme_primary"
+            app:strokeColor="@color/md_theme_primary"
+            app:strokeWidth="1dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/cancelButton"
-            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:layout_marginStart="8dp" />
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@android:color/white"
+            android:textColor="@color/md_theme_primary"
+            app:strokeColor="@color/md_theme_primary"
+            app:strokeWidth="1dp" />
 
         <Button
             android:id="@+id/applyButton"

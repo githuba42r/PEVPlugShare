@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Selected state - white text -->
+    <item android:state_selected="true" android:color="@android:color/white"/>
+    <!-- Default state - dark text -->
+    <item android:color="@color/md_theme_on_background"/>
+</selector>
