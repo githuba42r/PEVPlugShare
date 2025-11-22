@@ -54,6 +54,7 @@ class EditLocationViewModel @Inject constructor(
     private val osmandSyncService: com.a42r.pevplugshare.data.repository.OsmandLocationSyncService,
     private val tokenManager: com.a42r.pevplugshare.data.remote.TokenManager,
     private val descriptionParser: com.a42r.pevplugshare.ai.LocationDescriptionParser,
+    private val descriptionGenerator: com.a42r.pevplugshare.ai.LocationDescriptionGenerator,
     private val geocodingService: com.a42r.pevplugshare.data.remote.GeocodingService
 ) : ViewModel() {
 
@@ -426,49 +427,20 @@ class EditLocationViewModel @Inject constructor(
                 result.onSuccess { locations ->
                     val location = locations.find { it.id == locationId }
                     if (location != null) {
-                        // Check if we have cached OSMAnd metadata
-                        if (location.osmandSyncedToServer == true && 
-                            location.osmandOriginalName != null && 
-                            location.osmandGpxIndex != null) {
-                            // Use cached metadata for fast sync
-                            Log.d(TAG, "Using cached metadata: index=${location.osmandGpxIndex}, original name=${location.osmandOriginalName}")
-                            osmandSyncService.updateFavorite(location, category, location.osmandOriginalName!!, location.osmandGpxIndex!!)
-                                .onSuccess {
-                                    _editState.value = EditLocationState.UpdateSuccess
-                                }
-                                .onFailure { e ->
-                                    _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
-                                }
-                        } else {
-                            // No cached metadata - need to download GPX to determine add vs update
-                            Log.d(TAG, "No cached metadata, downloading GPX to determine sync strategy")
-                            val gpxResult = authRepository.downloadFavoritesGpx(category)
-                            gpxResult.onSuccess { favorites ->
-                                val index = favorites.indexOfFirst { it.id == location.id || it.name == location.name }
-                                if (index >= 0) {
-                                    val currentName = favorites[index].name
-                                    // Use the new updateFavorite function with proper updatetime handling
-                                    osmandSyncService.updateFavorite(location, category, currentName, index)
-                                        .onSuccess {
-                                            _editState.value = EditLocationState.UpdateSuccess
-                                        }
-                                        .onFailure { e ->
-                                            _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
-                                        }
-                                } else {
-                                    // Location not found in GPX, try adding as new
-                                    osmandSyncService.addFavorite(location, category)
-                                        .onSuccess {
-                                            _editState.value = EditLocationState.UpdateSuccess
-                                        }
-                                        .onFailure { e ->
-                                            _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
-                                        }
-                                }
-                            }.onFailure { e ->
-                                _editState.value = EditLocationState.Error("Failed to get current state: ${e.message}")
+                        Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                        Log.d(TAG, "SYNC TO OSMAND - Starting smart sync")
+                        Log.d(TAG, "  Location: ${location.name}")
+                        Log.d(TAG, "  Category: $category")
+                        Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+                        // Use smart sync which automatically determines ADD vs UPDATE
+                        osmandSyncService.smartSync(location, category)
+                            .onSuccess {
+                                _editState.value = EditLocationState.UpdateSuccess
                             }
-                        }
+                            .onFailure { e ->
+                                _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                            }
                     }
                 }
             } catch (e: Exception) {
@@ -480,47 +452,94 @@ class EditLocationViewModel @Inject constructor(
     fun syncToOsmandWithDescription(locationId: String, description: String) {
         viewModelScope.launch {
             try {
+                Log.d(TAG, "━━━ syncToOsmandWithDescription START ━━━")
+                Log.d(TAG, "Location ID: $locationId")
+                Log.d(TAG, "Description to sync: $description")
+
                 val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
                 val result = locationRepository.getLocationsByCategory(category)
 
                 result.onSuccess { locations ->
+                    Log.d(TAG, "Found ${locations.size} locations in category")
                     val location = locations.find { it.id == locationId }
                     if (location != null) {
+                        Log.d(TAG, "Found location: ${location.name}")
+                        Log.d(TAG, "Location from DB - gpoCount: ${location.gpoCount}")
+                        Log.d(TAG, "Location from DB - description: '${location.description}'")
+                        Log.d(TAG, "Location from DB - socketTypes: ${location.socketTypes}")
+                        Log.d(TAG, "Location from DB - hasFee: ${location.hasFee}")
+
                         // Create a copy of the location with the generated description
                         val locationWithGeneratedDescription = location.copy(description = description)
-                        
-                        // Download current favorites to get index and current name
-                        val gpxResult = authRepository.downloadFavoritesGpx(category)
-                        gpxResult.onSuccess { favorites ->
-                            val index = favorites.indexOfFirst { it.id == location.id || it.name == location.name }
-                            if (index >= 0) {
-                                val currentName = favorites[index].name
-                                // Use the new updateFavorite function with proper updatetime handling
-                                osmandSyncService.updateFavorite(locationWithGeneratedDescription, category, currentName, index)
-                                    .onSuccess {
-                                        _editState.value = EditLocationState.UpdateSuccess
-                                    }
-                                    .onFailure { e ->
-                                        _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
-                                    }
-                            } else {
-                                // Location not found in GPX, try adding as new
-                                osmandSyncService.addFavorite(locationWithGeneratedDescription, category)
-                                    .onSuccess {
-                                        _editState.value = EditLocationState.UpdateSuccess
-                                    }
-                                    .onFailure { e ->
-                                        _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
-                                    }
+
+                        Log.d(TAG, "Calling smartSync with generated description: $description")
+
+                        // Use smart sync which automatically determines ADD vs UPDATE
+                        osmandSyncService.smartSync(locationWithGeneratedDescription, category)
+                            .onSuccess {
+                                Log.d(TAG, "✓ Smart sync SUCCESS")
+                                _editState.value = EditLocationState.UpdateSuccess
                             }
-                        }.onFailure { e ->
-                            _editState.value = EditLocationState.Error("Failed to get current state: ${e.message}")
-                        }
+                            .onFailure { e ->
+                                Log.e(TAG, "✗ Smart sync FAILED: ${e.message}", e)
+                                _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
+                            }
+                    } else {
+                        Log.e(TAG, "✗ Location not found in DB with ID: $locationId")
+                        _editState.value = EditLocationState.Error("Location not found")
                     }
+                }.onFailure { e ->
+                    Log.e(TAG, "✗ Failed to get locations: ${e.message}", e)
+                    _editState.value = EditLocationState.Error("Failed to get locations: ${e.message}")
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "✗ Exception in syncToOsmandWithDescription: ${e.message}", e)
                 _editState.value = EditLocationState.Error("Sync failed: ${e.message}")
             }
+        }
+    }
+
+    suspend fun generateDescriptionFromLocation(locationId: String): Result<String> {
+        return try {
+            val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+            val result = locationRepository.getLocationsByCategory(category)
+
+            result.fold(
+                onSuccess = { locations ->
+                    val location = locations.find { it.id == locationId }
+                    if (location != null) {
+                        // Use location details from DB for AI generation
+                        val socketType = location.socketTypes.firstOrNull()?.name ?: "AS3112"
+                        val accessType = location.publicPrivate
+                        val hasFee = location.hasFee
+                        val gpoCount = location.gpoCount
+                        val openingHours = location.openingHours
+                        val capacity = location.chargingCosts
+                        val additionalInfo = location.additionalInfo
+                        val currentDescription = location.description ?: ""
+
+                        descriptionGenerator.generateDescription(
+                            locationName = "",
+                            accessType = accessType,
+                            hasFee = hasFee,
+                            chargingPoints = gpoCount,
+                            socketTypes = listOf(socketType),
+                            openingHours = openingHours,
+                            capacity = capacity,
+                            additionalInfo = additionalInfo,
+                            description = currentDescription,
+                            conversationHistory = emptyList()
+                        )
+                    } else {
+                        Result.failure(Exception("Location not found in database"))
+                    }
+                },
+                onFailure = { error ->
+                    Result.failure(error)
+                }
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 

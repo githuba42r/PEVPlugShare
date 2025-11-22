@@ -1,7 +1,10 @@
 package com.a42r.pevplugshare.ui.edit
 
 import android.Manifest
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -22,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -86,6 +90,55 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private var submittedSuccessfully: Boolean = false
     private var savedForLaterId: String? = null  // ID of saved for later entry to delete on success
     private var isProcessingQuickAddPhotos = false  // Flag to track if we're processing photos from QuickLocationActivity
+    private var waitingForSyncVerification = false  // Flag to prevent auto-close when showing verification dialog
+    private var pendingSyncWithVerification = false  // Flag to trigger sync with verification after DB update
+    private var pendingSyncWithoutVerification = false  // Flag to trigger sync without verification after DB update
+
+    private val syncResultReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            // Security: Only process if we're actually waiting for a sync result
+            if (!waitingForSyncVerification) {
+                Log.w("EditLocationActivity", "Ignoring sync result - not waiting for sync")
+                return
+            }
+
+            // Validate intent and data
+            if (intent == null) {
+                Log.w("EditLocationActivity", "Received null intent in sync result")
+                return
+            }
+
+            // Validate the intent action matches our expected action
+            if (intent.action != com.a42r.pevplugshare.services.OsmandBackgroundSyncService.ACTION_SYNC_RESULT) {
+                Log.w("EditLocationActivity", "Ignoring intent with wrong action: ${intent.action}")
+                return
+            }
+
+            // Extract and validate data
+            if (!intent.hasExtra(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.EXTRA_SYNC_SUCCESS)) {
+                Log.w("EditLocationActivity", "Sync result missing success flag")
+                return
+            }
+
+            val success = intent.getBooleanExtra(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.EXTRA_SYNC_SUCCESS, false)
+            val message = intent.getStringExtra(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.EXTRA_SYNC_MESSAGE)
+
+            // Validate message is not empty
+            if (message.isNullOrBlank()) {
+                Log.w("EditLocationActivity", "Sync result missing or empty message")
+                return
+            }
+
+            Log.d("EditLocationActivity", "Valid sync result received: success=$success, message=$message")
+
+            Toast.makeText(this@EditLocationActivity, message, if (success) Toast.LENGTH_SHORT else Toast.LENGTH_LONG).show()
+
+            // Clear waiting flag and close activity
+            waitingForSyncVerification = false
+            setResult(RESULT_OK)
+            finish()
+        }
+    }
 
     private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
@@ -193,6 +246,12 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
         binding = ActivityEditLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Register broadcast receiver for sync results
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            syncResultReceiver,
+            IntentFilter(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.ACTION_SYNC_RESULT)
+        )
 
         // Check if we'll be processing QuickAdd photos - show overlay IMMEDIATELY
         savedForLaterId = intent.getStringExtra("saved_for_later_id")
@@ -606,8 +665,29 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                             }
                         }
 
-                        setResult(RESULT_OK)
-                        finish()
+                        // Check if we need to perform OsmAnd sync after update
+                        val locId = locationId
+                        val shouldSync = pendingSyncWithVerification || pendingSyncWithoutVerification
+
+                        if (pendingSyncWithVerification && locId != null) {
+                            // Clear flag and trigger sync with verification
+                            pendingSyncWithVerification = false
+                            Log.d("EditLocationActivity", "━━━ UpdateSuccess: Starting sync WITH verification ━━━")
+                            Log.d("EditLocationActivity", "Location ID: $locId")
+                            showDescriptionVerificationAndSync(locId)
+                        } else if (pendingSyncWithoutVerification && locId != null) {
+                            // Clear flag and trigger sync without verification
+                            pendingSyncWithoutVerification = false
+                            Log.d("EditLocationActivity", "━━━ UpdateSuccess: Starting sync WITHOUT verification ━━━")
+                            Log.d("EditLocationActivity", "Location ID: $locId")
+                            generateAndSyncInBackground(locId)
+                        }
+
+                        // Only finish if NOT syncing AND not waiting for sync verification
+                        if (!shouldSync && !waitingForSyncVerification) {
+                            setResult(RESULT_OK)
+                            finish()
+                        }
                     }
                     is EditLocationState.DeleteSuccess -> {
                         binding.progressBar.visibility = android.view.View.GONE
@@ -936,7 +1016,6 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         val dialogView = layoutInflater.inflate(com.a42r.pevplugshare.R.layout.dialog_osmand_sync_prompt, null)
 
         val checkboxVerify = dialogView.findViewById<android.widget.CheckBox>(com.a42r.pevplugshare.R.id.checkboxVerifyDescription)
-        val checkboxRemember = dialogView.findViewById<android.widget.CheckBox>(com.a42r.pevplugshare.R.id.checkboxRememberChoice)
         val buttonCancel = dialogView.findViewById<android.widget.Button>(com.a42r.pevplugshare.R.id.buttonCancel)
         val buttonSync = dialogView.findViewById<android.widget.Button>(com.a42r.pevplugshare.R.id.buttonSyncToOsmand)
 
@@ -950,10 +1029,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
             .create()
 
         buttonCancel.setOnClickListener {
-            // Save preferences if remember is checked
-            if (checkboxRemember.isChecked) {
-                tokenManager.setSyncToOsmandOnUpdate(false) // Don't prompt again
-            }
+            // Save verify preference state
+            tokenManager.setVerifyDescriptionBeforeSync(checkboxVerify.isChecked)
+
             dialog.dismiss()
             // Continue with update without syncing
             performActualSubmit(syncToOsmand = false, verifyDescription = false)
@@ -962,11 +1040,8 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         buttonSync.setOnClickListener {
             val verifyDescription = checkboxVerify.isChecked
 
-            // Save preferences if remember is checked
-            if (checkboxRemember.isChecked) {
-                tokenManager.setVerifyDescriptionBeforeSync(verifyDescription)
-                // Note: We keep prompting enabled, just save the verify preference
-            }
+            // Save verify preference state
+            tokenManager.setVerifyDescriptionBeforeSync(verifyDescription)
 
             dialog.dismiss()
             // Continue with update and sync to OsmAnd
@@ -1221,62 +1296,124 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
                 if (isAddMode) {
                     viewModel.addLocation(finalLocationId)
+                    submittedSuccessfully = true
                 } else {
-                    viewModel.submitUpdates()
+                    // Handle OsmAnd sync if requested - set flags to trigger after DB update
+                    if (syncToOsmand && locationId != null) {
+                        // Set flag to prevent auto-close for ANY sync operation
+                        waitingForSyncVerification = true
 
-                    // If sync to OsmAnd was requested, do it after successful update
-                    if (syncToOsmand) {
-                        locationId?.let { id ->
-                            if (verifyDescription) {
-                                // Show description verification dialog before syncing
-                                withContext(Dispatchers.Main) {
-                                    showDescriptionVerificationAndSync(id)
-                                }
-                            } else {
-                                // Sync directly without verification
-                                viewModel.syncToOsmand(id)
-                                withContext(Dispatchers.Main) {
-                                    Toast.makeText(this@EditLocationActivity, "Syncing to OsmAnd...", Toast.LENGTH_SHORT).show()
-                                }
-                            }
+                        if (verifyDescription) {
+                            // Set flag to trigger sync with verification after DB update completes
+                            pendingSyncWithVerification = true
+                            Log.d("EditLocationActivity", "Set pendingSyncWithVerification=true, will sync after DB update")
+                        } else {
+                            // Set flag to trigger sync without verification after DB update completes
+                            pendingSyncWithoutVerification = true
+                            Log.d("EditLocationActivity", "Set pendingSyncWithoutVerification=true, will sync after DB update")
                         }
                     }
+
+                    // Submit the database update - sync will be triggered in UpdateSuccess handler
+                    viewModel.submitUpdates()
                 }
-                submittedSuccessfully = true
             }
         }
     }
 
     private fun showDescriptionVerificationAndSync(locationId: String) {
-        // Generate description first
-        val currentDescription = binding.descriptionInput.text.toString()
+        // ALWAYS generate a fresh description for OsmAnd sync
+        // The local DB description (from the form) has already been saved
+        // The generated description is ONLY for OsmAnd, not saved to local DB
+        generateDescriptionForVerification(locationId)
+    }
 
-        if (currentDescription.isBlank()) {
-            // No description, ask if they want to generate one
-            android.app.AlertDialog.Builder(this)
-                .setTitle("Generate Description?")
-                .setMessage("No description found. Would you like to generate one for OsmAnd sync?")
-                .setPositiveButton("Generate") { _, _ ->
-                    syncToOsmand() // This will trigger the existing sync flow with description generation
+    private fun generateDescriptionForVerification(locationId: String) {
+        // Show loading modal
+        showDescriptionGenerationModal()
+
+        lifecycleScope.launch {
+            val result = viewModel.generateDescriptionFromLocation(locationId)
+
+            result.onSuccess { generatedDescription ->
+                withContext(Dispatchers.Main) {
+                    hideDescriptionGenerationModal()
+                    showGeneratedDescriptionConfirmation(locationId, generatedDescription)
                 }
-                .setNegativeButton("Sync Without") { _, _ ->
-                    viewModel.syncToOsmand(locationId)
-                    Toast.makeText(this, "Syncing to OsmAnd without description...", Toast.LENGTH_SHORT).show()
+            }.onFailure { error ->
+                withContext(Dispatchers.Main) {
+                    hideDescriptionGenerationModal()
+                    Toast.makeText(this@EditLocationActivity, "Failed to generate description: ${error.message}", Toast.LENGTH_SHORT).show()
+                    submittedSuccessfully = true
+                    finish()
                 }
-                .setNeutralButton("Cancel", null)
-                .show()
-        } else {
-            // Show description for verification
-            android.app.AlertDialog.Builder(this)
-                .setTitle("Verify Description")
-                .setMessage("The following description will be synced to OsmAnd:\n\n$currentDescription")
-                .setPositiveButton("Sync") { _, _ ->
-                    viewModel.syncToOsmandWithDescription(locationId, currentDescription)
-                    Toast.makeText(this, "Syncing to OsmAnd...", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
+            }
         }
+    }
+
+    private fun showGeneratedDescriptionConfirmation(locationId: String, generatedDescription: String) {
+        val dialogView = layoutInflater.inflate(android.R.layout.simple_list_item_1, null)
+        val textView = dialogView.findViewById<TextView>(android.R.id.text1)
+        textView.text = "Generated description for OsmAnd:\n\n$generatedDescription"
+        textView.textSize = 16f
+        textView.setPadding(48, 48, 48, 48)
+
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Verify Generated Description")
+            .setView(dialogView)
+            .setCancelable(false) // Force user to make a choice
+            .setPositiveButton("Sync", android.content.DialogInterface.OnClickListener { _, _ ->
+                // Start sync in background and wait for result
+                performSyncAndWaitForResult(locationId, generatedDescription)
+            })
+            .setNegativeButton("Cancel", android.content.DialogInterface.OnClickListener { _, _ ->
+                // Close activity without syncing
+                waitingForSyncVerification = false
+                setResult(RESULT_OK)
+                finish()
+            })
+            .show()
+    }
+
+    private fun performSyncAndWaitForResult(locationId: String, description: String) {
+        // Show progress
+        Toast.makeText(this, "Syncing to OsmAnd...", Toast.LENGTH_SHORT).show()
+
+        Log.d("EditLocationActivity", "━━━ performSyncAndWaitForResult CALLED ━━━")
+        Log.d("EditLocationActivity", "Location ID: $locationId")
+        Log.d("EditLocationActivity", "Description length: ${description.length}")
+
+        // Start the background service to perform sync
+        val syncIntent = Intent(this, com.a42r.pevplugshare.services.OsmandBackgroundSyncService::class.java).apply {
+            putExtra(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.EXTRA_LOCATION_ID, locationId)
+            putExtra(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.EXTRA_DESCRIPTION, description)
+            putExtra(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.EXTRA_GENERATE_DESCRIPTION, false)
+        }
+        startService(syncIntent)
+
+        Log.d("EditLocationActivity", "Started OsmandBackgroundSyncService with provided description")
+    }
+
+    private fun generateAndSyncInBackground(locationId: String) {
+        // Let the background service generate and sync
+        Toast.makeText(this, "Generating description and syncing to OsmAnd...", Toast.LENGTH_SHORT).show()
+
+        Log.d("EditLocationActivity", "━━━ generateAndSyncInBackground CALLED ━━━")
+        Log.d("EditLocationActivity", "Location ID: $locationId")
+
+        // Start the background service - let it generate the description from DB
+        val syncIntent = Intent(this, com.a42r.pevplugshare.services.OsmandBackgroundSyncService::class.java).apply {
+            putExtra(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.EXTRA_LOCATION_ID, locationId)
+            putExtra(com.a42r.pevplugshare.services.OsmandBackgroundSyncService.EXTRA_GENERATE_DESCRIPTION, true)
+        }
+        startService(syncIntent)
+
+        Log.d("EditLocationActivity", "Started OsmandBackgroundSyncService with auto-generation")
+    }
+
+    private suspend fun generateDescriptionFromDB(locationId: String): String? {
+        val result = viewModel.generateDescriptionFromLocation(locationId)
+        return result.getOrNull()
     }
 
     private fun updateSubmitButtonState() {
@@ -1313,73 +1450,28 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun generateDescriptionForSync() {
-        val name = binding.nameInput.text.toString()
-        if (name.isBlank()) {
-            Toast.makeText(this, "Please enter a location name first", Toast.LENGTH_SHORT).show()
+        val locId = locationId
+        if (locId == null) {
+            Toast.makeText(this, "Location ID not found", Toast.LENGTH_SHORT).show()
             return
         }
 
         // Show loading modal
         showDescriptionGenerationModal()
 
-        val gpoCount = viewModel.formData.value.gpoCount
-        val openingHours = binding.openingHoursSpinner.selectedItem?.toString()
-        val additionalInfo = binding.additionalInfoInput.text.toString().takeIf { it.isNotBlank() }
-        val currentDescription = binding.descriptionInput.text.toString()
-
-        // Get socket type from spinner
-        val socketTypeIndex = binding.socketTypeSpinner.selectedItemPosition
-        val socketType = when (socketTypeIndex) {
-            1 -> "TYPE2"
-            2 -> "TESLA"
-            3 -> "CCS2"
-            4 -> "CHADEMO"
-            5 -> "TYPE1"
-            6 -> "WALL_SOCKET"
-            7 -> "CARAVAN"
-            8 -> "OTHER"
-            else -> "AS3112"
-        }
-
-        // Get access type from indicator
-        val accessType = if (binding.accessTypeText.text == "Public") {
-            com.a42r.pevplugshare.data.model.LocationAccessType.PUBLIC
-        } else {
-            com.a42r.pevplugshare.data.model.LocationAccessType.PRIVATE
-        }
-
-        // Get fee status
-        val hasFee = binding.feeCheckbox.isChecked
-
-        // Get capacity if available
-        val capacity = binding.chargingCostsInput.text.toString().takeIf { it.isNotBlank() }
-
-        Log.d("EditLocationActivity", "Generating description for OSMAnd sync")
-
         lifecycleScope.launch {
-            val result = descriptionGenerator.generateDescription(
-                locationName = "",  // Do not include location name in generated description
-                accessType = accessType,
-                hasFee = hasFee,
-                chargingPoints = gpoCount,
-                socketTypes = listOf(socketType),
-                openingHours = openingHours,
-                capacity = capacity,
-                additionalInfo = additionalInfo,
-                description = currentDescription,  // Pass the current description
-                conversationHistory = emptyList()
-            )
+            val result = viewModel.generateDescriptionFromLocation(locId)
 
             result.onSuccess { generatedDescription ->
-                Log.d("EditLocationActivity", "Description generated for sync: $generatedDescription")
-                // Hide loading modal
-                hideDescriptionGenerationModal()
-                // Show confirmation dialog with generated description
-                showSyncDescriptionModal(generatedDescription)
+                withContext(Dispatchers.Main) {
+                    hideDescriptionGenerationModal()
+                    showSyncDescriptionModal(generatedDescription)
+                }
             }.onFailure { error ->
-                Log.e("EditLocationActivity", "Description generation failed: ${error.message}")
-                hideDescriptionGenerationModal()
-                Toast.makeText(this@EditLocationActivity, "Failed to generate description: ${error.message}", Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    hideDescriptionGenerationModal()
+                    Toast.makeText(this@EditLocationActivity, "Failed to generate description: ${error.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -2799,6 +2891,10 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        // Unregister broadcast receiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(syncResultReceiver)
+
         if (!submittedSuccessfully) {
             // If the activity is destroyed without successful submission, delete temporary images
             currentEditLocationId?.let { sessionId ->

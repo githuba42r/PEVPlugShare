@@ -302,6 +302,52 @@
                 android:checked="true"
                 android:paddingVertical="8dp" />
 
+            <!-- Location Match Distance Setting -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location Match Distance"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:paddingTop="16dp"
+                android:paddingBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Allow matching of local locations with OsmAnd locations where the name is out of sync between the 2 data sources. GPS matching on the location will be performed to find the matching location."
+                android:textSize="12sp"
+                android:textColor="?android:textColorSecondary"
+                android:paddingBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp">
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/osmandMatchDistanceSlider"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:valueFrom="10"
+                    android:valueTo="100"
+                    android:stepSize="10"
+                    android:value="10" />
+
+                <TextView
+                    android:id="@+id/osmandMatchDistanceValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10m"
+                    android:textSize="14sp"
+                    android:minWidth="50dp"
+                    android:gravity="end"
+                    android:paddingStart="8dp" />
+            </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
