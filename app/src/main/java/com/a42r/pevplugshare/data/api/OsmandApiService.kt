@@ -82,20 +82,16 @@ interface OsmandApiService {
         @Query("name") name: String,
         @Query("shared") shared: Boolean = false
     ): okhttp3.ResponseBody
-    
+
     // Web API - Update favorite waypoint
     @POST("fav/update")
-    @FormUrlEncoded
     suspend fun updateFavorite(
-        @retrofit2.http.Field("wptName") wptName: String,
-        @retrofit2.http.Field("oldGroupName") oldGroupName: String,
-        @retrofit2.http.Field("newGroupName") newGroupName: String,
-        @retrofit2.http.Field("oldGroupUpdatetime") oldGroupUpdatetime: Long,
-        @retrofit2.http.Field("newGroupUpdatetime") newGroupUpdatetime: Long,
-        @retrofit2.http.Field("ind") ind: Int,
-        @retrofit2.http.Field("lat") lat: Double? = null,
-        @retrofit2.http.Field("lon") lon: Double? = null,
-        @retrofit2.http.Field("desc") desc: String? = null,
-        @retrofit2.http.Field("color") color: String? = null
-    ): okhttp3.ResponseBody
+        @Query("wptName") wptName: String,
+        @Query("oldGroupName") oldGroupName: String,
+        @Query("newGroupName") newGroupName: String,
+        @Query("oldGroupUpdatetime") oldGroupUpdatetime: Long,
+        @Query("newGroupUpdatetime") newGroupUpdatetime: Long,
+        @Query("ind") ind: Int,
+        @Body updateRequest: OsmandUpdateFavoriteRequest
+    ): retrofit2.Response<okhttp3.ResponseBody>
 }
