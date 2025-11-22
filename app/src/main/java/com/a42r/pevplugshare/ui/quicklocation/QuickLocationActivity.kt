@@ -150,7 +150,7 @@ class QuickLocationActivity : AppCompatActivity() {
             binding.contentContainer.visibility = android.view.View.GONE
             binding.loadingContainer.visibility = android.view.View.VISIBLE
             binding.loadingText.text = "Loading images..."
-            
+
             selectPhotos.launch("image/*")
         }
         binding.takePhotosButton.setOnClickListener {
@@ -215,7 +215,7 @@ class QuickLocationActivity : AppCompatActivity() {
         runOnUiThread {
             binding.loadingText.text = "Processing ${uris.size} photo(s)..."
         }
-        
+
         scope.launch(Dispatchers.Default) {
             uris.forEach { uri ->
                 try {
@@ -285,7 +285,7 @@ class QuickLocationActivity : AppCompatActivity() {
 
     private fun proceedToLocationPicker() {
         currentStep = Step.PICK_LOCATION
-        
+
         // Update loading text
         binding.loadingText.text = "Extracting location data..."
 
@@ -397,7 +397,7 @@ class QuickLocationActivity : AppCompatActivity() {
         // Hide loading overlay and restore content when returning from photo editor
         binding.loadingContainer.visibility = android.view.View.GONE
         binding.contentContainer.visibility = android.view.View.VISIBLE
-        
+
         if (result.resultCode == RESULT_OK) {
             // Photos have been edited, proceed with workflow
             val editedPhotoPaths = result.data?.getStringArrayListExtra("edited_photo_paths")
@@ -422,11 +422,11 @@ class QuickLocationActivity : AppCompatActivity() {
 
     private fun proceedToPhotoEditing() {
         currentStep = Step.EDIT_PHOTOS
-        
+
         Log.d("QuickLocationActivity", "proceedToPhotoEditing: Updating loading text")
         // Loading overlay should already be visible - just update the text
         binding.loadingText.text = "Loading photo editor..."
-        
+
         // Force the UI to update before launching the activity
         binding.root.post {
             // Filter out deleted/non-existent photo files before launching editor
@@ -434,7 +434,7 @@ class QuickLocationActivity : AppCompatActivity() {
                 val file = java.io.File(path)
                 file.exists()
             }
-            
+
             Log.d("QuickLocationActivity", "proceedToPhotoEditing: Launching PhotoGalleryEditorActivity")
             val intent = Intent(this, PhotoGalleryEditorActivity::class.java).apply {
                 putStringArrayListExtra("photo_paths", ArrayList(validPhotoPaths))
