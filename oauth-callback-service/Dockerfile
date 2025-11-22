@@ -3,10 +3,15 @@ FROM python:3.12-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including cloudflared and supervisor
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
+    curl \
+    supervisor \
+    && curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb \
+    && dpkg -i cloudflared.deb \
+    && rm cloudflared.deb \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -18,8 +23,16 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY app ./app
 
-# Create directory for SQLite database
-RUN mkdir -p /app/data
+# Copy supervisor configuration
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Copy startup scripts
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+COPY start-cloudflared.sh /app/start-cloudflared.sh
+RUN chmod +x /app/docker-entrypoint.sh /app/start-cloudflared.sh
+
+# Create directories
+RUN mkdir -p /app/data /var/log/supervisor /root/.cloudflared
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -29,8 +42,8 @@ ENV PYTHONUNBUFFERED=1 \
 EXPOSE 8000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=2)" || exit 1
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the startup script which launches supervisord
+CMD ["/app/docker-entrypoint.sh"]

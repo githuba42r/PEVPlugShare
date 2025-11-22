@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     domain_name: str
-    deep_link_scheme: str = "pevplugshare://oauth/callback"
 
     # Database
     database_url: str = "sqlite:///./oauth_sessions.db"
@@ -47,6 +46,9 @@ class Settings(BaseSettings):
 
     # Logging
     log_level: str = "INFO"
+
+    # Diagnostic endpoints (for testing/debugging)
+    enable_diagnostic_endpoints: bool = False
 
     class Config:
         env_file = ".env"
