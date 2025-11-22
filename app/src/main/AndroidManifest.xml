@@ -119,6 +119,11 @@
             android:exported="false"
             android:theme="@style/Theme.PEVPlugShare" />
 
+        <!-- Saved For Later Activity -->
+        <activity
+            android:name=".ui.savedforlater.SavedForLaterActivity"
+            android:exported="false" />
+
         <!-- FileProvider for camera images -->
         <provider
             android:name="androidx.core.content.FileProvider"

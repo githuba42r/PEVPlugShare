@@ -10,12 +10,14 @@ import com.a42r.pevplugshare.data.db.dao.LocationDao
 import com.a42r.pevplugshare.data.db.dao.PhotoDao
 import com.a42r.pevplugshare.data.db.dao.PendingLocationDao
 import com.a42r.pevplugshare.data.db.dao.PendingOperationDao
+import com.a42r.pevplugshare.data.db.dao.SavedForLaterDao
 import com.a42r.pevplugshare.data.db.dao.SyncStateDao
 import com.a42r.pevplugshare.data.db.dao.UserPreferencesDao
 import com.a42r.pevplugshare.data.db.entity.LocationEntity
 import com.a42r.pevplugshare.data.db.entity.PendingLocationEntity
 import com.a42r.pevplugshare.data.db.entity.PendingOperationEntity
 import com.a42r.pevplugshare.data.db.entity.PhotoEntity
+import com.a42r.pevplugshare.data.db.entity.SavedForLaterEntity
 import com.a42r.pevplugshare.data.db.entity.SyncStateEntity
 import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
 
@@ -26,9 +28,10 @@ import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
         SyncStateEntity::class,
         UserPreferencesEntity::class,
         PendingLocationEntity::class,
-        PendingOperationEntity::class
+        PendingOperationEntity::class,
+        SavedForLaterEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -39,6 +42,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
     abstract fun userPreferencesDao(): UserPreferencesDao
     abstract fun pendingLocationDao(): PendingLocationDao
     abstract fun pendingOperationDao(): PendingOperationDao
+    abstract fun savedForLaterDao(): SavedForLaterDao
 
     companion object {
         @Volatile

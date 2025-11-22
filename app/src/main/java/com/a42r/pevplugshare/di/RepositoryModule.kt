@@ -3,12 +3,15 @@ package com.a42r.pevplugshare.di
 import com.a42r.pevplugshare.data.db.dao.LocationDao
 import com.a42r.pevplugshare.data.db.dao.PendingOperationDao
 import com.a42r.pevplugshare.data.db.dao.PhotoDao
+import com.a42r.pevplugshare.data.db.dao.SavedForLaterDao
 import com.a42r.pevplugshare.data.remote.GeocodingService
 import com.a42r.pevplugshare.domain.repository.LocationRepository
 import com.a42r.pevplugshare.data.repository.LocalLocationRepository
 import com.a42r.pevplugshare.data.repository.PendingOperationRepository
 import com.a42r.pevplugshare.data.repository.PhotoRepositoryImpl
+import com.a42r.pevplugshare.data.repository.SavedForLaterRepositoryImpl
 import com.a42r.pevplugshare.domain.repository.PhotoRepository
+import com.a42r.pevplugshare.domain.repository.SavedForLaterRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +45,13 @@ object RepositoryModule {
         photoDao: PhotoDao
     ): PhotoRepository {
         return PhotoRepositoryImpl(photoDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideSavedForLaterRepository(
+        savedForLaterDao: SavedForLaterDao
+    ): SavedForLaterRepository {
+        return SavedForLaterRepositoryImpl(savedForLaterDao)
     }
 }

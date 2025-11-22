@@ -65,6 +65,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     @Inject
     lateinit var descriptionGenerator: com.a42r.pevplugshare.ai.LocationDescriptionGenerator
 
+    @Inject
+    lateinit var savedForLaterRepository: com.a42r.pevplugshare.domain.repository.SavedForLaterRepository
+
     // Sensor related fields
     private lateinit var sensorManager: SensorManager
     private var rotationSensor: Sensor? = null
@@ -81,6 +84,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
     private val photoSaveMutex = Mutex()  // Mutex for synchronized photo saving
     private var photosBeingProcessed = 0  // Count of photos currently being processed/saved
     private var submittedSuccessfully: Boolean = false
+    private var savedForLaterId: String? = null  // ID of saved for later entry to delete on success
 
     private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
@@ -206,6 +210,9 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         setupUI()
         setupPhotoSection()
         setupObservers()
+
+        // Retrieve saved for later ID if this is from a saved location
+        savedForLaterId = intent.getStringExtra("saved_for_later_id")
 
         // Retrieve photo paths from intent
         val incomingPhotoPaths = intent.getStringArrayListExtra("photo_paths")
@@ -527,6 +534,19 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                         val message = if (isAddMode) "Location added!" else "Location updated!"
                         Toast.makeText(this@EditLocationActivity, message, Toast.LENGTH_SHORT).show()
                         submittedSuccessfully = true // Set flag on successful submission
+                        
+                        // Delete the saved for later entry if this was from a saved location
+                        savedForLaterId?.let { id ->
+                            lifecycleScope.launch {
+                                try {
+                                    savedForLaterRepository.deleteSavedForLater(id)
+                                    Log.d("EditLocationActivity", "Deleted saved for later entry: $id")
+                                } catch (e: Exception) {
+                                    Log.e("EditLocationActivity", "Error deleting saved for later entry", e)
+                                }
+                            }
+                        }
+                        
                         setResult(RESULT_OK)
                         finish()
                     }
@@ -1481,14 +1501,14 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
                 val result = viewModel.performReverseGeocoding(latitude, longitude)
                 when (result) {
                     is com.a42r.pevplugshare.data.remote.GeocodingResult.Success -> {
-                        // Set location name to displayName if available, otherwise suburb
-                        val locationName = result.displayName ?: result.suburb
+                        // Set location name to business name first, then suburb as fallback
+                        val locationName = result.businessName ?: result.suburb
                         if (!locationName.isNullOrBlank()) {
                             Log.d("EditLocationActivity", "Auto-setting location name to: $locationName")
                             viewModel.updateName(locationName)
                             binding.nameInput.setText(locationName)
                         } else {
-                            Log.w("EditLocationActivity", "No displayName or suburb available from geocoding")
+                            Log.w("EditLocationActivity", "No businessName or suburb available from geocoding")
                         }
                     }
                     is com.a42r.pevplugshare.data.remote.GeocodingResult.Error -> {

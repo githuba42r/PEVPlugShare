@@ -135,3 +135,30 @@ interface PendingLocationDao {
     @Query("UPDATE pending_locations SET syncAttempts = syncAttempts + 1, lastSyncAttempt = :timestamp WHERE id = :id")
     suspend fun incrementSyncAttempts(id: String, timestamp: Long)
 }
+
+@Dao
+interface SavedForLaterDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSavedForLater(savedForLater: com.a42r.pevplugshare.data.db.entity.SavedForLaterEntity)
+
+    @Query("SELECT * FROM saved_for_later ORDER BY createdAt DESC")
+    fun getAllSavedForLater(): Flow<List<com.a42r.pevplugshare.data.db.entity.SavedForLaterEntity>>
+
+    @Query("SELECT * FROM saved_for_later ORDER BY createdAt DESC")
+    suspend fun getAllSavedForLaterList(): List<com.a42r.pevplugshare.data.db.entity.SavedForLaterEntity>
+
+    @Query("SELECT COUNT(*) FROM saved_for_later")
+    suspend fun getSavedForLaterCount(): Int
+
+    @Query("SELECT COUNT(*) FROM saved_for_later")
+    fun getSavedForLaterCountFlow(): Flow<Int>
+
+    @Query("SELECT * FROM saved_for_later WHERE id = :id")
+    suspend fun getSavedForLaterById(id: String): com.a42r.pevplugshare.data.db.entity.SavedForLaterEntity?
+
+    @Query("DELETE FROM saved_for_later WHERE id = :id")
+    suspend fun deleteSavedForLater(id: String)
+
+    @Query("DELETE FROM saved_for_later")
+    suspend fun deleteAllSavedForLater()
+}
