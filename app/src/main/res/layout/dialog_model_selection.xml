@@ -64,6 +64,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="16dp"
+        android:minHeight="200dp"
         android:scrollbars="vertical" />
 
     <!-- Buttons -->

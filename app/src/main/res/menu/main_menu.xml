@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_osmand_connect"
-        android:title="@string/connect_to_osmand" />
+        android:id="@+id/menu_saved_for_later"
+        android:title="Saved" />
     <item
         android:id="@+id/menu_select_category"
         android:title="Favourite Category" />
     <item
-        android:id="@+id/menu_saved_for_later"
-        android:title="Saved" />
-    <item
-        android:id="@+id/menu_image_gallery"
-        android:title="Image Gallery" />
-    <item
-        android:id="@+id/menu_openrouter_auth"
-        android:title="OpenRouter Authentication" />
-    <item
         android:id="@+id/menu_settings"
         android:title="Settings" />
     <item
+        android:id="@+id/menu_openrouter_auth"
+        android:title="AI Settings" />
+    <item
+        android:id="@+id/menu_osmand_connect"
+        android:title="@string/connect_to_osmand" />
+    <item
         android:id="@+id/menu_logout"
         android:title="Logout" />
+    <item
+        android:id="@+id/menu_image_gallery"
+        android:title="Image Gallery" />
     <item
         android:id="@+id/menu_about"
         android:title="About" />
