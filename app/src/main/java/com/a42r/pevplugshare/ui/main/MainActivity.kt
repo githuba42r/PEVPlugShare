@@ -172,6 +172,7 @@ class MainActivity : AppCompatActivity() {
                             onInfoClick = { location -> /* Info button handled internally */ },
                             onMapClick = { location -> loadLocationMap(location) },
                             onPhotoClick = { location -> showPhotoGallery(location) },
+                            onShareClick = { location -> shareLocation(location) },
                             userLatitude = userLoc.first,
                             userLongitude = userLoc.second
                         )
@@ -210,6 +211,7 @@ class MainActivity : AppCompatActivity() {
                             onInfoClick = { location -> /* Info button handled internally */ },
                             onMapClick = { location -> loadLocationMap(location) },
                             onPhotoClick = { location -> showPhotoGallery(location) },
+                            onShareClick = { location -> shareLocation(location) },
                             userLatitude = userLoc.first,
                             userLongitude = userLoc.second
                         )
@@ -570,6 +572,98 @@ class MainActivity : AppCompatActivity() {
         // The actual map loading will be handled by the adapter's ImageView
         // This is just for logging/debugging
         android.util.Log.d("MainActivity", "Loading map for ${location.name} at zoom $zoomLevel: $mapUrl")
+    }
+
+    private fun shareLocation(location: Location) {
+        // Create human-readable text
+        val humanReadableText = buildString {
+            append("🔌 ${location.name}\n\n")
+            
+            // Address information
+            val addressParts = mutableListOf<String>()
+            location.businessName?.let { addressParts.add(it) }
+            location.streetAddress?.let { addressParts.add(it) }
+            val suburbState = listOfNotNull(location.suburb, location.state).joinToString(", ")
+            if (suburbState.isNotEmpty()) addressParts.add(suburbState)
+            location.postcode?.let { addressParts.add(it) }
+            
+            if (addressParts.isNotEmpty()) {
+                append("📍 Address:\n")
+                addressParts.forEach { append("   $it\n") }
+                append("\n")
+            }
+            
+            // Charging details
+            append("⚡ Charging Details:\n")
+            append("   • ${location.gpoCount} GPO outlet${if (location.gpoCount != 1) "s" else ""}\n")
+            append("   • Access: ${location.publicPrivate.displayName}\n")
+            append("   • Cost: ${if (location.hasFee) "Paid" else "Free"}\n")
+            
+            if (location.socketTypes.isNotEmpty()) {
+                append("   • Sockets: ${location.socketTypes.joinToString(", ") { it.displayName }}\n")
+            }
+            
+            if (!location.openingHours.isNullOrEmpty()) {
+                append("   • Hours: ${location.openingHours}\n")
+            }
+            
+            location.description?.let {
+                append("\n📝 Description:\n$it\n")
+            }
+            
+            // Coordinates
+            append("\n📌 Coordinates:\n")
+            append("   ${String.format("%.6f", location.latitude)}, ${String.format("%.6f", location.longitude)}\n")
+            append("   https://www.openstreetmap.org/?mlat=${location.latitude}&mlon=${location.longitude}&zoom=17\n")
+            
+            append("\nShared from PEVPlugShare")
+        }
+        
+        // Create JSON for machine interpretation
+        val jsonData = org.json.JSONObject().apply {
+            put("app", "PEVPlugShare")
+            put("version", "1.0")
+            put("type", "charging_location")
+            put("id", location.id)
+            put("name", location.name)
+            location.description?.let { put("description", it) }
+            put("latitude", location.latitude)
+            put("longitude", location.longitude)
+            put("gpoCount", location.gpoCount)
+            put("publicPrivate", location.publicPrivate.name)
+            put("hasFee", location.hasFee)
+            
+            val socketsArray = org.json.JSONArray()
+            location.socketTypes.forEach { socketsArray.put(it.name) }
+            put("socketTypes", socketsArray)
+            
+            location.openingHours?.let { put("openingHours", it) }
+            location.businessName?.let { put("businessName", it) }
+            location.streetAddress?.let { put("streetAddress", it) }
+            location.suburb?.let { put("suburb", it) }
+            location.state?.let { put("state", it) }
+            location.postcode?.let { put("postcode", it) }
+            location.providerName?.let { put("providerName", it) }
+            location.providerWebsite?.let { put("providerWebsite", it) }
+            location.chargingCosts?.let { put("chargingCosts", it) }
+            location.additionalInfo?.let { put("additionalInfo", it) }
+        }.toString()
+        
+        // Create share intent with both text and JSON
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, humanReadableText)
+            putExtra(Intent.EXTRA_SUBJECT, "Charging Location: ${location.name}")
+            putExtra("PEVPLUGSHARE_JSON", jsonData)
+        }
+        
+        try {
+            startActivity(Intent.createChooser(shareIntent, "Share charging location"))
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to share location: ${e.message}", Toast.LENGTH_SHORT).show()
+            android.util.Log.e("MainActivity", "Error sharing location", e)
+        }
     }
 
     private fun showAuthenticationFailedDialog() {
