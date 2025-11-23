@@ -45,6 +45,7 @@ class OAuthActivity : AppCompatActivity() {
     private val okHttpClient = OkHttpClient()
     private var modelDataMap = mutableMapOf<String, OpenRouterModel>()
     private var isFromFirstLaunch = false
+    private var countdownTimer: android.os.CountDownTimer? = null
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -112,7 +113,12 @@ class OAuthActivity : AppCompatActivity() {
                     viewModel.openAuthorizationUrl(state.authUrl)
                 }
                 is OpenRouterOAuthViewModel.OAuthState.Success -> {
-                    Toast.makeText(this, "✅ Connected to OpenRouter successfully!", Toast.LENGTH_LONG).show()
+                    if (isFromFirstLaunch) {
+                        // Show success screen with countdown on first launch
+                        showSuccessScreen()
+                    } else {
+                        Toast.makeText(this, "✅ Connected to OpenRouter successfully!", Toast.LENGTH_LONG).show()
+                    }
                 }
                 is OpenRouterOAuthViewModel.OAuthState.Error -> {
                     Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
@@ -561,5 +567,48 @@ class OAuthActivity : AppCompatActivity() {
             startActivity(intent)
         }
         finish()
+    }
+
+    private fun showSuccessScreen() {
+        // Hide normal UI elements
+        binding.ivLogo.visibility = android.view.View.GONE
+        binding.tvTitle.visibility = android.view.View.GONE
+        binding.tvDescription.visibility = android.view.View.GONE
+        binding.tvLearnMore.visibility = android.view.View.GONE
+        binding.progressBar.visibility = android.view.View.GONE
+        binding.tvStatus.visibility = android.view.View.GONE
+        binding.btnStartOauth.visibility = android.view.View.GONE
+        binding.modelSelectionSection.visibility = android.view.View.GONE
+        
+        // Show success screen
+        binding.successScreen.visibility = android.view.View.VISIBLE
+        
+        // Setup Next button
+        binding.btnNext.setOnClickListener {
+            countdownTimer?.cancel()
+            finishActivity()
+        }
+        
+        // Start countdown timer (30 seconds)
+        startCountdownTimer()
+    }
+
+    private fun startCountdownTimer() {
+        countdownTimer = object : android.os.CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsLeft = (millisUntilFinished / 1000).toInt()
+                binding.countdownText.text = secondsLeft.toString()
+                binding.countdownProgress.progress = secondsLeft
+            }
+
+            override fun onFinish() {
+                finishActivity()
+            }
+        }.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        countdownTimer?.cancel()
     }
 }
