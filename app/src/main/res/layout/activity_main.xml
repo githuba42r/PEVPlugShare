@@ -87,7 +87,7 @@
                     app:cardElevation="4dp"
                     app:cardCornerRadius="12dp"
                     app:strokeWidth="1dp"
-                    app:strokeColor="?attr/colorOutline">
+                    app:strokeColor="@android:color/darker_gray">
 
                     <LinearLayout
                         android:id="@+id/loadingContainer"
