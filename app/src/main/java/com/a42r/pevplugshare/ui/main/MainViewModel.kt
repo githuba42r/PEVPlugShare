@@ -464,6 +464,29 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    suspend fun deleteAllOsmandLocations(): Int {
+        return try {
+            // Get the category to fetch locations
+            val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+            val locations = locationRepository.getLocationsByCategory(category).getOrNull() ?: emptyList()
+            
+            // Filter for OsmAnd locations and delete their photos
+            val osmandLocations = locations.filter { it.osmandSyncSource == "OSMAND" }
+            osmandLocations.forEach { location ->
+                // Delete physical image files
+                location.imagePaths.forEach { imagePath ->
+                    com.a42r.pevplugshare.util.ImageUtils.deleteImageFile(imagePath)
+                }
+            }
+            
+            // Delete all OsmAnd locations from database
+            val deletedCount = locationRepository.deleteAllOsmandLocations().getOrElse { 0 }
+            deletedCount
+        } catch (e: Exception) {
+            0
+        }
+    }
+
     fun getMapZoomLevel(): Float {
         return tokenManager.getMapZoomLevel()
     }

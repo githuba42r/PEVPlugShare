@@ -147,6 +147,12 @@
             android:name=".ui.savedforlater.SavedForLaterActivity"
             android:exported="false" />
 
+        <!-- OsmAnd Logout Activity -->
+        <activity
+            android:name=".ui.osmand.OsmandLogoutActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.main.MainActivity" />
+
         <!-- OsmAnd Sync Background Service -->
         <service
             android:name=".services.OsmandBackgroundSyncService"

@@ -266,4 +266,13 @@ class LocalLocationRepository(
             }
         }
     }
+
+    override suspend fun deleteAllOsmandLocations(): Result<Int> {
+        return try {
+            val deletedCount = locationDao.deleteOsmandLocations()
+            Result.success(deletedCount)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
