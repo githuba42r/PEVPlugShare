@@ -13,6 +13,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
 from security import verify_signature
 from responses import success_response, error_response
+from applications import get_application
 
 
 # Initialize DynamoDB
@@ -21,7 +22,6 @@ table_name = os.environ.get('DYNAMODB_TABLE', 'oauth-sessions')
 table = dynamodb.Table(table_name)
 
 # Configuration from environment
-DOMAIN_NAME = os.environ.get('DOMAIN_NAME', 'https://api.example.com')
 SESSION_TTL_MINUTES = int(os.environ.get('SESSION_TTL_MINUTES', '10'))
 ALLOWED_PROVIDERS = os.environ.get('OAUTH_PROVIDERS', 'openrouter,github,google').split(',')
 
@@ -36,15 +36,42 @@ def lambda_handler(event, context):
         # Parse request body
         body = json.loads(event.get('body', '{}'))
         provider = body.get('provider', '').lower()
+        deep_link_url = body.get('deep_link_url', '')
         timestamp = body.get('timestamp')
         signature = body.get('signature')
 
         # Validate required fields
-        if not all([provider, timestamp, signature]):
+        if not all([provider, deep_link_url, timestamp, signature]):
             return error_response(
                 400,
                 'missing_fields',
-                'Missing required fields: provider, timestamp, signature'
+                'Missing required fields: provider, deep_link_url, timestamp, signature'
+            )
+
+        # Extract request hostname
+        headers = event.get('headers', {})
+        request_host = headers.get('Host') or headers.get('host', 'unknown')
+
+        # Lookup application by domain
+        application = get_application(request_host)
+        if not application:
+            return error_response(
+                400,
+                'unknown_application',
+                f"No application configured for domain: {request_host}",
+                {'request_host': request_host}
+            )
+
+        # Validate deep link scheme
+        if not deep_link_url.startswith(application.deep_link_scheme):
+            return error_response(
+                400,
+                'invalid_deep_link',
+                f"Deep link URL must start with: {application.deep_link_scheme}",
+                {
+                    'expected_scheme': application.deep_link_scheme,
+                    'received_url': deep_link_url
+                }
             )
 
         # Validate provider
@@ -56,8 +83,14 @@ def lambda_handler(event, context):
                 {'allowed_providers': ALLOWED_PROVIDERS}
             )
 
-        # Verify signature
-        is_valid, error_msg = verify_signature(provider, timestamp, signature)
+        # Verify signature with application's secret
+        is_valid, error_msg = verify_signature(
+            provider,
+            deep_link_url,
+            timestamp,
+            signature,
+            application.shared_secret
+        )
         if not is_valid:
             return error_response(
                 400,
@@ -77,12 +110,14 @@ def lambda_handler(event, context):
         request_context = event.get('requestContext', {})
         identity = request_context.get('identity', {})
         client_ip = identity.get('sourceIp', 'unknown')
-        user_agent = event.get('headers', {}).get('User-Agent', 'unknown')
+        user_agent = headers.get('User-Agent', 'unknown')
 
         # Store session in DynamoDB
         table.put_item(Item={
             'session_id': session_id,
+            'app_id': application.app_id,
             'provider': provider,
+            'deep_link_url': deep_link_url,
             'created_at': current_time,
             'expires_at': expires_at,  # DynamoDB TTL attribute
             'used': False,
@@ -90,8 +125,11 @@ def lambda_handler(event, context):
             'user_agent': user_agent
         })
 
-        # Build callback URL
-        callback_url = f"{DOMAIN_NAME}/oauth/callback/{session_id}"
+        # Build callback URL using request scheme and host
+        request_context_http = request_context.get('http', {})
+        protocol = request_context_http.get('protocol', 'HTTP/1.1')
+        scheme = 'https' if 'https' in protocol.lower() else 'http'
+        callback_url = f"{scheme}://{request_host}/oauth/callback/{session_id}"
 
         # Return response
         return success_response(200, {

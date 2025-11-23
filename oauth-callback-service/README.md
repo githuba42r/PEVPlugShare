@@ -36,13 +36,15 @@ cp .env.example .env
 Edit `.env` and set your configuration:
 
 ```env
-# Required settings
-DOMAIN_NAME=https://your-cloudflare-tunnel.example.com
-SHARED_SECRET=your-secret-key-here
+# Database configuration
+DATABASE_URL=sqlite:///./data/oauth_sessions.db
 
-# Generate a secure secret:
-# python -c "import secrets; print(secrets.token_urlsafe(32))"
+# Optional settings (see Configuration Reference)
+SESSION_TTL_MINUTES=10
+LOG_LEVEL=INFO
 ```
+
+**Note**: Domain names and secrets are now configured **per-application in the database**, not via environment variables. See [Application Management](#application-management) below.
 
 ### 3. Run the Service
 
@@ -80,17 +82,50 @@ docker build -t oauth-callback-service .
 
 **2. Run the container**:
 ```bash
-# Generate a secure secret first
-SECRET=$(python -c "import secrets; print(secrets.token_urlsafe(32))")
-
-# Run container with environment variables
 docker run -d \
   --name oauth-callback \
   -p 8000:8000 \
-  -e DOMAIN_NAME=https://your-cloudflare-tunnel.example.com \
-  -e SHARED_SECRET=$SECRET \
   -v oauth-data:/app/data \
   oauth-callback-service
+```
+
+**Note**: The service will start with a sample application. You must configure your applications in the database - see [Application Management](#application-management).
+
+**3. Configure your application** (first time setup):
+
+**Method 1: Using Python script** (recommended for Docker):
+```bash
+# Access the container
+docker exec -it oauth-callback bash
+
+# List all applications
+python manage_db.py list
+
+# Update the sample application
+python manage_db.py update-domains pevplugshare "your-domain.com,your-other-domain.com"
+
+# Generate and update secret
+python manage_db.py update-secret pevplugshare
+
+# Or specify your own secret
+python manage_db.py update-secret pevplugshare "your-generated-secret-here"
+```
+
+**Method 2: Using sqlite3** (if available):
+```bash
+# Access the container
+docker exec -it oauth-callback bash
+
+# Update the sample application with your settings
+sqlite3 /app/data/oauth_sessions.db
+```
+
+```sql
+UPDATE applications
+SET
+  allowed_domains = 'your-domain.com,your-other-domain.com',
+  shared_secret = 'your-generated-secret-here'
+WHERE app_id = 'pevplugshare';
 ```
 
 **3. Check logs**:
@@ -109,12 +144,40 @@ docker start oauth-callback
 **1. Create `.env` file**:
 ```bash
 cp .env.example .env
-# Edit .env and set DOMAIN_NAME and SHARED_SECRET
+# Edit .env if needed (most settings have sensible defaults)
 ```
 
 **2. Start the service**:
 ```bash
 docker-compose up -d
+```
+
+**3. Configure your application** (first time):
+
+**Method 1: Using Python script** (recommended):
+```bash
+# Update the database
+docker exec oauth-callback-service python manage_db.py update-domains pevplugshare "your-domain.com"
+
+# Update secret (generates new one automatically)
+docker exec oauth-callback-service python manage_db.py update-secret pevplugshare
+```
+
+**Method 2: Using sqlite3**:
+```bash
+# Generate a secure secret
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+
+# Update the database
+docker exec -it oauth-callback-service sqlite3 /app/data/oauth_sessions.db
+```
+
+```sql
+UPDATE applications
+SET
+  allowed_domains = 'your-domain.com',
+  shared_secret = 'your-generated-secret-here'
+WHERE app_id = 'pevplugshare';
 ```
 
 **3. View logs**:
@@ -179,9 +242,17 @@ Edit your `.env` file:
 # Enable Cloudflare Tunnel
 CLOUDFLARE_TUNNEL_ENABLED=true
 CLOUDFLARE_TUNNEL_TOKEN=eyJhIjoiYmM0ZTM5ZjQwNjNmNDM4YWI5OTI3ZGE5ZjMyYzk3OGEiLCJ0IjoiOTZmYzA5NDAtYjNmYy00MTljLWI3YTMtNjk2ZGQwMjQxNDQ5IiwicyI6Ik9XVmxOelE1Wm1FdE56SmhZaTAwTkRjeExXSTFNV1V0TnpFek1UQTVNR1JpT1RCaiJ9
+```
 
-# Update domain to your Cloudflare public hostname
-DOMAIN_NAME=https://oauth.yourdomain.com
+Then update your application's allowed domains in the database:
+```bash
+docker exec -it oauth-callback-service sqlite3 /app/data/oauth_sessions.db
+```
+
+```sql
+UPDATE applications
+SET allowed_domains = 'oauth.yourdomain.com,oauth-dev.yourdomain.com'
+WHERE app_id = 'pevplugshare';
 ```
 
 **5. Start the Service**:
@@ -199,6 +270,7 @@ docker-compose logs -f
 # ✓ Cloudflare Tunnel configuration validated
 # 🔗 Connecting to Cloudflare Tunnel...
 # Connection registered
+# 🌱 Sample application 'pevplugshare' initialized
 ```
 
 **7. Test Public Access**:
@@ -311,10 +383,8 @@ services:
     ports:
       - "127.0.0.1:8000:8000"  # Only expose to localhost
     environment:
-      - DOMAIN_NAME=https://oauth.yourdomain.com
-      - SHARED_SECRET=${SHARED_SECRET}
       - LOG_LEVEL=WARNING
-      - ALLOWED_ORIGINS=https://openrouter.ai,https://yourdomain.com
+      - ALLOWED_ORIGINS=https://openrouter.ai
     volumes:
       - oauth-data:/app/data
     healthcheck:
@@ -326,6 +396,8 @@ services:
 volumes:
   oauth-data:
 ```
+
+**Note**: Configure applications in the database, not environment variables. See [Application Management](#application-management).
 
 Run with:
 ```bash
@@ -339,28 +411,16 @@ docker-compose -f docker-compose.prod.yml up -d
 docker-compose up -d
 ```
 
-**2. Run Cloudflare tunnel (separate container or host)**:
+**2. Configure application domains**:
 ```bash
-# Option A: Run cloudflared on host
-cloudflared tunnel --url http://localhost:8000
-
-# Option B: Add to docker-compose.yml
-services:
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    command: tunnel --url http://oauth-callback:8000
-    depends_on:
-      - oauth-callback
+# Update allowed domains to include your tunnel URL
+docker exec -it oauth-callback-service sqlite3 /app/data/oauth_sessions.db
 ```
 
-**3. Update `.env` with tunnel URL**:
-```env
-DOMAIN_NAME=https://your-tunnel-url.trycloudflare.com
-```
-
-**4. Restart service**:
-```bash
-docker-compose restart
+```sql
+UPDATE applications
+SET allowed_domains = 'your-tunnel-url.trycloudflare.com,localhost:8000'
+WHERE app_id = 'pevplugshare';
 ```
 
 ## Cloudflare Tunnel Setup
@@ -377,9 +437,15 @@ cloudflared tunnel --url http://localhost:8000
 
 This will output a temporary URL like `https://random-name.trycloudflare.com`.
 
-Update your `.env`:
-```env
-DOMAIN_NAME=https://random-name.trycloudflare.com
+Update your application's allowed domains in the database:
+```bash
+sqlite3 oauth_sessions.db
+```
+
+```sql
+UPDATE applications
+SET allowed_domains = 'random-name.trycloudflare.com,localhost:8000'
+WHERE app_id = 'pevplugshare';
 ```
 
 ### Option 2: Persistent Cloudflare Tunnel
@@ -395,9 +461,15 @@ If you already have a Cloudflare Tunnel configured:
      - service: http_status:404
    ```
 
-2. Update `.env`:
-   ```env
-   DOMAIN_NAME=https://oauth.your-domain.com
+2. Update your application's allowed domains:
+   ```bash
+   sqlite3 oauth_sessions.db
+   ```
+
+   ```sql
+   UPDATE applications
+   SET allowed_domains = 'oauth.your-domain.com'
+   WHERE app_id = 'pevplugshare';
    ```
 
 3. Restart your tunnel:
@@ -452,6 +524,424 @@ override fun onNewIntent(intent: Intent?) {
 }
 ```
 
+## Application Management
+
+The service supports multiple applications through database configuration. Each application has its own allowed domains, deep link scheme, and shared secret.
+
+### Database Management Methods
+
+**Method 1: Python Script** (Recommended for Docker)
+
+A Python-based database management tool is included that doesn't require sqlite3:
+
+```bash
+# In Docker
+docker exec oauth-callback-service python manage_db.py <command>
+
+# Locally
+python manage_db.py <command>
+```
+
+**Method 2: Direct SQL**
+
+Use sqlite3 command-line tool for direct database access:
+
+```bash
+# In Docker
+docker exec -it oauth-callback-service sqlite3 /app/data/oauth_sessions.db
+
+# Locally
+sqlite3 oauth_sessions.db
+```
+
+### View All Applications
+
+**Using Python script**:
+```bash
+docker exec oauth-callback-service python manage_db.py list
+```
+
+**Using SQL**:
+**Local**:
+```bash
+sqlite3 oauth_sessions.db "SELECT app_id, name, allowed_domains, is_active FROM applications;"
+```
+
+**Docker**:
+```bash
+docker exec oauth-callback-service sqlite3 /app/data/oauth_sessions.db \
+  "SELECT app_id, name, allowed_domains, is_active FROM applications;"
+```
+
+### Add a New Application
+
+**Using Python script**:
+```bash
+# Generates secret automatically
+docker exec oauth-callback-service python manage_db.py add \
+  myapp \
+  "My Application" \
+  "myapp.example.com,myapp-dev.example.com" \
+  "myapp://oauth/callback"
+
+# Or specify your own secret
+docker exec oauth-callback-service python manage_db.py add \
+  myapp \
+  "My Application" \
+  "myapp.example.com" \
+  "myapp://oauth/callback" \
+  "your-secret-here"
+```
+
+**Using SQL**:
+
+**1. Generate a secure secret**:
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+**2. Add to database**:
+
+**Local**:
+```bash
+sqlite3 oauth_sessions.db
+```
+
+**Docker**:
+```bash
+docker exec -it oauth-callback-service sqlite3 /app/data/oauth_sessions.db
+```
+
+**SQL**:
+```sql
+INSERT INTO applications (
+  app_id,
+  name,
+  allowed_domains,
+  deep_link_scheme,
+  shared_secret,
+  is_active,
+  created_at,
+  updated_at
+) VALUES (
+  'myapp',                                    -- Unique app ID
+  'My Application',                           -- Display name
+  'myapp.example.com,myapp-dev.example.com', -- Comma-separated domains
+  'myapp://oauth/callback',                  -- Deep link scheme
+  'YOUR_GENERATED_SECRET_HERE',              -- Secret from step 1
+  1,                                         -- Active (1) or inactive (0)
+  datetime('now'),
+  datetime('now')
+);
+```
+
+**3. Verify**:
+```sql
+SELECT * FROM applications WHERE app_id = 'myapp';
+```
+
+**Quick SQL Example** (copy-paste ready):
+```sql
+-- Generate secret first with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+
+INSERT INTO applications (
+  app_id, name, allowed_domains, deep_link_scheme, shared_secret,
+  is_active, created_at, updated_at
+) VALUES (
+  'myapp',
+  'My Application',
+  'myapp.example.com,localhost:8000',
+  'myapp://oauth/callback',
+  'REPLACE_WITH_GENERATED_SECRET',
+  1,
+  datetime('now'),
+  datetime('now')
+);
+```
+
+### Update an Existing Application
+
+**Using Python script**:
+
+**Update allowed domains**:
+```bash
+docker exec oauth-callback-service python manage_db.py update-domains \
+  pevplugshare \
+  "new-domain.com,other-domain.com"
+```
+
+**Update shared secret** (generates automatically):
+```bash
+docker exec oauth-callback-service python manage_db.py update-secret pevplugshare
+```
+
+**Using SQL**:
+
+**Update allowed domains**:
+```sql
+UPDATE applications
+SET
+  allowed_domains = 'new-domain.com,other-domain.com',
+  updated_at = datetime('now')
+WHERE app_id = 'pevplugshare';
+```
+
+**Update shared secret** (secret rotation):
+```sql
+UPDATE applications
+SET
+  shared_secret = 'NEW_SECURE_SECRET_HERE',
+  updated_at = datetime('now')
+WHERE app_id = 'pevplugshare';
+```
+
+**Important**: After updating the secret, you must rebuild and redeploy your mobile app with the new secret.
+
+**Update deep link scheme**:
+```sql
+UPDATE applications
+SET
+  deep_link_scheme = 'newscheme://oauth/callback',
+  updated_at = datetime('now')
+WHERE app_id = 'pevplugshare';
+```
+
+**Update display name**:
+```sql
+UPDATE applications
+SET
+  name = 'New Application Name',
+  updated_at = datetime('now')
+WHERE app_id = 'pevplugshare';
+```
+
+### Temporarily Disable an Application
+
+**Using Python script**:
+
+**Disable** (reject all requests):
+```bash
+docker exec oauth-callback-service python manage_db.py disable myapp
+```
+
+**Re-enable**:
+```bash
+docker exec oauth-callback-service python manage_db.py enable myapp
+```
+
+**Using SQL**:
+
+**Disable** (reject all requests):
+```sql
+UPDATE applications
+SET
+  is_active = 0,
+  updated_at = datetime('now')
+WHERE app_id = 'myapp';
+```
+
+**Re-enable**:
+```sql
+UPDATE applications
+SET
+  is_active = 1,
+  updated_at = datetime('now')
+WHERE app_id = 'myapp';
+```
+
+When disabled, requests will receive:
+```json
+{
+  "error": "unknown_application",
+  "message": "No application configured for domain: myapp.example.com"
+}
+```
+
+### Remove an Application
+
+**Using Python script**:
+```bash
+# Will prompt for confirmation
+docker exec -it oauth-callback-service python manage_db.py delete myapp
+```
+
+**Using SQL**:
+
+**Caution**: This permanently deletes the application configuration.
+
+```sql
+-- First, check for active sessions
+SELECT COUNT(*) FROM oauth_sessions WHERE app_id = 'myapp';
+
+-- Delete the application
+DELETE FROM applications WHERE app_id = 'myapp';
+```
+
+**Note**: Existing sessions will continue to work until they expire, but no new sessions can be created.
+
+### Application Configuration Examples
+
+**Development + Production Domains**:
+```sql
+UPDATE applications
+SET allowed_domains = 'myapp.com,dev.myapp.com,localhost:8000'
+WHERE app_id = 'myapp';
+```
+
+**Multiple Domains** (e.g., different regional domains):
+```sql
+UPDATE applications
+SET allowed_domains = 'myapp.com,myapp.co.uk,myapp.eu,myapp.asia'
+WHERE app_id = 'myapp';
+```
+
+**With Cloudflare Tunnel**:
+```sql
+UPDATE applications
+SET allowed_domains = 'random-name.trycloudflare.com,myapp.com'
+WHERE app_id = 'myapp';
+```
+
+### Python Management Script Reference
+
+The `manage_db.py` script provides a user-friendly interface for database management:
+
+**List all applications**:
+```bash
+docker exec oauth-callback-service python manage_db.py list
+```
+
+**Show detailed application info**:
+```bash
+docker exec oauth-callback-service python manage_db.py show pevplugshare
+```
+
+**View recent sessions**:
+```bash
+# All sessions
+docker exec oauth-callback-service python manage_db.py sessions
+
+# Sessions for specific app
+docker exec oauth-callback-service python manage_db.py sessions pevplugshare
+```
+
+**Complete command reference**:
+```bash
+docker exec oauth-callback-service python manage_db.py
+```
+
+This will display all available commands and their usage.
+
+### Security Best Practices
+
+**1. Secret Generation**:
+```bash
+# Always use cryptographically secure secrets
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+
+# NOT secure (don't use):
+# - Simple passwords
+# - Dictionary words
+# - Predictable patterns
+```
+
+**2. Domain Validation**:
+- Only add domains you control
+- Use exact domain matches (no wildcards)
+- Include port numbers if not using 80/443
+- Test with `localhost:8000` for development
+
+**3. Secret Rotation**:
+```sql
+-- Rotate secrets periodically (e.g., every 90 days)
+UPDATE applications
+SET shared_secret = 'NEW_SECRET', updated_at = datetime('now')
+WHERE app_id = 'myapp';
+```
+
+After rotation:
+1. Update mobile app with new secret
+2. Test thoroughly
+3. Deploy updated mobile app
+4. Old sessions continue to work until expiration
+
+**4. Monitoring**:
+```sql
+-- Check recent sessions by application
+SELECT app_id, COUNT(*) as session_count, MAX(created_at) as last_session
+FROM oauth_sessions
+GROUP BY app_id;
+
+-- Find applications with no recent activity
+SELECT app_id, name, updated_at
+FROM applications
+WHERE app_id NOT IN (
+  SELECT DISTINCT app_id FROM oauth_sessions
+  WHERE created_at > datetime('now', '-7 days')
+);
+```
+
+### Database Schema
+
+```sql
+-- Applications table
+CREATE TABLE applications (
+  app_id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  allowed_domains TEXT NOT NULL,     -- Comma-separated list
+  deep_link_scheme TEXT NOT NULL,
+  shared_secret TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  is_active INTEGER NOT NULL DEFAULT 1
+);
+
+-- Sessions table (references applications)
+CREATE TABLE oauth_sessions (
+  session_id TEXT PRIMARY KEY,
+  app_id TEXT NOT NULL,              -- Foreign key to applications
+  provider TEXT NOT NULL,
+  deep_link_url TEXT NOT NULL,
+  created_at INTEGER NOT NULL,
+  expires_at INTEGER NOT NULL,
+  used INTEGER NOT NULL DEFAULT 0,
+  client_ip TEXT,
+  user_agent TEXT,
+  FOREIGN KEY (app_id) REFERENCES applications(app_id)
+);
+```
+
+### Backup and Restore
+
+**Backup**:
+```bash
+# Local
+cp oauth_sessions.db oauth_sessions.backup-$(date +%Y%m%d).db
+
+# Docker
+docker cp oauth-callback-service:/app/data/oauth_sessions.db \
+  ./oauth_sessions.backup-$(date +%Y%m%d).db
+```
+
+**Restore**:
+```bash
+# Local
+cp oauth_sessions.backup-20241123.db oauth_sessions.db
+
+# Docker
+docker cp ./oauth_sessions.backup-20241123.db \
+  oauth-callback-service:/app/data/oauth_sessions.db
+docker-compose restart
+```
+
+**Export applications only** (for migration):
+```bash
+sqlite3 oauth_sessions.db <<EOF
+.mode insert applications
+SELECT * FROM applications;
+EOF
+```
+
 ## Project Structure
 
 ```
@@ -492,12 +982,9 @@ oauth-callback-service/
 |----------|------|---------|-------------|
 | `HOST` | string | `0.0.0.0` | Server bind address |
 | `PORT` | integer | `8000` | Server port |
-| `DOMAIN_NAME` | string | **Required** | Public domain for callback URLs |
-| `DEEP_LINK_SCHEME` | string | `pevplugshare://oauth/callback` | Mobile app deep link |
 | `DATABASE_URL` | string | `sqlite:///./oauth_sessions.db` | Database connection string |
 | `SESSION_TTL_MINUTES` | integer | `10` | Session expiration time |
 | `CLEANUP_INTERVAL_MINUTES` | integer | `5` | Database cleanup interval |
-| `SHARED_SECRET` | string | **Required** | HMAC signature secret |
 | `RATE_LIMIT_PER_MINUTE` | integer | `10` | Requests per minute per IP |
 | `RATE_LIMIT_PER_HOUR` | integer | `100` | Requests per hour per IP |
 | `RATE_LIMIT_PER_DAY` | integer | `1000` | Requests per day per IP |
@@ -508,15 +995,27 @@ oauth-callback-service/
 | `CLOUDFLARE_TUNNEL_TOKEN` | string | - | Cloudflare Tunnel token (required if tunnel enabled) |
 | `ENABLE_DIAGNOSTIC_ENDPOINTS` | boolean | `false` | Enable /ping and /version endpoints (testing only) |
 
+### Removed Environment Variables
+
+The following variables are **no longer used**. Configuration is now per-application in the database:
+
+- ~~`DOMAIN_NAME`~~ - Now configured per-application in `allowed_domains`
+- ~~`SHARED_SECRET`~~ - Now configured per-application in `shared_secret`
+- ~~`DEEP_LINK_SCHEME`~~ - Now configured per-application in `deep_link_scheme`
+
+See [Application Management](#application-management) for database configuration.
+
 ### Generating Secrets
 
-Generate a cryptographically secure secret for `SHARED_SECRET`:
+Generate a cryptographically secure secret for your application's `shared_secret`:
 
 ```bash
 python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
 
 Example output: `xK7pQ9rN2mZ4vB8wC3dE5fG6hJ1kL0mN2oP4qR5sT7uV9wX`
+
+Use this secret when adding or updating applications in the database. See [Application Management](#application-management).
 
 ## Security Best Practices
 
@@ -633,13 +1132,10 @@ spec:
         ports:
         - containerPort: 8000
         env:
-        - name: DOMAIN_NAME
-          value: "https://oauth.yourdomain.com"
-        - name: SHARED_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: oauth-secrets
-              key: shared-secret
+        - name: LOG_LEVEL
+          value: "WARNING"
+        - name: ALLOWED_ORIGINS
+          value: "https://openrouter.ai"
         volumeMounts:
         - name: data
           mountPath: /app/data
@@ -858,13 +1354,20 @@ Service logs all requests and errors:
 1. Verify tunnel is running: `cloudflared tunnel info`
 2. Check public hostname configuration
 3. Test local service first: `curl http://localhost:8000/health`
-4. Update `DOMAIN_NAME` in `.env` to match tunnel URL
+4. Update application's `allowed_domains` in database to include tunnel URL
+
+### "unknown_application" errors
+
+- Check the request's `Host` header matches an application's `allowed_domains`
+- Verify application exists: `SELECT * FROM applications WHERE is_active = 1;`
+- Check domain includes port if using non-standard ports (e.g., `localhost:8000`)
+- Ensure application is active (`is_active = 1`)
 
 ## Contributing
 
 This is a development/testing service. For production use, consider:
 - Migrating to PostgreSQL (change `DATABASE_URL`)
-- Adding authentication for admin endpoints
+- Adding admin API for application management
 - Implementing webhook notifications
 - Adding metrics/monitoring (Prometheus)
 - Setting up log aggregation

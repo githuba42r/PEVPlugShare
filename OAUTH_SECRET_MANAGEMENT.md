@@ -83,16 +83,16 @@ Final APK (secrets embedded)
 
 ### What This Protects Against
 
-✅ Accidentally committing secrets to git  
-✅ Simple APK decompilation (jadx, apktool)  
-✅ BuildConfig secret extraction  
-✅ Automated secret scanners  
+✅ Accidentally committing secrets to git
+✅ Simple APK decompilation (jadx, apktool)
+✅ BuildConfig secret extraction
+✅ Automated secret scanners
 
 ### What This Does NOT Protect Against
 
-❌ Dedicated reverse engineering (IDA Pro, Ghidra)  
-❌ Dynamic analysis (Frida, hooking)  
-❌ Root/jailbroken devices with memory dumps  
+❌ Dedicated reverse engineering (IDA Pro, Ghidra)
+❌ Dynamic analysis (Frida, hooking)
+❌ Root/jailbroken devices with memory dumps
 
 **Note**: No client-side secret is 100% secure. This is defense in depth - making it harder to extract secrets, but not impossible.
 
@@ -134,7 +134,7 @@ grep secrets.properties .gitignore
 
 **Problem**: Build is using production secrets instead of dev
 
-**Solution**: 
+**Solution**:
 - Debug builds use `oauth.dev.*` properties
 - Release builds use `oauth.prod.*` properties
 - Check that you have both sets defined in secrets.properties
@@ -241,12 +241,12 @@ openssl rand -base64 32
 
 ## Summary
 
-✅ **DO**: Keep secrets.properties local (gitignored)  
-✅ **DO**: Use secrets.properties.template for documentation  
-✅ **DO**: Generate strong random secrets for production  
-✅ **DO**: Update callback service with matching secrets  
+✅ **DO**: Keep secrets.properties local (gitignored)
+✅ **DO**: Use secrets.properties.template for documentation
+✅ **DO**: Generate strong random secrets for production
+✅ **DO**: Update callback service with matching secrets
 
-❌ **DON'T**: Commit secrets.properties to git  
-❌ **DON'T**: Hardcode secrets in source code  
-❌ **DON'T**: Share secrets in plain text (Slack, email)  
-❌ **DON'T**: Reuse the same secret for dev and prod  
+❌ **DON'T**: Commit secrets.properties to git
+❌ **DON'T**: Hardcode secrets in source code
+❌ **DON'T**: Share secrets in plain text (Slack, email)
+❌ **DON'T**: Reuse the same secret for dev and prod

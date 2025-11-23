@@ -40,17 +40,38 @@ Edit `.env` file:
 ```env
 CLOUDFLARE_TUNNEL_ENABLED=true
 CLOUDFLARE_TUNNEL_TOKEN=eyJhIjoiYmM0ZTM5ZjQwNjNmNDM4YWI5OTI3ZGE5ZjMyYzk3OGEiLCJ0IjoiOTZmYzA5NDAtYjNmYy00MTljLWI3YTMtNjk2ZGQwMjQxNDQ5IiwicyI6Ik9XVmxOelE1Wm1FdE56SmhZaTAwTkRjeExXSTFNV1V0TnpFek1UQTVNR1JpT1RCaiJ9
-DOMAIN_NAME=https://oauth.yourdomain.com
-SHARED_SECRET=your-secret-here
 ```
 
-### 4. Start Service
+### 4. Configure Application
+
+Update your application's allowed domains to include the tunnel URL:
+
+```bash
+# Generate a secure secret if you haven't already
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+
+# Start the service
+docker-compose up -d
+
+# Configure the application
+docker exec -it oauth-callback-service sqlite3 /app/data/oauth_sessions.db
+```
+
+```sql
+UPDATE applications
+SET
+  allowed_domains = 'oauth.yourdomain.com,localhost:8000',
+  shared_secret = 'your-generated-secret-here'
+WHERE app_id = 'pevplugshare';
+```
+
+### 5. Start Service
 
 ```bash
 docker-compose up -d
 ```
 
-### 5. Test
+### 6. Test
 
 ```bash
 # Check logs
@@ -100,10 +121,13 @@ docker-compose down -v
 |----------|----------|---------|-------------|
 | `CLOUDFLARE_TUNNEL_ENABLED` | No | `false` | Enable Cloudflare Tunnel |
 | `CLOUDFLARE_TUNNEL_TOKEN` | Yes* | - | Tunnel token from Cloudflare dashboard |
-| `DOMAIN_NAME` | Yes | - | Your public URL (e.g., `https://oauth.yourdomain.com`) |
-| `SHARED_SECRET` | Yes | - | HMAC signature secret |
+| `DATABASE_URL` | No | `sqlite:///./data/oauth_sessions.db` | Database connection string |
+| `SESSION_TTL_MINUTES` | No | `10` | Session expiration time |
+| `LOG_LEVEL` | No | `INFO` | Logging level |
 
 *Required when `CLOUDFLARE_TUNNEL_ENABLED=true`
+
+**Note**: Domain names and secrets are configured per-application in the database, not via environment variables. See the main README for application management.
 
 ## Architecture
 
@@ -193,10 +217,12 @@ docker-compose restart
 ## Security Notes
 
 1. **Never commit** `.env` file to git (already in `.gitignore`)
-2. **Rotate** `SHARED_SECRET` regularly
+2. **Rotate secrets regularly**: Update application's `shared_secret` in database every 90 days
 3. **Use strong secrets**: `python -c "import secrets; print(secrets.token_urlsafe(32))"`
 4. **Monitor** Cloudflare dashboard for unusual traffic
 5. **Rate limiting** is enabled by default (10/min, 100/hour, 1000/day)
+6. **Domain validation**: Only add domains you control to `allowed_domains`
+7. **Disable unused apps**: Set `is_active = 0` for applications no longer in use
 
 ## Benefits vs Alternatives
 

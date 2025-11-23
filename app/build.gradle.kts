@@ -38,7 +38,7 @@ android {
     // Load OAuth secrets from secrets.properties (NOT in git)
     val secretsFile = rootProject.file("secrets.properties")
     val secrets = java.util.Properties()
-    
+
     if (secretsFile.exists()) {
         secretsFile.inputStream().use { secrets.load(it) }
     } else {
@@ -84,7 +84,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            
+
             // Production secrets
             externalNativeBuild {
                 cmake {
