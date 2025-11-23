@@ -453,6 +453,25 @@ class MainViewModel @Inject constructor(
         loadLocations(category)
     }
 
+    suspend fun addLocation(location: Location) {
+        try {
+            val categoryName = _selectedCategory.value ?: "default"
+            val result = locationRepository.addLocation(location, categoryName)
+            
+            if (result.isSuccess) {
+                android.util.Log.d("MainViewModel", "Location added successfully: ${location.name}")
+                // Refresh the location list
+                syncLocations()
+            } else {
+                android.util.Log.e("MainViewModel", "Failed to add location: ${result.exceptionOrNull()?.message}")
+                throw result.exceptionOrNull() ?: Exception("Failed to add location")
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MainViewModel", "Error adding location: ${e.message}", e)
+            throw e
+        }
+    }
+
     suspend fun manualSync() {
         checkPendingOperationsAndSync()
     }
