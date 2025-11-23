@@ -16,8 +16,8 @@
         android:id="@+id/menu_osmand_connect"
         android:title="@string/connect_to_osmand" />
     <item
-        android:id="@+id/menu_logout"
-        android:title="Logout" />
+        android:id="@+id/menu_osmand_logout"
+        android:title="Disconnect from OsmAnd" />
     <item
         android:id="@+id/menu_image_gallery"
         android:title="Image Gallery" />
