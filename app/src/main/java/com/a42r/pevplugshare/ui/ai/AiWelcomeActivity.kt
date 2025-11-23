@@ -40,10 +40,11 @@ class AiWelcomeActivity : AppCompatActivity() {
         markAiWelcomeAsSeen()
 
         val intent = Intent(this, SettingsActivity::class.java)
+        intent.putExtra("from_first_launch", true)
         startActivity(intent)
-
-        // Proceed to main activity - user can configure API key from settings
-        proceedToMainActivity()
+        
+        // Finish this activity so user can proceed to main from Settings
+        finish()
     }
 
     private fun skipAiSetup() {

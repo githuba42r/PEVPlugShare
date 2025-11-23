@@ -97,6 +97,9 @@ class MainViewModel @Inject constructor(
     private val _isSyncing = MutableStateFlow(false)
     val isSyncing: StateFlow<Boolean> = _isSyncing
 
+    private val _syncProgress = MutableStateFlow<SyncProgress?>(null)
+    val syncProgress: StateFlow<SyncProgress?> = _syncProgress
+
     private val _savedForLaterCount = MutableStateFlow(0)
     val savedForLaterCount: StateFlow<Int> = _savedForLaterCount
 
@@ -357,12 +360,20 @@ class MainViewModel @Inject constructor(
 
                     if (locations.isEmpty()) {
                         _locationListState.value = LocationListState.Empty
+                        _syncProgress.value = null
                     } else {
-                        // Save to database
+                        // Save to database with progress updates
                         android.util.Log.d("MainViewModel", "Saving ${locations.size} locations to database...")
                         var savedCount = 0
-                        locations.forEach { location ->
+                        locations.forEachIndexed { index, location ->
                             try {
+                                // Update progress before saving
+                                _syncProgress.value = SyncProgress(
+                                    current = index + 1,
+                                    total = locations.size,
+                                    categoryName = categoryName
+                                )
+                                
                                 val result = locationRepository.addLocation(location, categoryName)
                                 if (result.isSuccess) {
                                     savedCount++
@@ -374,6 +385,9 @@ class MainViewModel @Inject constructor(
                             }
                         }
                         android.util.Log.d("MainViewModel", "Saved $savedCount out of ${locations.size} locations")
+                        
+                        // Clear progress
+                        _syncProgress.value = null
 
                         // Sort and display
                         allLocations = locations
@@ -385,11 +399,13 @@ class MainViewModel @Inject constructor(
                     _isOffline.value = false
                 }.onFailure { error ->
                     android.util.Log.e("MainViewModel", "Failed to download GPX: ${error.message}")
+                    _syncProgress.value = null
                     _locationListState.value = LocationListState.Error(error.message ?: "Failed to load locations")
                     _isOffline.value = true
                 }
             } catch (e: Exception) {
                 android.util.Log.e("MainViewModel", "Error loading locations: ${e.message}", e)
+                _syncProgress.value = null
                 _locationListState.value = LocationListState.Error(e.message ?: "Failed to load locations")
                 _isOffline.value = true
             }
@@ -608,4 +624,10 @@ class MainViewModel @Inject constructor(
         return true
     }
 }
+
+data class SyncProgress(
+    val current: Int,
+    val total: Int,
+    val categoryName: String
+)
 
