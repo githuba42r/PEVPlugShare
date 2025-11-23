@@ -24,6 +24,7 @@ class LocationAdapter(
     private val onInfoClick: (Location) -> Unit,
     private val onMapClick: (Location) -> Unit,
     private val onPhotoClick: (Location) -> Unit,
+    private val onArFinderClick: (Location) -> Unit,
     private val userLatitude: Double,
     private val userLongitude: Double
 ) : ListAdapter<Location, LocationAdapter.LocationViewHolder>(LocationDiffCallback()) {
@@ -46,7 +47,7 @@ class LocationAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val binding = ItemLocationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return LocationViewHolder(binding, onItemClick, onNavigateClick, onFavouriteClick, onEditClick, onInfoClick, onMapClick, onPhotoClick, userLatitude, userLongitude, ::isValidUserLocation)
+        return LocationViewHolder(binding, onItemClick, onNavigateClick, onFavouriteClick, onEditClick, onInfoClick, onMapClick, onPhotoClick, onArFinderClick, userLatitude, userLongitude, ::isValidUserLocation)
     }
 
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
@@ -64,6 +65,7 @@ class LocationAdapter(
         private val onInfoClick: (Location) -> Unit,
         private val onMapClick: (Location) -> Unit,
         private val onPhotoClick: (Location) -> Unit,
+        private val onArFinderClick: (Location) -> Unit,
         private val userLatitude: Double,
         private val userLongitude: Double,
         private val isValidUserLocation: () -> Boolean
@@ -234,6 +236,24 @@ class LocationAdapter(
                 photosButton.visibility = if (hasPhotos) android.view.View.VISIBLE else android.view.View.GONE
                 photosButton.setOnClickListener {
                     onPhotoClick(location)
+                }
+
+                // AR Finder button - show status based on AR data availability
+                val hasArData = location.arSocketData != null
+                arFinderButton.alpha = if (hasArData) 1.0f else 0.5f
+                arFinderButton.setOnClickListener {
+                    onArFinderClick(location)
+                }
+                // Show tooltip hint if no AR data
+                if (!hasArData) {
+                    arFinderButton.setOnLongClickListener {
+                        android.widget.Toast.makeText(
+                            binding.root.context,
+                            "AR positioning data not available. Using GPS fallback.",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+                        true
+                    }
                 }
 
                 // Item click

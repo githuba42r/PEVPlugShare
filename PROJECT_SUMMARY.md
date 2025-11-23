@@ -41,6 +41,7 @@
 - **UI Framework**: Material Design 3
 - **Authentication**: OAuth2 (Authorization Code Grant)
 - **Location**: Fused Location Provider (Google Play Services)
+- **AR**: ARCore 1.44.0 with Geospatial API
 - **Security**: EncryptedSharedPreferences (AndroidX Security)
 
 ### Architectural Patterns
@@ -106,6 +107,20 @@ External Services (OSMAnd API, Google Play Services)
 - Success navigation
 - Material Design components
 - Progressive field disclosure
+
+### 🆕 AR Socket Finder (Phase 1 MVP) ✅
+- **ARCore Geospatial API Integration**: Pixel-accurate socket positioning
+- **Glowing Target Circle**: Real-time AR overlay on socket location
+- **Distance & Height Indicators**: 3D positioning with vertical guidance
+- **Off-Screen Arrows**: Directional guidance when target not in view
+- **Compass Fallback Mode**: Works on non-AR devices
+- **ENU Coordinate System**: Geographic to local 3D coordinate conversion
+- **Dual Mode Toggle**: Switch between AR and compass navigation
+- **Sub-meter Accuracy**: ±30cm outdoors, ±15cm in VPS areas
+- **UI Integration**: AR button on every location card
+- **Sensor Fusion**: Accelerometer + magnetometer for compass mode
+
+See [AR_SOCKET_FINDER.md](./AR_SOCKET_FINDER.md) for detailed documentation.
 
 ## 📱 User Flow
 

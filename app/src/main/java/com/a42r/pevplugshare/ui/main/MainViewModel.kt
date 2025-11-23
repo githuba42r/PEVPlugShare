@@ -1,5 +1,6 @@
 package com.a42r.pevplugshare.ui.main
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a42r.pevplugshare.data.model.Location
@@ -15,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -372,7 +374,7 @@ class MainViewModel @Inject constructor(
                         // Save all locations to local database in one batch (no API calls)
                         android.util.Log.d("MainViewModel", "Saving ${locations.size} locations to local database...")
                         val saveResult = locationRepository.saveLocationsToLocalDb(locations, categoryName)
-                        
+
                         saveResult.onSuccess { savedCount ->
                             android.util.Log.d("MainViewModel", "✅ Saved $savedCount locations to local database")
                         }.onFailure { error ->
@@ -615,6 +617,74 @@ class MainViewModel @Inject constructor(
 
         // For other cases, assume open (could be enhanced with time parsing)
         return true
+    }
+
+    /**
+     * Generate AR socket data for a location from its photos
+     * Uses focus rectangles or AI detection to find socket positions
+     */
+    fun generateArDataFromPhotos(context: android.content.Context, location: Location, categoryName: String) {
+        viewModelScope.launch {
+            try {
+                // Skip if already has AR data
+                if (location.arSocketData != null) {
+                    Log.d("MainViewModel", "Location ${location.id} already has AR data")
+                    return@launch
+                }
+
+                // Get photo paths
+                val photoPaths = location.imagePaths
+                if (photoPaths.isEmpty()) {
+                    Log.d("MainViewModel", "Location ${location.id} has no photos")
+                    return@launch
+                }
+
+                Log.d("MainViewModel", "Analyzing ${photoPaths.size} photos for location ${location.id}")
+
+                // Analyze photos
+                val result = com.a42r.pevplugshare.ar.ArPhotoAnalyzer.analyzeBestPhoto(
+                    context,
+                    photoPaths
+                )
+
+                if (result != null && result.arSocketData != null) {
+                    // Update location with AR data
+                    val updatedLocation = location.copy(arSocketData = result.arSocketData)
+                    locationRepository.updateLocation(updatedLocation, categoryName)
+
+                    Log.d("MainViewModel", "Generated AR data for location ${location.id} using ${result.method} (confidence: ${result.confidence})")
+                } else {
+                    Log.d("MainViewModel", "Failed to generate AR data for location ${location.id}: ${result?.errorMessage}")
+                }
+
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Error generating AR data for location ${location.id}", e)
+            }
+        }
+    }
+
+    /**
+     * Batch generate AR data for all locations missing it in a category
+     */
+    fun generateArDataForCategory(context: android.content.Context, categoryName: String) {
+        viewModelScope.launch {
+            try {
+                val result = locationRepository.getLocationsByCategory(categoryName)
+                val locations = result.getOrNull() ?: emptyList()
+                val locationsNeedingAr = locations.filter {
+                    it.arSocketData == null && it.imagePaths.isNotEmpty()
+                }
+
+                Log.d("MainViewModel", "Generating AR data for ${locationsNeedingAr.size} locations in $categoryName")
+
+                locationsNeedingAr.forEach { location ->
+                    generateArDataFromPhotos(context, location, categoryName)
+                }
+
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Error in batch AR data generation for $categoryName", e)
+            }
+        }
     }
 }
 

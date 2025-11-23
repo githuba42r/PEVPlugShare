@@ -25,6 +25,7 @@ object PhotoUtils {
             val latitude = latLong?.get(0)
             val longitude = latLong?.get(1)
             val bearing = extractBearing(exif)
+            val (pitch, distanceEstimate) = extractArMetadataFromExif(exif)
             val focusRectString = exif.getAttribute(ImageEditorActivity.EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT)
             val focusRect = parseFocusRectString(focusRectString)
 
@@ -33,6 +34,8 @@ object PhotoUtils {
                 longitude = longitude,
                 altitude = null,
                 bearing = bearing,
+                pitch = pitch,
+                distanceEstimate = distanceEstimate,
                 dateTime = exif.getAttribute(androidx.exifinterface.media.ExifInterface.TAG_DATETIME),
                 make = exif.getAttribute(androidx.exifinterface.media.ExifInterface.TAG_MAKE),
                 model = exif.getAttribute(androidx.exifinterface.media.ExifInterface.TAG_MODEL),
@@ -55,6 +58,7 @@ object PhotoUtils {
 
             // Extract bearing/direction if available (some devices record this)
             val bearing = extractBearing(exif)
+            val (pitch, distanceEstimate) = extractArMetadataFromExif(exif)
             val focusRectString = exif.getAttribute(ImageEditorActivity.EXIF_TAG_PEVPLUGSHARE_FOCUS_RECT)
             val focusRect = parseFocusRectString(focusRectString)
 
@@ -63,6 +67,8 @@ object PhotoUtils {
                 longitude = longitude,
                 altitude = null, // EXIF_TAG_ALTITUDE not available in simple way, skip for now
                 bearing = bearing,
+                pitch = pitch,
+                distanceEstimate = distanceEstimate,
                 dateTime = exif.getAttribute(ExifInterface.TAG_DATETIME),
                 make = exif.getAttribute(ExifInterface.TAG_MAKE),
                 model = exif.getAttribute(ExifInterface.TAG_MODEL),
@@ -98,6 +104,31 @@ object PhotoUtils {
             Log.d(TAG, "Could not extract bearing from EXIF", e)
             null
         }
+    }
+
+    private fun extractArMetadataFromExif(exif: ExifInterface): Pair<Float?, Float?> {
+        var pitch: Float? = null
+        var distance: Float? = null
+        
+        try {
+            // Extract pitch from UserComment
+            val userComment = exif.getAttribute(ExifInterface.TAG_USER_COMMENT)
+            pitch = userComment?.split(";")
+                ?.find { it.startsWith("AR_PITCH=") }
+                ?.substringAfter("=")
+                ?.toFloatOrNull()
+            
+            // Extract distance from MakerNote
+            val makerNote = exif.getAttribute(ExifInterface.TAG_MAKER_NOTE)
+            distance = makerNote?.split(";")
+                ?.find { it.startsWith("AR_DISTANCE=") }
+                ?.substringAfter("=")
+                ?.toFloatOrNull()
+        } catch (e: Exception) {
+            Log.d(TAG, "Could not extract AR metadata from EXIF", e)
+        }
+        
+        return Pair(pitch, distance)
     }
 
     fun getExifData(photoPath: String): Map<String, String> {
@@ -321,6 +352,62 @@ object PhotoUtils {
         } catch (e: Exception) {
             Log.e(TAG, "Error parsing normalized focusRectString: $normalizedString", e)
             null
+        }
+    }
+
+    /**
+     * Write AR-specific metadata to photo EXIF
+     * Stores pitch and distance estimate for AR Socket Finder
+     */
+    fun writeArMetadataToPhoto(
+        photoPath: String,
+        pitch: Float?,
+        distanceEstimate: Float?
+    ): Boolean {
+        return try {
+            val exif = ExifInterface(photoPath)
+            
+            // Store pitch in UserComment field (standardized way to store custom data)
+            pitch?.let {
+                val existingComment = exif.getAttribute(ExifInterface.TAG_USER_COMMENT) ?: ""
+                val newComment = if (existingComment.isEmpty()) {
+                    "AR_PITCH=$it"
+                } else {
+                    "$existingComment;AR_PITCH=$it"
+                }
+                exif.setAttribute(ExifInterface.TAG_USER_COMMENT, newComment)
+            }
+            
+            // Store distance in MakerNote field (another custom data field)
+            distanceEstimate?.let {
+                val existingMaker = exif.getAttribute(ExifInterface.TAG_MAKER_NOTE) ?: ""
+                val newMaker = if (existingMaker.isEmpty()) {
+                    "AR_DISTANCE=$it"
+                } else {
+                    "$existingMaker;AR_DISTANCE=$it"
+                }
+                exif.setAttribute(ExifInterface.TAG_MAKER_NOTE, newMaker)
+            }
+            
+            exif.saveAttributes()
+            Log.d(TAG, "AR metadata saved: pitch=$pitch, distance=$distanceEstimate")
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Error writing AR metadata to photo", e)
+            false
+        }
+    }
+
+    /**
+     * Extract AR metadata from photo EXIF
+     */
+    fun extractArMetadataFromPhoto(photoPath: String): Pair<Float?, Float?> {
+        return try {
+            val exif = ExifInterface(photoPath)
+            extractArMetadataFromExif(exif)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error extracting AR metadata from photo", e)
+            Pair(null, null)
         }
     }
 

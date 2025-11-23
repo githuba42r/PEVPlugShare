@@ -1,5 +1,8 @@
 package com.a42r.pevplugshare.data.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 enum class SocketType(val displayName: String) {
     AS3112("AS3112 (AU GPO)"),
     TYPE2("Type2 EV"),
@@ -29,6 +32,7 @@ enum class OsmandSyncStatus(val value: String, val displayName: String) {
     MODIFIED("MODIFIED", "Modified")                 // Local changes not pushed to OSMand
 }
 
+@Parcelize
 data class Location(
     val id: String,
     val name: String,
@@ -65,9 +69,13 @@ data class Location(
     val osmandLastSyncedAt: Long? = null,        // Timestamp of last successful sync
     val osmandSyncedToServer: Boolean = false,   // True if exists on OSMAnd server
     val osmandSyncedUsernames: String? = null,   // Comma-separated list of OSMand usernames this location has been synced with
-    val osmandSyncStatus: OsmandSyncStatus = OsmandSyncStatus.LOCAL_ONLY  // Current sync status relative to OSMand
-)
+    val osmandSyncStatus: OsmandSyncStatus = OsmandSyncStatus.LOCAL_ONLY,  // Current sync status relative to OSMand
+    
+    // AR Socket Finder fields
+    val arSocketData: ArSocketData? = null  // AR-specific 3D positioning data
+) : Parcelable
 
+@Parcelize
 data class Photo(
     val id: String,
     val locationId: String,
@@ -75,7 +83,7 @@ data class Photo(
     val timestamp: Long,
     val exifMetadata: String? = null,
     val gpxData: String? = null
-)
+) : Parcelable
 
 data class SyncState(
     val lastSyncTime: Long = 0L,

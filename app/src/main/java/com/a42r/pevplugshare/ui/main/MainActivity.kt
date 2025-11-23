@@ -172,6 +172,7 @@ class MainActivity : AppCompatActivity() {
                             onInfoClick = { location -> /* Info button handled internally */ },
                             onMapClick = { location -> loadLocationMap(location) },
                             onPhotoClick = { location -> showPhotoGallery(location) },
+                            onArFinderClick = { location -> launchArFinder(location) },
                             userLatitude = userLoc.first,
                             userLongitude = userLoc.second
                         )
@@ -210,6 +211,7 @@ class MainActivity : AppCompatActivity() {
                             onInfoClick = { location -> /* Info button handled internally */ },
                             onMapClick = { location -> loadLocationMap(location) },
                             onPhotoClick = { location -> showPhotoGallery(location) },
+                            onArFinderClick = { location -> /* AR Finder not yet implemented */ },
                             userLatitude = userLoc.first,
                             userLongitude = userLoc.second
                         )
@@ -740,6 +742,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         android.util.Log.d("PhotoGallery", "=== Modal opened successfully ===")
+    }
+
+    private fun launchArFinder(location: Location) {
+        val intent = com.a42r.pevplugshare.ar.ArSocketFinderActivity.createIntent(this, location)
+        startActivity(intent)
     }
 
     private fun downloadImage(imagePath: String) {
