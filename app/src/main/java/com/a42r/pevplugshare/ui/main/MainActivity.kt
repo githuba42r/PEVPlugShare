@@ -149,13 +149,14 @@ class MainActivity : AppCompatActivity() {
             viewModel.locationListState.collect { state ->
                 when (state) {
                     is LocationListState.Loading -> {
-                        binding.loadingProgressBar.visibility = android.view.View.VISIBLE
+                        binding.loadingContainer.visibility = android.view.View.VISIBLE
+                        binding.loadingMessage.text = "Loading locations..."
                         binding.locationRecyclerView.visibility = android.view.View.GONE
                         binding.emptyState.visibility = android.view.View.GONE
                         binding.swipeRefreshLayout.isRefreshing = false
                     }
                     is LocationListState.Success -> {
-                        binding.loadingProgressBar.visibility = android.view.View.GONE
+                        binding.loadingContainer.visibility = android.view.View.GONE
                         binding.locationRecyclerView.visibility = android.view.View.VISIBLE
                         binding.emptyState.visibility = android.view.View.GONE
                         binding.swipeRefreshLayout.isRefreshing = false
@@ -178,14 +179,14 @@ class MainActivity : AppCompatActivity() {
                         adapter?.submitList(state.locations)
                     }
                     is LocationListState.Empty -> {
-                        binding.loadingProgressBar.visibility = android.view.View.GONE
+                        binding.loadingContainer.visibility = android.view.View.GONE
                         binding.locationRecyclerView.visibility = android.view.View.GONE
                         binding.emptyState.visibility = android.view.View.VISIBLE
                         binding.emptyState.text = "No charging locations found.\n\nLog in to OSMAnd to sync your favorites, or tap + to add locations manually."
                         binding.swipeRefreshLayout.isRefreshing = false
                     }
                     is LocationListState.Error -> {
-                        binding.loadingProgressBar.visibility = android.view.View.GONE
+                        binding.loadingContainer.visibility = android.view.View.GONE
                         binding.locationRecyclerView.visibility = android.view.View.GONE
                         binding.emptyState.visibility = android.view.View.VISIBLE
                         binding.emptyState.text = "Error: ${state.message}"
@@ -222,6 +223,17 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.selectedCategory.collect { category ->
                 updateCategoryBadgeVisibility()
+            }
+        }
+
+        // Observe sync progress
+        lifecycleScope.launch {
+            viewModel.syncProgress.collect { progress ->
+                if (progress != null) {
+                    binding.loadingMessage.text = "Syncing ${progress.categoryName}...\n${progress.current} of ${progress.total} locations"
+                } else {
+                    binding.loadingMessage.text = "Loading locations..."
+                }
             }
         }
 
