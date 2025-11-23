@@ -100,7 +100,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Share location"
                     android:scaleType="centerInside"
-                    android:src="@android:drawable/ic_menu_share" />
+                    android:src="@drawable/ic_share" />
             </LinearLayout>
 
             <!-- Distance on right -->

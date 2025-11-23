@@ -21,12 +21,12 @@ import java.util.UUID
 
 @AndroidEntryPoint
 class ImportSharedLocationActivity : AppCompatActivity() {
-    
+
     private val viewModel: MainViewModel by viewModels()
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         when (intent?.action) {
             Intent.ACTION_SEND -> {
                 handleSharedLocation(intent)
@@ -37,11 +37,11 @@ class ImportSharedLocationActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     private fun handleSharedLocation(intent: Intent) {
         val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
         val sharedJson = intent.getStringExtra("PEVPLUGSHARE_JSON")
-        
+
         if (sharedJson != null) {
             // Try to parse JSON first (machine-interpretable format)
             try {
@@ -67,10 +67,10 @@ class ImportSharedLocationActivity : AppCompatActivity() {
             finish()
         }
     }
-    
+
     private fun parseLocationFromJson(json: String): Location {
         val jsonObj = JSONObject(json)
-        
+
         // Parse socket types
         val socketTypesArray = jsonObj.optJSONArray("socketTypes")
         val socketTypes = mutableListOf<SocketType>()
@@ -83,12 +83,12 @@ class ImportSharedLocationActivity : AppCompatActivity() {
                 }
             }
         }
-        
+
         // If no valid socket types, add a default
         if (socketTypes.isEmpty()) {
             socketTypes.add(SocketType.AS3112)
         }
-        
+
         return Location(
             id = UUID.randomUUID().toString(), // Generate new ID for imported location
             name = jsonObj.getString("name"),
@@ -121,15 +121,15 @@ class ImportSharedLocationActivity : AppCompatActivity() {
             osmandSyncStatus = OsmandSyncStatus.LOCAL_ONLY
         )
     }
-    
+
     private fun parseLocationFromText(text: String): Location {
         // Extract coordinates from text (looking for pattern like "lat, lon" or OpenStreetMap URL)
         val coordsPattern = Regex("""(-?\d+\.\d+),\s*(-?\d+\.\d+)""")
         val coordsMatch = coordsPattern.find(text)
-        
+
         val osmUrlPattern = Regex("""mlat=(-?\d+\.\d+)&mlon=(-?\d+\.\d+)""")
         val osmUrlMatch = osmUrlPattern.find(text)
-        
+
         val (latitude, longitude) = when {
             coordsMatch != null -> {
                 Pair(coordsMatch.groupValues[1].toDouble(), coordsMatch.groupValues[2].toDouble())
@@ -139,23 +139,23 @@ class ImportSharedLocationActivity : AppCompatActivity() {
             }
             else -> throw IllegalArgumentException("No coordinates found in shared text")
         }
-        
+
         // Extract name (first line typically)
         val lines = text.lines().filter { it.isNotBlank() }
         val name = lines.firstOrNull()?.replace("🔌", "")?.trim() ?: "Imported Charging Location"
-        
+
         // Extract GPO count
         val gpoPattern = Regex("""(\d+)\s+GPO""")
         val gpoMatch = gpoPattern.find(text)
         val gpoCount = gpoMatch?.groupValues?.get(1)?.toIntOrNull() ?: 1
-        
+
         // Determine if public/private
         val isPublic = text.contains("Public", ignoreCase = true)
         val publicPrivate = if (isPublic) LocationAccessType.PUBLIC else LocationAccessType.PRIVATE
-        
+
         // Determine if has fee
         val hasFee = text.contains("Paid", ignoreCase = true) || text.contains("Fee", ignoreCase = true)
-        
+
         return Location(
             id = UUID.randomUUID().toString(),
             name = name,
@@ -184,7 +184,7 @@ class ImportSharedLocationActivity : AppCompatActivity() {
             osmandSyncStatus = OsmandSyncStatus.LOCAL_ONLY
         )
     }
-    
+
     private fun showImportDialog(location: Location, isFromJson: Boolean) {
         val message = buildString {
             append("Import this charging location?\n\n")
@@ -193,14 +193,14 @@ class ImportSharedLocationActivity : AppCompatActivity() {
             append("GPO Count: ${location.gpoCount}\n")
             append("Access: ${location.publicPrivate.displayName}\n")
             append("Cost: ${if (location.hasFee) "Paid" else "Free"}\n")
-            
+
             if (isFromJson) {
                 append("\n✓ Full location details available")
             } else {
                 append("\n⚠ Imported from text (limited details)")
             }
         }
-        
+
         AlertDialog.Builder(this)
             .setTitle("Import Shared Location")
             .setMessage(message)
@@ -215,19 +215,19 @@ class ImportSharedLocationActivity : AppCompatActivity() {
             }
             .show()
     }
-    
+
     private fun importLocation(location: Location) {
         lifecycleScope.launch {
             try {
                 // Save to local database
                 viewModel.addLocation(location)
-                
+
                 Toast.makeText(
                     this@ImportSharedLocationActivity,
                     "Location imported successfully",
                     Toast.LENGTH_SHORT
                 ).show()
-                
+
                 // Navigate to main activity
                 val intent = Intent(this@ImportSharedLocationActivity, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
