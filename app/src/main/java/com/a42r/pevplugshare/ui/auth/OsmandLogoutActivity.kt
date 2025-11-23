@@ -84,7 +84,7 @@ class OsmandLogoutActivity : AppCompatActivity() {
 
                     // Delete all OsmAnd locations and their photos
                     val deletedCount = viewModel.deleteAllOsmandLocations()
-                    
+
                     Toast.makeText(
                         this@OsmandLogoutActivity,
                         "Removed $deletedCount OsmAnd locations and their photos",
@@ -94,7 +94,7 @@ class OsmandLogoutActivity : AppCompatActivity() {
 
                 // Perform logout
                 viewModel.logout()
-                
+
                 Toast.makeText(
                     this@OsmandLogoutActivity,
                     "Disconnected from OsmAnd successfully",
@@ -113,7 +113,7 @@ class OsmandLogoutActivity : AppCompatActivity() {
                     "Error during logout: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
-                
+
                 binding.btnDisconnect.isEnabled = true
                 binding.btnDisconnect.text = "Disconnect from OsmAnd"
             }
