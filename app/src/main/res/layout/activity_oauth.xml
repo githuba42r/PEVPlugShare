@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="OpenRouter Authentication"
+            app:title="AI Settings"
             app:navigationIcon="?attr/homeAsUpIndicator" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -56,25 +56,43 @@
 
             <TextView
                 android:id="@+id/tvDescription"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="Connect your OpenRouter account to enable AI features"
+                android:gravity="start"
+                android:text="AI-powered features:\n• Automatic location descriptions\n• Smart charging location summaries\n• Natural language location details"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
+            <TextView
+                android:id="@+id/tvLearnMore"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Learn more about OpenRouter"
+                android:textSize="12sp"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvDescription"
+                app:layout_constraintTop_toBottomOf="@id/tvLearnMore"
                 tools:visibility="visible" />
 
             <TextView
@@ -90,23 +108,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/progressBar" />
 
-            <TextView
-                android:id="@+id/tvApiKey"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvStatus"
-                tools:text="Connected (sk-abc123...)" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnStartOauth"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:paddingVertical="16dp"
                 android:text="Connect to OpenRouter"
                 android:textAllCaps="false"
@@ -115,25 +121,7 @@
                 app:icon="@android:drawable/ic_menu_myplaces"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvApiKey" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDisconnect"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:paddingVertical="16dp"
-                android:text="Disconnect"
-                android:textAllCaps="false"
-                android:textSize="16sp"
-                android:visibility="gone"
-                app:cornerRadius="8dp"
-                app:strokeWidth="1dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvApiKey"
-                tools:visibility="visible" />
+                app:layout_constraintTop_toBottomOf="@id/tvStatus" />
 
             <!-- Model Selection Section (only visible when authenticated) -->
             <LinearLayout
@@ -145,7 +133,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnDisconnect"
+                app:layout_constraintTop_toBottomOf="@id/btnStartOauth"
                 tools:visibility="visible">
 
                 <TextView
@@ -165,7 +153,9 @@
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
                     app:cardElevation="2dp"
-                    app:cardCornerRadius="8dp">
+                    app:cardCornerRadius="8dp"
+                    app:strokeWidth="2dp"
+                    app:strokeColor="?attr/colorPrimary">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -235,6 +225,26 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
+
+            <!-- Disconnect Button at the bottom (only visible when authenticated) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDisconnect"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:paddingVertical="16dp"
+                android:text="Disconnect"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:cornerRadius="8dp"
+                app:strokeColor="?attr/colorPrimary"
+                android:textColor="?attr/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/modelSelectionSection"
+                tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
