@@ -131,7 +131,7 @@ object ArCoordinateUtils {
      */
     fun formatDistance(meters: Float): String {
         return when {
-            meters < 1 -> String.format("%.0f cm", meters * 100)
+            meters < 1 -> String.format("%.1f cm", meters * 100)
             meters < 1000 -> String.format("%.1f m", meters)
             else -> String.format("%.2f km", meters / 1000)
         }

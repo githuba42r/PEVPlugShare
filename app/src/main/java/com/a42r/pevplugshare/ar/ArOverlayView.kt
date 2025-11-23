@@ -180,7 +180,7 @@ class ArOverlayView @JvmOverloads constructor(
                 if (!running) return
                 
                 val elapsed = System.currentTimeMillis() - startTime
-                val fraction = ((elapsed % duration).toFloat() / duration)
+                val fraction = (elapsed.toFloat() / duration) % 1.0f
                 
                 updateCallback?.invoke(fraction)
                 

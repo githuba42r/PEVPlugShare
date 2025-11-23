@@ -288,8 +288,9 @@ class ArSocketFinderActivity : AppCompatActivity(), SensorEventListener {
         // Apply view transformation
         android.opengl.Matrix.multiplyMV(viewPos, 0, viewMatrix, 0, position, 0)
         
-        // Check if behind camera (in OpenGL camera space, positive Z is behind)
-        if (viewPos[2] >= 0) return null
+        // Check if behind camera or too close to near plane (0.1m)
+        // In ARCore camera space, camera looks down negative Z, so positive Z is behind
+        if (viewPos[2] > -0.1f) return null
         
         // Apply projection
         android.opengl.Matrix.multiplyMV(screenPos, 0, projectionMatrix, 0, viewPos, 0)
@@ -403,7 +404,8 @@ class ArSocketFinderActivity : AppCompatActivity(), SensorEventListener {
     private fun getCurrentLocation(callback: (Double, Double, Double) -> Unit) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            callback(0.0, 0.0, 0.0)
+            showError("Location permission required for AR mode")
+            switchToCompassMode()
             return
         }
         
@@ -414,8 +416,11 @@ class ArSocketFinderActivity : AppCompatActivity(), SensorEventListener {
             if (location != null) {
                 callback(location.latitude, location.longitude, location.altitude)
             } else {
-                callback(0.0, 0.0, 0.0)
+                showError("Could not get current location")
             }
+        }.addOnFailureListener { e ->
+            Log.e(TAG, "Error getting location", e)
+            showError("Location error: ${e.message}")
         }
     }
     

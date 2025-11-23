@@ -29,7 +29,7 @@ data class ArSocketData(
     // Confidence and metadata
     val confidence: Float = 0f,  // 0.0 to 1.0
     val timestamp: Long = System.currentTimeMillis(),
-    val method: ArLocalizationMethod = ArLocalizationMethod.GPS_BEARING
+    val method: ArLocalizationMethod = ArLocalizationMethod.GEOSPATIAL_API
 ) : Parcelable
 
 enum class ArLocalizationMethod {

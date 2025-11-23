@@ -113,19 +113,17 @@ object PhotoUtils {
         try {
             // Extract pitch from UserComment
             val userComment = exif.getAttribute(ExifInterface.TAG_USER_COMMENT)
-            userComment?.split(";")?.forEach { part ->
-                if (part.startsWith("AR_PITCH=")) {
-                    pitch = part.substringAfter("=").toFloatOrNull()
-                }
-            }
+            pitch = userComment?.split(";")
+                ?.find { it.startsWith("AR_PITCH=") }
+                ?.substringAfter("=")
+                ?.toFloatOrNull()
             
             // Extract distance from MakerNote
             val makerNote = exif.getAttribute(ExifInterface.TAG_MAKER_NOTE)
-            makerNote?.split(";")?.forEach { part ->
-                if (part.startsWith("AR_DISTANCE=")) {
-                    distance = part.substringAfter("=").toFloatOrNull()
-                }
-            }
+            distance = makerNote?.split(";")
+                ?.find { it.startsWith("AR_DISTANCE=") }
+                ?.substringAfter("=")
+                ?.toFloatOrNull()
         } catch (e: Exception) {
             Log.d(TAG, "Could not extract AR metadata from EXIF", e)
         }
