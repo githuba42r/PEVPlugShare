@@ -31,7 +31,6 @@ class SettingsActivity : AppCompatActivity() {
     private var modelPricingMap = mutableMapOf<String, com.a42r.pevplugshare.ui.settings.model.ModelPricing>()
     private var modelDataMap = mutableMapOf<String, com.a42r.pevplugshare.ui.settings.model.OpenRouterModel>()
     private var modelChanged = false
-    private var isFromFirstLaunch = false
 
     companion object {
         // OpenRouter OAuth endpoints
@@ -48,15 +47,13 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        isFromFirstLaunch = intent.getBooleanExtra("from_first_launch", false)
-
         setupToolbar()
         setupUI()
     }
 
     private fun setupToolbar() {
         binding.toolbar.setNavigationOnClickListener {
-            finishActivity()
+            finish()
         }
     }
 
@@ -119,7 +116,7 @@ class SettingsActivity : AppCompatActivity() {
             tokenManager.setOsmandLocationMatchDistance(matchDistance)
 
             Toast.makeText(this@SettingsActivity, "Settings saved", Toast.LENGTH_SHORT).show()
-            finishActivity()
+            finish()
         }
     }
 
@@ -142,15 +139,6 @@ class SettingsActivity : AppCompatActivity() {
 
             Toast.makeText(this@SettingsActivity, "Settings reset to defaults", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun finishActivity() {
-        if (isFromFirstLaunch) {
-            // User came from AiWelcomeActivity, navigate to MainActivity
-            val intent = Intent(this, com.a42r.pevplugshare.ui.main.MainActivity::class.java)
-            startActivity(intent)
-        }
-        finish()
     }
 
     /* Commented out - OpenRouter authentication now handled in OAuthActivity

@@ -9,17 +9,17 @@ interface AuthRepository {
     suspend fun refreshWebApiSession(): Result<Unit>
 
     suspend fun getFavoritesCategories(): Result<List<String>>
-    
+
     suspend fun downloadFavoritesGpx(categoryName: String): Result<List<com.a42r.pevplugshare.data.model.Location>>
 
     suspend fun logout()
 
     suspend fun isLoggedIn(): Boolean
-    
+
     suspend fun hasStoredCredentials(): Boolean
-    
+
     suspend fun hasSessionToken(): Boolean
-    
+
     suspend fun autoLogin(): Result<String>
 
     suspend fun getUserInfo(): Result<Pair<String, String>>
@@ -33,13 +33,22 @@ interface LocationRepository {
     suspend fun addLocation(location: Location, categoryName: String): Result<Location>
 
     suspend fun updateLocation(location: Location, categoryName: String): Result<Location>
-    
+
     suspend fun updateLocationToOsmand(location: Location, categoryName: String, index: Int, updateTime: Long): Result<Unit>
 
     suspend fun deleteLocation(locationId: String): Result<Unit>
 
     suspend fun syncLocations(categoryName: String): Result<List<Location>>
-    
+
+    /**
+     * Save locations to local database only (no API call)
+     * Used when syncing from OsmAnd GPX - locations already exist in OsmAnd
+     * @param locations List of locations to save
+     * @param categoryName Category these locations belong to
+     * @return Result with number of locations saved
+     */
+    suspend fun saveLocationsToLocalDb(locations: List<Location>, categoryName: String): Result<Int>
+
     /**
      * Find nearby locations within specified radius
      * @param latitude Location latitude

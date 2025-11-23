@@ -362,30 +362,23 @@ class MainViewModel @Inject constructor(
                         _locationListState.value = LocationListState.Empty
                         _syncProgress.value = null
                     } else {
-                        // Save to database with progress updates
-                        android.util.Log.d("MainViewModel", "Saving ${locations.size} locations to database...")
-                        var savedCount = 0
-                        locations.forEachIndexed { index, location ->
-                            try {
-                                // Update progress before saving
-                                _syncProgress.value = SyncProgress(
-                                    current = index + 1,
-                                    total = locations.size,
-                                    categoryName = categoryName
-                                )
-                                
-                                val result = locationRepository.addLocation(location, categoryName)
-                                if (result.isSuccess) {
-                                    savedCount++
-                                } else {
-                                    android.util.Log.e("MainViewModel", "Failed to save location ${location.name}: ${result.exceptionOrNull()?.message}")
-                                }
-                            } catch (e: Exception) {
-                                android.util.Log.e("MainViewModel", "Exception saving location ${location.name}: ${e.message}")
-                            }
-                        }
-                        android.util.Log.d("MainViewModel", "Saved $savedCount out of ${locations.size} locations")
+                        // Show progress indicator
+                        _syncProgress.value = SyncProgress(
+                            current = 0,
+                            total = locations.size,
+                            categoryName = categoryName
+                        )
+
+                        // Save all locations to local database in one batch (no API calls)
+                        android.util.Log.d("MainViewModel", "Saving ${locations.size} locations to local database...")
+                        val saveResult = locationRepository.saveLocationsToLocalDb(locations, categoryName)
                         
+                        saveResult.onSuccess { savedCount ->
+                            android.util.Log.d("MainViewModel", "✅ Saved $savedCount locations to local database")
+                        }.onFailure { error ->
+                            android.util.Log.e("MainViewModel", "❌ Failed to save locations: ${error.message}")
+                        }
+
                         // Clear progress
                         _syncProgress.value = null
 
@@ -485,7 +478,7 @@ class MainViewModel @Inject constructor(
             // Get the category to fetch locations
             val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
             val locations = locationRepository.getLocationsByCategory(category).getOrNull() ?: emptyList()
-            
+
             // Filter for OsmAnd locations and delete their photos
             val osmandLocations = locations.filter { it.osmandSyncSource == "OSMAND" }
             osmandLocations.forEach { location ->
@@ -494,7 +487,7 @@ class MainViewModel @Inject constructor(
                     com.a42r.pevplugshare.util.ImageUtils.deleteImageFile(imagePath)
                 }
             }
-            
+
             // Delete all OsmAnd locations from database
             val deletedCount = locationRepository.deleteAllOsmandLocations().getOrElse { 0 }
             deletedCount

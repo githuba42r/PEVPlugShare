@@ -33,11 +33,11 @@ class AuthRepositoryImpl(
         Log.d(TAG, "Username: $username")
         Log.d(TAG, "Remember Me: $rememberMe")
         Log.d(TAG, "Endpoint: https://osmand.net/mapapi/auth/login")
-        
+
         return safeApiCall {
             apiClient.clearCookies()
             Log.d(TAG, "Cleared existing cookies")
-            
+
             val webApiService = apiClient.getWebApiRetrofit()
                 .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
             val loginRequest = com.a42r.pevplugshare.data.api.OsmandLoginRequest(
@@ -45,15 +45,15 @@ class AuthRepositoryImpl(
                 password = password,
                 lang = "en"
             )
-            
+
             Log.d(TAG, "Sending login request...")
             val response = webApiService.webLogin(loginRequest)
-            
+
             Log.d(TAG, "Login Response:")
             Log.d(TAG, "  Status: ${response.status}")
             Log.d(TAG, "  Message: ${response.message}")
             Log.d(TAG, "  User ID: ${response.userid}")
-            
+
             // Get cookies after login
             val cookies = cookieManager.loadCookies("osmand.net")
             Log.d(TAG, "Session Cookies Received: ${cookies.size}")
@@ -67,7 +67,7 @@ class AuthRepositoryImpl(
                 Log.d(TAG, "    Secure: ${cookie.secure}")
                 Log.d(TAG, "    HttpOnly: ${cookie.httpOnly}")
             }
-            
+
             if (response.status == "ok" || response.userid != null) {
                 Log.d(TAG, "✅ Login Successful!")
                 tokenManager.saveWebApiCredentials(username, password, rememberMe)
@@ -87,32 +87,32 @@ class AuthRepositoryImpl(
     override suspend fun hasStoredCredentials(): Boolean {
         return tokenManager.hasStoredCredentials()
     }
-    
+
     override suspend fun hasSessionToken(): Boolean {
         // Check if we have valid session cookies from OSMAnd
         val hasCookies = cookieManager.hasCookies("osmand.net")
         Log.d(TAG, "Checking session token - has cookies: $hasCookies")
-        
+
         // Also check access token for backward compatibility with OAuth
         val hasAccessToken = tokenManager.isLoggedIn()
         Log.d(TAG, "Checking session token - has access token: $hasAccessToken")
-        
+
         return hasCookies || hasAccessToken
     }
 
     override suspend fun autoLogin(): Result<String> {
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "Attempting Auto-Login")
-        
+
         val username = tokenManager.getUsername()
         val password = tokenManager.getPassword()
-        
+
         if (username.isNullOrEmpty() || password.isNullOrEmpty()) {
             Log.d(TAG, "❌ No stored credentials found")
             Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             return Result.failure(Exception("No stored credentials"))
         }
-        
+
         Log.d(TAG, "Found stored credentials for: $username")
         return loginWithWebApi(username, password, true)
     }
@@ -122,14 +122,14 @@ class AuthRepositoryImpl(
             if (tokenManager.getAuthType() != TokenManager.AuthType.WEB_API) {
                 throw Exception("Not using web API authentication")
             }
-            
+
             val username = tokenManager.getUsername()
             val password = tokenManager.getPassword()
-            
+
             if (username.isNullOrEmpty() || password.isNullOrEmpty()) {
                 throw Exception("Credentials not found")
             }
-            
+
             val webApiService = apiClient.getWebApiRetrofit()
                 .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
             val loginRequest = com.a42r.pevplugshare.data.api.OsmandLoginRequest(
@@ -138,7 +138,7 @@ class AuthRepositoryImpl(
                 lang = "en"
             )
             val response = webApiService.webLogin(loginRequest)
-            
+
             if (response.status != "ok" && response.userid == null) {
                 throw Exception(response.message ?: "Session refresh failed")
             }
@@ -149,37 +149,37 @@ class AuthRepositoryImpl(
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "Fetching Favorites Categories")
         Log.d(TAG, "Endpoint: https://osmand.net/mapapi/list-files")
-        
+
         // Check cookies before request
         val cookies = cookieManager.loadCookies("osmand.net")
         Log.d(TAG, "Using ${cookies.size} session cookie(s)")
         cookies.forEachIndexed { index, cookie ->
             Log.d(TAG, "  Cookie $index: ${cookie.name} = ${cookie.value.take(20)}...")
         }
-        
+
         return try {
             val result = safeApiCall {
                 val webApiService = apiClient.getWebApiRetrofit()
                     .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
-                
+
                 Log.d(TAG, "Sending list-files request...")
                 Log.d(TAG, "Request will timeout after 5 seconds")
                 val startTime = System.currentTimeMillis()
-                
+
                 val response = webApiService.listFiles()
-                
+
                 val elapsed = System.currentTimeMillis() - startTime
                 Log.d(TAG, "Response received in ${elapsed}ms")
-                
+
                 Log.d(TAG, "List Files Response:")
                 Log.d(TAG, "  Total Files: ${response.totalFiles}")
                 Log.d(TAG, "  Total Unique Files: ${response.totalUniqueFiles}")
                 Log.d(TAG, "  Unique Files Count: ${response.uniqueFiles?.size}")
-                
-                val favoriteFiles = response.uniqueFiles?.filter { 
-                    it.type == "FAVOURITES" 
+
+                val favoriteFiles = response.uniqueFiles?.filter {
+                    it.type == "FAVOURITES"
                 } ?: emptyList()
-                
+
                 Log.d(TAG, "Favorites Files Found: ${favoriteFiles.size}")
                 favoriteFiles.forEachIndexed { index, file ->
                     Log.d(TAG, "  File $index:")
@@ -192,21 +192,21 @@ class AuthRepositoryImpl(
                         Log.d(TAG, "    Categories: ${categories.keys.joinToString(", ")}")
                     }
                 }
-                
+
                 val categoryNames = favoriteFiles.mapNotNull { file ->
                     file.name
                         .removePrefix("favourites-")
                         .removePrefix("favorites-")
                         .removeSuffix(".gpx")
                 }
-                
+
                 Log.d(TAG, "Extracted Category Names: ${categoryNames.joinToString(", ")}")
                 Log.d(TAG, "✅ Successfully retrieved ${categoryNames.size} categories")
                 Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                
+
                 categoryNames
             }
-            
+
             when (result) {
                 is ApiResult.Success -> {
                     Result.success(result.data)
@@ -233,34 +233,34 @@ class AuthRepositoryImpl(
     override suspend fun downloadFavoritesGpx(categoryName: String): Result<List<Location>> {
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "Downloading Favorites GPX for category: $categoryName")
-        
+
         return try {
             // Use "favorites" (American spelling) to match OSMAnd's file naming
             val fileName = "favorites-${categoryName}.gpx"
             Log.d(TAG, "GPX File name: $fileName")
-            
+
             val result = safeApiCall {
                 val webApiService = apiClient.getWebApiRetrofit()
                     .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
-                
+
                 val response = webApiService.downloadFile(
                     type = "FAVOURITES",
                     name = fileName,
                     shared = false
                 )
-                
+
                 // Get the full content as bytes first
                 val gpxBytes = response.bytes()
                 Log.d(TAG, "Downloaded ${gpxBytes.size} bytes")
-                
+
                 // Parse the GPX content
                 val parser = com.a42r.pevplugshare.data.gpx.GpxParser()
                 val locations = parser.parse(gpxBytes.inputStream())
-                
+
                 Log.d(TAG, "Parsed ${locations.size} waypoints from GPX")
                 locations
             }
-            
+
             when (result) {
                 is ApiResult.Success -> {
                     Log.d(TAG, "✅ Successfully downloaded and parsed GPX")
@@ -312,6 +312,10 @@ class LocationRepositoryImpl(
     private val tokenManager: TokenManager
 ) : LocationRepository {
 
+    companion object {
+        private const val TAG = "LocationRepository"
+    }
+
     override suspend fun getCategories(): Result<List<OsmandCategory>> {
         val authHeader = tokenManager.getAuthHeader() ?: return Result.failure(
             Exception("Please log in to OSMAnd to access your favorites")
@@ -346,6 +350,11 @@ class LocationRepositoryImpl(
         }.mapToResult()
     }
 
+    override suspend fun saveLocationsToLocalDb(locations: List<Location>, categoryName: String): Result<Int> {
+        // This implementation is not used - LocalLocationRepository is injected via DI
+        return Result.failure(UnsupportedOperationException("Use LocalLocationRepository"))
+    }
+
     override suspend fun updateLocation(
         location: Location,
         categoryName: String
@@ -375,7 +384,7 @@ class LocationRepositoryImpl(
             apiClient.api.deleteMarker(locationId, authHeader)
         }.mapToResult()
     }
-    
+
     override suspend fun updateLocationToOsmand(
         location: Location,
         categoryName: String,
@@ -389,7 +398,7 @@ class LocationRepositoryImpl(
     override suspend fun syncLocations(categoryName: String): Result<List<Location>> {
         return getLocationsByCategory(categoryName)
     }
-    
+
     override suspend fun findNearbyLocations(
         latitude: Double,
         longitude: Double,

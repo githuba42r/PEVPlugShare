@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         // Refresh location list when returning from edit/add activities
         // This ensures gallery icons and photo changes are reflected
         viewModel.syncLocations()
-        
+
         // Update category badge visibility based on OsmAnd connection status
         updateCategoryBadgeVisibility()
     }
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateCategoryBadgeVisibility() {
         val category = viewModel.selectedCategory.value
         val isOsmandConnected = viewModel.isOsmandConnected()
-        
+
         if (category != null && isOsmandConnected) {
             binding.categoryBadge.text = category
             binding.categoryBadge.visibility = android.view.View.VISIBLE
@@ -149,14 +149,14 @@ class MainActivity : AppCompatActivity() {
             viewModel.locationListState.collect { state ->
                 when (state) {
                     is LocationListState.Loading -> {
-                        binding.loadingContainer.visibility = android.view.View.VISIBLE
+                        binding.loadingCard.visibility = android.view.View.VISIBLE
                         binding.loadingMessage.text = "Loading locations..."
                         binding.locationRecyclerView.visibility = android.view.View.GONE
                         binding.emptyState.visibility = android.view.View.GONE
                         binding.swipeRefreshLayout.isRefreshing = false
                     }
                     is LocationListState.Success -> {
-                        binding.loadingContainer.visibility = android.view.View.GONE
+                        binding.loadingCard.visibility = android.view.View.GONE
                         binding.locationRecyclerView.visibility = android.view.View.VISIBLE
                         binding.emptyState.visibility = android.view.View.GONE
                         binding.swipeRefreshLayout.isRefreshing = false
@@ -179,14 +179,14 @@ class MainActivity : AppCompatActivity() {
                         adapter?.submitList(state.locations)
                     }
                     is LocationListState.Empty -> {
-                        binding.loadingContainer.visibility = android.view.View.GONE
+                        binding.loadingCard.visibility = android.view.View.GONE
                         binding.locationRecyclerView.visibility = android.view.View.GONE
                         binding.emptyState.visibility = android.view.View.VISIBLE
                         binding.emptyState.text = "No charging locations found.\n\nLog in to OSMAnd to sync your favorites, or tap + to add locations manually."
                         binding.swipeRefreshLayout.isRefreshing = false
                     }
                     is LocationListState.Error -> {
-                        binding.loadingContainer.visibility = android.view.View.GONE
+                        binding.loadingCard.visibility = android.view.View.GONE
                         binding.locationRecyclerView.visibility = android.view.View.GONE
                         binding.emptyState.visibility = android.view.View.VISIBLE
                         binding.emptyState.text = "Error: ${state.message}"
