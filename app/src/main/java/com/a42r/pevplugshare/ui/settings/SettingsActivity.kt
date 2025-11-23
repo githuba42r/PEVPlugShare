@@ -557,45 +557,7 @@ class SettingsActivity : AppCompatActivity() {
                     pricing = pricing
                 )
                 modelDataMap[modelId] = openRouterModel
-
-                // Filter for free or commonly used models
-                if (modelId.contains("free", ignoreCase = true) ||
-                    modelId.contains("gpt", ignoreCase = true) ||
-                    modelId.contains("claude", ignoreCase = true) ||
-                    modelId.contains("llama", ignoreCase = true) ||
-                    modelId.contains("mistral", ignoreCase = true) ||
-                    modelId.contains("gemini", ignoreCase = true)) {
-                    models.add(openRouterModel)
-                }
-            }
-
-            // If no filtered models, return first 30
-            if (models.isEmpty()) {
-                for (i in 0 until minOf(30, dataArray.length())) {
-                    val modelJson = dataArray.getJSONObject(i)
-                    val modelId = modelJson.getString("id")
-                    val contextLength = modelJson.optInt("context_length", -1).takeIf { it != -1 }
-                    val description = modelJson.optString("description", null)
-
-                    var pricing: com.a42r.pevplugshare.ui.settings.model.ModelPricing? = null
-                    if (modelJson.has("pricing")) {
-                        val pricingJson = modelJson.getJSONObject("pricing")
-                        val promptCost = pricingJson.optString("prompt", "0")
-                        val completionCost = pricingJson.optString("completion", "0")
-                        val promptPerMillion = (promptCost.toDoubleOrNull() ?: 0.0) * 1000000
-                        val completionPerMillion = (completionCost.toDoubleOrNull() ?: 0.0) * 1000000
-                        pricing = com.a42r.pevplugshare.ui.settings.model.ModelPricing(
-                            prompt = formatCost(promptPerMillion),
-                            completion = formatCost(completionPerMillion)
-                        )
-                    }
-                    models.add(com.a42r.pevplugshare.ui.settings.model.OpenRouterModel(
-                        id = modelId,
-                        context_length = contextLength,
-                        description = description,
-                        pricing = pricing
-                    ))
-                }
+                models.add(openRouterModel)
             }
 
             models

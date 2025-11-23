@@ -3,10 +3,10 @@ package com.a42r.pevplugshare.ui.settings.model
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.a42r.pevplugshare.R
+import com.google.android.material.card.MaterialCardView
 
 class ModelSelectionAdapter(
     private var models: List<AiModel>,
@@ -18,7 +18,7 @@ class ModelSelectionAdapter(
     private var filteredModels: List<AiModel> = models
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val radioButton: RadioButton = view.findViewById(R.id.radioButton)
+        val modelCard: MaterialCardView = view.findViewById(R.id.modelCard)
         val modelName: TextView = view.findViewById(R.id.modelName)
         val modelProvider: TextView = view.findViewById(R.id.modelProvider)
         val modelCost: TextView = view.findViewById(R.id.modelCost)
@@ -35,6 +35,7 @@ class ModelSelectionAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = filteredModels[position]
+        val isSelected = model.id == selectedModelId
         
         holder.modelName.text = model.name
         holder.modelProvider.text = "Provider: ${model.provider}"
@@ -55,7 +56,18 @@ class ModelSelectionAdapter(
             holder.modelParameters.visibility = View.GONE
         }
         
-        holder.radioButton.isChecked = model.id == selectedModelId
+        // Update card appearance based on selection
+        if (isSelected) {
+            holder.modelCard.strokeWidth = 4
+            holder.modelCard.setCardBackgroundColor(
+                holder.itemView.context.getColor(R.color.selection_background)
+            )
+        } else {
+            holder.modelCard.strokeWidth = 0
+            holder.modelCard.setCardBackgroundColor(
+                holder.itemView.context.getColor(R.color.white)
+            )
+        }
         
         // Link click handler
         holder.modelLink.setOnClickListener {
@@ -70,10 +82,6 @@ class ModelSelectionAdapter(
             // Update the UI for both old and new selection
             notifyItemChanged(filteredModels.indexOfFirst { it.id == previousSelectedId })
             notifyItemChanged(position)
-        }
-        
-        holder.radioButton.setOnClickListener {
-            holder.itemView.performClick()
         }
     }
 

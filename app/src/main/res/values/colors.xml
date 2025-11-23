@@ -18,5 +18,7 @@
     <color name="red_closed">#f44336</color>
     <color name="orange_warning">#ff9800</color>
     <color name="blue_info">#2196F3</color>
+    
+    <color name="selection_background">#E8F5E9</color>
 
 </resources>
