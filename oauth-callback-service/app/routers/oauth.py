@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from app.models import (
+    Application,
     OAuthSession,
     get_db,
     RegisterRequest,
@@ -36,7 +37,50 @@ async def register_session(
     This endpoint creates a temporary session that will be used to track
     the OAuth flow. The returned callback_url should be used as the
     redirect_uri/callback_url in the OAuth authorization request.
+
+    The request hostname is used to identify the application and validate
+    the signature with the application's shared secret.
     """
+    # Get request hostname to identify the application
+    request_host = request.url.hostname
+    if request.url.port and request.url.port not in (80, 443):
+        request_host = f"{request_host}:{request.url.port}"
+
+    # Lookup application by allowed_domains
+    application = db.query(Application).filter(
+        Application.is_active == True
+    ).all()
+
+    matching_app = None
+    for app in application:
+        if app.is_domain_allowed(request_host):
+            matching_app = app
+            break
+
+    if not matching_app:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "unknown_application",
+                "message": f"No application configured for domain '{request_host}'",
+                "details": {"request_hostname": request_host}
+            }
+        )
+
+    # Validate deep link scheme matches application
+    if not request_data.deep_link_url.startswith(matching_app.deep_link_scheme):
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "invalid_deep_link",
+                "message": f"Deep link must start with '{matching_app.deep_link_scheme}'",
+                "details": {
+                    "provided": request_data.deep_link_url,
+                    "expected_scheme": matching_app.deep_link_scheme
+                }
+            }
+        )
+
     # Verify provider is allowed
     provider_lower = request_data.provider.lower()
     allowed_providers = settings.get_oauth_providers_list()
@@ -51,12 +95,13 @@ async def register_session(
             }
         )
 
-    # Verify signature
+    # Verify signature with application's shared secret
     is_valid, error_msg = verify_signature(
         provider_lower,
         request_data.deep_link_url,
         request_data.timestamp,
-        request_data.signature
+        request_data.signature,
+        matching_app.shared_secret
     )
 
     if not is_valid:
@@ -82,6 +127,7 @@ async def register_session(
     # Create session in database
     session = OAuthSession(
         session_id=session_id,
+        app_id=matching_app.app_id,
         provider=provider_lower,
         deep_link_url=request_data.deep_link_url,
         created_at=datetime.utcnow(),
@@ -94,8 +140,8 @@ async def register_session(
     db.add(session)
     db.commit()
 
-    # Build callback URL
-    callback_url = f"{settings.domain_name}/oauth/callback/{session_id}"
+    # Build callback URL - use request hostname for the callback URL
+    callback_url = f"{request.url.scheme}://{request_host}/oauth/callback/{session_id}"
 
     return RegisterResponse(
         session_id=session_id,
