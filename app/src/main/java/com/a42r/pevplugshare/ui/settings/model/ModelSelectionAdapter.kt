@@ -36,11 +36,11 @@ class ModelSelectionAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = filteredModels[position]
         val isSelected = model.id == selectedModelId
-        
+
         holder.modelName.text = model.name
         holder.modelProvider.text = "Provider: ${model.provider}"
         holder.modelCost.text = "Cost: ${model.cost}"
-        
+
         if (model.contextSize != null) {
             holder.modelDetails.text = "Context: ${model.contextSize}"
             holder.modelDetails.visibility = View.VISIBLE
@@ -55,7 +55,7 @@ class ModelSelectionAdapter(
         } else {
             holder.modelParameters.visibility = View.GONE
         }
-        
+
         // Update card appearance based on selection
         if (isSelected) {
             holder.modelCard.strokeWidth = 4
@@ -68,17 +68,17 @@ class ModelSelectionAdapter(
                 holder.itemView.context.getColor(R.color.white)
             )
         }
-        
+
         // Link click handler
         holder.modelLink.setOnClickListener {
             onViewModelLink(model.id)
         }
-        
+
         holder.itemView.setOnClickListener {
             val previousSelectedId = selectedModelId
             selectedModelId = model.id
             onModelSelected(model)
-            
+
             // Update the UI for both old and new selection
             notifyItemChanged(filteredModels.indexOfFirst { it.id == previousSelectedId })
             notifyItemChanged(position)
@@ -93,13 +93,13 @@ class ModelSelectionAdapter(
         } else {
             val lowerQuery = query.lowercase()
             models.filter { model ->
-                val matchesSearch = query.isEmpty() || 
+                val matchesSearch = query.isEmpty() ||
                     model.name.lowercase().contains(lowerQuery) ||
                     model.provider.lowercase().contains(lowerQuery) ||
                     model.id.lowercase().contains(lowerQuery)
-                
+
                 val matchesFree = !freeOnly || model.cost.lowercase() == "free"
-                
+
                 matchesSearch && matchesFree
             }
         }

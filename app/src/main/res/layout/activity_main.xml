@@ -78,30 +78,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/loadingContainer"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/loadingCard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    app:cardElevation="4dp"
+                    app:cardCornerRadius="12dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="?attr/colorOutline">
 
-                    <ProgressBar
-                        android:id="@+id/loadingProgressBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/loadingMessage"
+                    <LinearLayout
+                        android:id="@+id/loadingContainer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Syncing locations..."
-                        android:textSize="14sp"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="32dp">
 
-                </LinearLayout>
+                        <ProgressBar
+                            android:id="@+id/loadingProgressBar"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp" />
+
+                        <TextView
+                            android:id="@+id/loadingMessage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:gravity="center"
+                            android:text="Syncing locations..."
+                            android:textSize="16sp"
+                            android:textColor="?attr/colorOnSurface" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/locationRecyclerView"

@@ -275,4 +275,17 @@ class LocalLocationRepository(
             Result.failure(e)
         }
     }
+
+    override suspend fun saveLocationsToLocalDb(locations: List<Location>, categoryName: String): Result<Int> {
+        return try {
+            // Convert locations to entities and save in batch
+            val entities = locations.map { it.toLocationEntity() }
+            locationDao.insertLocations(entities)
+            android.util.Log.d(TAG, "✅ Saved ${entities.size} locations to local database")
+            Result.success(entities.size)
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "❌ Failed to save locations to local DB: ${e.message}")
+            Result.failure(e)
+        }
+    }
 }

@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.a42r.pevplugshare.databinding.ActivityAiWelcomeBinding
 import com.a42r.pevplugshare.ui.main.MainActivity
-import com.a42r.pevplugshare.ui.settings.SettingsActivity
+import com.a42r.pevplugshare.ui.oauth.OAuthActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -36,14 +36,14 @@ class AiWelcomeActivity : AppCompatActivity() {
     }
 
     private fun openOpenRouterSignup() {
-        // Open Settings activity which now has OAuth flow
+        // Open OAuth activity which has the AI settings and OAuth flow
         markAiWelcomeAsSeen()
 
-        val intent = Intent(this, SettingsActivity::class.java)
+        val intent = Intent(this, OAuthActivity::class.java)
         intent.putExtra("from_first_launch", true)
         startActivity(intent)
-        
-        // Finish this activity so user can proceed to main from Settings
+
+        // Finish this activity so user can proceed to main from OAuth
         finish()
     }
 

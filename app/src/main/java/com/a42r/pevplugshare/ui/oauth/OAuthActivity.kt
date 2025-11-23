@@ -44,6 +44,7 @@ class OAuthActivity : AppCompatActivity() {
     private val viewModel: OpenRouterOAuthViewModel by viewModels()
     private val okHttpClient = OkHttpClient()
     private var modelDataMap = mutableMapOf<String, OpenRouterModel>()
+    private var isFromFirstLaunch = false
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -56,6 +57,8 @@ class OAuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOauthBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        isFromFirstLaunch = intent.getBooleanExtra("from_first_launch", false)
 
         setupUI()
         observeViewModel()
@@ -78,7 +81,7 @@ class OAuthActivity : AppCompatActivity() {
         }
 
         binding.toolbar.setNavigationOnClickListener {
-            finish()
+            finishActivity()
         }
 
         binding.btnStartOauth.setOnClickListener {
@@ -209,7 +212,7 @@ class OAuthActivity : AppCompatActivity() {
 
         if (selectedModelId != null) {
             val modelData = modelDataMap[selectedModelId]
-            
+
             // Parse model ID to extract provider and name
             val parts = selectedModelId.split("/")
             val provider = if (parts.size >= 2) parts[0] else ""
@@ -234,7 +237,7 @@ class OAuthActivity : AppCompatActivity() {
                     ""
                 }
                 binding.selectedModelCost.text = costDisplay
-                
+
                 val contextDisplay = modelData.context_length?.let { "Context: ${it / 1000}K tokens" } ?: ""
                 binding.selectedModelContext.text = contextDisplay
             } else {
@@ -549,5 +552,14 @@ class OAuthActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun finishActivity() {
+        if (isFromFirstLaunch) {
+            // User came from AiWelcomeActivity, navigate to MainActivity
+            val intent = Intent(this, com.a42r.pevplugshare.ui.main.MainActivity::class.java)
+            startActivity(intent)
+        }
+        finish()
     }
 }
