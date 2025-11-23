@@ -238,9 +238,22 @@ class LocationAdapter(
                     onPhotoClick(location)
                 }
 
-                // AR Finder button
+                // AR Finder button - show status based on AR data availability
+                val hasArData = location.arSocketData != null
+                arFinderButton.alpha = if (hasArData) 1.0f else 0.5f
                 arFinderButton.setOnClickListener {
                     onArFinderClick(location)
+                }
+                // Show tooltip hint if no AR data
+                if (!hasArData) {
+                    arFinderButton.setOnLongClickListener {
+                        android.widget.Toast.makeText(
+                            binding.root.context,
+                            "AR positioning data not available. Using GPS fallback.",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+                        true
+                    }
                 }
 
                 // Item click

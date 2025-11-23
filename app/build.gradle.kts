@@ -154,6 +154,10 @@ dependencies {
     // ARCore for AR Socket Finder
     implementation(libs.arcore)
 
+    // ML Kit for AI-based socket detection
+    implementation("com.google.mlkit:object-detection:17.0.1")
+    implementation("com.google.mlkit:object-detection-custom:17.0.1")
+
     // Map
     implementation("org.osmdroid:osmdroid-android:6.1.18")
 

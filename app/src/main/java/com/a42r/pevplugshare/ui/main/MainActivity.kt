@@ -211,6 +211,7 @@ class MainActivity : AppCompatActivity() {
                             onInfoClick = { location -> /* Info button handled internally */ },
                             onMapClick = { location -> loadLocationMap(location) },
                             onPhotoClick = { location -> showPhotoGallery(location) },
+                            onArFinderClick = { location -> /* AR Finder not yet implemented */ },
                             userLatitude = userLoc.first,
                             userLongitude = userLoc.second
                         )
