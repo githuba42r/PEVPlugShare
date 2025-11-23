@@ -151,6 +151,9 @@ dependencies {
     // Location Services
     implementation(libs.play.services.location)
 
+    // ARCore for AR Socket Finder
+    implementation(libs.arcore)
+
     // Map
     implementation("org.osmdroid:osmdroid-android:6.1.18")
 

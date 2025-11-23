@@ -15,6 +15,8 @@ data class PhotoMetadata(
     val longitude: Double? = null,
     val altitude: Double? = null,
     val bearing: Float? = null,
+    val pitch: Float? = null,  // Camera pitch angle for AR
+    val distanceEstimate: Float? = null,  // User-estimated distance to socket in meters
     val dateTime: String? = null,
     val make: String? = null,
     val model: String? = null,
