@@ -49,10 +49,6 @@ class SettingsActivity : AppCompatActivity() {
 
         setupToolbar()
         setupUI()
-        checkExistingApiKey()
-
-        // Handle OAuth callback
-        handleOAuthCallback()
     }
 
     private fun setupToolbar() {
@@ -63,23 +59,6 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupUI() {
         binding.apply {
-            // Get API Key button - initiates OAuth PKCE flow
-            getApiKeyButton.setOnClickListener {
-                startOAuthFlow()
-            }
-
-            // Reset/Update API Key button
-            resetApiKeyButton.setOnClickListener {
-                showResetApiKeyConfirmation()
-            }
-
-            // Model selection card click
-            selectedModelCard.setOnClickListener {
-                if (availableModels.isNotEmpty()) {
-                    showModelSelectionDialog()
-                }
-            }
-
             // Load saved zoom level
             val savedZoom = tokenManager.getMapZoomLevel()
             zoomLevelSlider.value = savedZoom
@@ -162,6 +141,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    /* Commented out - OpenRouter authentication now handled in OAuthActivity
     private fun showModelSelectionDialog() {
         val dialog = androidx.appcompat.app.AlertDialog.Builder(this).create()
         val dialogView = layoutInflater.inflate(com.a42r.pevplugshare.R.layout.dialog_model_selection, null)
@@ -273,11 +253,13 @@ class SettingsActivity : AppCompatActivity() {
 
         dialog.show()
     }
+    */
 
     private fun updateBottomButtons() {
         binding.bottomButtons.visibility = if (modelChanged) View.VISIBLE else View.GONE
     }
 
+    /* Removed - OpenRouter settings moved to separate activity
     private fun checkExistingApiKey() {
         val existingApiKey = tokenManager.getOpenRouterApiKey()
         if (!existingApiKey.isNullOrEmpty()) {
@@ -351,6 +333,8 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
     }
+
+    */
 
     private fun createAiModelFromId(openRouterModel: com.a42r.pevplugshare.ui.settings.model.OpenRouterModel): com.a42r.pevplugshare.ui.settings.model.AiModel {
         val modelId = openRouterModel.id
@@ -471,6 +455,8 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    /* Commented out - OpenRouter authentication now handled in OAuthActivity */
+    /*
     private fun validateAndSaveApiKey(apiKey: String, silent: Boolean = false) {
         binding.loadingProgressBar.visibility = View.VISIBLE
         binding.statusMessage.text = "Validating API key..."
@@ -629,54 +615,9 @@ class SettingsActivity : AppCompatActivity() {
      * Start OAuth PKCE flow for OpenRouter API key retrieval
      */
     private fun startOAuthFlow() {
-        // Generate PKCE parameters
-        val codeVerifier = PkceUtils.generateCodeVerifier()
-        val codeChallenge = PkceUtils.generateCodeChallenge(codeVerifier)
-
-        // Store code verifier for later verification
-        tokenManager.savePkceCodeVerifier(codeVerifier)
-
-        // Build authorization URL according to OpenRouter's spec
-        val authUrl = Uri.parse(OPENROUTER_AUTH_URL).buildUpon()
-            .appendQueryParameter("callback_url", CALLBACK_URL)
-            .appendQueryParameter("code_challenge", codeChallenge)
-            .appendQueryParameter("code_challenge_method", "S256")
-            .build()
-
-        // Log the URL for debugging
-        android.util.Log.d("SettingsActivity", "OAuth URL: $authUrl")
-        android.util.Log.d("SettingsActivity", "Code Challenge: $codeChallenge")
-
-        // Create custom tabs intent with referrer
-        val customTabsIntent = androidx.browser.customtabs.CustomTabsIntent.Builder()
-            .setShowTitle(true)
-            .build()
-
-        // Add referrer header to verify app identity
-        customTabsIntent.intent.putExtra(
-            Intent.EXTRA_REFERRER,
-            Uri.parse("android-app://" + packageName)
-        )
-
-        // Launch browser with authorization URL
-        try {
-            customTabsIntent.launchUrl(this, authUrl)
-            Toast.makeText(
-                this,
-                "Redirecting to OpenRouter for authorization...",
-                Toast.LENGTH_SHORT
-            ).show()
-        } catch (e: Exception) {
-            android.util.Log.e("SettingsActivity", "Failed to open OAuth URL", e)
-            Toast.makeText(
-                this,
-                "Could not open browser for authorization",
-                Toast.LENGTH_LONG
-            ).show()
-
-            // Clean up stored PKCE data
-            tokenManager.clearPkceCodeVerifier()
-        }
+        // Use the new OAuth flow with callback service
+        val intent = Intent(this, com.a42r.pevplugshare.ui.oauth.OAuthActivity::class.java)
+        startActivity(intent)
     }
 
     /**
@@ -836,4 +777,5 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
     }
+    */
 }

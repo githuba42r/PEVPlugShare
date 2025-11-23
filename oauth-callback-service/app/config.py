@@ -42,6 +42,7 @@ class Settings(BaseSettings):
 
     # Logging
     log_level: str = "INFO"
+    environment: str = "development"  # production or development
 
     # Diagnostic endpoints (for testing/debugging)
     enable_diagnostic_endpoints: bool = False

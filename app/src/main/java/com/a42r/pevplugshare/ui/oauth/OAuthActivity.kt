@@ -1,13 +1,23 @@
 package com.a42r.pevplugshare.ui.oauth
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.databinding.ActivityOauthBinding
 import com.a42r.pevplugshare.viewmodel.OpenRouterOAuthViewModel
+import com.a42r.pevplugshare.data.remote.TokenManager
+import com.a42r.pevplugshare.ui.settings.model.AiModel
+import com.a42r.pevplugshare.ui.settings.model.ModelSelectionAdapter
+import com.a42r.pevplugshare.ui.settings.model.OpenRouterModel
+import com.a42r.pevplugshare.ui.settings.model.ModelPricing
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Activity for OpenRouter OAuth2 authentication with PKCE
@@ -17,12 +27,16 @@ import dagger.hilt.android.AndroidEntryPoint
  * 2. Open OpenRouter authorization page
  * 3. Handle callback with authorization code
  * 4. Exchange code for API key
+ * 5. Select AI model for location descriptions
  */
 @AndroidEntryPoint
 class OAuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOauthBinding
     private val viewModel: OpenRouterOAuthViewModel by viewModels()
+
+    @Inject
+    lateinit var tokenManager: TokenManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +45,7 @@ class OAuthActivity : AppCompatActivity() {
 
         setupUI()
         observeViewModel()
+        setupModelSelection()
 
         // Handle deep link callback if this is a callback intent
         handleDeepLink(intent)
@@ -42,13 +57,22 @@ class OAuthActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            title = "OpenRouter Authentication"
+        }
+
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
+        }
+
         binding.btnStartOauth.setOnClickListener {
             viewModel.startOAuthFlow()
         }
 
-        binding.btnReset.setOnClickListener {
-            viewModel.reset()
-            updateUI(OpenRouterOAuthViewModel.OAuthState.Idle)
+        binding.btnDisconnect.setOnClickListener {
+            viewModel.disconnect()
         }
     }
 
@@ -62,7 +86,7 @@ class OAuthActivity : AppCompatActivity() {
                     viewModel.openAuthorizationUrl(state.authUrl)
                 }
                 is OpenRouterOAuthViewModel.OAuthState.Success -> {
-                    Toast.makeText(this, "API Key obtained successfully!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "✅ Connected to OpenRouter successfully!", Toast.LENGTH_LONG).show()
                 }
                 is OpenRouterOAuthViewModel.OAuthState.Error -> {
                     Toast.makeText(this, state.message, Toast.LENGTH_LONG).show()
@@ -71,9 +95,15 @@ class OAuthActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.isAuthenticated.observe(this) { isAuthenticated ->
+            updateAuthenticationUI(isAuthenticated)
+        }
+
         viewModel.apiKey.observe(this) { apiKey ->
             apiKey?.let {
-                binding.tvApiKey.text = "API Key: ${it.take(20)}..."
+                binding.tvApiKey.text = "Connected (${it.take(8)}...)"
+            } ?: run {
+                binding.tvApiKey.text = ""
             }
         }
     }
@@ -81,7 +111,7 @@ class OAuthActivity : AppCompatActivity() {
     private fun updateUI(state: OpenRouterOAuthViewModel.OAuthState) {
         when (state) {
             is OpenRouterOAuthViewModel.OAuthState.Idle -> {
-                binding.tvStatus.text = "Ready to authenticate with OpenRouter"
+                binding.tvStatus.text = "Not connected"
                 binding.progressBar.visibility = android.view.View.GONE
                 binding.btnStartOauth.isEnabled = true
             }
@@ -95,11 +125,16 @@ class OAuthActivity : AppCompatActivity() {
                 binding.progressBar.visibility = android.view.View.VISIBLE
             }
             is OpenRouterOAuthViewModel.OAuthState.ExchangingCode -> {
-                binding.tvStatus.text = "Exchanging authorization code for API key..."
+                binding.tvStatus.text = "Exchanging authorization code..."
                 binding.progressBar.visibility = android.view.View.VISIBLE
             }
             is OpenRouterOAuthViewModel.OAuthState.Success -> {
-                binding.tvStatus.text = "✅ Authentication successful!"
+                binding.tvStatus.text = "✅ Connected to OpenRouter"
+                binding.progressBar.visibility = android.view.View.GONE
+                binding.btnStartOauth.isEnabled = false
+            }
+            is OpenRouterOAuthViewModel.OAuthState.Authenticated -> {
+                binding.tvStatus.text = "✅ Connected to OpenRouter"
                 binding.progressBar.visibility = android.view.View.GONE
                 binding.btnStartOauth.isEnabled = false
             }
@@ -109,6 +144,186 @@ class OAuthActivity : AppCompatActivity() {
                 binding.btnStartOauth.isEnabled = true
             }
         }
+    }
+
+    private fun updateAuthenticationUI(isAuthenticated: Boolean) {
+        if (isAuthenticated) {
+            binding.btnStartOauth.visibility = android.view.View.GONE
+            binding.btnDisconnect.visibility = android.view.View.VISIBLE
+            binding.modelSelectionSection.visibility = android.view.View.VISIBLE
+            binding.tvDescription.text = "Your OpenRouter account is connected and AI features are enabled"
+            
+            // Update model display
+            updateSelectedModelDisplay()
+        } else {
+            binding.btnStartOauth.visibility = android.view.View.VISIBLE
+            binding.btnDisconnect.visibility = android.view.View.GONE
+            binding.modelSelectionSection.visibility = android.view.View.GONE
+            binding.tvDescription.text = "Connect your OpenRouter account to enable AI features"
+        }
+    }
+
+    private fun setupModelSelection() {
+        // Click listener to open model selection dialog
+        binding.selectedModelCard.setOnClickListener {
+            showModelSelectionDialog()
+        }
+        
+        // Initial display update
+        updateSelectedModelDisplay()
+    }
+    
+    private fun updateSelectedModelDisplay() {
+        val selectedModelId = tokenManager.getSelectedAiModel()
+        
+        if (selectedModelId != null) {
+            // Parse model ID to extract provider and name
+            val parts = selectedModelId.split("/")
+            val provider = if (parts.size >= 2) parts[0] else ""
+            val modelName = if (parts.size >= 2) parts[1] else selectedModelId
+            
+            // Format display names
+            val displayName = modelName.replace("-", " ").split(" ")
+                .joinToString(" ") { it.replaceFirstChar { c -> c.uppercase() } }
+            val displayProvider = provider.replaceFirstChar { it.uppercase() }
+            
+            binding.selectedModelName.text = displayName
+            binding.selectedModelProvider.text = "Provider: $displayProvider"
+            
+            // You can add cost/context info if you have model metadata
+            binding.selectedModelCost.text = ""
+            binding.selectedModelContext.text = ""
+        } else {
+            binding.selectedModelName.text = "Tap to select a model"
+            binding.selectedModelProvider.text = ""
+            binding.selectedModelCost.text = ""
+            binding.selectedModelContext.text = ""
+        }
+    }
+    
+    private fun showModelSelectionDialog() {
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this).create()
+        val dialogView = layoutInflater.inflate(R.layout.dialog_model_selection, null)
+        dialog.setView(dialogView)
+
+        val searchInput = dialogView.findViewById<android.widget.EditText>(R.id.searchInput)
+        val clearSearchButton = dialogView.findViewById<android.widget.ImageButton>(R.id.clearSearchButton)
+        val freeOnlyCheckbox = dialogView.findViewById<android.widget.CheckBox>(R.id.freeOnlyCheckbox)
+        val recyclerView = dialogView.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.modelsRecyclerView)
+        val selectButton = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.selectButton)
+        val cancelButton = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.cancelButton)
+
+        // Create model list (hardcoded for now, could be fetched from API)
+        val aiModels = createDefaultModelList()
+        val currentSelectedModel = tokenManager.getSelectedAiModel()
+
+        val adapter = ModelSelectionAdapter(
+            aiModels,
+            currentSelectedModel,
+            { selectedModel ->
+                // Model clicked callback
+                android.util.Log.d("OAuthActivity", "Model clicked: ${selectedModel.name}")
+            },
+            { modelId ->
+                // Open model page on OpenRouter.ai
+                val url = "https://openrouter.ai/models/${modelId.replace("/", "--")}"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                try {
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(this, "Could not open browser", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+
+        val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter = adapter
+
+        // Scroll to selected model if available
+        currentSelectedModel?.let { selectedId ->
+            val selectedPosition = aiModels.indexOfFirst { it.id == selectedId }
+            if (selectedPosition != -1) {
+                layoutManager.scrollToPositionWithOffset(selectedPosition, 200)
+            }
+        }
+
+        // Filter function
+        val applyFilter = {
+            val query = searchInput.text?.toString() ?: ""
+            val freeOnly = freeOnlyCheckbox.isChecked
+            adapter.filter(query, freeOnly)
+
+            // Show/hide clear button
+            clearSearchButton.visibility = if (query.isEmpty()) View.GONE else View.VISIBLE
+        }
+
+        // Clear search button
+        clearSearchButton.setOnClickListener {
+            searchInput.setText("")
+        }
+
+        // Search functionality
+        searchInput.addTextChangedListener(object : android.text.TextWatcher {
+            override fun afterTextChanged(s: android.text.Editable?) {
+                applyFilter()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        // Free only checkbox
+        freeOnlyCheckbox.setOnCheckedChangeListener { _, _ ->
+            applyFilter()
+        }
+
+        // Select button
+        selectButton.setOnClickListener {
+            val selected = adapter.getSelectedModel()
+            if (selected != null) {
+                tokenManager.saveSelectedAiModel(selected.id)
+                updateSelectedModelDisplay()
+                Toast.makeText(this, "Model selected: ${selected.name}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "Please select a model", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Cancel button
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        
+        // Make dialog full screen
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.95).toInt(),
+            (resources.displayMetrics.heightPixels * 0.85).toInt()
+        )
+    }
+
+    private fun createDefaultModelList(): List<AiModel> {
+        // Hardcoded list of popular models
+        // TODO: Fetch from OpenRouter API
+        return listOf(
+            AiModel("anthropic/claude-3.5-sonnet", "Claude 3.5 Sonnet", "Anthropic", "$3-15/M tokens", "200K tokens", "Most intelligent model"),
+            AiModel("anthropic/claude-3-opus", "Claude 3 Opus", "Anthropic", "$15-75/M tokens", "200K tokens", "Powerful model for hard tasks"),
+            AiModel("anthropic/claude-3-sonnet", "Claude 3 Sonnet", "Anthropic", "$3-15/M tokens", "200K tokens", "Balance of intelligence and speed"),
+            AiModel("anthropic/claude-3-haiku", "Claude 3 Haiku", "Anthropic", "$0.25-1.25/M tokens", "200K tokens", "Fastest and most compact"),
+            AiModel("openai/gpt-4o", "GPT-4 Omni", "OpenAI", "$5-15/M tokens", "128K tokens", "High-intelligence flagship model"),
+            AiModel("openai/gpt-4-turbo", "GPT-4 Turbo", "OpenAI", "$10-30/M tokens", "128K tokens", "Latest GPT-4 with vision"),
+            AiModel("openai/gpt-4", "GPT-4", "OpenAI", "$30-60/M tokens", "8K tokens", "Original GPT-4"),
+            AiModel("openai/gpt-3.5-turbo", "GPT-3.5 Turbo", "OpenAI", "$0.50-1.50/M tokens", "16K tokens", "Fast and inexpensive"),
+            AiModel("google/gemini-pro-1.5", "Gemini Pro 1.5", "Google", "$1.25-5/M tokens", "1M tokens", "Huge context window"),
+            AiModel("google/gemini-pro", "Gemini Pro", "Google", "$0.50-1.50/M tokens", "32K tokens", "Efficient and capable"),
+            AiModel("meta-llama/llama-3.1-70b-instruct", "Llama 3.1 70B", "Meta", "Free", "128K tokens", "70B parameters, open source"),
+            AiModel("meta-llama/llama-3.1-8b-instruct", "Llama 3.1 8B", "Meta", "Free", "128K tokens", "8B parameters, open source"),
+            AiModel("mistralai/mistral-large", "Mistral Large", "Mistral", "$4-12/M tokens", "32K tokens", "Top tier reasoning"),
+            AiModel("mistralai/mistral-medium", "Mistral Medium", "Mistral", "$2.7-8.1/M tokens", "32K tokens", "Balanced performance"),
+            AiModel("cohere/command-r-plus", "Command R+", "Cohere", "$3-15/M tokens", "128K tokens", "Advanced RAG capabilities")
+        )
     }
 
     private fun handleDeepLink(intent: Intent?) {

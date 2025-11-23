@@ -1,6 +1,7 @@
 package com.a42r.pevplugshare.service
 
 import android.util.Base64
+import android.util.Log
 import com.a42r.pevplugshare.util.NativeSecrets
 import com.a42r.pevplugshare.util.OAuthSignature
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,7 @@ import javax.inject.Singleton
 class OpenRouterOAuthService @Inject constructor() {
 
     companion object {
+        private const val TAG = "OpenRouterOAuth"
         private const val PROVIDER_NAME = "openrouter"
         private const val AUTH_BASE_URL = "https://openrouter.ai/auth"
         private const val CODE_CHALLENGE_METHOD = "S256"
@@ -70,11 +72,18 @@ class OpenRouterOAuthService @Inject constructor() {
     suspend fun registerOAuthSession(): PKCEState = withContext(Dispatchers.IO) {
         val timestamp = OAuthSignature.getCurrentTimestamp()
         val deepLinkUrl = NativeSecrets.getDeepLinkScheme()
+        val callbackBaseUrl = NativeSecrets.getOAuthCallbackUrl()
+        val secret = NativeSecrets.getOAuthSharedSecret()
+
+        Log.d(TAG, "OAuth Registration - Callback URL: $callbackBaseUrl")
+        Log.d(TAG, "OAuth Registration - Deep Link: $deepLinkUrl")
+        Log.d(TAG, "OAuth Registration - Secret length: ${secret.length}")
+
         val signature = OAuthSignature.generateSignature(
             provider = PROVIDER_NAME,
             deepLinkUrl = deepLinkUrl,
             timestamp = timestamp,
-            secret = NativeSecrets.getOAuthSharedSecret()
+            secret = secret
         )
 
         // Create registration request
@@ -85,8 +94,10 @@ class OpenRouterOAuthService @Inject constructor() {
             put("signature", signature)
         }
 
+        Log.d(TAG, "Registering session at: $callbackBaseUrl/oauth/register")
+
         // Send registration request
-        val url = URL("${NativeSecrets.getOAuthCallbackUrl()}/oauth/register")
+        val url = URL("$callbackBaseUrl/oauth/register")
         val connection = url.openConnection() as HttpURLConnection
 
         try {
@@ -159,10 +170,11 @@ class OpenRouterOAuthService @Inject constructor() {
             connection.connectTimeout = 15000
             connection.readTimeout = 15000
 
-            // Request body with code and code_verifier
+            // Request body with code, code_verifier, and code_challenge_method
             val requestBody = JSONObject().apply {
                 put("code", code)
                 put("code_verifier", codeVerifier)
+                put("code_challenge_method", CODE_CHALLENGE_METHOD)
             }
 
             // Write request

@@ -132,6 +132,10 @@ class TokenManager(context: Context) {
         return encryptedPrefs.getString(KEY_OPENROUTER_API_KEY, null)
     }
 
+    fun clearOpenRouterApiKey() {
+        encryptedPrefs.edit().remove(KEY_OPENROUTER_API_KEY).apply()
+    }
+
     fun saveSelectedAiModel(modelId: String) {
         encryptedPrefs.edit().putString(KEY_SELECTED_AI_MODEL, modelId).apply()
     }

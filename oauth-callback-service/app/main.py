@@ -3,6 +3,7 @@ Main FastAPI application
 """
 import asyncio
 import logging
+import json
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,11 +14,53 @@ from app.models import init_db, cleanup_expired_sessions, seed_sample_applicatio
 from app.routers import oauth_router, health_router
 from app.utils import RateLimiter
 
+
+# Custom formatter to include extra fields as JSON
+class JSONFormatter(logging.Formatter):
+    """Format log records as JSON with extra fields"""
+
+    def format(self, record):
+        log_data = {
+            "timestamp": self.formatTime(record, self.datefmt),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+
+        # Add extra fields - they're stored directly as attributes on the record
+        for key in ['session_id', 'provider', 'app_name', 'client_ip', 'error',
+                   'callback_url', 'request_hostname', 'has_code', 'has_error',
+                   'error_description', 'deep_link_scheme', 'expires_at',
+                   'timestamp', 'user_agent', 'expected_scheme', 'provided']:
+            if hasattr(record, key):
+                log_data[key] = getattr(record, key)
+
+        # Add exception info if present
+        if record.exc_info:
+            log_data["exception"] = self.formatException(record.exc_info)
+
+        return json.dumps(log_data)
+
+
 # Configure logging
-logging.basicConfig(
-    level=settings.log_level,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+root_logger = logging.getLogger()
+root_logger.setLevel(settings.log_level)
+
+# Remove any existing handlers
+for handler in root_logger.handlers[:]:
+    root_logger.removeHandler(handler)
+
+# Add our custom handler
+handler = logging.StreamHandler()
+if settings.environment == "production":
+    handler.setFormatter(JSONFormatter())
+else:
+    # Use human-readable format for development
+    handler.setFormatter(
+        logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    )
+
+root_logger.addHandler(handler)
 logger = logging.getLogger(__name__)
 
 # Initialize rate limiter
