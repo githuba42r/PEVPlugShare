@@ -54,4 +54,10 @@ interface LocationRepository {
         radiusMeters: Double = 250.0,
         categoryName: String
     ): Result<List<Pair<Location, Double>>>
+
+    /**
+     * Delete all locations that were synced from OsmAnd
+     * @return Number of locations deleted
+     */
+    suspend fun deleteAllOsmandLocations(): Result<Int>
 }

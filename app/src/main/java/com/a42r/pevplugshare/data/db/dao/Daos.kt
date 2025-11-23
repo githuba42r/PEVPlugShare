@@ -50,6 +50,12 @@ interface LocationDao {
         WHERE (6371 * acos(cos(radians(:latitude)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(latitude)))) < :radiusKm
     """)
     suspend fun getLocationsNearby(latitude: Double, longitude: Double, radiusKm: Double): List<LocationEntity>
+
+    @Query("SELECT * FROM locations WHERE osmandSyncSource = 'OSMAND'")
+    suspend fun getOsmandLocations(): List<LocationEntity>
+
+    @Query("DELETE FROM locations WHERE osmandSyncSource = 'OSMAND'")
+    suspend fun deleteOsmandLocations(): Int
 }
 
 @Dao

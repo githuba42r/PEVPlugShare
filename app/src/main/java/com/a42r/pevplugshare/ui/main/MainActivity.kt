@@ -97,6 +97,21 @@ class MainActivity : AppCompatActivity() {
         // Refresh location list when returning from edit/add activities
         // This ensures gallery icons and photo changes are reflected
         viewModel.syncLocations()
+        
+        // Update category badge visibility based on OsmAnd connection status
+        updateCategoryBadgeVisibility()
+    }
+
+    private fun updateCategoryBadgeVisibility() {
+        val category = viewModel.selectedCategory.value
+        val isOsmandConnected = viewModel.isOsmandConnected()
+        
+        if (category != null && isOsmandConnected) {
+            binding.categoryBadge.text = category
+            binding.categoryBadge.visibility = android.view.View.VISIBLE
+        } else {
+            binding.categoryBadge.visibility = android.view.View.GONE
+        }
     }
 
     private fun setupUI() {
@@ -206,12 +221,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.selectedCategory.collect { category ->
-                if (category != null) {
-                    binding.categoryBadge.text = category
-                    binding.categoryBadge.visibility = android.view.View.VISIBLE
-                } else {
-                    binding.categoryBadge.visibility = android.view.View.GONE
-                }
+                updateCategoryBadgeVisibility()
             }
         }
 
@@ -265,24 +275,17 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val isOsmandConnected = viewModel.isOsmandConnected()
 
-            // Update OSMand connect menu item
+            // Show/hide OSMand connect menu item based on connection status
             val osmandConnectItem = popup.menu.findItem(R.id.menu_osmand_connect)
-            osmandConnectItem?.let {
-                if (isOsmandConnected) {
-                    it.title = getString(R.string.osmand_connected)
-                    it.isEnabled = false // Already connected
-                } else {
-                    it.title = getString(R.string.connect_to_osmand)
-                    it.isEnabled = true
-                }
-            }
+            osmandConnectItem?.isVisible = !isOsmandConnected
 
-            // Disable category selection and logout if not connected to OSMand
+            // Show/hide OSMand logout menu item based on connection status
+            val osmandLogoutItem = popup.menu.findItem(R.id.menu_osmand_logout)
+            osmandLogoutItem?.isVisible = isOsmandConnected
+
+            // Disable category selection if not connected to OSMand
             val categoryItem = popup.menu.findItem(R.id.menu_select_category)
             categoryItem?.isEnabled = isOsmandConnected
-
-            val logoutItem = popup.menu.findItem(R.id.menu_logout)
-            logoutItem?.isEnabled = isOsmandConnected
         }
 
         // Update the saved for later menu item with badge count
@@ -322,8 +325,8 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this, com.a42r.pevplugshare.ui.settings.SettingsActivity::class.java))
                     true
                 }
-                R.id.menu_logout -> {
-                    showLogoutConfirmation()
+                R.id.menu_osmand_logout -> {
+                    startActivity(Intent(this, com.a42r.pevplugshare.ui.osmand.OsmandLogoutActivity::class.java))
                     true
                 }
                 R.id.menu_about -> {

@@ -410,6 +410,14 @@ class LocationRepositoryImpl(
             }.sortedBy { it.second }
         }
     }
+
+    override suspend fun deleteAllOsmandLocations(): Result<Int> {
+        // This implementation is for the OSMAnd API-based repository
+        // Since we can't delete from OSMAnd server via API in bulk,
+        // and this class isn't actually used (LocalLocationRepository is injected instead),
+        // we return a not-supported error
+        return Result.failure(UnsupportedOperationException("Bulk deletion of OSMAnd locations not supported via API"))
+    }
 }
 
 fun OsmandMarker.toLocation(): Location {
