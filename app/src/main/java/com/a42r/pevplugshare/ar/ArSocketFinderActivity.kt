@@ -168,11 +168,11 @@ class ArSocketFinderActivity : AppCompatActivity(), SensorEventListener {
         val location = targetLocation ?: return
         val arData = location.arSocketData
         
-        if (arData != null) {
-            // Use pre-computed AR offset data
+        if (arData != null && arData.cameraLatitude != null && arData.cameraLongitude != null) {
+            // Use pre-computed AR offset data with valid camera position
             val (socketLat, socketLon, socketAlt) = ArCoordinateUtils.enuToGeographic(
-                arData.cameraLatitude ?: location.latitude,
-                arData.cameraLongitude ?: location.longitude,
+                arData.cameraLatitude,
+                arData.cameraLongitude,
                 arData.cameraAltitude ?: 0.0,
                 arData.offsetEast,
                 arData.offsetNorth,
@@ -182,13 +182,16 @@ class ArSocketFinderActivity : AppCompatActivity(), SensorEventListener {
             socketAnchor = arCoreHelper?.createGeospatialAnchor(
                 socketLat, socketLon, socketAlt
             )
+            Log.d(TAG, "Socket anchor created from AR data: $socketLat, $socketLon, $socketAlt")
         } else {
-            // Use location coordinates directly
+            // No valid AR data - use location coordinates directly
+            // Note: This will be less accurate but still provides basic AR functionality
             socketAnchor = arCoreHelper?.createGeospatialAnchor(
                 location.latitude,
                 location.longitude,
                 0.0
             )
+            Log.d(TAG, "Socket anchor created from location coords (no AR data): ${location.latitude}, ${location.longitude}")
         }
         
         if (socketAnchor != null) {
@@ -285,8 +288,8 @@ class ArSocketFinderActivity : AppCompatActivity(), SensorEventListener {
         // Apply view transformation
         android.opengl.Matrix.multiplyMV(viewPos, 0, viewMatrix, 0, position, 0)
         
-        // Check if behind camera
-        if (viewPos[2] > 0) return null
+        // Check if behind camera (in OpenGL camera space, positive Z is behind)
+        if (viewPos[2] >= 0) return null
         
         // Apply projection
         android.opengl.Matrix.multiplyMV(screenPos, 0, projectionMatrix, 0, viewPos, 0)

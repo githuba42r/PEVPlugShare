@@ -173,31 +173,33 @@ class ArOverlayView @JvmOverloads constructor(
         private var startTime = 0L
         private var duration = 1000L
         private var updateCallback: ((Float) -> Unit)? = null
+        private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        
+        private val animationRunnable = object : Runnable {
+            override fun run() {
+                if (!running) return
+                
+                val elapsed = System.currentTimeMillis() - startTime
+                val fraction = ((elapsed % duration).toFloat() / duration)
+                
+                updateCallback?.invoke(fraction)
+                
+                // Schedule next frame
+                handler.postDelayed(this, 16) // ~60fps
+            }
+        }
         
         fun start(duration: Long, update: (Float) -> Unit) {
             this.duration = duration
             this.updateCallback = update
             this.startTime = System.currentTimeMillis()
             this.running = true
-            animate()
-        }
-        
-        private fun animate() {
-            if (!running) return
-            
-            val elapsed = System.currentTimeMillis() - startTime
-            val fraction = ((elapsed % duration).toFloat() / duration)
-            
-            updateCallback?.invoke(fraction)
-            
-            // Schedule next frame
-            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                animate()
-            }, 16) // ~60fps
+            handler.post(animationRunnable)
         }
         
         fun cancel() {
             running = false
+            handler.removeCallbacks(animationRunnable)
             updateCallback = null
         }
     }

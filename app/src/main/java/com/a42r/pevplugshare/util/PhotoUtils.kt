@@ -406,26 +406,7 @@ object PhotoUtils {
     fun extractArMetadataFromPhoto(photoPath: String): Pair<Float?, Float?> {
         return try {
             val exif = ExifInterface(photoPath)
-            var pitch: Float? = null
-            var distance: Float? = null
-            
-            // Extract pitch from UserComment
-            val userComment = exif.getAttribute(ExifInterface.TAG_USER_COMMENT)
-            userComment?.split(";")?.forEach { part ->
-                if (part.startsWith("AR_PITCH=")) {
-                    pitch = part.substringAfter("=").toFloatOrNull()
-                }
-            }
-            
-            // Extract distance from MakerNote
-            val makerNote = exif.getAttribute(ExifInterface.TAG_MAKER_NOTE)
-            makerNote?.split(";")?.forEach { part ->
-                if (part.startsWith("AR_DISTANCE=")) {
-                    distance = part.substringAfter("=").toFloatOrNull()
-                }
-            }
-            
-            Pair(pitch, distance)
+            extractArMetadataFromExif(exif)
         } catch (e: Exception) {
             Log.e(TAG, "Error extracting AR metadata from photo", e)
             Pair(null, null)
