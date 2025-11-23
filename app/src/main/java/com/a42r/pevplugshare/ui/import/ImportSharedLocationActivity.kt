@@ -13,6 +13,7 @@ import com.a42r.pevplugshare.data.model.SocketType
 import com.a42r.pevplugshare.data.model.SyncStatus
 import com.a42r.pevplugshare.data.model.OsmandSyncStatus
 import com.a42r.pevplugshare.ui.main.MainActivity
+import com.a42r.pevplugshare.ui.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -21,7 +22,7 @@ import java.util.UUID
 @AndroidEntryPoint
 class ImportSharedLocationActivity : AppCompatActivity() {
     
-    private val viewModel: com.a42r.pevplugshare.viewmodel.MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
