@@ -251,37 +251,21 @@
                 android:id="@+id/successScreen"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="32dp"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnStartOauth">
+                app:layout_constraintTop_toBottomOf="@id/modelSelectionSection">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="✅"
-                    android:textSize="64sp"
-                    android:paddingBottom="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Successfully Connected!"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorPrimary"
-                    android:paddingBottom="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AI features are now enabled"
-                    android:textSize="14sp"
+                    android:text="Continuing to app in:"
+                    android:textSize="16sp"
                     android:textColor="?android:textColorSecondary"
-                    android:paddingBottom="32dp" />
+                    android:paddingBottom="16dp" />
 
                 <FrameLayout
                     android:layout_width="wrap_content"
@@ -290,8 +274,8 @@
                     <ProgressBar
                         android:id="@+id/countdownProgress"
                         style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:indeterminate="false"
                         android:max="30"
                         android:progress="30"
@@ -304,19 +288,18 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="30"
-                        android:textSize="32sp"
+                        android:textSize="28sp"
                         android:textStyle="bold"
                         android:textColor="?attr/colorPrimary" />
                 </FrameLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnNext"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:paddingHorizontal="48dp"
+                    android:layout_marginTop="24dp"
                     android:paddingVertical="16dp"
-                    android:text="Next"
+                    android:text="Skip and Continue"
                     android:textAllCaps="false"
                     android:textSize="16sp"
                     app:cornerRadius="8dp" />
