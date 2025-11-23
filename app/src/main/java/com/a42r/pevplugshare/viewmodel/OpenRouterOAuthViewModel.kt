@@ -3,11 +3,13 @@ package com.a42r.pevplugshare.viewmodel
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.a42r.pevplugshare.data.remote.TokenManager
 import com.a42r.pevplugshare.service.OpenRouterOAuthService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,8 +21,13 @@ import javax.inject.Inject
 @HiltViewModel
 class OpenRouterOAuthViewModel @Inject constructor(
     application: Application,
-    private val oauthService: OpenRouterOAuthService
+    private val oauthService: OpenRouterOAuthService,
+    private val tokenManager: TokenManager
 ) : AndroidViewModel(application) {
+
+    companion object {
+        private const val TAG = "OAuthViewModel"
+    }
 
     // Current PKCE state (stored in memory during OAuth flow)
     private var currentPKCEState: OpenRouterOAuthService.PKCEState? = null
@@ -33,6 +40,14 @@ class OpenRouterOAuthViewModel @Inject constructor(
     private val _apiKey = MutableLiveData<String?>()
     val apiKey: LiveData<String?> = _apiKey
 
+    // Is authenticated
+    private val _isAuthenticated = MutableLiveData<Boolean>()
+    val isAuthenticated: LiveData<Boolean> = _isAuthenticated
+
+    init {
+        checkExistingAuthentication()
+    }
+
     sealed class OAuthState {
         object Idle : OAuthState()
         object Registering : OAuthState()
@@ -40,6 +55,22 @@ class OpenRouterOAuthViewModel @Inject constructor(
         object ExchangingCode : OAuthState()
         data class Success(val apiKey: String) : OAuthState()
         data class Error(val message: String) : OAuthState()
+        object Authenticated : OAuthState()
+    }
+
+    /**
+     * Check if user is already authenticated
+     */
+    private fun checkExistingAuthentication() {
+        val existingKey = tokenManager.getOpenRouterApiKey()
+        if (existingKey != null) {
+            _apiKey.value = existingKey
+            _isAuthenticated.value = true
+            _oauthState.value = OAuthState.Authenticated
+        } else {
+            _isAuthenticated.value = false
+            _oauthState.value = OAuthState.Idle
+        }
     }
 
     /**
@@ -54,12 +85,16 @@ class OpenRouterOAuthViewModel @Inject constructor(
                 val pkceState = oauthService.registerOAuthSession()
                 currentPKCEState = pkceState
 
+                // Save code verifier to persistent storage (survives app restart)
+                tokenManager.savePkceCodeVerifier(pkceState.codeVerifier)
+
                 // Build authorization URL
                 val authUrl = oauthService.buildAuthorizationUrl(pkceState)
 
                 // Ready to open browser
                 _oauthState.value = OAuthState.ReadyToAuthorize(authUrl)
             } catch (e: Exception) {
+                Log.e(TAG, "OAuth registration failed", e)
                 _oauthState.value = OAuthState.Error("Registration failed: ${e.message}")
             }
         }
@@ -82,10 +117,23 @@ class OpenRouterOAuthViewModel @Inject constructor(
      * Handle deep link callback with authorization code
      */
     fun handleCallback(code: String, provider: String) {
-        val pkceState = currentPKCEState
+        // Try to get PKCE state from memory first, then from persistent storage
+        var pkceState = currentPKCEState
         if (pkceState == null) {
-            _oauthState.value = OAuthState.Error("No active OAuth session")
-            return
+            // Restore from persistent storage (app may have been restarted)
+            val savedVerifier = tokenManager.getPkceCodeVerifier()
+            if (savedVerifier == null) {
+                _oauthState.value = OAuthState.Error("No active OAuth session - code verifier not found")
+                return
+            }
+            // Reconstruct PKCE state with saved verifier
+            // Note: We only need the verifier for token exchange, other fields aren't used
+            pkceState = OpenRouterOAuthService.PKCEState(
+                codeVerifier = savedVerifier,
+                codeChallenge = "", // Not needed for exchange
+                sessionId = "", // Not needed for exchange
+                callbackUrl = "" // Not needed for exchange
+            )
         }
 
         if (provider != "openrouter") {
@@ -100,14 +148,20 @@ class OpenRouterOAuthViewModel @Inject constructor(
                 // Exchange code for API key
                 val apiKey = oauthService.exchangeCodeForKey(code, pkceState.codeVerifier)
 
-                // Clear PKCE state
+                // Save API key
+                tokenManager.saveOpenRouterApiKey(apiKey)
+
+                // Clear PKCE state from memory and storage
                 currentPKCEState = null
+                tokenManager.clearPkceCodeVerifier()
 
                 // Success!
                 _apiKey.value = apiKey
+                _isAuthenticated.value = true
                 _oauthState.value = OAuthState.Success(apiKey)
             } catch (e: Exception) {
                 currentPKCEState = null
+                tokenManager.clearPkceCodeVerifier()
                 _oauthState.value = OAuthState.Error("Token exchange failed: ${e.message}")
             }
         }
@@ -118,6 +172,7 @@ class OpenRouterOAuthViewModel @Inject constructor(
      */
     fun handleError(error: String, errorDescription: String?) {
         currentPKCEState = null
+        tokenManager.clearPkceCodeVerifier()
         val message = errorDescription ?: error
         _oauthState.value = OAuthState.Error("OAuth error: $message")
     }
@@ -127,7 +182,18 @@ class OpenRouterOAuthViewModel @Inject constructor(
      */
     fun reset() {
         currentPKCEState = null
+        tokenManager.clearPkceCodeVerifier()
         _oauthState.value = OAuthState.Idle
         _apiKey.value = null
+    }
+
+    /**
+     * Disconnect - clear saved API key
+     */
+    fun disconnect() {
+        tokenManager.clearOpenRouterApiKey()
+        _apiKey.value = null
+        _isAuthenticated.value = false
+        _oauthState.value = OAuthState.Idle
     }
 }

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -37,7 +39,7 @@ android {
 
     // Load OAuth secrets from secrets.properties (NOT in git)
     val secretsFile = rootProject.file("secrets.properties")
-    val secrets = java.util.Properties()
+    val secrets = Properties()
 
     if (secretsFile.exists()) {
         secretsFile.inputStream().use { secrets.load(it) }
@@ -103,7 +105,7 @@ android {
         warningsAsErrors = false
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }

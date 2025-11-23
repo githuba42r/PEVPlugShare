@@ -314,6 +314,10 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this, com.a42r.pevplugshare.ui.gallery.AllImagesGalleryActivity::class.java))
                     true
                 }
+                R.id.menu_openrouter_auth -> {
+                    startActivity(Intent(this, com.a42r.pevplugshare.ui.oauth.OAuthActivity::class.java))
+                    true
+                }
                 R.id.menu_settings -> {
                     startActivity(Intent(this, com.a42r.pevplugshare.ui.settings.SettingsActivity::class.java))
                     true
