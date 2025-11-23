@@ -113,11 +113,10 @@ class OAuthActivity : AppCompatActivity() {
                     viewModel.openAuthorizationUrl(state.authUrl)
                 }
                 is OpenRouterOAuthViewModel.OAuthState.Success -> {
+                    Toast.makeText(this, "✅ Connected to OpenRouter successfully!", Toast.LENGTH_LONG).show()
                     if (isFromFirstLaunch) {
-                        // Show success screen with countdown on first launch
-                        showSuccessScreen()
-                    } else {
-                        Toast.makeText(this, "✅ Connected to OpenRouter successfully!", Toast.LENGTH_LONG).show()
+                        // Show countdown and Next button on first launch
+                        showFirstLaunchSuccessUI()
                     }
                 }
                 is OpenRouterOAuthViewModel.OAuthState.Error -> {
@@ -173,7 +172,7 @@ class OAuthActivity : AppCompatActivity() {
     private fun updateAuthenticationUI(isAuthenticated: Boolean) {
         if (isAuthenticated) {
             binding.btnStartOauth.visibility = android.view.View.GONE
-            binding.btnDisconnect.visibility = android.view.View.VISIBLE
+            binding.btnDisconnect.visibility = if (isFromFirstLaunch) android.view.View.GONE else android.view.View.VISIBLE
             binding.modelSelectionSection.visibility = android.view.View.VISIBLE
             binding.tvDescription.text = "AI-powered features enabled:\n• Automatic location descriptions\n• Smart charging location summaries\n• Natural language location details"
 
@@ -206,6 +205,10 @@ class OAuthActivity : AppCompatActivity() {
     private fun setupModelSelection() {
         // Click listener to open model selection dialog
         binding.selectedModelCard.setOnClickListener {
+            // If first launch countdown is active, cancel it but keep Next button visible
+            if (isFromFirstLaunch && countdownTimer != null) {
+                cancelCountdownTimer()
+            }
             showModelSelectionDialog()
         }
 
@@ -569,18 +572,8 @@ class OAuthActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun showSuccessScreen() {
-        // Hide normal UI elements
-        binding.ivLogo.visibility = android.view.View.GONE
-        binding.tvTitle.visibility = android.view.View.GONE
-        binding.tvDescription.visibility = android.view.View.GONE
-        binding.tvLearnMore.visibility = android.view.View.GONE
-        binding.progressBar.visibility = android.view.View.GONE
-        binding.tvStatus.visibility = android.view.View.GONE
-        binding.btnStartOauth.visibility = android.view.View.GONE
-        binding.modelSelectionSection.visibility = android.view.View.GONE
-        
-        // Show success screen
+    private fun showFirstLaunchSuccessUI() {
+        // Show the Next button and countdown timer
         binding.successScreen.visibility = android.view.View.VISIBLE
         
         // Setup Next button
@@ -605,6 +598,12 @@ class OAuthActivity : AppCompatActivity() {
                 finishActivity()
             }
         }.start()
+    }
+
+    fun cancelCountdownTimer() {
+        countdownTimer?.cancel()
+        binding.countdownProgress.visibility = android.view.View.GONE
+        binding.countdownText.visibility = android.view.View.GONE
     }
 
     override fun onDestroy() {
