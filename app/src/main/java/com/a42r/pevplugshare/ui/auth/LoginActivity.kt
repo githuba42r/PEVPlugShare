@@ -27,38 +27,44 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Check if this is a manual reconnection attempt from the menu
+        val isReconnecting = intent?.getBooleanExtra("isReconnecting", false) == true
+
         // Check if we should show auth error modal from splash screen
         if (intent?.getBooleanExtra("showAuthErrorModal", false) == true) {
             showBackgroundAuthenticationFailedModal()
         }
 
-        // Check for existing session token
-        lifecycleScope.launch {
-            if (viewModel.hasValidSessionToken()) {
-                // Check if user has seen AI welcome screen
-                if (!hasSeenAiWelcome()) {
-                    // Show AI welcome screen first
-                    if (!isFinishing && !isDestroyed) {
-                        startActivity(Intent(this@LoginActivity, AiWelcomeActivity::class.java))
-                        finish()
+        // Check for existing session token (but not if user explicitly wants to reconnect)
+        if (!isReconnecting) {
+            lifecycleScope.launch {
+                if (viewModel.hasValidSessionToken()) {
+                    // Check if user has seen AI welcome screen
+                    if (!hasSeenAiWelcome()) {
+                        // Show AI welcome screen first
+                        if (!isFinishing && !isDestroyed) {
+                            startActivity(Intent(this@LoginActivity, AiWelcomeActivity::class.java))
+                            finish()
+                        }
+                    } else {
+                        // Skip login screen and go directly to MainActivity
+                        // Validation will happen in background
+                        if (!isFinishing && !isDestroyed) {
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            finish()
+                        }
                     }
-                } else {
-                    // Skip login screen and go directly to MainActivity
-                    // Validation will happen in background
-                    if (!isFinishing && !isDestroyed) {
-                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                        finish()
-                    }
+                    return@launch
                 }
-                return@launch
-            }
 
-            // No session token, check for stored credentials
-            if (viewModel.hasStoredCredentials()) {
-                showAutoLoginState()
-                viewModel.attemptAutoLogin()
+                // No session token, check for stored credentials
+                if (viewModel.hasStoredCredentials()) {
+                    showAutoLoginState()
+                    viewModel.attemptAutoLogin()
+                }
             }
         }
+        // If isReconnecting is true, just show the login screen without auto-navigating
 
         // Handle Remember Me checkbox - show warning when checked
         binding.rememberMeCheckbox.setOnCheckedChangeListener { _, isChecked ->
