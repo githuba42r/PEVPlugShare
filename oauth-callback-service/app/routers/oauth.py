@@ -2,6 +2,7 @@
 OAuth router - handles session registration and callback endpoints
 """
 import uuid
+import logging
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, Request, HTTPException, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -18,6 +19,9 @@ from app.models import (
 )
 from app.config import settings
 from app.utils import verify_signature
+
+# Configure logger
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -41,6 +45,17 @@ async def register_session(
     The request hostname is used to identify the application and validate
     the signature with the application's shared secret.
     """
+    # Log registration attempt
+    logger.info(
+        "OAuth registration attempt",
+        extra={
+            "provider": request_data.provider,
+            "timestamp": request_data.timestamp,
+            "client_ip": request.client.host if request.client else "unknown",
+            "user_agent": request.headers.get("user-agent", "unknown")
+        }
+    )
+
     # Get request hostname to identify the application
     request_host = request.url.hostname
     if request.url.port and request.url.port not in (80, 443):
@@ -58,6 +73,13 @@ async def register_session(
             break
 
     if not matching_app:
+        logger.warning(
+            "Registration failed - unknown application",
+            extra={
+                "request_hostname": request_host,
+                "provider": request_data.provider
+            }
+        )
         raise HTTPException(
             status_code=400,
             detail={
@@ -69,6 +91,14 @@ async def register_session(
 
     # Validate deep link scheme matches application
     if not request_data.deep_link_url.startswith(matching_app.deep_link_scheme):
+        logger.warning(
+            "Registration failed - invalid deep link scheme",
+            extra={
+                "app_name": matching_app.name,
+                "expected_scheme": matching_app.deep_link_scheme,
+                "provided": request_data.deep_link_url
+            }
+        )
         raise HTTPException(
             status_code=400,
             detail={
@@ -105,6 +135,15 @@ async def register_session(
     )
 
     if not is_valid:
+        logger.warning(
+            "Registration failed - invalid signature",
+            extra={
+                "app_name": matching_app.name,
+                "provider": provider_lower,
+                "error": error_msg,
+                "timestamp": request_data.timestamp
+            }
+        )
         raise HTTPException(
             status_code=400,
             detail={
@@ -143,6 +182,18 @@ async def register_session(
     # Build callback URL - use request hostname for the callback URL
     callback_url = f"{request.url.scheme}://{request_host}/oauth/callback/{session_id}"
 
+    logger.info(
+        "OAuth session registered successfully",
+        extra={
+            "session_id": session_id,
+            "app_name": matching_app.name,
+            "provider": provider_lower,
+            "callback_url": callback_url,
+            "expires_at": expires_at.isoformat(),
+            "client_ip": client_ip
+        }
+    )
+
     return RegisterResponse(
         session_id=session_id,
         callback_url=callback_url,
@@ -165,12 +216,28 @@ async def handle_callback(
     This endpoint receives the callback from the OAuth provider and redirects
     to the mobile app's deep link scheme with the authorization code.
     """
+    # Log callback received
+    logger.info(
+        "OAuth callback received",
+        extra={
+            "session_id": session_id,
+            "has_code": code is not None,
+            "has_error": error is not None,
+            "error": error,
+            "error_description": error_description
+        }
+    )
+
     # Lookup session
     session = db.query(OAuthSession).filter(
         OAuthSession.session_id == session_id
     ).first()
 
     if not session:
+        logger.warning(
+            "Callback failed - session not found",
+            extra={"session_id": session_id}
+        )
         return create_error_page(
             "Session Not Found",
             "The OAuth session has expired or does not exist.",
@@ -179,6 +246,13 @@ async def handle_callback(
 
     # Check if session is valid
     if session.used:
+        logger.warning(
+            "Callback failed - session already used",
+            extra={
+                "session_id": session_id,
+                "provider": session.provider
+            }
+        )
         return create_error_page(
             "Session Already Used",
             "This OAuth session has already been completed.",
@@ -186,6 +260,14 @@ async def handle_callback(
         )
 
     if session.is_expired():
+        logger.warning(
+            "Callback failed - session expired",
+            extra={
+                "session_id": session_id,
+                "provider": session.provider,
+                "expires_at": session.expires_at.isoformat()
+            }
+        )
         return create_error_page(
             "Session Expired",
             f"This OAuth session expired at {session.expires_at.strftime('%Y-%m-%d %H:%M:%S UTC')}.",
@@ -198,6 +280,15 @@ async def handle_callback(
 
     # Handle OAuth error
     if error:
+        logger.warning(
+            "OAuth callback contains error from provider",
+            extra={
+                "session_id": session_id,
+                "provider": session.provider,
+                "error": error,
+                "error_description": error_description
+            }
+        )
         deep_link = f"{session.deep_link_url}?error={error}"
         if error_description:
             deep_link += f"&error_description={error_description}"
@@ -211,6 +302,13 @@ async def handle_callback(
 
     # Handle missing code
     if not code:
+        logger.warning(
+            "Callback failed - missing authorization code",
+            extra={
+                "session_id": session_id,
+                "provider": session.provider
+            }
+        )
         return create_error_page(
             "Missing Authorization Code",
             "No authorization code was provided by the OAuth provider.",
@@ -219,6 +317,15 @@ async def handle_callback(
 
     # Build deep link with authorization code
     deep_link = f"{session.deep_link_url}?code={code}&provider={session.provider}"
+
+    logger.info(
+        "OAuth callback successful - redirecting to app",
+        extra={
+            "session_id": session_id,
+            "provider": session.provider,
+            "deep_link_scheme": session.deep_link_url.split("://")[0] if "://" in session.deep_link_url else "unknown"
+        }
+    )
 
     return create_redirect_page(
         "Authorization Successful",

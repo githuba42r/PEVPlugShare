@@ -13,6 +13,9 @@
         android:id="@+id/menu_image_gallery"
         android:title="Image Gallery" />
     <item
+        android:id="@+id/menu_openrouter_auth"
+        android:title="OpenRouter Authentication" />
+    <item
         android:id="@+id/menu_settings"
         android:title="Settings" />
     <item

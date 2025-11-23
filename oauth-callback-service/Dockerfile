@@ -33,7 +33,8 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Copy startup scripts
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 COPY start-cloudflared.sh /app/start-cloudflared.sh
-RUN chmod +x /app/docker-entrypoint.sh /app/start-cloudflared.sh
+COPY start-fastapi.sh /app/start-fastapi.sh
+RUN chmod +x /app/docker-entrypoint.sh /app/start-cloudflared.sh /app/start-fastapi.sh
 
 # Create directories
 RUN mkdir -p /app/data /var/log/supervisor /root/.cloudflared
