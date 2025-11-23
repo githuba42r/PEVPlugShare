@@ -11,7 +11,6 @@ class Settings(BaseSettings):
     # Service settings
     host: str = "0.0.0.0"
     port: int = 8000
-    domain_name: str
 
     # Database
     database_url: str = "sqlite:///./oauth_sessions.db"
@@ -19,9 +18,6 @@ class Settings(BaseSettings):
     # Session settings
     session_ttl_minutes: int = 10
     cleanup_interval_minutes: int = 5
-
-    # Security
-    shared_secret: str
 
     # Rate limiting (per IP address)
     rate_limit_per_minute: int = 10

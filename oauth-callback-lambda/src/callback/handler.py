@@ -19,9 +19,6 @@ dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('DYNAMODB_TABLE', 'oauth-sessions')
 table = dynamodb.Table(table_name)
 
-# Configuration
-DEEP_LINK_SCHEME = os.environ.get('DEEP_LINK_SCHEME', 'pevplugshare://oauth/callback')
-
 
 def lambda_handler(event, context):
     """
@@ -112,9 +109,12 @@ def lambda_handler(event, context):
             print(f"Error marking session as used: {str(e)}")
             # Continue anyway - better to allow duplicate use than fail
 
+        # Get deep link URL from session
+        deep_link_url = item.get('deep_link_url', 'pevplugshare://oauth/callback')
+
         # Handle OAuth error from provider
         if error:
-            deep_link = f"{DEEP_LINK_SCHEME}?error={error}"
+            deep_link = f"{deep_link_url}?error={error}"
             if error_description:
                 deep_link += f"&error_description={error_description}"
 
@@ -141,7 +141,7 @@ def lambda_handler(event, context):
 
         # Build deep link with authorization code
         provider = item.get('provider', 'unknown')
-        deep_link = f"{DEEP_LINK_SCHEME}?code={auth_code}&provider={provider}"
+        deep_link = f"{deep_link_url}?code={auth_code}&provider={provider}"
 
         # Return success redirect page
         return html_response(

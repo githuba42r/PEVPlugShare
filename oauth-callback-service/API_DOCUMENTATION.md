@@ -275,7 +275,7 @@ Limits are configurable via environment variables.
 ```kotlin
 // SettingsActivity.kt
 private const val OAUTH_SERVICE_URL = "https://your-cloudflare-tunnel.example.com"
-private const val OAUTH_SHARED_SECRET = "your-shared-secret"
+private const val OAUTH_SHARED_SECRET = "your-shared-secret"  // From native-secrets.cpp
 private const val DEEP_LINK_SCHEME = "pevplugshare://oauth/callback"
 ```
 
@@ -287,8 +287,8 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 object OAuthSignature {
-    fun generateSignature(provider: String, timestamp: Long, secret: String): String {
-        val message = "${provider.lowercase()}|$timestamp"
+    fun generateSignature(provider: String, deepLinkUrl: String, timestamp: Long, secret: String): String {
+        val message = "${provider.lowercase()}|$deepLinkUrl|$timestamp"
         val mac = Mac.getInstance("HmacSHA256")
         val secretKey = SecretKeySpec(secret.toByteArray(), "HmacSHA256")
         mac.init(secretKey)
@@ -305,11 +305,13 @@ object OAuthSignature {
 ```kotlin
 // SettingsActivity.kt
 private suspend fun registerOAuthSession(provider: String): JSONObject {
+    val deepLinkUrl = DEEP_LINK_SCHEME
     val timestamp = OAuthSignature.getCurrentTimestamp()
-    val signature = OAuthSignature.generateSignature(provider, timestamp, OAUTH_SHARED_SECRET)
+    val signature = OAuthSignature.generateSignature(provider, deepLinkUrl, timestamp, OAUTH_SHARED_SECRET)
 
     val requestBody = JSONObject().apply {
         put("provider", provider)
+        put("deep_link_url", deepLinkUrl)
         put("timestamp", timestamp)
         put("signature", signature)
     }
@@ -437,11 +439,13 @@ private fun handleOAuthCallback(uri: Uri) {
 private suspend fun startOpenRouterOAuth() {
     try {
         // 1. Register callback session
+        val deepLinkUrl = DEEP_LINK_SCHEME
         val timestamp = System.currentTimeMillis() / 1000
-        val signature = OAuthSignature.generateSignature("openrouter", timestamp, OAUTH_SHARED_SECRET)
+        val signature = OAuthSignature.generateSignature("openrouter", deepLinkUrl, timestamp, OAUTH_SHARED_SECRET)
 
         val registerRequest = JSONObject().apply {
             put("provider", "openrouter")
+            put("deep_link_url", deepLinkUrl)
             put("timestamp", timestamp)
             put("signature", signature)
         }
@@ -611,19 +615,12 @@ All errors follow a consistent format:
 All settings are configured via environment variables in `.env`:
 
 ```env
-# Service
-DOMAIN_NAME=https://your-cloudflare-tunnel.example.com
-DEEP_LINK_SCHEME=pevplugshare://oauth/callback
-
 # Database
 DATABASE_URL=sqlite:///./oauth_sessions.db
 
 # Session
 SESSION_TTL_MINUTES=10
 CLEANUP_INTERVAL_MINUTES=5
-
-# Security
-SHARED_SECRET=generate-a-strong-secret-here
 
 # Rate Limiting
 RATE_LIMIT_PER_MINUTE=10
@@ -632,7 +629,12 @@ RATE_LIMIT_PER_DAY=1000
 
 # Providers
 OAUTH_PROVIDERS=openrouter,github,google
+
+# Logging
+LOG_LEVEL=INFO
 ```
+
+**Note**: Domain names, deep link schemes, and secrets are configured **per-application in the database**, not via environment variables. See the main README for application management instructions.
 
 ## Support
 

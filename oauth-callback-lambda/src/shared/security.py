@@ -8,22 +8,20 @@ import os
 from typing import Tuple, Optional
 
 
-def generate_signature(provider: str, timestamp: int, secret: Optional[str] = None) -> str:
+def generate_signature(provider: str, deep_link_url: str, timestamp: int, secret: str) -> str:
     """
     Generate HMAC-SHA256 signature for request validation
 
     Args:
         provider: OAuth provider name
+        deep_link_url: Deep link callback URL
         timestamp: Unix timestamp
-        secret: Shared secret (defaults to env var)
+        secret: Shared secret for the application
 
     Returns:
         Hex-encoded HMAC signature
     """
-    if secret is None:
-        secret = os.environ.get('SHARED_SECRET', '')
-
-    message = f"{provider.lower()}|{timestamp}"
+    message = f"{provider.lower()}|{deep_link_url}|{timestamp}"
     signature = hmac.new(
         secret.encode('utf-8'),
         message.encode('utf-8'),
@@ -35,8 +33,10 @@ def generate_signature(provider: str, timestamp: int, secret: Optional[str] = No
 
 def verify_signature(
     provider: str,
+    deep_link_url: str,
     timestamp: int,
     signature: str,
+    secret: str,
     max_age_seconds: int = 300
 ) -> Tuple[bool, Optional[str]]:
     """
@@ -44,8 +44,10 @@ def verify_signature(
 
     Args:
         provider: OAuth provider name
+        deep_link_url: Deep link callback URL
         timestamp: Unix timestamp from request
         signature: HMAC signature to verify
+        secret: Shared secret for the application
         max_age_seconds: Maximum age of timestamp (default 5 minutes)
 
     Returns:
@@ -59,7 +61,7 @@ def verify_signature(
         return False, f"Timestamp too old or in future (diff: {time_diff}s)"
 
     # Generate expected signature
-    expected_signature = generate_signature(provider, timestamp)
+    expected_signature = generate_signature(provider, deep_link_url, timestamp, secret)
 
     # Constant-time comparison
     is_valid = hmac.compare_digest(signature, expected_signature)

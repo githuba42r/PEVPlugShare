@@ -10,7 +10,7 @@ All OAuth secrets have been removed from git-tracked files and moved to a build-
 
 #### Files Modified
 - **`.gitignore`**: Added `secrets.properties` and `app/src/main/cpp/native-secrets.local.cpp`
-- **`app/build.gradle.kts`**: 
+- **`app/build.gradle.kts`**:
   - Added code to read `secrets.properties` at build time
   - Removed hardcoded BuildConfig secrets
   - Configured CMake to receive secrets as compile definitions
@@ -82,7 +82,7 @@ Before building the app, each developer must:
    oauth.dev.callback.url=https://your-dev-server.com
    oauth.dev.shared.secret=your-dev-secret
    oauth.dev.deep.link.scheme=yourapp://oauth/callback
-   
+
    oauth.prod.callback.url=https://your-prod-server.com
    oauth.prod.shared.secret=your-prod-secret
    oauth.prod.deep.link.scheme=yourapp://oauth/callback
@@ -110,18 +110,18 @@ Before building the app, each developer must:
 
 #### What This Protects Against
 
-✅ Accidentally committing secrets to git repository  
-✅ Secrets appearing in git history  
-✅ Simple APK decompilation with jadx/apktool  
-✅ BuildConfig secret extraction from DEX bytecode  
-✅ Automated secret scanning tools  
+✅ Accidentally committing secrets to git repository
+✅ Secrets appearing in git history
+✅ Simple APK decompilation with jadx/apktool
+✅ BuildConfig secret extraction from DEX bytecode
+✅ Automated secret scanning tools
 
 #### What This Does NOT Protect Against
 
-❌ Determined reverse engineering (IDA Pro, Ghidra)  
-❌ Dynamic analysis with hooking frameworks (Frida)  
-❌ Memory dumps on rooted devices  
-❌ Debug builds with extractable .so files  
+❌ Determined reverse engineering (IDA Pro, Ghidra)
+❌ Dynamic analysis with hooking frameworks (Frida)
+❌ Memory dumps on rooted devices
+❌ Debug builds with extractable .so files
 
 **Note**: This is **defense in depth**, not absolute security. No client-side secret is 100% secure.
 
@@ -205,11 +205,11 @@ To verify the implementation works:
 
 1. **Create secrets.properties with test values**
 2. **Build debug APK**: `./gradlew assembleDebug`
-3. **Extract and check**: 
+3. **Extract and check**:
    ```bash
    unzip -l app/build/outputs/apk/debug/app-debug.apk | grep libpevplugshare.so
    ```
-4. **Verify secret injection**: 
+4. **Verify secret injection**:
    - Install APK on device/emulator
    - Use app's OAuth flow
    - Should use secrets from your secrets.properties

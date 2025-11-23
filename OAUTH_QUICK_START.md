@@ -17,7 +17,7 @@ Edit `secrets.properties` with:
 2. **Development shared secret** - HMAC secret for dev builds
 3. **Development deep link scheme** - Your app's deep link (e.g., `yourapp://oauth/callback`)
 4. **Production callback URL** - Your production server OAuth endpoint
-5. **Production shared secret** - HMAC secret for release builds  
+5. **Production shared secret** - HMAC secret for release builds
 6. **Production deep link scheme** - Production deep link
 
 ## Build

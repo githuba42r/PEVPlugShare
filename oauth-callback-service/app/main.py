@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import settings
-from app.models import init_db, cleanup_expired_sessions
+from app.models import init_db, cleanup_expired_sessions, seed_sample_application
 from app.routers import oauth_router, health_router
 from app.utils import RateLimiter
 
@@ -47,6 +47,12 @@ async def lifespan(app: FastAPI):
     logger.info("Starting OAuth Callback Service...")
     init_db()
     logger.info("Database initialized")
+
+    # Seed sample application for development
+    if seed_sample_application():
+        logger.info("Sample application seeded")
+    else:
+        logger.info("Sample application already exists")
 
     # Start cleanup task
     cleanup_task_handle = asyncio.create_task(cleanup_task())

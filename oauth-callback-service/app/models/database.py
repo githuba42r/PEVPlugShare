@@ -1,7 +1,7 @@
 """
 Database models for OAuth session management
 """
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, create_engine
+from sqlalchemy import Column, String, Integer, Boolean, DateTime, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timedelta
@@ -10,11 +10,35 @@ from app.config import settings
 Base = declarative_base()
 
 
+class Application(Base):
+    """Application model for managing multiple client applications"""
+    __tablename__ = "applications"
+
+    app_id = Column(String(50), primary_key=True, index=True)
+    name = Column(String(200), nullable=False)
+    allowed_domains = Column(Text, nullable=False)  # Comma-separated list
+    deep_link_scheme = Column(String(200), nullable=False)
+    shared_secret = Column(String(500), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+
+    def get_allowed_domains_list(self):
+        """Parse comma-separated domains into list"""
+        return [domain.strip() for domain in self.allowed_domains.split(",")]
+
+    def is_domain_allowed(self, domain: str) -> bool:
+        """Check if a domain is allowed for this application"""
+        allowed = self.get_allowed_domains_list()
+        return domain in allowed
+
+
 class OAuthSession(Base):
     """OAuth session model for tracking callback state"""
     __tablename__ = "oauth_sessions"
 
     session_id = Column(String(36), primary_key=True, index=True)
+    app_id = Column(String(50), nullable=False, index=True)  # Foreign key to applications
     provider = Column(String(50), nullable=False, index=True)
     deep_link_url = Column(String(500), nullable=False)  # Client-provided deep link URL
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -45,6 +69,32 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def init_db():
     """Initialize database tables"""
     Base.metadata.create_all(bind=engine)
+
+
+def seed_sample_application():
+    """Seed a sample application for development/testing"""
+    db = SessionLocal()
+    try:
+        # Check if sample app already exists
+        existing = db.query(Application).filter(
+            Application.app_id == "pevplugshare"
+        ).first()
+
+        if not existing:
+            sample_app = Application(
+                app_id="pevplugshare",
+                name="PEV PlugShare",
+                allowed_domains="pevplugshare.a42r.com,pevplugshare-prod.a42r.com,localhost:8000",
+                deep_link_scheme="pevplugshare://oauth/callback",
+                shared_secret="CHANGE_THIS_SECRET",  # Should be changed in production
+                is_active=True
+            )
+            db.add(sample_app)
+            db.commit()
+            return True
+        return False
+    finally:
+        db.close()
 
 
 def get_db():
