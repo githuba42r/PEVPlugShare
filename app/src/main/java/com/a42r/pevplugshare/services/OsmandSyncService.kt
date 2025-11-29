@@ -37,7 +37,9 @@ class OsmandBackgroundSyncService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "OsmandBackgroundSyncService started")
+        Log.d(TAG, "═══════════════════════════════════════════════════════")
+        Log.d(TAG, "🚀 OsmandBackgroundSyncService onStartCommand called")
+        Log.d(TAG, "═══════════════════════════════════════════════════════")
 
         // Validate intent
         if (intent == null) {

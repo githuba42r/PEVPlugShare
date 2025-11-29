@@ -795,19 +795,29 @@ class OsmandLocationSyncService @Inject constructor(
     ): Result<Unit> {
         Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         Log.d(TAG, "ADD FAVORITE - EXACT ALGORITHM (using /fav/add)")
-        Log.d(TAG, "Name: ${location.name}")
-        Log.d(TAG, "Category: $categoryName")
-        Log.d(TAG, "Location: ${location.latitude}, ${location.longitude}")
-        Log.d(TAG, "Current OsmAnd metadata:")
+        Log.d(TAG, "📍 LOCATION DETAILS:")
+        Log.d(TAG, "  Name: ${location.name}")
+        Log.d(TAG, "  Category: $categoryName")
+        Log.d(TAG, "  Coordinates: ${location.latitude}, ${location.longitude}")
+        Log.d(TAG, "📋 CURRENT OSMAND METADATA:")
         Log.d(TAG, "  osmandSyncedToServer: ${location.osmandSyncedToServer}")
         Log.d(TAG, "  osmandOriginalName: ${location.osmandOriginalName}")
         Log.d(TAG, "  osmandGpxIndex: ${location.osmandGpxIndex}")
         Log.d(TAG, "  syncStatus: ${location.syncStatus}")
+        Log.d(TAG, "🔑 VALIDATION:")
+        Log.d(TAG, "  Has ID: ${location.id != null}")
+        Log.d(TAG, "  Has name: ${location.name.isNotBlank()}")
+        Log.d(TAG, "  Has coordinates: ${location.latitude != 0.0 && location.longitude != 0.0}")
 
         if (location.osmandSyncedToServer == true && location.osmandGpxIndex != null) {
             Log.w(TAG, "⚠️⚠️⚠️ WARNING: This location appears to already be synced!")
             Log.w(TAG, "         Should use UPDATE instead of ADD to avoid duplicates!")
         }
+        
+        Log.d(TAG, "🔍 CHECKING AUTHENTICATION:")
+        val token = tokenManager.getAccessToken()
+        Log.d(TAG, "  Has token: ${!token.isNullOrBlank()}")
+        Log.d(TAG, "  Token length: ${token?.length ?: 0}")
 
         val groupName = "favorites-${categoryName}.gpx"
         var attempt = 0
@@ -825,6 +835,7 @@ class OsmandLocationSyncService @Inject constructor(
                 // → If group doesn't exist, we can still proceed (will be created)
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 1: Getting current updatetime from /fav/list")
+                Log.d(TAG, "  📡 Calling /mapapi/list-files endpoint...")
 
                 val updatetime: Long = getCurrentGroupUpdatetime(groupName) ?: run {
                     Log.w(TAG, "⚠️ Group doesn't exist yet - will be created")
@@ -832,7 +843,7 @@ class OsmandLocationSyncService @Inject constructor(
                     System.currentTimeMillis()
                 }
 
-                Log.d(TAG, "✅ Using updatetime: $updatetime")
+                Log.d(TAG, "✅ Using updatetime: $updatetime (${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(java.util.Date(updatetime))})")
 
                 // ═══════════════════════════════════════════════════════════
                 // STEP 1.5: Use hardcoded style attributes
@@ -894,14 +905,22 @@ class OsmandLocationSyncService @Inject constructor(
                 // STEP 4: Send POST request to /fav/add
                 // ═══════════════════════════════════════════════════════════
                 Log.d(TAG, "STEP 4: Sending POST request to /fav/add")
+                Log.d(TAG, "📤 REQUEST DETAILS:")
+                Log.d(TAG, "  Endpoint: POST https://osmand.net/mapapi/fav/add")
+                Log.d(TAG, "  fileName: $groupName")
+                Log.d(TAG, "  updatetime: $updatetime")
 
                 val webApiService = apiClient.getWebApiRetrofit()
                     .create(com.a42r.pevplugshare.data.api.OsmandApiService::class.java)
 
                 // Log cookies (SESSION)
                 val cookies = apiClient.getCookiesForUrl("https://osmand.net/mapapi/fav/add")
-                Log.d(TAG, "Cookies: ${cookies.joinToString("; ") { "${it.name}=${it.value.take(10)}..." }}")
+                Log.d(TAG, "  Cookies (count): ${cookies.size}")
+                cookies.forEach { cookie ->
+                    Log.d(TAG, "    - ${cookie.name}=${cookie.value.take(20)}...")
+                }
 
+                Log.d(TAG, "  Sending request...")
                 val response = webApiService.addFavorite(
                     fileName = groupName,
                     updatetime = updatetime,
@@ -909,7 +928,9 @@ class OsmandLocationSyncService @Inject constructor(
                     addRequest = addRequest
                 )
 
-                Log.d(TAG, "Response: HTTP ${response.code()} ${response.message()}")
+                Log.d(TAG, "📥 RESPONSE RECEIVED:")
+                Log.d(TAG, "  HTTP Status: ${response.code()} ${response.message()}")
+                Log.d(TAG, "  Is Successful: ${response.isSuccessful}")
 
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
@@ -921,38 +942,43 @@ class OsmandLocationSyncService @Inject constructor(
                     // → This is required so future syncs can use UPDATE instead of ADD
                     // ═══════════════════════════════════════════════════════════
                     Log.d(TAG, "STEP 5: Downloading GPX to find new location's index")
+                    Log.d(TAG, "  ⬇️ Downloading $groupName from OsmAnd...")
 
                     var gpxIndex: Int? = null
                     try {
                         val gpxContent = downloadGpxFile(groupName)
                         if (gpxContent != null) {
+                            Log.d(TAG, "  ✓ Downloaded ${gpxContent.length} bytes")
                             // Parse GPX to find our location's index
                             val wptPattern = "<wpt\\s+lat=\"([^\"]+)\"\\s+lon=\"([^\"]+)\">.*?<name>([^<]+)</name>".toRegex(RegexOption.DOT_MATCHES_ALL)
                             val matches = wptPattern.findAll(gpxContent)
 
                             matches.forEachIndexed { index, match ->
                                 val wptName = match.groupValues[3]
+                                Log.d(TAG, "  Checking [index=$index]: '$wptName'")
                                 if (wptName == location.name) {
                                     gpxIndex = index
-                                    Log.d(TAG, "✅ Found location at index $index in GPX")
+                                    Log.d(TAG, "  ✅ Found location at index $index in GPX")
                                     return@forEachIndexed
                                 }
                             }
 
                             if (gpxIndex == null) {
-                                Log.w(TAG, "⚠️ Could not find location in GPX - index will remain null")
+                                Log.w(TAG, "  ⚠️ Could not find location in GPX - index will remain null")
+                                Log.w(TAG, "    Searched for: '${location.name}'")
                             }
                         } else {
-                            Log.w(TAG, "⚠️ Could not download GPX - index will remain null")
+                            Log.w(TAG, "  ⚠️ Could not download GPX - index will remain null")
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error finding index in GPX: ${e.message}", e)
+                        Log.e(TAG, "  ❌ Error finding index in GPX: ${e.message}", e)
                     }
 
                     // ═══════════════════════════════════════════════════════════
                     // STEP 6: Update local DB with OsmAnd metadata
                     // ═══════════════════════════════════════════════════════════
                     Log.d(TAG, "STEP 6: Updating local database")
+                    Log.d(TAG, "  💾 Updating sync metadata...")
 
                     val syncedLocation = location.copy(
                         syncStatus = SyncStatus.SYNCED,
@@ -965,6 +991,7 @@ class OsmandLocationSyncService @Inject constructor(
                     localRepository.updateLocation(syncedLocation, categoryName)
 
                     Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    Log.d(TAG, "✅ COMPLETE: Location synced to OsmAnd")
                     Log.d(TAG, "LOCAL DB UPDATE COMPLETE:")
                     Log.d(TAG, "  osmandSyncedToServer: ${syncedLocation.osmandSyncedToServer}")
                     Log.d(TAG, "  osmandOriginalName: ${syncedLocation.osmandOriginalName}")
@@ -979,7 +1006,10 @@ class OsmandLocationSyncService @Inject constructor(
                     // ═══════════════════════════════════════════════════════════
                     val errorBody = response.errorBody()?.string()
                     Log.e(TAG, "❌ ADD FAILED: HTTP ${response.code()}")
-                    Log.e(TAG, "Error body: ${formatJsonIfPossible(errorBody)}")
+                    Log.e(TAG, "📋 ERROR DETAILS:")
+                    Log.e(TAG, "  Status: ${response.code()} ${response.message()}")
+                    Log.e(TAG, "  Headers: ${response.headers()}")
+                    Log.e(TAG, "  Body: ${formatJsonIfPossible(errorBody)}")
 
                     // Try to parse error code 106 specifically
                     try {
@@ -1005,16 +1035,20 @@ class OsmandLocationSyncService @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                Log.e(TAG, "Exception during add: ${e.message}", e)
+                Log.e(TAG, "❌ Exception during add: ${e.message}", e)
+                Log.e(TAG, "💥 STACK TRACE:")
+                e.stackTrace.forEach { element ->
+                    Log.e(TAG, "    at ${element.className}.${element.methodName}(${element.fileName}:${element.lineNumber})")
+                }
 
                 if (attempt >= maxAttempts) {
-                    Log.e(TAG, "❌ FAILED after $maxAttempts attempts")
+                    Log.e(TAG, "❌ FAILED after $maxAttempts attempts - giving up")
                     Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                     return Result.failure(e)
                 }
 
                 // Continue to next attempt
-                Log.w(TAG, "Will retry...")
+                Log.w(TAG, "⏳ Will retry (attempt ${attempt + 1}/$maxAttempts)...")
             }
         }
 
