@@ -33,7 +33,7 @@ import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
         PendingOperationEntity::class,
         SavedForLaterEntity::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -127,6 +127,20 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Set all locations to SYNCED status with current timestamp
+                val currentTime = System.currentTimeMillis()
+                database.execSQL("""
+                    UPDATE locations
+                    SET syncStatus = 'SYNCED',
+                        osmandSyncStatus = 'SYNCED',
+                        osmandSyncedToServer = 1,
+                        osmandLastSyncedAt = $currentTime
+                """)
+            }
+        }
+
         fun getDatabase(context: Context): PEVPlugShareDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
@@ -134,7 +148,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
                     PEVPlugShareDatabase::class.java,
                     "pevplugshare.db"
                 )
-                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }

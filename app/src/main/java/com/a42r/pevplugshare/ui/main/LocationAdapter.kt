@@ -1,6 +1,7 @@
 package com.a42r.pevplugshare.ui.main
 
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.webkit.WebSettings
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.data.model.Location
+import com.a42r.pevplugshare.data.model.OsmandSyncStatus
+import com.a42r.pevplugshare.data.remote.TokenManager
 import com.a42r.pevplugshare.databinding.ItemLocationBinding
 import com.a42r.pevplugshare.util.LocationUtils
 import java.time.LocalTime
@@ -26,7 +29,8 @@ class LocationAdapter(
     private val onPhotoClick: (Location) -> Unit,
     private val onShareClick: (Location) -> Unit,
     private val userLatitude: Double,
-    private val userLongitude: Double
+    private val userLongitude: Double,
+    private val tokenManager: TokenManager? = null
 ) : ListAdapter<Location, LocationAdapter.LocationViewHolder>(LocationDiffCallback()) {
 
     private var highlightedLocationId: String? = null
@@ -47,7 +51,7 @@ class LocationAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val binding = ItemLocationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return LocationViewHolder(binding, onItemClick, onNavigateClick, onFavouriteClick, onEditClick, onInfoClick, onMapClick, onPhotoClick, onShareClick, userLatitude, userLongitude, ::isValidUserLocation)
+        return LocationViewHolder(binding, onItemClick, onNavigateClick, onFavouriteClick, onEditClick, onInfoClick, onMapClick, onPhotoClick, onShareClick, userLatitude, userLongitude, ::isValidUserLocation, tokenManager)
     }
 
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
@@ -68,11 +72,31 @@ class LocationAdapter(
         private val onShareClick: (Location) -> Unit,
         private val userLatitude: Double,
         private val userLongitude: Double,
-        private val isValidUserLocation: () -> Boolean
+        private val isValidUserLocation: () -> Boolean,
+        private val tokenManager: TokenManager? = null
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private var isDescriptionExpanded = false
         private var isMapExpanded = false
+
+        private fun getSyncStatusIndicatorColor(location: Location, isOsmandConnected: Boolean): Int {
+            return if (!isOsmandConnected) {
+                Color.parseColor("#FFC107")  // Yellow - OsmAnd not connected
+            } else {
+                // Check the osmandSyncStatus enum to determine the indicator color
+                when (location.osmandSyncStatus) {
+                    OsmandSyncStatus.SYNCED -> {
+                        Color.parseColor("#4CAF50")  // Green - fully synced and up to date
+                    }
+                    OsmandSyncStatus.MODIFIED -> {
+                        Color.parseColor("#FF9800")  // Orange - has local changes pending sync
+                    }
+                    OsmandSyncStatus.LOCAL_ONLY -> {
+                        Color.parseColor("#F44336")  // Red - never synced to OsmAnd
+                    }
+                }
+            }
+        }
 
         fun bind(location: Location, isHighlighted: Boolean = false) {
             binding.apply {
@@ -87,6 +111,18 @@ class LocationAdapter(
                 }
 
                 locationName.text = location.name
+
+                // Set sync status indicator color
+                val isOsmandConnected = tokenManager?.isOsmandConnected() ?: false
+                val indicatorColor = getSyncStatusIndicatorColor(location, isOsmandConnected)
+                val drawable = osmandSyncStatusIndicator.background as? GradientDrawable ?: (osmandSyncStatusIndicator.background?.constantState?.newDrawable() as? GradientDrawable)
+                drawable?.setColor(indicatorColor)
+                if (drawable == null) {
+                    // Fallback if drawable is not a GradientDrawable - use background tint
+                    osmandSyncStatusIndicator.setBackgroundColor(indicatorColor)
+                } else {
+                    osmandSyncStatusIndicator.background = drawable
+                }
 
                 // Long press on name to edit
                 locationName.setOnLongClickListener {

@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <!-- Header Row: Name + Info Button + Navigation Icon (right aligned) -->
+        <!-- Header Row: Name + Sync Status Indicator + Info Button + Navigation Icon (right aligned) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,6 +29,14 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:gravity="center_vertical" />
+
+            <View
+                android:id="@+id/osmandSyncStatusIndicator"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_sync_status_dot"
+                android:contentDescription="OsmAnd sync status" />
 
             <ImageButton
                 android:id="@+id/infoButton"

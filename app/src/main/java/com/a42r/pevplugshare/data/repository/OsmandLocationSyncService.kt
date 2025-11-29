@@ -273,7 +273,10 @@ class OsmandLocationSyncService @Inject constructor(
         return when (apiResult) {
             is com.a42r.pevplugshare.data.remote.ApiResult.Success -> {
                 // Update local database to mark as synced
-                val updatedLocation = location.copy(syncStatus = SyncStatus.SYNCED)
+                val updatedLocation = location.copy(
+                    syncStatus = SyncStatus.SYNCED,
+                    osmandSyncStatus = com.a42r.pevplugshare.data.model.OsmandSyncStatus.SYNCED
+                )
                 localRepository.updateLocation(updatedLocation, categoryName)
                 Result.success(Unit)
             }
@@ -290,9 +293,21 @@ class OsmandLocationSyncService @Inject constructor(
 
     /**
      * Mark a location as pending sync
+     * If location was previously synced to OsmAnd, mark as MODIFIED
      */
     suspend fun markLocationPendingSync(location: Location, categoryName: String) {
-        val updatedLocation = location.copy(syncStatus = SyncStatus.PENDING)
+        // If location was previously synced to OsmAnd, mark it as MODIFIED
+        // Otherwise, leave it as LOCAL_ONLY (never been synced)
+        val newOsmandSyncStatus = if (location.osmandSyncedToServer) {
+            com.a42r.pevplugshare.data.model.OsmandSyncStatus.MODIFIED
+        } else {
+            location.osmandSyncStatus
+        }
+        
+        val updatedLocation = location.copy(
+            syncStatus = SyncStatus.PENDING,
+            osmandSyncStatus = newOsmandSyncStatus
+        )
         localRepository.updateLocation(updatedLocation, categoryName)
     }
 
@@ -717,6 +732,7 @@ class OsmandLocationSyncService @Inject constructor(
 
                     val syncedLocation = location.copy(
                         syncStatus = SyncStatus.SYNCED,
+                        osmandSyncStatus = com.a42r.pevplugshare.data.model.OsmandSyncStatus.SYNCED,
                         osmandOriginalName = location.name,  // Update to new server name
                         osmandGpxIndex = actualIndex,        // Update to verified index
                         osmandLastSyncedAt = System.currentTimeMillis()
@@ -982,6 +998,7 @@ class OsmandLocationSyncService @Inject constructor(
 
                     val syncedLocation = location.copy(
                         syncStatus = SyncStatus.SYNCED,
+                        osmandSyncStatus = com.a42r.pevplugshare.data.model.OsmandSyncStatus.SYNCED,
                         osmandOriginalName = location.name,      // Server now knows this name
                         osmandSyncSource = "OSMAND",             // Now exists on OsmAnd
                         osmandSyncedToServer = true,             // Confirmed on server

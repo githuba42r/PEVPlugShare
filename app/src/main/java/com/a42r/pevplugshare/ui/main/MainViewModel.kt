@@ -484,6 +484,10 @@ class MainViewModel @Inject constructor(
         return tokenManager.isOsmandConnected()
     }
 
+    fun getTokenManager(): com.a42r.pevplugshare.data.remote.TokenManager {
+        return tokenManager
+    }
+
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()

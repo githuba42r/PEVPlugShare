@@ -174,7 +174,8 @@ class MainActivity : AppCompatActivity() {
                             onPhotoClick = { location -> showPhotoGallery(location) },
                             onShareClick = { location -> shareLocation(location) },
                             userLatitude = userLoc.first,
-                            userLongitude = userLoc.second
+                            userLongitude = userLoc.second,
+                            tokenManager = viewModel.getTokenManager()
                         )
                         binding.locationRecyclerView.adapter = adapter
                         adapter?.submitList(state.locations)
@@ -213,7 +214,8 @@ class MainActivity : AppCompatActivity() {
                             onPhotoClick = { location -> showPhotoGallery(location) },
                             onShareClick = { location -> shareLocation(location) },
                             userLatitude = userLoc.first,
-                            userLongitude = userLoc.second
+                            userLongitude = userLoc.second,
+                            tokenManager = viewModel.getTokenManager()
                         )
                         binding.locationRecyclerView.adapter = adapter
                         adapter?.submitList(state.locations)
