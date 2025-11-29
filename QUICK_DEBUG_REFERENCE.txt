@@ -1,0 +1,136 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                 OSMAND LOCATION SYNC - QUICK DEBUG REFERENCE               ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ COPY & PASTE THIS COMMAND TO START MONITORING                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+adb logcat -v threadtime com.a42r.pevplugshare:D *:S | grep -E "OsmandLocationSync|ADD FAVORITE|STEP|✅|❌|⚠️|📍|💾|📤|📥"
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ WHAT TO LOOK FOR IN THE LOGS                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+✅ SUCCESS MARKERS:
+   ✅ ADD FAVORITE - EXACT ALGORITHM ................ Starting add
+   ✅ Using updatetime: [timestamp] ................ Got server time
+   ✅ ADD SUCCESSFUL! ............................. Request succeeded
+   ✅ Found location at index [N] in GPX .......... Location found in response
+   ✅ COMPLETE: Location synced to OsmAnd ........ All steps completed
+
+❌ ERROR MARKERS:
+   ❌ ADD FAILED: HTTP [code] ..................... Server returned error
+   ❌ Could not find location in GPX ............ Location missing after add
+   ❌ Exception during add ....................... Code error occurred
+
+⚠️  WARNING MARKERS:
+   ⚠️  ERROR 106: File was changed! ............ Timestamp mismatch (will retry)
+   ⚠️  Could not download GPX ................. Download failed
+   ⚠️  Group doesn't exist yet ................ Will be created
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ COMMON ISSUES & SOLUTIONS                                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+ISSUE #1: "Has token: false"
+   CAUSE: User not logged in to OsmAnd
+   FIX: Have user login to OsmAnd via Settings > OsmAnd Sync
+   CHECK: Look for 🔍 CHECKING AUTHENTICATION section
+
+ISSUE #2: "ERROR 106: File was changed!"
+   CAUSE: Timestamp mismatch between app and server
+   FIX: System automatically retries (happens up to 2 times)
+   CHECK: Watch for second attempt with "Attempt 2 of 2"
+
+ISSUE #3: "Could not download GPX"
+   CAUSE: Network error or OsmAnd API down
+   FIX: Check internet connection, try again
+   CHECK: Look for 📥 RESPONSE RECEIVED section
+
+ISSUE #4: "HTTP 401 Unauthorized"
+   CAUSE: Invalid or expired authentication token
+   FIX: User needs to re-login to OsmAnd
+   CHECK: Compare token length with known good token
+
+ISSUE #5: "Could not find location in GPX"
+   CAUSE: Location name mismatch or special character encoding
+   FIX: Check if location name has special characters
+   CHECK: Compare name being searched with names in GPX
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP-BY-STEP TESTING                                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Terminal 1: Start monitoring (BEFORE opening app)
+  $ adb logcat -v threadtime com.a42r.pevplugshare:D *:S | \
+    grep -E "OsmandLocationSync|ADD FAVORITE|STEP|✅|❌|⚠️|📍|💾|📤|📥"
+
+Terminal 2: Build and install app
+  $ cd /home/philg/src/AndroidStudioProjects/PEVPlugShare
+  $ ./gradlew assembleDebug -q && \
+    adb install -r app/build/outputs/apk/debug/app-debug.apk
+
+Terminal 1: Watch for logs while you:
+  1. Open PEVPlugShare app
+  2. Login (if not already)
+  3. Navigate to create new location
+  4. Fill in location details
+  5. Save location
+  6. Confirm sync to OsmAnd (if prompted)
+  
+  EXPECTED: See "ADD FAVORITE" start, then "✅ COMPLETE" within 5-10 seconds
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ EMOJI LEGEND                                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+📍 = Location details being processed
+🔍 = Authentication/validation checks
+📡 = API endpoint being called
+📤 = Request being sent to OsmAnd
+📥 = Response received from OsmAnd
+💾 = Database being updated
+✅ = Success - operation completed
+❌ = Failure - operation failed
+⚠️  = Warning - might be a problem
+💥 = Exception/error - stack trace follows
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ADVANCED FILTERING (if too much output)                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Only show success/failure:
+  adb logcat com.a42r.pevplugshare:D *:S | grep -E "✅|❌"
+
+Only show errors:
+  adb logcat com.a42r.pevplugshare:E *:S | grep "OsmandLocationSync"
+
+Only show API responses:
+  adb logcat com.a42r.pevplugshare:D *:S | grep -E "HTTP|RESPONSE|SUCCESSFUL|FAILED"
+
+Save to file while displaying:
+  adb logcat -v threadtime com.a42r.pevplugshare:D *:S | \
+    tee osmand_$(date +%s).log | grep "OsmandLocationSync"
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ EXPECTED TIMING                                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+First sync attempt:      2-5 seconds  (includes API calls + GPX download)
+Retry on error 106:      1-3 seconds  (fresh updatetime fetch + retry)
+Database update:         <100ms
+TOTAL for success:       3-8 seconds
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ DOCUMENTATION FILES                                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+DEBUGGING_SUMMARY.md ................. Overview of all changes
+OSMAND_SYNC_DEBUGGING.md ............ Detailed log structure & troubleshooting
+ADB_MONITORING_COMMANDS.md ......... All ADB commands and variants
+QUICK_DEBUG_REFERENCE.txt ......... This file (quick lookup)
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                           HAPPY DEBUGGING!                                ║
+╚════════════════════════════════════════════════════════════════════════════╝
