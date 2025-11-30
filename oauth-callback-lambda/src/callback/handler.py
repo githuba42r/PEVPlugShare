@@ -8,10 +8,8 @@ import time
 from urllib.parse import urlencode
 
 # Import shared utilities
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
-from responses import html_response
-from templates import create_redirect_page, create_error_page
+from shared.responses import html_response
+from shared.templates import create_redirect_page, create_error_page
 
 
 # Initialize DynamoDB

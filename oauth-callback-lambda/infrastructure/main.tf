@@ -26,15 +26,41 @@ variable "project_name" {
   default     = "oauth-callback"
 }
 
-variable "domain_name" {
-  description = "Public domain name for API"
+variable "custom_domain" {
+  description = "Custom domain for OAuth endpoint (e.g., pevplugshare.a42r.com)"
   type        = string
+  default     = ""
 }
 
-variable "shared_secret" {
-  description = "Shared secret for HMAC signatures"
+variable "certificate_arn_us_east_1" {
+  description = "ACM Certificate ARN in us-east-1 (required for EDGE endpoints)"
   type        = string
-  sensitive   = true
+  default     = ""
+}
+
+variable "applications" {
+  description = "List of applications with their configurations (multiple domains and deep link schemes supported)"
+  type = list(object({
+    app_id           = string
+    name             = string
+    allowed_domains  = list(string)
+    deep_link_scheme = string
+    shared_secret    = string
+  }))
+  sensitive = true
+
+  validation {
+    condition     = length(var.applications) > 0
+    error_message = "At least one application must be configured."
+  }
+
+  validation {
+    condition = alltrue([
+      for app in var.applications :
+      length(app.app_id) > 0 && length(app.name) > 0 && length(app.allowed_domains) > 0 && length(app.deep_link_scheme) > 0 && length(app.shared_secret) > 0
+    ])
+    error_message = "All application fields (app_id, name, allowed_domains, deep_link_scheme, shared_secret) are required."
+  }
 }
 
 variable "session_ttl_minutes" {
@@ -47,12 +73,6 @@ variable "oauth_providers" {
   description = "Comma-separated list of allowed OAuth providers"
   type        = string
   default     = "openrouter,github,google"
-}
-
-variable "deep_link_scheme" {
-  description = "Mobile app deep link scheme"
-  type        = string
-  default     = "pevplugshare://oauth/callback"
 }
 
 # DynamoDB Table
@@ -142,11 +162,11 @@ resource "aws_lambda_function" "register" {
 
   environment {
     variables = {
-      DYNAMODB_TABLE        = aws_dynamodb_table.oauth_sessions.name
-      DOMAIN_NAME           = var.domain_name
-      SESSION_TTL_MINUTES   = var.session_ttl_minutes
-      OAUTH_PROVIDERS       = var.oauth_providers
-      SHARED_SECRET         = var.shared_secret
+      DYNAMODB_TABLE = aws_dynamodb_table.oauth_sessions.name
+      SESSION_TTL_MINUTES = var.session_ttl_minutes
+      OAUTH_PROVIDERS = var.oauth_providers
+      # Convert applications list to JSON for Lambda
+      APPLICATIONS = jsonencode(var.applications)
     }
   }
 
@@ -170,8 +190,9 @@ resource "aws_lambda_function" "callback" {
 
   environment {
     variables = {
-      DYNAMODB_TABLE    = aws_dynamodb_table.oauth_sessions.name
-      DEEP_LINK_SCHEME  = var.deep_link_scheme
+      DYNAMODB_TABLE = aws_dynamodb_table.oauth_sessions.name
+      # Convert applications list to JSON for Lambda
+      APPLICATIONS = jsonencode(var.applications)
     }
   }
 
@@ -331,10 +352,294 @@ resource "aws_cloudwatch_log_group" "api_gateway" {
   }
 }
 
+# Custom domain in API Gateway (REGIONAL endpoint for better SSL certificate handling)
+resource "aws_api_gateway_domain_name" "oauth" {
+  domain_name              = "oauth.${var.custom_domain}"
+  regional_certificate_arn = "arn:aws:acm:${var.aws_region}:273681054217:certificate/d3bd482f-3105-4e5a-9e5c-ecdc70a79387"
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+
+  tags = {
+    Name    = "${var.project_name}-domain"
+    Project = var.project_name
+  }
+}
+
+# Base path mapping for API Gateway
+resource "aws_api_gateway_base_path_mapping" "oauth" {
+  api_id            = aws_api_gateway_rest_api.oauth_api.id
+  domain_name       = aws_api_gateway_domain_name.oauth.domain_name
+  stage_name        = aws_api_gateway_stage.prod.stage_name
+  base_path         = ""
+}
+
+# API Gateway API Key for usage plan
+resource "aws_api_gateway_api_key" "oauth_key" {
+  name        = "${var.project_name}-api-key"
+  description = "API Key for OAuth service - cost control"
+  enabled     = true
+
+  tags = {
+    Name    = "${var.project_name}-api-key"
+    Project = var.project_name
+  }
+}
+
+# Usage Plan with cost controls (<$2/month)
+# Per-IP limits enforced via WAF (10 req/min, 50 req/day per IP)
+resource "aws_api_gateway_usage_plan" "oauth" {
+  name            = "${var.project_name}-usage-plan"
+  description     = "Usage plan for OAuth - 10 req/min, 50 req/day per IP"
+  product_code    = var.project_name
+  api_stages {
+    api_id = aws_api_gateway_rest_api.oauth_api.id
+    stage  = aws_api_gateway_stage.prod.stage_name
+  }
+
+  # Conservative throttle limits (per-IP enforced via WAF)
+  throttle_settings {
+    burst_limit = 15    # 10 req/min = 0.17 req/sec, burst to 15
+    rate_limit  = 1     # 1 req/sec average
+  }
+
+  # Monthly quota (safety cap)
+  quota_settings {
+    limit  = 50000      # ~50 logins/day * 1000 devices = 50k/month
+    period = "MONTH"
+  }
+
+  tags = {
+    Name    = "${var.project_name}-usage-plan"
+    Project = var.project_name
+  }
+}
+
+# AWS WAF IP Set for rate limiting
+resource "aws_wafv2_ip_set" "oauth_blocked_ips" {
+  name               = "${var.project_name}-blocked-ips"
+  description        = "IPs blocked due to rate limit abuse"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = []
+
+  tags = {
+    Name    = "${var.project_name}-blocked-ips"
+    Project = var.project_name
+  }
+}
+
+# AWS WAF Rate Limit Rules
+resource "aws_wafv2_web_acl" "oauth_waf" {
+  name  = "${var.project_name}-waf"
+  scope = "REGIONAL"
+
+  default_action {
+    allow {}
+  }
+
+  # Rule 1: Rate limit per IP on /register endpoint - 10 requests per minute (50 per 5 min)
+  rule {
+    name     = "${var.project_name}-rate-limit-register"
+    priority = 1
+
+    action {
+      block {}
+    }
+
+    statement {
+      rate_based_statement {
+        limit              = 50  # 10 req/min = 50 req/5min
+        aggregate_key_type = "IP"
+        
+        scope_down_statement {
+          byte_match_statement {
+            search_string = "/register"
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+            positional_constraint = "CONTAINS"
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.project_name}-rate-limit-register"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  # Rule 2: Rate limit per IP on /callback endpoint - 10 requests per minute
+  rule {
+    name     = "${var.project_name}-rate-limit-callback"
+    priority = 2
+
+    action {
+      block {}
+    }
+
+    statement {
+      rate_based_statement {
+        limit              = 50  # 10 req/min = 50 req/5min
+        aggregate_key_type = "IP"
+        
+        scope_down_statement {
+          byte_match_statement {
+            search_string = "/callback"
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "NONE"
+            }
+            positional_constraint = "CONTAINS"
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.project_name}-rate-limit-callback"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  # Rule 3: Block known malicious IPs
+  rule {
+    name     = "${var.project_name}-block-abusive-ips"
+    priority = 3
+
+    action {
+      block {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.oauth_blocked_ips.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${var.project_name}-blocked-ips"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "${var.project_name}-waf"
+    sampled_requests_enabled   = true
+  }
+
+  tags = {
+    Name    = "${var.project_name}-waf"
+    Project = var.project_name
+  }
+}
+
+# Associate WAF with API Gateway
+resource "aws_wafv2_web_acl_association" "oauth_waf" {
+  resource_arn = aws_api_gateway_stage.prod.arn
+  web_acl_arn  = aws_wafv2_web_acl.oauth_waf.arn
+}
+
+# CloudWatch Alarm for WAF rate limit blocks
+resource "aws_cloudwatch_metric_alarm" "waf_rate_limit_blocks" {
+  alarm_name          = "${var.project_name}-waf-blocks"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "BlockedRequests"
+  namespace           = "AWS/WAFV2"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 100
+  alarm_description   = "Alert if WAF is blocking many requests (potential attack)"
+
+  dimensions = {
+    WebACL = aws_wafv2_web_acl.oauth_waf.name
+    Region = var.aws_region
+  }
+
+  tags = {
+    Name    = "${var.project_name}-waf-alarm"
+    Project = var.project_name
+  }
+}
+
+# CloudWatch Alarm for API Gateway errors (notify if something breaks)
+resource "aws_cloudwatch_metric_alarm" "api_errors" {
+  alarm_name          = "${var.project_name}-high-errors"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "5XXError"
+  namespace           = "AWS/ApiGateway"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 10
+  alarm_description   = "Alert if API Gateway has too many 5xx errors"
+
+  dimensions = {
+    ApiName = aws_api_gateway_rest_api.oauth_api.name
+    Stage   = aws_api_gateway_stage.prod.stage_name
+  }
+
+  tags = {
+    Name    = "${var.project_name}-error-alarm"
+    Project = var.project_name
+  }
+}
+
+# CloudWatch Alarm for API Gateway throttling (safety alert)
+resource "aws_cloudwatch_metric_alarm" "api_throttle" {
+  alarm_name          = "${var.project_name}-throttling"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "Count"
+  namespace           = "AWS/ApiGateway"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 100
+  alarm_description   = "Alert if API is being throttled (indicates potential attack)"
+
+  dimensions = {
+    ApiName = aws_api_gateway_rest_api.oauth_api.name
+    Stage   = aws_api_gateway_stage.prod.stage_name
+  }
+
+  tags = {
+    Name    = "${var.project_name}-throttle-alarm"
+    Project = var.project_name
+  }
+}
+
 # Outputs
 output "api_endpoint" {
   description = "API Gateway endpoint URL"
   value       = "${aws_api_gateway_stage.prod.invoke_url}"
+}
+
+output "custom_domain_endpoint" {
+  description = "Custom domain endpoint URL"
+  value       = "https://oauth.${var.custom_domain}/prod"
+}
+
+output "certificate_arn" {
+  description = "ACM Certificate ARN (us-east-1)"
+  value       = var.certificate_arn_us_east_1
+}
+
+output "certificate_validation_records" {
+  description = "DNS validation records needed for Cloudflare - add this CNAME to validate certificate"
+  value       = "Add CNAME record to Cloudflare: Name=_5c1bb79d2b7568bda0ee8de03967f2a6.oauth.pevplugshare.a42r.com Value=_c504615ea79b4f29429e438677b4309c.jkddzztszm.acm-validations.aws"
 }
 
 output "dynamodb_table" {
@@ -350,4 +655,30 @@ output "register_lambda_arn" {
 output "callback_lambda_arn" {
   description = "Callback Lambda function ARN"
   value       = aws_lambda_function.callback.arn
+}
+
+output "api_key_id" {
+  description = "API Key ID for cost control"
+  value       = aws_api_gateway_api_key.oauth_key.id
+  sensitive   = true
+}
+
+output "usage_plan_id" {
+  description = "Usage Plan ID"
+  value       = aws_api_gateway_usage_plan.oauth.id
+}
+
+output "cost_controls" {
+  description = "Cost control and rate limit summary"
+  value = {
+    per_ip_rate_limit_per_minute = "10 requests/minute"
+    per_ip_rate_limit_per_day    = "50 requests/day"
+    monthly_quota                = "50,000 requests/month"
+    estimated_cost               = "<$0.20/month (normal use), <$1/month (at quota)"
+    rate_limiting_type           = "AWS WAF per-IP + API Gateway quotas"
+    waf_alarm                    = aws_cloudwatch_metric_alarm.waf_rate_limit_blocks.alarm_name
+    throttling_alarm             = aws_cloudwatch_metric_alarm.api_throttle.alarm_name
+    error_alarm                  = aws_cloudwatch_metric_alarm.api_errors.alarm_name
+    dynamodb_pricing             = "PAY_PER_REQUEST (no fixed costs)"
+  }
 }
