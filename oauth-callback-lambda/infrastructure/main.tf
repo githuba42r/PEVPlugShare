@@ -403,20 +403,26 @@ resource "aws_cloudwatch_log_group" "api_gateway" {
 }
 
 # Custom domain in API Gateway (REGIONAL endpoint for better SSL certificate handling)
-# This resource already exists - skipping creation to avoid conflicts
-# Run: terraform import 'aws_api_gateway_domain_name.oauth' 'oauth.pevplugshare.a42r.com' if needed
-# resource "aws_api_gateway_domain_name" "oauth" {
-#   domain_name              = "oauth.${var.custom_domain}"
-#   regional_certificate_arn = "arn:aws:acm:${var.aws_region}:273681054217:certificate/d3bd482f-3105-4e5a-9e5c-ecdc70a79387"
-#   endpoint_configuration {
-#     types = ["REGIONAL"]
-#   }
-#
-#   tags = {
-#     Name    = "${var.project_name}-domain"
-#     Project = var.project_name
-#   }
-# }
+resource "aws_api_gateway_domain_name" "oauth" {
+  domain_name              = "oauth.${var.custom_domain}"
+  regional_certificate_arn = "arn:aws:acm:${var.aws_region}:273681054217:certificate/d3bd482f-3105-4e5a-9e5c-ecdc70a79387"
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+
+  tags = {
+    Name    = "${var.project_name}-domain"
+    Project = var.project_name
+  }
+}
+
+# Base path mapping to connect custom domain to API Gateway
+resource "aws_api_gateway_base_path_mapping" "oauth" {
+  api_id      = aws_api_gateway_rest_api.oauth_api.id
+  stage_name  = aws_api_gateway_stage.prod.stage_name
+  domain_name = aws_api_gateway_domain_name.oauth.domain_name
+  base_path   = "prod"
+}
 
 # API Gateway API Key for usage plan
 resource "aws_api_gateway_api_key" "oauth_key" {
