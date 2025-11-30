@@ -329,6 +329,36 @@ resource "aws_api_gateway_deployment" "oauth_api" {
   }
 }
 
+# IAM Role for API Gateway CloudWatch Logs
+resource "aws_iam_role" "api_gateway_logs_role" {
+  name = "${var.project_name}-api-gateway-logs-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "apigateway.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "api_gateway_logs_policy" {
+  role       = aws_iam_role.api_gateway_logs_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
+data "aws_caller_identity" "current" {}
+
+# API Gateway Account (enables CloudWatch logging for all stages)
+# Note: If this fails, the account likely already has a role configured
+# You can manually update it in AWS Console > API Gateway > Account
+# resource "aws_api_gateway_account" "main" {
+#   cloudwatch_role_arn = aws_iam_role.api_gateway_logs_role.arn
+# }
+
 # API Gateway Stage
 resource "aws_api_gateway_stage" "prod" {
   deployment_id = aws_api_gateway_deployment.oauth_api.id
@@ -353,23 +383,30 @@ resource "aws_cloudwatch_log_group" "api_gateway" {
 }
 
 # Custom domain in API Gateway (REGIONAL endpoint for better SSL certificate handling)
-resource "aws_api_gateway_domain_name" "oauth" {
-  domain_name              = "oauth.${var.custom_domain}"
-  regional_certificate_arn = "arn:aws:acm:${var.aws_region}:273681054217:certificate/d3bd482f-3105-4e5a-9e5c-ecdc70a79387"
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
+# This resource already exists - skipping creation to avoid conflicts
+# Run: terraform import 'aws_api_gateway_domain_name.oauth' 'oauth.pevplugshare.a42r.com' if needed
+# resource "aws_api_gateway_domain_name" "oauth" {
+#   domain_name              = "oauth.${var.custom_domain}"
+#   regional_certificate_arn = "arn:aws:acm:${var.aws_region}:273681054217:certificate/d3bd482f-3105-4e5a-9e5c-ecdc70a79387"
+#   endpoint_configuration {
+#     types = ["REGIONAL"]
+#   }
+#
+#   tags = {
+#     Name    = "${var.project_name}-domain"
+#     Project = var.project_name
+#   }
+# }
 
-  tags = {
-    Name    = "${var.project_name}-domain"
-    Project = var.project_name
-  }
+# Data source for existing domain
+data "aws_api_gateway_domain_name" "oauth" {
+  domain_name = "oauth.${var.custom_domain}"
 }
 
 # Base path mapping for API Gateway
 resource "aws_api_gateway_base_path_mapping" "oauth" {
   api_id            = aws_api_gateway_rest_api.oauth_api.id
-  domain_name       = aws_api_gateway_domain_name.oauth.domain_name
+  domain_name       = data.aws_api_gateway_domain_name.oauth.domain_name
   stage_name        = aws_api_gateway_stage.prod.stage_name
   base_path         = ""
 }
@@ -415,141 +452,22 @@ resource "aws_api_gateway_usage_plan" "oauth" {
   }
 }
 
-# AWS WAF IP Set for rate limiting
-resource "aws_wafv2_ip_set" "oauth_blocked_ips" {
-  name               = "${var.project_name}-blocked-ips"
-  description        = "IPs blocked due to rate limit abuse"
-  scope              = "REGIONAL"
-  ip_address_version = "IPV4"
-  addresses          = []
-
-  tags = {
-    Name    = "${var.project_name}-blocked-ips"
-    Project = var.project_name
-  }
+# AWS WAF IP Set for rate limiting - using existing set if available
+data "aws_wafv2_ip_set" "oauth_blocked_ips" {
+  name  = "${var.project_name}-blocked-ips"
+  scope = "REGIONAL"
 }
 
-# AWS WAF Rate Limit Rules
-resource "aws_wafv2_web_acl" "oauth_waf" {
+# AWS WAF Web ACL for rate limiting - using existing WAF
+data "aws_wafv2_web_acl" "oauth_waf" {
   name  = "${var.project_name}-waf"
   scope = "REGIONAL"
-
-  default_action {
-    allow {}
-  }
-
-  # Rule 1: Rate limit per IP on /register endpoint - 10 requests per minute (50 per 5 min)
-  rule {
-    name     = "${var.project_name}-rate-limit-register"
-    priority = 1
-
-    action {
-      block {}
-    }
-
-    statement {
-      rate_based_statement {
-        limit              = 50  # 10 req/min = 50 req/5min
-        aggregate_key_type = "IP"
-        
-        scope_down_statement {
-          byte_match_statement {
-            search_string = "/register"
-            field_to_match {
-              uri_path {}
-            }
-            text_transformation {
-              priority = 0
-              type     = "NONE"
-            }
-            positional_constraint = "CONTAINS"
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "${var.project_name}-rate-limit-register"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  # Rule 2: Rate limit per IP on /callback endpoint - 10 requests per minute
-  rule {
-    name     = "${var.project_name}-rate-limit-callback"
-    priority = 2
-
-    action {
-      block {}
-    }
-
-    statement {
-      rate_based_statement {
-        limit              = 50  # 10 req/min = 50 req/5min
-        aggregate_key_type = "IP"
-        
-        scope_down_statement {
-          byte_match_statement {
-            search_string = "/callback"
-            field_to_match {
-              uri_path {}
-            }
-            text_transformation {
-              priority = 0
-              type     = "NONE"
-            }
-            positional_constraint = "CONTAINS"
-          }
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "${var.project_name}-rate-limit-callback"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  # Rule 3: Block known malicious IPs
-  rule {
-    name     = "${var.project_name}-block-abusive-ips"
-    priority = 3
-
-    action {
-      block {}
-    }
-
-    statement {
-      ip_set_reference_statement {
-        arn = aws_wafv2_ip_set.oauth_blocked_ips.arn
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "${var.project_name}-blocked-ips"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "${var.project_name}-waf"
-    sampled_requests_enabled   = true
-  }
-
-  tags = {
-    Name    = "${var.project_name}-waf"
-    Project = var.project_name
-  }
 }
 
 # Associate WAF with API Gateway
 resource "aws_wafv2_web_acl_association" "oauth_waf" {
   resource_arn = aws_api_gateway_stage.prod.arn
-  web_acl_arn  = aws_wafv2_web_acl.oauth_waf.arn
+  web_acl_arn  = data.aws_wafv2_web_acl.oauth_waf.arn
 }
 
 # CloudWatch Alarm for WAF rate limit blocks
@@ -565,7 +483,7 @@ resource "aws_cloudwatch_metric_alarm" "waf_rate_limit_blocks" {
   alarm_description   = "Alert if WAF is blocking many requests (potential attack)"
 
   dimensions = {
-    WebACL = aws_wafv2_web_acl.oauth_waf.name
+    WebACL = data.aws_wafv2_web_acl.oauth_waf.name
     Region = var.aws_region
   }
 
