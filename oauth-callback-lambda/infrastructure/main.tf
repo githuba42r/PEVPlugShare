@@ -465,6 +465,13 @@ resource "aws_api_gateway_usage_plan" "oauth" {
   }
 }
 
+# Associate API Key with Usage Plan for cost control
+resource "aws_api_gateway_usage_plan_key" "oauth_key" {
+  key_id        = aws_api_gateway_api_key.oauth_key.id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.oauth.id
+}
+
 # AWS WAF IP Set for rate limiting - using existing set if available
 data "aws_wafv2_ip_set" "oauth_blocked_ips" {
   name  = "${var.project_name}-blocked-ips"
