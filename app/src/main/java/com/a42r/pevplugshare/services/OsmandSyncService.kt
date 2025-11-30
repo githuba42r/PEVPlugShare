@@ -95,7 +95,7 @@ class OsmandBackgroundSyncService : Service() {
 
                         // Determine description to use
                         val finalDescription = if (shouldGenerateDescription) {
-                            Log.d(TAG, "Generating AI description from DB values...")
+                            Log.d(TAG, "Generating description from DB values...")
                             val socketTypeNames = location.socketTypes.map { it.name }
                             val accessType = location.publicPrivate
                             val hasFee = location.hasFee
