@@ -165,6 +165,7 @@ resource "aws_lambda_function" "register" {
       DYNAMODB_TABLE = aws_dynamodb_table.oauth_sessions.name
       SESSION_TTL_MINUTES = var.session_ttl_minutes
       OAUTH_PROVIDERS = var.oauth_providers
+      CUSTOM_DOMAIN = var.custom_domain
       # Convert applications list to JSON for Lambda
       APPLICATIONS = jsonencode(var.applications)
     }
@@ -353,17 +354,36 @@ resource "aws_iam_role_policy_attachment" "api_gateway_logs_policy" {
 data "aws_caller_identity" "current" {}
 
 # API Gateway Account (enables CloudWatch logging for all stages)
-# Note: If this fails, the account likely already has a role configured
-# You can manually update it in AWS Console > API Gateway > Account
-# resource "aws_api_gateway_account" "main" {
-#   cloudwatch_role_arn = aws_iam_role.api_gateway_logs_role.arn
-# }
+resource "aws_api_gateway_account" "main" {
+  cloudwatch_role_arn = aws_iam_role.api_gateway_logs_role.arn
+}
 
 # API Gateway Stage
 resource "aws_api_gateway_stage" "prod" {
   deployment_id = aws_api_gateway_deployment.oauth_api.id
   rest_api_id   = aws_api_gateway_rest_api.oauth_api.id
   stage_name    = "prod"
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.api_gateway.arn
+    format = jsonencode({
+      requestId      = "$context.requestId"
+      ip             = "$context.identity.sourceIp"
+      requestTime    = "$context.requestTime"
+      httpMethod     = "$context.httpMethod"
+      resourcePath   = "$context.resourcePath"
+      status         = "$context.status"
+      protocol       = "$context.protocol"
+      responseLength = "$context.responseLength"
+      integrationLatency = "$context.integration.latency"
+      integrationStatus = "$context.integrationStatus"
+      integrationErrorMessage = "$context.integrationErrorMessage"
+      error          = "$context.error.message"
+      errorType      = "$context.error.messageString"
+    })
+  }
+
+  depends_on = [aws_api_gateway_account.main]
 
   tags = {
     Name    = "${var.project_name}-prod"
@@ -397,19 +417,6 @@ resource "aws_cloudwatch_log_group" "api_gateway" {
 #     Project = var.project_name
 #   }
 # }
-
-# Data source for existing domain
-data "aws_api_gateway_domain_name" "oauth" {
-  domain_name = "oauth.${var.custom_domain}"
-}
-
-# Base path mapping for API Gateway
-resource "aws_api_gateway_base_path_mapping" "oauth" {
-  api_id            = aws_api_gateway_rest_api.oauth_api.id
-  domain_name       = data.aws_api_gateway_domain_name.oauth.domain_name
-  stage_name        = aws_api_gateway_stage.prod.stage_name
-  base_path         = ""
-}
 
 # API Gateway API Key for usage plan
 resource "aws_api_gateway_api_key" "oauth_key" {

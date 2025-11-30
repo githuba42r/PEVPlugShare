@@ -139,11 +139,8 @@ def lambda_handler(event, context):
             'user_agent': user_agent
         })
 
-        # Build callback URL using request scheme and host
-        request_context_http = request_context.get('http', {})
-        protocol = request_context_http.get('protocol', 'HTTP/1.1')
-        scheme = 'https' if 'https' in protocol.lower() else 'http'
-        callback_url = f"{scheme}://{request_host}/oauth/callback/{session_id}"
+        # Build callback URL using the same domain the request came from
+        callback_url = f"https://{request_host}/oauth/callback/{session_id}"
 
         # Return response
         return success_response(200, {
