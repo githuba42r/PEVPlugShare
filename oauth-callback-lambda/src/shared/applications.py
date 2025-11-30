@@ -45,6 +45,7 @@ def load_applications() -> Dict[str, Application]:
         Dict mapping domain -> Application
     """
     apps_json = os.environ.get('APPLICATIONS', '[]')
+    print(f"DEBUG load_applications: APPLICATIONS={apps_json[:100]}..." if len(apps_json) > 100 else f"DEBUG load_applications: APPLICATIONS={apps_json}")
 
     try:
         apps_data = json.loads(apps_json)
@@ -67,7 +68,8 @@ def load_applications() -> Dict[str, Application]:
         # Map each domain to this application
         for domain in app.allowed_domains:
             domain_map[domain] = app
-
+    
+    print(f"DEBUG load_applications: Loaded {len(domain_map)} domains")
     return domain_map
 
 
@@ -89,7 +91,14 @@ def get_application_by_domain(domain: str, domain_map: Optional[Dict[str, Applic
 
 
 # Load applications at module import (cached for Lambda container reuse)
-_APPLICATIONS = load_applications()
+try:
+    _APPLICATIONS = load_applications()
+    print(f"DEBUG: Module-level _APPLICATIONS loaded: {len(_APPLICATIONS)} domains")
+except Exception as e:
+    print(f"ERROR loading applications at module level: {e}")
+    import traceback
+    print(traceback.format_exc())
+    _APPLICATIONS = {}
 
 
 def get_application(domain: str) -> Optional[Application]:

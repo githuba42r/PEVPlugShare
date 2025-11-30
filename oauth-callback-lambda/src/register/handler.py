@@ -31,6 +31,10 @@ def lambda_handler(event, context):
     Registers a new OAuth session and returns callback URL
     """
     try:
+        # Debug: Log environment
+        import os
+        print(f"DEBUG: APPLICATIONS env var: {os.environ.get('APPLICATIONS', 'NOT SET')}")
+        
         # Parse request body
         body = json.loads(event.get('body', '{}'))
         provider = body.get('provider', '').lower()
@@ -48,10 +52,22 @@ def lambda_handler(event, context):
 
         # Extract request hostname
         headers = event.get('headers', {})
-        request_host = headers.get('Host') or headers.get('host', 'unknown')
+        request_host = headers.get('Host') or headers.get('host') or 'default-app'
+        print(f"DEBUG: request_host={request_host}, headers={headers}")
 
         # Lookup application by domain
         application = get_application(request_host)
+        print(f"DEBUG: get_application('{request_host}') returned: {application}")
+        
+        # For testing/development, allow unknown domains to use the first application
+        if not application and request_host == 'default-app':
+            # Use the first configured application as default
+            from shared.applications import _APPLICATIONS
+            if _APPLICATIONS:
+                # Get the first application from the domain map
+                application = next(iter(_APPLICATIONS.values())) if _APPLICATIONS else None
+                print(f"DEBUG: Using default application: {application}")
+        
         if not application:
             return error_response(
                 400,
@@ -137,7 +153,8 @@ def lambda_handler(event, context):
             'provider': provider
         })
 
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print(f"JSON decode error: {str(e)}")
         return error_response(
             400,
             'invalid_json',
@@ -145,7 +162,9 @@ def lambda_handler(event, context):
         )
 
     except Exception as e:
+        import traceback
         print(f"Error in register function: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
         return error_response(
             500,
             'internal_error',
