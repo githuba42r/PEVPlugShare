@@ -8,7 +8,7 @@ applications = [
   {
     app_id           = "pevplugshare"
     name             = "PEV PlugShare"
-    allowed_domains  = ["oauth.pevplugshare.a42r.com", "mp4eotwhri.execute-api.ap-southeast-2.amazonaws.com", "localhost:8000"]
+    allowed_domains  = ["oauth.pevplugshare.a42r.com", "jfaaj9qo11.execute-api.ap-southeast-2.amazonaws.com", "localhost:8000"]
     deep_link_scheme = "pevplugshare://oauth/callback"
     shared_secret = "CRxzBIleEQfuAW-8Y0hFgkHD4jCciDxxDQFd6LX2jrM"
   }
