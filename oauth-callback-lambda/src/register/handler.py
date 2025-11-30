@@ -50,9 +50,15 @@ def lambda_handler(event, context):
                 'Missing required fields: provider, deep_link_url, timestamp, signature'
             )
 
-        # Extract request hostname
+        # Extract request hostname (prefer X-Forwarded-Host for custom domains through proxies)
         headers = event.get('headers', {})
-        request_host = headers.get('Host') or headers.get('host') or 'default-app'
+        request_host = (
+            headers.get('X-Forwarded-Host') or 
+            headers.get('x-forwarded-host') or
+            headers.get('Host') or 
+            headers.get('host') or 
+            'default-app'
+        )
         print(f"DEBUG: request_host={request_host}, headers={headers}")
 
         # Lookup application by domain
@@ -140,7 +146,8 @@ def lambda_handler(event, context):
         })
 
         # Build callback URL using the same domain the request came from
-        callback_url = f"https://{request_host}/oauth/callback/{session_id}"
+        # Include the stage name (prod) in the callback URL
+        callback_url = f"https://{request_host}/prod/oauth/callback/{session_id}"
 
         # Return response
         return success_response(200, {
