@@ -101,6 +101,14 @@ class EditLocationViewModel @Inject constructor(
                         Log.d(TAG, "  Additional info from DB: '${location.additionalInfo}'")
 
                         originalLocation = location
+                        // Validate and normalize socket count - if missing or invalid, set to 1
+                        val normalizedGpoCount = when {
+                            location.gpoCount < 1 || location.gpoCount > 11 -> {
+                                Log.w(TAG, "Invalid GPO count ${location.gpoCount} loaded from DB, normalizing to 1")
+                                1
+                            }
+                            else -> location.gpoCount
+                        }
                         val initialFormData = EditLocationFormData(
                             name = location.name,
                             socketTypes = location.socketTypes.firstOrNull()?.name ?: "AS3112",
@@ -114,7 +122,7 @@ class EditLocationViewModel @Inject constructor(
                             additionalInfo = location.additionalInfo ?: "",
                             latitude = location.latitude,
                             longitude = location.longitude,
-                            gpoCount = location.gpoCount,
+                            gpoCount = normalizedGpoCount,
                             isFavorite = location.isFavourite,
                             businessName = location.businessName ?: "",
                             streetAddress = location.streetAddress ?: "",
@@ -124,7 +132,9 @@ class EditLocationViewModel @Inject constructor(
                             photoPaths = location.imagePaths
                         )
                         _formData.value = initialFormData
-                        _editState.value = EditLocationState.Loaded(location)
+                        // Update originalLocation to use normalized GPO count to prevent false change detection
+                        originalLocation = location.copy(gpoCount = normalizedGpoCount)
+                        _editState.value = EditLocationState.Loaded(location.copy(gpoCount = normalizedGpoCount))
 
                         // Check if address fields are empty and perform reverse geocoding if needed
                         val hasAddressData = location.businessName?.isNotBlank() == true ||
