@@ -55,7 +55,8 @@ def verify_signature(
     """
     # Check timestamp freshness
     current_time = int(time.time())
-    time_diff = abs(current_time - timestamp)
+    timestamp_int = int(timestamp) if isinstance(timestamp, str) else timestamp
+    time_diff = abs(current_time - timestamp_int)
 
     if time_diff > max_age_seconds:
         return False, f"Timestamp too old or in future (diff: {time_diff}s)"
