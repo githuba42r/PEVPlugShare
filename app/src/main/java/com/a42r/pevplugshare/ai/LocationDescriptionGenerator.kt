@@ -111,14 +111,20 @@ Return ONLY the formatted description, no additional commentary."""
             try {
                 val apiKey = tokenManager.getOpenRouterApiKey()
                 if (apiKey.isNullOrEmpty()) {
-                    Log.e(TAG, "No OpenRouter API key configured")
-                    return@withContext Result.failure(Exception("No OpenRouter API key configured. Please add an API key in Settings."))
+                    Log.w(TAG, "No OpenRouter API key configured, falling back to programmatic generation")
+                    return@withContext Result.success(generateProgrammaticDescription(
+                        locationName, accessType, hasFee, chargingPoints, socketTypes,
+                        openingHours, capacity, additionalInfo, description
+                    ))
                 }
 
                 val modelId = tokenManager.getSelectedAiModel()
                 if (modelId.isNullOrEmpty()) {
-                    Log.e(TAG, "No AI model selected")
-                    return@withContext Result.failure(Exception("No AI model selected. Please select a model in Settings."))
+                    Log.w(TAG, "No AI model selected, falling back to programmatic generation")
+                    return@withContext Result.success(generateProgrammaticDescription(
+                        locationName, accessType, hasFee, chargingPoints, socketTypes,
+                        openingHours, capacity, additionalInfo, description
+                    ))
                 }
 
                 Log.d(TAG, "Using model: $modelId")
@@ -170,24 +176,22 @@ Return ONLY the formatted description, no additional commentary."""
 
                 if (!response.isSuccessful) {
                     val errorBody = response.body?.string()
-                    Log.e(TAG, "API request failed: ${response.code} - $errorBody")
-                    val errorMessage = when (response.code) {
-                        401 -> "Invalid API key. Please check your OpenRouter API key in Settings."
-                        404 -> {
-                            if (errorBody?.contains("data policy") == true || errorBody?.contains("Free model") == true) {
-                                "Free model access not enabled. Please enable 'Allow free model publication' at https://openrouter.ai/settings/privacy"
-                            } else {
-                                "Model not found. The selected model may no longer be available. Please select a different model in Settings."
-                            }
-                        }
-                        429 -> "Rate limit exceeded. Please try again later."
-                        else -> "API request failed with code ${response.code}"
-                    }
-                    return@withContext Result.failure(Exception(errorMessage))
+                    Log.w(TAG, "AI API request failed: ${response.code} - $errorBody")
+                    Log.w(TAG, "Falling back to programmatic description generation")
+                    return@withContext Result.success(generateProgrammaticDescription(
+                        locationName, accessType, hasFee, chargingPoints, socketTypes,
+                        openingHours, capacity, additionalInfo, description
+                    ))
                 }
 
                 val responseBody = response.body?.string()
-                    ?: return@withContext Result.failure(Exception("Empty response"))
+                    ?: run {
+                        Log.w(TAG, "Empty API response, falling back to programmatic description generation")
+                        return@withContext Result.success(generateProgrammaticDescription(
+                            locationName, accessType, hasFee, chargingPoints, socketTypes,
+                            openingHours, capacity, additionalInfo, description
+                        ))
+                    }
 
                 Log.d(TAG, "")
                 Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
@@ -209,8 +213,11 @@ Return ONLY the formatted description, no additional commentary."""
 
                 Result.success(generatedDescription)
             } catch (e: Exception) {
-                Log.e(TAG, "Error generating description with AI", e)
-                Result.failure(e)
+                Log.w(TAG, "Error generating description with AI: ${e.message}, falling back to programmatic generation", e)
+                return@withContext Result.success(generateProgrammaticDescription(
+                    locationName, accessType, hasFee, chargingPoints, socketTypes,
+                    openingHours, capacity, additionalInfo, description
+                ))
             }
         }
     }
@@ -326,5 +333,69 @@ Return ONLY the formatted description, no additional commentary."""
         Log.d(TAG, "")
 
         return content
+    }
+
+    private fun generateProgrammaticDescription(
+        locationName: String,
+        accessType: LocationAccessType,
+        hasFee: Boolean,
+        chargingPoints: Int,
+        socketTypes: List<String>,
+        openingHours: String?,
+        capacity: String?,
+        additionalInfo: String?,
+        description: String?
+    ): String {
+        Log.d(TAG, "")
+        Log.d(TAG, "╔════════════════════════════════════════════════════════════════════════════════╗")
+        Log.d(TAG, "║                GENERATING PROGRAMMATIC DESCRIPTION (AI Fallback)             ║")
+        Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+
+        val accessStr = when (accessType) {
+            LocationAccessType.PUBLIC -> "allowed"
+            LocationAccessType.PRIVATE -> "restricted"
+        }
+
+        val costStr = if (hasFee) "Paid" else "Free"
+
+        val socketsStr = when {
+            chargingPoints == 0 || socketTypes.isEmpty() -> "at least 1 charging point is available"
+            chargingPoints == 1 -> "1 ${socketTypes.joinToString(", ")}"
+            else -> "$chargingPoints ${socketTypes.joinToString(", ")}"
+        }
+
+        val hoursStr = openingHours?.takeIf { it.isNotBlank() } ?: "24x7"
+        val capacityStr = capacity?.takeIf { it.isNotBlank() } ?: "Standard capacity"
+
+        val briefDescription = description?.takeIf { it.isNotBlank() }
+            ?: "PEV charging location at $locationName."
+
+        val additionalInfoStr = additionalInfo?.takeIf { it.isNotBlank() }
+            ?.let { "* Additional Information: $it" }
+            ?: ""
+
+        val descriptionBuilder = StringBuilder()
+        descriptionBuilder.append(briefDescription)
+        descriptionBuilder.append("\n\nDetails:\n")
+        descriptionBuilder.append("* Public Access: $accessStr\n")
+        descriptionBuilder.append("* Sockets: $socketsStr\n")
+        descriptionBuilder.append("* Available: $hoursStr\n")
+        descriptionBuilder.append("* Cost: $costStr\n")
+
+        if (additionalInfoStr.isNotEmpty()) {
+            descriptionBuilder.append("$additionalInfoStr\n")
+        }
+
+        descriptionBuilder.append("* Type: PEV Charging Location")
+
+        val result = descriptionBuilder.toString()
+
+        Log.d(TAG, "")
+        Log.d(TAG, "Programmatic Description Generated (length: ${result.length} characters):")
+        Log.d(TAG, result)
+        Log.d(TAG, "╚════════════════════════════════════════════════════════════════════════════════╝")
+        Log.d(TAG, "")
+
+        return result
     }
 }
