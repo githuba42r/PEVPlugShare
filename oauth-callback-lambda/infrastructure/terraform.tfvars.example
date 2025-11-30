@@ -1,11 +1,25 @@
 aws_region = "us-east-1"
 project_name = "oauth-callback"
 
-# REQUIRED: Set these values
-domain_name = "https://your-api-gateway-url.execute-api.us-east-1.amazonaws.com/prod"
-shared_secret = "CHANGE-ME-generate-with-python-secrets"
+# REQUIRED: Applications configuration (supports multiple apps with multiple domains)
+applications = [
+  {
+    app_id           = "pevplugshare"
+    name             = "PEV PlugShare"
+    allowed_domains  = ["pevplugshare.a42r.com", "localhost:8000"]
+    deep_link_scheme = "pevplugshare://oauth/callback"
+    shared_secret    = "CHANGE-ME-generate-with-python-secrets"
+  }
+  # Add more applications as needed:
+  # {
+  #   app_id           = "another-app"
+  #   name             = "Another App"
+  #   allowed_domains  = ["app.example.com", "www.app.example.com"]
+  #   deep_link_scheme = "anotherapp://oauth/callback"
+  #   shared_secret    = "generate-separate-secret-per-app"
+  # }
+]
 
 # Optional configurations
 session_ttl_minutes = 10
 oauth_providers = "openrouter,github,google"
-deep_link_scheme = "pevplugshare://oauth/callback"

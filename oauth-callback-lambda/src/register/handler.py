@@ -9,11 +9,9 @@ import boto3
 from datetime import datetime, timedelta
 
 # Import shared utilities
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
-from security import verify_signature
-from responses import success_response, error_response
-from applications import get_application
+from shared.security import verify_signature
+from shared.responses import success_response, error_response
+from shared.applications import get_application
 
 
 # Initialize DynamoDB

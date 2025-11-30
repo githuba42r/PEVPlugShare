@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">oauth.pevplugshare.a42r.com</domain>
+        <trust-anchors>
+            <!-- Trust system certs for OAuth endpoint (AWS ACM) -->
+            <certificates src="system" />
+        </trust-anchors>
+        <!-- Allow certificate pinning if needed in future -->
+        <!-- <pin-set expiration="2026-01-01"> -->
+        <!--     <pin digest="SHA-256">YOUR_PIN_HERE</pin> -->
+        <!-- </pin-set> -->
+    </domain-config>
+    
+    <!-- Allow system certificates for all other domains -->
+    <trust-anchors>
+        <certificates src="system" />
+    </trust-anchors>
+</network-security-config>
