@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okio.Buffer
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -42,7 +43,7 @@ class OAuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOauthBinding
     private val viewModel: OpenRouterOAuthViewModel by viewModels()
-    private val okHttpClient = OkHttpClient()
+    private val okHttpClient = createMonitoredOkHttpClient()
     private var modelDataMap = mutableMapOf<String, OpenRouterModel>()
     private var isFromFirstLaunch = false
     private var countdownTimer: android.os.CountDownTimer? = null
@@ -52,6 +53,11 @@ class OAuthActivity : AppCompatActivity() {
 
     companion object {
         private const val DEFAULT_MODEL = "google/gemini-2.0-flash-exp"
+        private const val TAG = "OAuthActivity"
+    }
+    
+    private fun createMonitoredOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder().build()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -173,6 +179,7 @@ class OAuthActivity : AppCompatActivity() {
         if (isAuthenticated) {
             binding.btnStartOauth.visibility = android.view.View.GONE
             binding.btnDisconnect.visibility = if (isFromFirstLaunch) android.view.View.GONE else android.view.View.VISIBLE
+            binding.accountInfoSection.visibility = android.view.View.GONE
             binding.modelSelectionSection.visibility = android.view.View.VISIBLE
             binding.tvDescription.text = "AI-powered features enabled:\n• Automatic location descriptions\n• Smart charging location summaries\n• Natural language location details"
 
@@ -185,9 +192,16 @@ class OAuthActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try {
                     val apiKey = tokenManager.getOpenRouterApiKey()
+                    android.util.Log.d("OAuthActivity", "Retrieved API Key: ${apiKey?.take(20)}... (length: ${apiKey?.length})")
+                    
                     if (!apiKey.isNullOrEmpty()) {
+                        android.util.Log.d("OAuthActivity", "API Key is valid, fetching models")
                         val models = fetchAvailableModels(apiKey)
                         models.forEach { modelDataMap[it.id] = it }
+                        // Account info section disabled - OAuth PKCE flow keys don't have access to /key and /credit routes
+                        // fetchAndDisplayAccountInfo(apiKey)
+                    } else {
+                        android.util.Log.e("OAuthActivity", "API Key is null or empty!")
                     }
                 } catch (e: Exception) {
                     android.util.Log.e("OAuthActivity", "Failed to fetch models for display", e)
@@ -197,6 +211,7 @@ class OAuthActivity : AppCompatActivity() {
         } else {
             binding.btnStartOauth.visibility = android.view.View.VISIBLE
             binding.btnDisconnect.visibility = android.view.View.GONE
+            binding.accountInfoSection.visibility = android.view.View.GONE
             binding.modelSelectionSection.visibility = android.view.View.GONE
             binding.tvDescription.text = "AI-powered features:\n• Automatic location descriptions\n• Smart charging location summaries\n• Natural language location details"
         }
@@ -431,7 +446,7 @@ class OAuthActivity : AppCompatActivity() {
                 val modelJson = dataArray.getJSONObject(i)
                 val modelId = modelJson.getString("id")
                 val contextLength = modelJson.optInt("context_length", -1).takeIf { it != -1 }
-                val description = modelJson.optString("description", null)
+                val description = modelJson.optString("description", "").takeIf { it.isNotEmpty() }
 
                 var pricing: ModelPricing? = null
                 if (modelJson.has("pricing")) {
@@ -523,6 +538,321 @@ class OAuthActivity : AppCompatActivity() {
             AiModel("mistralai/mistral-medium", "Mistral Medium", "Mistral", "$2.7-8.1/M tokens", "32K tokens", "Balanced performance"),
             AiModel("cohere/command-r-plus", "Command R+", "Cohere", "$3-15/M tokens", "128K tokens", "Advanced RAG capabilities")
         )
+    }
+
+    private suspend fun fetchAccountBalance(apiKey: String): Double? {
+        return withContext(Dispatchers.IO) {
+            // ONLY use the correct endpoint for balance
+            val endpoint = "https://openrouter.ai/api/v1/credits"
+            
+            try {
+                android.util.Log.d(TAG, "=== BALANCE FETCH START ===")
+                android.util.Log.d(TAG, "Fetching account balance from: $endpoint")
+                android.util.Log.d(TAG, "API Key received: ${apiKey.take(20)}... (length: ${apiKey.length})")
+                
+                if (apiKey.isEmpty()) {
+                    android.util.Log.e(TAG, "API KEY IS EMPTY!")
+                    return@withContext null
+                }
+                
+                val request = Request.Builder()
+                    .url(endpoint)
+                    .header("Authorization", "Bearer $apiKey")
+                    .header("Accept", "application/json")
+                    .build()
+                
+                android.util.Log.d(TAG, "=== REQUEST DETAILS ===")
+                android.util.Log.d(TAG, "URL: $endpoint")
+                android.util.Log.d(TAG, "Authorization: Bearer $apiKey")
+                android.util.Log.d(TAG, "Accept: application/json")
+                android.util.Log.d(TAG, "All Headers: ${request.headers}")
+
+                val response = okHttpClient.newCall(request).execute()
+                android.util.Log.d(TAG, "=== RESPONSE ===")
+                android.util.Log.d(TAG, "Response code from $endpoint: ${response.code}")
+
+                if (!response.isSuccessful) {
+                    val errorBody = response.body?.string()
+                    android.util.Log.e(TAG, "Failed to fetch balance: HTTP ${response.code}")
+                    android.util.Log.e(TAG, "Error body (first 500 chars): ${errorBody?.take(500)}")
+                    return@withContext null
+                }
+
+                val jsonResponse = response.body?.string()
+                if (jsonResponse == null) {
+                    android.util.Log.d(TAG, "Empty response body from $endpoint")
+                    return@withContext null
+                }
+                android.util.Log.d(TAG, "Balance response: $jsonResponse")
+                
+                val json = JSONObject(jsonResponse)
+                android.util.Log.d(TAG, "JSON object created, keys: ${json.keys().asSequence().joinToString(",")}")
+                
+                // Check if balance is in "data" object
+                var balance = -1.0
+                
+                if (json.has("data")) {
+                    val dataObj = json.getJSONObject("data")
+                    android.util.Log.d(TAG, "Found 'data' object, keys: ${dataObj.keys().asSequence().joinToString(",")}")
+                    
+                    balance = dataObj.optDouble("total_credits", -1.0)
+                    android.util.Log.d(TAG, "Tried 'data.total_credits' field: $balance")
+                    
+                    if (balance < 0) {
+                        balance = dataObj.optDouble("balance", -1.0)
+                        android.util.Log.d(TAG, "Tried 'data.balance' field: $balance")
+                    }
+                    if (balance < 0) {
+                        balance = dataObj.optDouble("credits", -1.0)
+                        android.util.Log.d(TAG, "Tried 'data.credits' field: $balance")
+                    }
+                }
+                
+                // Try direct fields if not found in data object
+                if (balance < 0) {
+                    balance = json.optDouble("total_credits", -1.0)
+                    android.util.Log.d(TAG, "Tried direct 'total_credits' field: $balance")
+                }
+                if (balance < 0) {
+                    balance = json.optDouble("balance", -1.0)
+                    android.util.Log.d(TAG, "Tried direct 'balance' field: $balance")
+                }
+                if (balance < 0) {
+                    balance = json.optDouble("credits", -1.0)
+                    android.util.Log.d(TAG, "Tried direct 'credits' field: $balance")
+                }
+                
+                if (balance >= 0) {
+                    android.util.Log.d(TAG, "✅ SUCCESS: Found balance: $balance from $endpoint")
+                    return@withContext balance
+                } else {
+                    android.util.Log.e(TAG, "❌ Could not find balance field in response")
+                    return@withContext null
+                }
+                
+            } catch (e: Exception) {
+                android.util.Log.e(TAG, "Error fetching balance from $endpoint: ${e.message}", e)
+                return@withContext null
+            }
+        }
+    }
+
+    private suspend fun fetchKeyInfo(apiKey: String): Pair<String?, String?>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                android.util.Log.d("OAuthActivity", "=== KEY INFO FETCH START ===")
+                android.util.Log.d("OAuthActivity", "Fetching key info from /api/v1/key")
+                android.util.Log.d("OAuthActivity", "Full API Key: $apiKey")
+                
+                val request = Request.Builder()
+                    .url("https://openrouter.ai/api/v1/key")
+                    .header("Authorization", "Bearer $apiKey")
+                    .header("Accept", "application/json")
+                    .build()
+                
+                android.util.Log.d("OAuthActivity", "=== REQUEST DETAILS ===")
+                android.util.Log.d("OAuthActivity", "URL: https://openrouter.ai/api/v1/key")
+                android.util.Log.d("OAuthActivity", "Authorization: Bearer $apiKey")
+                android.util.Log.d("OAuthActivity", "Accept: application/json")
+                android.util.Log.d("OAuthActivity", "All Headers: ${request.headers}")
+
+                val response = okHttpClient.newCall(request).execute()
+                android.util.Log.d("OAuthActivity", "=== RESPONSE ===")
+                android.util.Log.d("OAuthActivity", "Key info response code: ${response.code}")
+
+                if (!response.isSuccessful) {
+                    android.util.Log.e("OAuthActivity", "Failed to fetch key info: HTTP ${response.code}")
+                    val errorBody = response.body?.string()
+                    android.util.Log.e("OAuthActivity", "Error response body (first 500 chars): ${errorBody?.take(500)}")
+                    return@withContext null
+                }
+
+                val jsonResponse = response.body?.string() ?: run {
+                    android.util.Log.d("OAuthActivity", "Empty response body from /api/v1/key")
+                    return@withContext null
+                }
+                
+                android.util.Log.d("OAuthActivity", "Key info raw response: $jsonResponse")
+                
+                val json = JSONObject(jsonResponse)
+                
+                // Try to get data as object (from /api/v1/key endpoint)
+                var creditLimitStr: String? = null
+                var expiresAtStr: String = ""
+                
+                // Check if response has "data" object
+                if (json.has("data")) {
+                    android.util.Log.d("OAuthActivity", "Found 'data' object in response")
+                    val keyData = json.getJSONObject("data")
+                    android.util.Log.d("OAuthActivity", "Key data object: $keyData")
+                    android.util.Log.d("OAuthActivity", "Key object keys: ${keyData.keys().asSequence().joinToString(",")}")
+                    
+                    // Try multiple field names for credit limit
+                    var creditLimit = keyData.optDouble("limit", -1.0)
+                    android.util.Log.d("OAuthActivity", "Tried 'limit': $creditLimit")
+                    
+                    // Note: limit can be null (no limit set), so handle that
+                    if (creditLimit < 0) {
+                        // If limit is not a number or is negative, check if it's null
+                        if (keyData.isNull("limit")) {
+                            android.util.Log.d("OAuthActivity", "Limit is null (no limit set)")
+                            creditLimit = -2.0 // Different from -1 to indicate null
+                        }
+                    }
+                    
+                    if (creditLimit < 0 && creditLimit != -2.0) {
+                        creditLimit = keyData.optDouble("budget", -1.0)
+                        android.util.Log.d("OAuthActivity", "Tried 'budget': $creditLimit")
+                    }
+                    if (creditLimit < 0 && creditLimit != -2.0) {
+                        creditLimit = keyData.optDouble("credit_limit", -1.0)
+                        android.util.Log.d("OAuthActivity", "Tried 'credit_limit': $creditLimit")
+                    }
+                    if (creditLimit < 0 && creditLimit != -2.0) {
+                        creditLimit = keyData.optDouble("max_limit", -1.0)
+                        android.util.Log.d("OAuthActivity", "Tried 'max_limit': $creditLimit")
+                    }
+                    
+                    // Only show credit limit if it's actually set (not null and > 0)
+                    if (creditLimit > 0 && creditLimit != Double.POSITIVE_INFINITY) {
+                        creditLimitStr = String.format("$%.2f", creditLimit)
+                        android.util.Log.d("OAuthActivity", "Found credit limit: $creditLimitStr")
+                    } else if (creditLimit == -2.0) {
+                        android.util.Log.d("OAuthActivity", "Credit limit is null (unlimited)")
+                    }
+                    
+                    // Try multiple field names for expiry
+                    expiresAtStr = keyData.optString("expires_at", "")
+                    android.util.Log.d("OAuthActivity", "Tried 'expires_at': '$expiresAtStr'")
+                    
+                    // Note: expires_at can be null (no expiry), so handle that
+                    if (expiresAtStr.isEmpty() && keyData.isNull("expires_at")) {
+                        android.util.Log.d("OAuthActivity", "Expiry date is null (no expiry)")
+                    }
+                    
+                    if (expiresAtStr.isEmpty()) {
+                        expiresAtStr = keyData.optString("expiry", "")
+                        android.util.Log.d("OAuthActivity", "Tried 'expiry': '$expiresAtStr'")
+                    }
+                    if (expiresAtStr.isEmpty()) {
+                        expiresAtStr = keyData.optString("expiration_date", "")
+                        android.util.Log.d("OAuthActivity", "Tried 'expiration_date': '$expiresAtStr'")
+                    }
+                    if (expiresAtStr.isEmpty()) {
+                        expiresAtStr = keyData.optString("expires", "")
+                        android.util.Log.d("OAuthActivity", "Tried 'expires': '$expiresAtStr'")
+                    }
+                    
+                    if (expiresAtStr.isNotEmpty()) {
+                        android.util.Log.d("OAuthActivity", "Found expiry date: $expiresAtStr")
+                    }
+                } else {
+                    // Fallback: check if response is the key object directly
+                    android.util.Log.d("OAuthActivity", "No 'data' object found, checking for direct fields")
+                    android.util.Log.d("OAuthActivity", "Response keys: ${json.keys().asSequence().joinToString(",")}")
+                    
+                    var creditLimit = json.optDouble("limit", -1.0)
+                    if (creditLimit < 0) creditLimit = json.optDouble("budget", -1.0)
+                    if (creditLimit < 0) creditLimit = json.optDouble("credit_limit", -1.0)
+                    
+                    if (creditLimit > 0 && creditLimit != Double.POSITIVE_INFINITY) {
+                        creditLimitStr = String.format("$%.2f", creditLimit)
+                    }
+                    
+                    expiresAtStr = json.optString("expires_at", "")
+                    if (expiresAtStr.isEmpty()) expiresAtStr = json.optString("expiry", "")
+                    if (expiresAtStr.isEmpty()) expiresAtStr = json.optString("expiration_date", "")
+                }
+                
+                android.util.Log.d("OAuthActivity", "Returning key info - limit: $creditLimitStr, expiry: $expiresAtStr")
+                return@withContext if (creditLimitStr != null || expiresAtStr.isNotEmpty()) {
+                    Pair(creditLimitStr, expiresAtStr.takeIf { it.isNotEmpty() })
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("OAuthActivity", "Error fetching key info", e)
+                return@withContext null
+            }
+        }
+    }
+
+    private suspend fun fetchAndDisplayAccountInfo(apiKey: String) {
+        try {
+            android.util.Log.d(TAG, "Starting fetchAndDisplayAccountInfo")
+            android.util.Log.d(TAG, "API Key (first 20 chars): ${apiKey.take(20)}...")
+            android.util.Log.d(TAG, "API Key length: ${apiKey.length}")
+            
+            // Fetch balance
+            android.util.Log.d(TAG, "Fetching account balance...")
+            val balance = fetchAccountBalance(apiKey)
+            val balanceText = if (balance != null) {
+                String.format("$%.2f", balance)
+            } else {
+                "Unable to load"
+            }
+            android.util.Log.d(TAG, "Balance result: $balanceText")
+            
+            // Fetch key info (credit limit and expiry)
+            android.util.Log.d("OAuthActivity", "Fetching key info...")
+            val keyInfo = fetchKeyInfo(apiKey)
+            val creditLimitText = keyInfo?.first ?: "N/A"
+            val expiryText = if (keyInfo?.second?.isNotEmpty() == true) {
+                formatExpiryDate(keyInfo.second!!)
+            } else {
+                "N/A"
+            }
+            android.util.Log.d("OAuthActivity", "Key info result - limit: $creditLimitText, expiry: $expiryText")
+            
+            // Update UI on main thread
+            runOnUiThread {
+                android.util.Log.d("OAuthActivity", "Updating UI with account info")
+                binding.tvAccountBalance.text = balanceText
+                
+                // Only show credit limit row if it's not N/A
+                if (creditLimitText == "N/A") {
+                    binding.creditLimitRow.visibility = android.view.View.GONE
+                    android.util.Log.d("OAuthActivity", "Hiding credit limit row")
+                } else {
+                    binding.creditLimitRow.visibility = android.view.View.VISIBLE
+                    binding.tvCreditLimit.text = creditLimitText
+                    android.util.Log.d("OAuthActivity", "Showing credit limit: $creditLimitText")
+                }
+                
+                // Only show expiry row if it's not N/A
+                if (expiryText == "N/A") {
+                    binding.keyExpiryRow.visibility = android.view.View.GONE
+                    android.util.Log.d("OAuthActivity", "Hiding key expiry row")
+                } else {
+                    binding.keyExpiryRow.visibility = android.view.View.VISIBLE
+                    binding.tvKeyExpiry.text = expiryText
+                    android.util.Log.d("OAuthActivity", "Showing key expiry: $expiryText")
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("OAuthActivity", "Error fetching and displaying account info", e)
+            runOnUiThread {
+                binding.tvAccountBalance.text = "Error loading"
+                binding.tvCreditLimit.text = "Error loading"
+                binding.tvKeyExpiry.text = "Error loading"
+            }
+        }
+    }
+
+    private fun formatExpiryDate(isoDate: String): String {
+        return try {
+            val sdf = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US)
+            val date = sdf.parse(isoDate)
+            if (date != null) {
+                val outputSdf = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.US)
+                outputSdf.format(date)
+            } else {
+                isoDate
+            }
+        } catch (e: Exception) {
+            android.util.Log.d("OAuthActivity", "Failed to parse expiry date: $isoDate", e)
+            isoDate
+        }
     }
 
     private fun handleDeepLink(intent: Intent?) {
