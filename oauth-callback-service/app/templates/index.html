@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Application Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>OAuth Application Manager</h1>
+            <p class="subtitle">Manage OAuth2 callback applications and secrets</p>
+        </header>
+
+        <div class="actions">
+            <button id="addAppBtn" class="btn btn-primary">+ Add New Application</button>
+            <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+        </div>
+
+        <div id="appList" class="app-list">
+            <div class="loading">Loading applications...</div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Application Modal -->
+    <div id="appModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Application</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="appForm">
+                <div class="form-group">
+                    <label for="appId">App ID *</label>
+                    <input type="text" id="appId" name="app_id" required 
+                           pattern="[a-z0-9_-]+" 
+                           title="Lowercase letters, numbers, hyphens and underscores only">
+                    <small>Unique identifier (e.g., myapp, my-app-name)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="appName">App Name *</label>
+                    <input type="text" id="appName" name="name" required>
+                    <small>Display name for the application</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="allowedDomains">Allowed Domains *</label>
+                    <textarea id="allowedDomains" name="allowed_domains" required rows="3"></textarea>
+                    <small>Comma-separated list (e.g., myapp.com,localhost:8000)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="deepLinkScheme">Deep Link Scheme *</label>
+                    <input type="text" id="deepLinkScheme" name="deep_link_scheme" required>
+                    <small>Format: scheme://path (e.g., myapp://oauth/callback)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="sharedSecret">Shared Secret</label>
+                    <div class="input-with-button">
+                        <input type="text" id="sharedSecret" name="shared_secret" readonly>
+                        <button type="button" id="generateSecretBtn" class="btn btn-secondary">Generate</button>
+                    </div>
+                    <small>Auto-generated if left empty. Click to copy.</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Secret Modal -->
+    <div id="secretModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Shared Secret</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="secret-display">
+                <p><strong>App:</strong> <span id="secretAppName"></span></p>
+                <div class="secret-value">
+                    <code id="secretValue"></code>
+                    <button id="copySecretBtn" class="btn btn-secondary">Copy</button>
+                </div>
+                <div class="warning">
+                    <strong>⚠️ Warning:</strong> Keep this secret secure. Anyone with this secret can authenticate as this application.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

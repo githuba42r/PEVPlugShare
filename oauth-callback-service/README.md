@@ -13,6 +13,8 @@ A generic OAuth 2.0 callback handler service for mobile applications. Solves the
 - 🎨 **Beautiful Error Pages**: User-friendly HTML responses
 - 📖 **Interactive API Docs**: Swagger UI and ReDoc included
 - 🌐 **CORS Support**: Configurable allowed origins
+- 🖥️ **Web Management UI**: Browser-based application management interface
+- 🔐 **Authelia Integration**: Secure web UI access with single sign-on
 
 ## Quick Start
 
@@ -77,7 +79,28 @@ Open your browser and check:
 
 **1. Build the Docker image**:
 ```bash
+# Build locally
+./build.sh
+
+# Force rebuild without cache
+./build.sh --force
+
+# Or build and push to registry (requires authentication)
+./build.sh --push
+
+# Build with version tag
+./build.sh --push v1.1.0
+
+# Force rebuild and push (e.g., after dependency updates)
+./build.sh --force --push
+```
+
+**Alternative: Build with docker command directly**:
+```bash
 docker build -t oauth-callback-service .
+
+# Force rebuild without cache
+docker build --no-cache -t oauth-callback-service .
 ```
 
 **2. Run the container**:
@@ -528,7 +551,340 @@ override fun onNewIntent(intent: Intent?) {
 
 The service supports multiple applications through database configuration. Each application has its own allowed domains, deep link scheme, and shared secret.
 
+### Web Management UI
+
+The service includes a **web-based management interface** for easy application configuration without requiring command-line or SQL knowledge.
+
+**Access the Web UI**:
+- Local: http://localhost:8001/
+- Production: https://oauth.yourdomain.com/admin/ (requires Authelia authentication)
+
+**Features**:
+- 📋 **List Applications**: View all configured OAuth applications
+- ➕ **Add Application**: Create new application configurations with auto-generated secrets
+- ✏️ **Edit Application**: Update domains, schemes, and settings
+- 🔄 **Toggle Status**: Enable/disable applications without deletion
+- 🔑 **Secret Management**: View and regenerate shared secrets
+- 🗑️ **Delete Application**: Remove applications (with confirmation)
+
+**Using the Web UI**:
+
+**1. List Applications**:
+- View all configured applications
+- See status badges (Active/Inactive)
+- Quick overview of allowed domains
+- Click "View Details" to see full configuration
+
+**2. Add New Application**:
+- Click "Add Application" button
+- Fill in required fields:
+  - **App ID**: Unique identifier (e.g., `myapp`, `mobile-client`)
+  - **Display Name**: Human-readable name (e.g., "My Application")
+  - **Allowed Domains**: Comma-separated list (e.g., `myapp.com,localhost:8000`)
+  - **Deep Link Scheme**: Your app's URL scheme (e.g., `myapp://oauth/callback`)
+- Secret is auto-generated (cryptographically secure)
+- Click "Add Application" to save
+
+**3. Edit Application**:
+- Click "Edit" on any application
+- Update domains, scheme, or name
+- Changes take effect immediately
+- Click "Update Application" to save
+
+**4. View/Copy Secrets**:
+- Secrets are hidden by default (shown as `••••••••`)
+- Click "View Secret" to reveal
+- Click "Copy" to copy to clipboard
+- **Important**: Store secrets securely, only visible in Web UI
+
+**5. Regenerate Secret**:
+- Click "Regenerate Secret" on any application
+- Generates new cryptographically secure secret
+- **Warning**: Old secret stops working immediately
+- Update your mobile app before regenerating!
+
+**6. Enable/Disable Application**:
+- Toggle "Active/Inactive" button
+- Disabled apps reject all OAuth requests
+- Useful for maintenance or security incidents
+- No data is deleted, easily re-enable later
+
+**7. Delete Application**:
+- Click "Delete" button
+- Confirmation dialog prevents accidents
+- **Permanent**: Cannot be undone
+- Active sessions continue until expiration
+
+**8. View Sessions** (if implemented):
+- See recent OAuth sessions
+- Filter by application
+- Monitor usage patterns
+- Identify potential issues
+
+The Web UI provides:
+- Clean, modern interface with responsive design
+- No database knowledge required
+- One-click secret generation and copying
+- Real-time status updates
+- Application statistics and session monitoring
+- Responsive design (works on mobile/tablet)
+
+**Note**: In production deployments with Traefik + Authelia, the Web UI is protected by authentication while the OAuth API endpoints remain publicly accessible.
+
+### Traefik + Authelia Integration
+
+The OAuth2 redirector service is designed to work seamlessly with **Traefik** reverse proxy and **Authelia** authentication middleware, providing a secure architecture where:
+
+- **OAuth API endpoints** remain publicly accessible (required for OAuth flows)
+- **Web Management UI** is protected by authentication
+
+#### Architecture Overview
+
+```
+Internet → Traefik Reverse Proxy → Routes split by path:
+                                  ├─ /health          → FastAPI (port 8000) - Public
+                                  ├─ /oauth/*         → FastAPI (port 8000) - Public  
+                                  ├─ /                → FastAPI (port 8000) - Public
+                                  └─ /admin/*         → Authelia → Flask (port 8001) - Protected
+```
+
+**Why This Design?**
+- OAuth callbacks MUST be publicly accessible (OAuth providers need to reach them)
+- Administrative functions should be protected with authentication
+- Single container runs both services on different ports
+- Traefik routes based on URL path and forwards to appropriate service
+
+#### Deployment with Docker Compose
+
+Use the provided `docker-compose.production.yml` for production deployments with Traefik:
+
+```bash
+# Deploy with Traefik labels
+docker-compose -f docker-compose.production.yml up -d
+```
+
+**Key Traefik labels configured**:
+
+```yaml
+# OAuth API - Public endpoints (port 8000)
+- traefik.http.routers.oauth-api.rule=Host(`oauth.yourdomain.com`) && (Path(`/health`) || PathPrefix(`/oauth`) || Path(`/`))
+- traefik.http.routers.oauth-api.priority=100
+- traefik.http.services.oauth-api-svc.loadbalancer.server.port=8000
+
+# Web UI - Protected by Authelia (port 8001)
+- traefik.http.routers.oauth-webui.rule=Host(`oauth.yourdomain.com`) && PathPrefix(`/admin`)
+- traefik.http.routers.oauth-webui.priority=110  # Higher priority to catch /admin before /
+- traefik.http.routers.oauth-webui.middlewares=authelia@docker,oauth-webui-stripprefix
+- traefik.http.middlewares.oauth-webui-stripprefix.stripprefix.prefixes=/admin
+- traefik.http.services.oauth-webui-svc.loadbalancer.server.port=8001
+```
+
+**How it works**:
+1. **Priority routing**: `/admin/*` routes have priority 110 (caught first)
+2. **Authentication**: `authelia@docker` middleware protects `/admin/*` routes
+3. **Path rewriting**: `stripprefix` removes `/admin` before forwarding to Flask (e.g., `/admin/` → `/`)
+4. **Port mapping**: Traefik forwards to port 8001 for Web UI, port 8000 for OAuth API
+
+#### Authelia Configuration
+
+Add this configuration to your Authelia `configuration.yml`:
+
+```yaml
+access_control:
+  default_policy: deny
+  rules:
+    # OAuth API - Public (bypass authentication)
+    - domain: oauth.yourdomain.com
+      policy: bypass
+      resources:
+        - "^/health$"           # Health check endpoint
+        - "^/oauth/.*$"         # All OAuth callback endpoints
+        - "^/$"                 # Root API info endpoint
+    
+    # Web Management UI - Require authentication
+    - domain: oauth.yourdomain.com
+      policy: one_factor       # or two_factor for higher security
+      resources:
+        - "^/admin.*$"          # All admin UI paths
+```
+
+**Security levels**:
+- `bypass` - No authentication required (OAuth API must be public)
+- `one_factor` - Username + password required (recommended for Web UI)
+- `two_factor` - Username + password + 2FA required (for high-security environments)
+
+**Important notes**:
+- OAuth endpoints MUST use `bypass` policy (OAuth providers need public access)
+- Regex patterns use `^` and `$` anchors for exact matching
+- Test carefully to ensure OAuth flow isn't blocked
+
+#### Verifying the Setup
+
+**Test public OAuth API** (should work without authentication):
+```bash
+# Health check
+curl https://oauth.yourdomain.com/health
+
+# Root endpoint
+curl https://oauth.yourdomain.com/
+
+# These should return JSON, not redirect to login
+```
+
+**Test protected Web UI** (should require Authelia login):
+```bash
+# Try accessing admin without auth
+curl https://oauth.yourdomain.com/admin/
+
+# Should either:
+# - Redirect to Authelia login page (302)
+# - Return 401/403 Unauthorized
+```
+
+**Test OAuth flow** (end-to-end test):
+1. Use your mobile app to initiate OAuth
+2. Verify the OAuth provider can reach the callback URL
+3. Confirm callback redirects properly to your app
+
+#### Troubleshooting
+
+**OAuth callbacks are being blocked**:
+```bash
+# Check Authelia logs
+docker logs authelia
+
+# Verify bypass rules are configured correctly
+# Ensure Traefik is forwarding to correct port (8000 for OAuth API)
+
+# Test direct access (bypass Traefik)
+docker exec oauth-callback-service curl http://localhost:8000/health
+```
+
+**Web UI accessible without authentication**:
+```bash
+# Check Traefik labels
+docker inspect oauth-callback-service | grep -A 5 "oauth-webui"
+
+# Verify authelia@docker middleware exists
+docker exec traefik cat /etc/traefik/traefik.yml
+
+# Check middleware is applied
+curl -I https://oauth.yourdomain.com/admin/
+# Should see: X-Forwarded-User header or redirect to Authelia
+```
+
+**404 errors on /admin paths**:
+```bash
+# Verify both services are running
+docker exec oauth-callback-service supervisorctl status
+# Should show: fastapi RUNNING, webui RUNNING
+
+# Check Web UI is listening
+docker exec oauth-callback-service curl http://localhost:8001/
+
+# Verify stripprefix middleware is working
+# Flask expects / but receives /admin/ - stripprefix removes /admin
+```
+
+**Port conflicts**:
+```bash
+# Verify both ports are exposed
+docker port oauth-callback-service
+# Should show: 8000/tcp -> ..., 8001/tcp -> ...
+
+# Check if ports are in use
+netstat -tlnp | grep -E '8000|8001'
+```
+
+#### Security Considerations
+
+**1. Never protect OAuth endpoints with authentication**:
+```yaml
+# ❌ WRONG - This will break OAuth flows
+- domain: oauth.yourdomain.com
+  policy: one_factor  # Don't do this!
+  resources:
+    - "^/oauth/.*$"
+
+# ✅ CORRECT - OAuth endpoints must be public
+- domain: oauth.yourdomain.com
+  policy: bypass
+  resources:
+    - "^/oauth/.*$"
+```
+
+**2. Always protect admin endpoints**:
+```yaml
+# ✅ CORRECT - Admin UI requires authentication
+- domain: oauth.yourdomain.com
+  policy: one_factor
+  resources:
+    - "^/admin.*$"
+```
+
+**3. Use HTTPS in production**:
+- Traefik should handle TLS termination
+- Configure Let's Encrypt for automatic certificates
+- Never expose OAuth service directly without HTTPS
+
+**4. Rate limiting**:
+- OAuth API has built-in rate limits (configurable)
+- Consider adding Traefik rate limiting for additional protection
+- Monitor logs for abuse patterns
+
+**5. Monitoring**:
+```bash
+# Watch for authentication failures
+docker logs authelia | grep "authentication"
+
+# Monitor OAuth API usage
+docker logs oauth-callback-service | grep "POST /oauth"
+
+# Check for suspicious activity
+docker logs oauth-callback-service | grep "429\|403\|401"
+```
+
+#### Alternative Deployment Without Authelia
+
+If you don't use Authelia, consider:
+
+**Option 1: Network isolation**
+```yaml
+# docker-compose.yml
+services:
+  oauth-callback:
+    networks:
+      - public    # OAuth API accessible
+      - internal  # Web UI only on internal network
+```
+
+**Option 2: Firewall rules**
+```bash
+# Allow OAuth API (port 8000) from internet
+iptables -A INPUT -p tcp --dport 8000 -j ACCEPT
+
+# Allow Web UI (port 8001) only from specific IPs
+iptables -A INPUT -p tcp --dport 8001 -s 192.168.1.0/24 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8001 -j DROP
+```
+
+**Option 3: VPN access for Web UI**
+- Expose port 8000 publicly for OAuth
+- Keep port 8001 on localhost only
+- Access Web UI via VPN or SSH tunnel
+
+```bash
+# SSH tunnel to access Web UI
+ssh -L 8001:localhost:8001 user@oauth-server
+
+# Then access locally at http://localhost:8001/
+```
+
 ### Database Management Methods
+
+Choose the method that works best for your workflow:
+
+**Method 1: Web UI** (Easiest - Recommended for most users)
 
 **Method 1: Python Script** (Recommended for Docker)
 

@@ -24,6 +24,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY app ./app
 
+# Copy logging configuration
+COPY logging_config.json ./logging_config.json
+
 # Copy database management script
 COPY manage_db.py ./manage_db.py
 
@@ -34,7 +37,8 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 COPY start-cloudflared.sh /app/start-cloudflared.sh
 COPY start-fastapi.sh /app/start-fastapi.sh
-RUN chmod +x /app/docker-entrypoint.sh /app/start-cloudflared.sh /app/start-fastapi.sh
+COPY start-webui.sh /app/start-webui.sh
+RUN chmod +x /app/docker-entrypoint.sh /app/start-cloudflared.sh /app/start-fastapi.sh /app/start-webui.sh
 
 # Create directories
 RUN mkdir -p /app/data /var/log/supervisor /root/.cloudflared
@@ -44,11 +48,11 @@ ENV PYTHONUNBUFFERED=1 \
     DATABASE_URL=sqlite:////app/data/oauth_sessions.db
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8000 8001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=2)" || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
 # Run the startup script which launches supervisord
 CMD ["/app/docker-entrypoint.sh"]

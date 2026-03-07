@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # Service settings
     host: str = "0.0.0.0"
     port: int = 8000
+    webui_port: int = 8001
 
     # Database
     database_url: str = "sqlite:///./oauth_sessions.db"
