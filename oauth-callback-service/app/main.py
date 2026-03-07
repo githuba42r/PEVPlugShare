@@ -133,11 +133,15 @@ app.add_middleware(
 
 
 @app.middleware("http")
-async def rate_limit_middleware(request: Request, call_next):
-    """Rate limiting middleware"""
+async def logging_and_rate_limit_middleware(request: Request, call_next):
+    """Combined logging filter and rate limiting middleware"""
+    # Skip logging for health check endpoint to avoid log spam
+    is_health_check = request.url.path == "/health"
+    
     # Skip rate limiting for health check and docs
     if request.url.path in ["/health", "/", "/docs", "/redoc", "/openapi.json"]:
-        return await call_next(request)
+        response = await call_next(request)
+        return response
 
     # Get client IP
     client_ip = request.client.host if request.client else "unknown"

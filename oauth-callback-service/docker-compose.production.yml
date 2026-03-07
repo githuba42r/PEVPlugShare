@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  oauth-callback:
+    image: ghcr.io/githuba42r/oauth2-redirector:latest
+    container_name: oauth-callback-service
+    environment:
+      # Override these in .env file or here
+      - HOST=0.0.0.0
+      - PORT=8000
+      - WEBUI_PORT=8001
+
+      # Cloudflare Tunnel (Optional)
+      - CLOUDFLARE_TUNNEL_ENABLED=${CLOUDFLARE_TUNNEL_ENABLED:-false}
+      - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
+
+      # Database and other settings
+      - DATABASE_URL=sqlite:////app/data/oauth_sessions.db
+      - SESSION_TTL_MINUTES=${SESSION_TTL_MINUTES:-10}
+      - CLEANUP_INTERVAL_MINUTES=${CLEANUP_INTERVAL_MINUTES:-5}
+      - SHARED_SECRET=${SHARED_SECRET}
+      - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-10}
+      - RATE_LIMIT_PER_HOUR=${RATE_LIMIT_PER_HOUR:-100}
+      - RATE_LIMIT_PER_DAY=${RATE_LIMIT_PER_DAY:-1000}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
+      - OAUTH_PROVIDERS=${OAUTH_PROVIDERS:-openrouter,github,google}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+      # Diagnostic endpoints (for testing/debugging)
+      - ENABLE_DIAGNOSTIC_ENDPOINTS=${ENABLE_DIAGNOSTIC_ENDPOINTS:-false}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+
+      # ==============================================
+      # OAuth API Routes (NO authentication required)
+      # ==============================================
+      
+      # Health endpoint - no auth
+      - traefik.http.routers.oauth-health.rule=Host(`oauth.a42r.com`) && Path(`/health`)
+      - traefik.http.routers.oauth-health.entrypoints=websecure
+      - traefik.http.routers.oauth-health.tls=true
+      - traefik.http.routers.oauth-health.tls.certresolver=letsencrypt
+      - traefik.http.routers.oauth-health.service=oauth-api-svc
+      - traefik.http.routers.oauth-health.priority=100
+      
+      # OAuth callback endpoints - no auth
+      - traefik.http.routers.oauth-callback.rule=Host(`oauth.a42r.com`) && PathPrefix(`/oauth`)
+      - traefik.http.routers.oauth-callback.entrypoints=websecure
+      - traefik.http.routers.oauth-callback.tls=true
+      - traefik.http.routers.oauth-callback.tls.certresolver=letsencrypt
+      - traefik.http.routers.oauth-callback.service=oauth-api-svc
+      - traefik.http.routers.oauth-callback.priority=90
+      
+      # Root endpoint - no auth
+      - traefik.http.routers.oauth-root.rule=Host(`oauth.a42r.com`) && Path(`/`)
+      - traefik.http.routers.oauth-root.entrypoints=websecure
+      - traefik.http.routers.oauth-root.tls=true
+      - traefik.http.routers.oauth-root.tls.certresolver=letsencrypt
+      - traefik.http.routers.oauth-root.service=oauth-api-svc
+      - traefik.http.routers.oauth-root.priority=80
+
+      # OAuth API service (port 8000)
+      - traefik.http.services.oauth-api-svc.loadbalancer.server.port=8000
+      - traefik.http.services.oauth-api-svc.loadbalancer.server.scheme=http
+
+      # ==============================================
+      # Web UI Routes (REQUIRES Authelia authentication)
+      # ==============================================
+      
+      # Web UI - requires Authelia auth
+      - traefik.http.routers.oauth-webui.rule=Host(`oauth.a42r.com`) && PathPrefix(`/admin`)
+      - traefik.http.routers.oauth-webui.entrypoints=websecure
+      - traefik.http.routers.oauth-webui.tls=true
+      - traefik.http.routers.oauth-webui.tls.certresolver=letsencrypt
+      - traefik.http.routers.oauth-webui.service=oauth-webui-svc
+      - traefik.http.routers.oauth-webui.middlewares=authelia@docker,oauth-webui-stripprefix
+      - traefik.http.routers.oauth-webui.priority=110
+      
+      # Strip /admin prefix before forwarding to web UI
+      - traefik.http.middlewares.oauth-webui-stripprefix.stripprefix.prefixes=/admin
+
+      # Web UI service (port 8001)
+      - traefik.http.services.oauth-webui-svc.loadbalancer.server.port=8001
+      - traefik.http.services.oauth-webui-svc.loadbalancer.server.scheme=http
+
+      # ==============================================
+      # HTTP to HTTPS redirect
+      # ==============================================
+      - traefik.http.routers.oauth-http.rule=Host(`oauth.a42r.com`)
+      - traefik.http.routers.oauth-http.entrypoints=web
+      - traefik.http.routers.oauth-http.middlewares=https-redirect@file
+
+    volumes:
+      # Persist database
+      - /storage/docker/oauth-redirect-service:/app/data
+    networks:
+      - traefik
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+networks:
+  traefik:
+    external: true

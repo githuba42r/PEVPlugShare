@@ -25,10 +25,17 @@ fi
 # Display configuration
 echo ""
 echo "📋 Configuration:"
-echo "  PORT: ${PORT:-8000}"
+echo "  OAuth API Port: ${PORT:-8000}"
+echo "  Web UI Port: ${WEBUI_PORT:-8001}"
 echo "  DOMAIN_NAME: ${DOMAIN_NAME:-https://localhost:8000}"
 echo "  SESSION_TTL: ${SESSION_TTL_MINUTES:-10} minutes"
 echo "  CLOUDFLARE_TUNNEL: ${CLOUDFLARE_TUNNEL_ENABLED:-false}"
+echo ""
+echo "🌐 Endpoints:"
+echo "  OAuth API: http://localhost:${PORT:-8000}/"
+echo "  Web Admin: http://localhost:${WEBUI_PORT:-8001}/"
+echo "  Health Check: http://localhost:${PORT:-8000}/health"
+echo "  API Docs: http://localhost:${PORT:-8000}/docs"
 echo ""
 
 # Start supervisord

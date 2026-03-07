@@ -6,12 +6,12 @@ services:
     container_name: oauth-callback-service
     ports:
       - "8000:8000"
+      - "8001:8001"
     environment:
       # Override these in .env file or here
       - HOST=0.0.0.0
       - PORT=8000
-      - DOMAIN_NAME=${DOMAIN_NAME:-https://localhost:8000}
-      - DEEP_LINK_SCHEME=${DEEP_LINK_SCHEME:-pevplugshare://oauth/callback}
+      - WEBUI_PORT=8001
 
       # Cloudflare Tunnel (Optional)
       - CLOUDFLARE_TUNNEL_ENABLED=${CLOUDFLARE_TUNNEL_ENABLED:-false}
@@ -21,7 +21,6 @@ services:
       - DATABASE_URL=sqlite:////app/data/oauth_sessions.db
       - SESSION_TTL_MINUTES=${SESSION_TTL_MINUTES:-10}
       - CLEANUP_INTERVAL_MINUTES=${CLEANUP_INTERVAL_MINUTES:-5}
-      - SHARED_SECRET=${SHARED_SECRET}
       - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-10}
       - RATE_LIMIT_PER_HOUR=${RATE_LIMIT_PER_HOUR:-100}
       - RATE_LIMIT_PER_DAY=${RATE_LIMIT_PER_DAY:-1000}
@@ -31,12 +30,19 @@ services:
 
       # Diagnostic endpoints (for testing/debugging)
       - ENABLE_DIAGNOSTIC_ENDPOINTS=${ENABLE_DIAGNOSTIC_ENDPOINTS:-false}
+      
+      # NOTE: Application configuration (domains, deep link schemes, secrets) 
+      # are now stored in the database, not environment variables.
+      # Use manage_db.py to configure applications:
+      #   docker exec oauth-callback-service python manage_db.py list
+      #   docker exec oauth-callback-service python manage_db.py update-domains <app_id> "domain1.com,domain2.com"
+      #   docker exec oauth-callback-service python manage_db.py update-secret <app_id>
     volumes:
       # Persist database
       - oauth-data:/app/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=2)"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 3s
       retries: 3
