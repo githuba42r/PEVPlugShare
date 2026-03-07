@@ -150,3 +150,4 @@ coverage/
 .terraform.lock.hcl
 terraform.tfvars
 !terraform.tfvars.example
+data/
