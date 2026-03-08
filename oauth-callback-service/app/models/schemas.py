@@ -31,6 +31,7 @@ class RegisterResponse(BaseModel):
     callback_url: str = Field(..., description="Full callback URL to use in OAuth flow")
     expires_in: int = Field(..., description="Session TTL in seconds")
     provider: str = Field(..., description="OAuth provider name")
+    app_name: str = Field(..., description="Application name for OAuth display")
 
     class Config:
         json_schema_extra = {
@@ -38,7 +39,8 @@ class RegisterResponse(BaseModel):
                 "session_id": "550e8400-e29b-41d4-a716-446655440000",
                 "callback_url": "https://your-domain.com/oauth/callback/550e8400-e29b-41d4-a716-446655440000",
                 "expires_in": 600,
-                "provider": "openrouter"
+                "provider": "openrouter",
+                "app_name": "PEV PlugShare"
             }
         }
 

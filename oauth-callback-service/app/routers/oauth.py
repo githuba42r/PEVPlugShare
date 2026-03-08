@@ -245,7 +245,8 @@ async def register_session(
         session_id=session_id,
         callback_url=callback_url,
         expires_in=settings.session_ttl_minutes * 60,
-        provider=provider_lower
+        provider=provider_lower,
+        app_name=matching_app.name
     )
 
 

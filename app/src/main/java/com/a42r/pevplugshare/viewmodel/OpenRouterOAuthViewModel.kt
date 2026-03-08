@@ -132,7 +132,8 @@ class OpenRouterOAuthViewModel @Inject constructor(
                 codeVerifier = savedVerifier,
                 codeChallenge = "", // Not needed for exchange
                 sessionId = "", // Not needed for exchange
-                callbackUrl = "" // Not needed for exchange
+                callbackUrl = "", // Not needed for exchange
+                appName = "" // Not needed for exchange
             )
         }
 
