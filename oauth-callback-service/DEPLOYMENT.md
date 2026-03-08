@@ -138,6 +138,19 @@ docker exec oauth-callback-service supervisorctl status
 
 ### Step 5: Configure Authelia
 
+**Important**: Ensure your Authelia container has the correct middleware definition. Check with:
+
+```bash
+docker inspect authelia --format '{{json .Config.Labels}}' | grep middleware
+```
+
+You should see: `traefik.http.middlewares.authelia-forwardauth.forwardauth.address`
+
+If your middleware has a different name, update the docker-compose.yml label:
+```yaml
+- traefik.http.routers.oauth-webui.middlewares=YOUR-MIDDLEWARE-NAME@docker
+```
+
 **Add to Authelia configuration (`configuration.yml`):**
 
 ```yaml
@@ -284,8 +297,378 @@ Location TBD - need to identify where OAuth configuration is stored in the app.
             [OAuth Callback Container]
             - supervisord manages both
             - SQLite database shared
-            - Logs to stdout/stderr
+             - Logs to stdout/stderr
 ```
+
+## Alternative Deployment: Nginx Reverse Proxy with Basic Auth
+
+If you're not using Traefik/Authelia, you can deploy with nginx as a reverse proxy and use HTTP Basic Authentication to protect the admin interface.
+
+### Architecture
+
+```
+Internet → nginx (443) → OAuth Service Container
+                           ├─ Port 8000: OAuth API (public)
+                           └─ Port 8001: Admin UI (protected by basic auth)
+```
+
+### Prerequisites
+
+- nginx installed on your server
+- certbot for Let's Encrypt SSL certificates
+- OAuth service running in Docker
+
+### Step 1: Deploy OAuth Service
+
+Create `docker-compose.yml` without Traefik labels:
+
+```yaml
+version: '3.8'
+
+services:
+  oauth-callback:
+    image: ghcr.io/githuba42r/oauth2-redirector:latest
+    container_name: oauth-callback-service
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - WEBUI_PORT=8001
+      - DATABASE_URL=sqlite:////app/data/oauth_sessions.db
+      - SESSION_TTL_MINUTES=10
+      - CLEANUP_INTERVAL_MINUTES=5
+      - LOG_LEVEL=INFO
+    volumes:
+      - /storage/docker/oauth-redirect-service:/app/data
+    ports:
+      # Expose only to localhost - nginx will proxy
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8001:8001"
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+```
+
+Deploy the service:
+
+```bash
+docker-compose up -d
+```
+
+### Step 2: Create Basic Auth Credentials
+
+```bash
+# Install apache2-utils for htpasswd
+sudo apt-get install apache2-utils
+
+# Create password file for admin user
+sudo htpasswd -c /etc/nginx/.htpasswd admin
+
+# Add additional users (without -c flag)
+sudo htpasswd /etc/nginx/.htpasswd john
+```
+
+### Step 3: Configure Nginx
+
+Create `/etc/nginx/sites-available/oauth.a42r.com`:
+
+```nginx
+# OAuth Callback Service - nginx Configuration
+# Public OAuth API + Protected Admin UI
+
+upstream oauth_api {
+    server 127.0.0.1:8000;
+    keepalive 32;
+}
+
+upstream oauth_admin {
+    server 127.0.0.1:8001;
+    keepalive 8;
+}
+
+# HTTP -> HTTPS redirect
+server {
+    listen 80;
+    listen [::]:80;
+    server_name oauth.a42r.com;
+
+    location / {
+        return 301 https://$server_name$request_uri;
+    }
+
+    # Let's Encrypt challenge
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+}
+
+# HTTPS server
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name oauth.a42r.com;
+
+    # SSL Configuration (managed by certbot)
+    ssl_certificate /etc/letsencrypt/live/oauth.a42r.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/oauth.a42r.com/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Modern SSL configuration
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
+    ssl_prefer_server_ciphers off;
+
+    # Security headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+
+    # Logging
+    access_log /var/log/nginx/oauth_access.log;
+    error_log /var/log/nginx/oauth_error.log;
+
+    # ====================================
+    # Admin UI - PROTECTED with Basic Auth
+    # ====================================
+    location /admin {
+        auth_basic "OAuth Admin Area";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+
+        proxy_pass http://oauth_admin;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+
+        # WebSocket support (if needed in future)
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        # Timeouts
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    # ====================================
+    # OAuth API - PUBLIC (no authentication)
+    # ====================================
+    location / {
+        proxy_pass http://oauth_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+
+        # Timeouts
+        proxy_connect_timeout 30s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+    }
+
+    location /oauth {
+        proxy_pass http://oauth_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+
+        # Timeouts
+        proxy_connect_timeout 30s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+    }
+
+    location /health {
+        proxy_pass http://oauth_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        
+        # No auth required for health checks
+        access_log off;
+    }
+}
+```
+
+### Step 4: Enable Site and Get SSL Certificate
+
+```bash
+# Enable the site
+sudo ln -s /etc/nginx/sites-available/oauth.a42r.com /etc/nginx/sites-enabled/
+
+# Test nginx configuration
+sudo nginx -t
+
+# Get SSL certificate with certbot
+sudo certbot --nginx -d oauth.a42r.com
+
+# Certbot will automatically:
+# - Obtain certificate from Let's Encrypt
+# - Update nginx config with SSL paths
+# - Set up auto-renewal
+
+# Reload nginx
+sudo systemctl reload nginx
+```
+
+### Step 5: Test the Deployment
+
+```bash
+# Test OAuth API (public - no auth)
+curl https://oauth.a42r.com/health
+# Expected: {"status":"healthy",...}
+
+# Test admin UI (should require auth)
+curl -I https://oauth.a42r.com/admin/
+# Expected: HTTP/1.1 401 Unauthorized
+# WWW-Authenticate: Basic realm="OAuth Admin Area"
+
+# Test with credentials
+curl -u admin:yourpassword https://oauth.a42r.com/admin/
+# Expected: HTTP/1.1 200 OK (HTML content)
+```
+
+**Test in browser:**
+1. Open `https://oauth.a42r.com/admin/`
+2. Browser prompts for username/password
+3. Enter credentials created with htpasswd
+4. Admin UI should load
+
+### Nginx Rate Limiting (Optional)
+
+Add rate limiting to protect against abuse:
+
+```nginx
+# Add to http block in /etc/nginx/nginx.conf
+http {
+    # Rate limiting zones
+    limit_req_zone $binary_remote_addr zone=oauth_api:10m rate=10r/s;
+    limit_req_zone $binary_remote_addr zone=oauth_admin:10m rate=5r/s;
+    
+    # ... rest of config
+}
+```
+
+Update location blocks:
+
+```nginx
+    # In OAuth API locations
+    location /oauth {
+        limit_req zone=oauth_api burst=20 nodelay;
+        # ... rest of proxy config
+    }
+
+    # In admin location
+    location /admin {
+        limit_req zone=oauth_admin burst=10 nodelay;
+        auth_basic "OAuth Admin Area";
+        # ... rest of proxy config
+    }
+```
+
+### Nginx Maintenance
+
+**View logs:**
+```bash
+# Access logs
+sudo tail -f /var/log/nginx/oauth_access.log
+
+# Error logs
+sudo tail -f /var/log/nginx/oauth_error.log
+
+# Filter for admin access
+sudo grep "/admin" /var/log/nginx/oauth_access.log | tail -20
+```
+
+**Manage basic auth users:**
+```bash
+# Add user
+sudo htpasswd /etc/nginx/.htpasswd newuser
+
+# Change password
+sudo htpasswd /etc/nginx/.htpasswd existinguser
+
+# Delete user
+sudo htpasswd -D /etc/nginx/.htpasswd olduser
+
+# View all users
+sudo cat /etc/nginx/.htpasswd
+```
+
+**Test configuration:**
+```bash
+# Test nginx config
+sudo nginx -t
+
+# Reload without downtime
+sudo systemctl reload nginx
+
+# Full restart if needed
+sudo systemctl restart nginx
+```
+
+### Security Considerations for Nginx Deployment
+
+1. **Basic Auth Limitations**: HTTP Basic Auth sends credentials with every request. Always use HTTPS.
+
+2. **IP Whitelisting** (optional but recommended):
+   ```nginx
+   location /admin {
+       # Allow specific IPs
+       allow 192.168.1.0/24;
+       allow 10.0.0.0/8;
+       deny all;
+       
+       auth_basic "OAuth Admin Area";
+       # ... rest of config
+   }
+   ```
+
+3. **Fail2ban Integration**:
+   ```bash
+   # Create /etc/fail2ban/filter.d/nginx-oauth-auth.conf
+   [Definition]
+   failregex = ^<HOST> .* "GET /admin.*" 401
+   ignoreregex =
+   
+   # Add to /etc/fail2ban/jail.local
+   [nginx-oauth-auth]
+   enabled = true
+   filter = nginx-oauth-auth
+   logpath = /var/log/nginx/oauth_access.log
+   maxretry = 5
+   bantime = 3600
+   ```
+
+4. **SSL Best Practices**:
+   - Use certbot for automatic certificate renewal
+   - Enable HTTP/2 for better performance
+   - Use strong SSL ciphers (shown in config above)
+   - Enable HSTS header
+
+5. **Regular Updates**:
+   ```bash
+   # Update nginx
+   sudo apt-get update && sudo apt-get upgrade nginx
+   
+   # Check SSL certificate expiry
+   sudo certbot certificates
+   
+   # Test auto-renewal
+   sudo certbot renew --dry-run
+   ```
 
 ## Troubleshooting
 

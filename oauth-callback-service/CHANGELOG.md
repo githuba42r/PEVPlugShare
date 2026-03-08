@@ -2,6 +2,28 @@
 
 All notable changes to the OAuth2 Redirector Service.
 
+## [Unreleased] - 2026-03-08
+
+### Fixed
+- **Authelia Middleware Configuration**: Corrected Traefik middleware name
+  - Changed from `authelia@docker` to `authelia-forwardauth@docker`
+  - Matches standard Authelia container label naming
+  - Fixes 404 errors on `/admin` routes when using Authelia
+  - Updated docker-compose.production.yml with correct middleware name
+
+### Documentation
+- **DEPLOYMENT.md Updates**:
+  - Added verification steps for Authelia middleware name
+  - Comprehensive nginx reverse proxy deployment guide
+  - HTTP Basic Authentication setup for admin interface
+  - nginx configuration examples with SSL/TLS
+  - Rate limiting and security best practices for nginx
+  - Fail2ban integration for nginx deployments
+- **README.md Updates**:
+  - Corrected Authelia middleware references
+  - Added instructions to verify middleware name
+  - Listed common middleware naming patterns
+
 ## [Unreleased] - 2026-03-07
 
 ### Fixed
