@@ -43,4 +43,10 @@ object NativeSecrets {
      * @return Deep link URL scheme
      */
     external fun getDeepLinkScheme(): String
+
+    /**
+     * Get application ID for OAuth callback service
+     * @return Application ID (e.g., "pevplugshare")
+     */
+    external fun getAppId(): String
 }

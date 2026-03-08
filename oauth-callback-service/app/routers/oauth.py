@@ -59,6 +59,11 @@ async def register_session(
     # Determine application identification method
     identification_method = settings.app_identification_method.lower()
     matching_app = None
+    
+    # Get request host for callback URL (needed for both identification methods)
+    request_host = request.url.hostname
+    if request.url.port and request.url.port not in (80, 443):
+        request_host = f"{request_host}:{request.url.port}"
 
     if identification_method == "appid":
         # App ID-based identification
@@ -104,10 +109,6 @@ async def register_session(
 
     else:
         # Domain-based identification (default)
-        request_host = request.url.hostname
-        if request.url.port and request.url.port not in (80, 443):
-            request_host = f"{request_host}:{request.url.port}"
-
         # Lookup application by allowed_domains
         applications = db.query(Application).filter(
             Application.is_active == True

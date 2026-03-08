@@ -88,6 +88,7 @@ class OpenRouterOAuthService @Inject constructor() {
 
         // Create registration request
         val requestBody = JSONObject().apply {
+            put("app_id", NativeSecrets.getAppId())
             put("provider", PROVIDER_NAME)
             put("deep_link_url", deepLinkUrl)
             put("timestamp", timestamp)
