@@ -619,7 +619,7 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun refreshImageWithOverlay(isActive: Boolean = false, type: RectType? = null) {
-        val tempBitmap = editBitmap.copy(editBitmap.config, true)
+        val tempBitmap = editBitmap.copy(editBitmap.config ?: Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(tempBitmap)
 
         val currentImageMatrixValues = FloatArray(9)
@@ -825,7 +825,7 @@ class ImageEditorActivity : AppCompatActivity() {
     }
 
     private fun resetAllEdits() {
-        editBitmap = originalBitmap.copy(originalBitmap.config, true)
+        editBitmap = originalBitmap.copy(originalBitmap.config ?: Bitmap.Config.ARGB_8888, true)
         focusRect = null
         cropRect = null
         currentZoom = 1.0f
@@ -885,7 +885,7 @@ class ImageEditorActivity : AppCompatActivity() {
             }
 
             originalBitmap = decodedBitmap
-            editBitmap = originalBitmap.copy(originalBitmap.config, true)
+            editBitmap = originalBitmap.copy(originalBitmap.config ?: Bitmap.Config.ARGB_8888, true)
             imageView.setImageBitmap(editBitmap)
             imageView.imageMatrix = matrix // Apply initial matrix for zoom
             updateResetZoomIconVisibility()
