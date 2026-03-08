@@ -314,6 +314,7 @@ async function loadVersionInfo() {
         
         const data = await response.json();
         const versionInfo = document.getElementById('versionInfo');
+        const identificationMethod = document.getElementById('identificationMethod');
         
         if (data.version && data.version !== 'unknown') {
             const buildDate = data.build_date ? new Date(data.build_date).toLocaleString() : 'Unknown';
@@ -327,6 +328,23 @@ async function loadVersionInfo() {
             `;
         } else {
             versionInfo.innerHTML = '<span class="version-badge">Version unknown</span>';
+        }
+        
+        // Display identification method
+        if (data.app_identification_method) {
+            const method = data.app_identification_method;
+            const methodLabel = method === 'appid' ? 'App ID' : 'Domain';
+            const methodDescription = method === 'appid' 
+                ? 'Apps identified by app_id parameter'
+                : 'Apps identified by request domain';
+            
+            identificationMethod.innerHTML = `
+                <span class="method-badge" title="${methodDescription}">
+                    ID Method: ${methodLabel}
+                </span>
+            `;
+        } else {
+            identificationMethod.innerHTML = '<span class="method-badge">ID Method: Unknown</span>';
         }
     } catch (error) {
         console.error('Error loading version:', error);

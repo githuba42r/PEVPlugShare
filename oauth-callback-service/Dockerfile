@@ -27,6 +27,9 @@ COPY app ./app
 # Copy logging configuration
 COPY logging_config.json ./logging_config.json
 
+# Copy version information
+COPY version.json ./version.json
+
 # Copy database management script
 COPY manage_db.py ./manage_db.py
 

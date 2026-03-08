@@ -23,7 +23,7 @@ _diagnostic_limit_per_minute = 5  # Very strict limit
 
 def load_version_info():
     """Load version information from version.json"""
-    version_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'version.json')
+    version_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'version.json')
     try:
         if os.path.exists(version_file):
             with open(version_file, 'r') as f:
