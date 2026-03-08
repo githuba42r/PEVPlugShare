@@ -301,7 +301,23 @@ function escapeHtml(text) {
 function formatDate(isoString) {
     if (!isoString) return 'N/A';
     const date = new Date(isoString);
-    return date.toLocaleString();
+    
+    // Format: DD MMM YYYY H:i Z (e.g., 08 Mar 2026 18:35 +10:00)
+    const day = date.getDate().toString().padStart(2, '0');
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    // Get timezone offset in format +HH:MM or -HH:MM
+    const tzOffset = -date.getTimezoneOffset();
+    const tzHours = Math.floor(Math.abs(tzOffset) / 60).toString().padStart(2, '0');
+    const tzMinutes = (Math.abs(tzOffset) % 60).toString().padStart(2, '0');
+    const tzSign = tzOffset >= 0 ? '+' : '-';
+    const timezone = `${tzSign}${tzHours}:${tzMinutes}`;
+    
+    return `${day} ${month} ${year} ${hours}:${minutes} ${timezone}`;
 }
 
 // Load version information
@@ -317,7 +333,7 @@ async function loadVersionInfo() {
         const identificationMethod = document.getElementById('identificationMethod');
         
         if (data.version && data.version !== 'unknown') {
-            const buildDate = data.build_date ? new Date(data.build_date).toLocaleString() : 'Unknown';
+            const buildDate = data.build_date ? formatDate(data.build_date) : 'Unknown';
             const gitInfo = data.git_commit ? ` (${data.git_commit})` : '';
             
             versionInfo.innerHTML = `
