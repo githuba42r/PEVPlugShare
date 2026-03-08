@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 VERSION_FILE="version.json"
-SERVICE_DIR="oauth-callback-service"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Show usage
 show_usage() {
@@ -86,11 +86,14 @@ echo -e "${BLUE}OAuth Service Version Manager${NC}"
 echo -e "${BLUE}================================${NC}"
 echo ""
 
-# Change to service directory
-cd "$SERVICE_DIR" || {
-    echo -e "${RED}Error: Could not find $SERVICE_DIR directory${NC}"
+# Change to script directory (oauth-callback-service)
+cd "$SCRIPT_DIR" || {
+    echo -e "${RED}Error: Could not change to script directory${NC}"
     exit 1
 }
+
+echo -e "${BLUE}Working directory: $(pwd)${NC}"
+echo ""
 
 # Check if version.json exists
 if [ ! -f "$VERSION_FILE" ]; then
