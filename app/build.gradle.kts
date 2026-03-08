@@ -105,8 +105,8 @@ android {
             // Secrets injected from secrets.properties at build time
         }
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false  // Temporarily disabled for release testing - TODO: Fix proguard rules for Hilt
+            isShrinkResources = false  // Temporarily disabled for release testing
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
