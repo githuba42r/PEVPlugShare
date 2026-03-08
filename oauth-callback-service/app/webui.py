@@ -13,6 +13,7 @@ import os
 import json
 
 from app.models.database import SessionLocal, Application, OAuthSession
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -292,7 +293,7 @@ def get_sessions():
 @admin_bp.route('/api/version', methods=['GET'])
 def get_version():
     """Get service version information"""
-    version_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'version.json')
+    version_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'version.json')
     
     try:
         if os.path.exists(version_file):
@@ -306,6 +307,9 @@ def get_version():
                 'git_branch': ''
             }
         
+        # Add application identification method from settings
+        version_data['app_identification_method'] = settings.app_identification_method
+        
         return jsonify(version_data)
     except Exception as e:
         logger.error(f"Error reading version file: {e}")
@@ -314,6 +318,7 @@ def get_version():
             'build_date': '',
             'git_commit': '',
             'git_branch': '',
+            'app_identification_method': settings.app_identification_method,
             'error': str(e)
         })
 
