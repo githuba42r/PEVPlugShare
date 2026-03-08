@@ -210,14 +210,6 @@ fi
 echo -e "${GREEN}New version: ${NEW_VERSION}${NC}"
 echo ""
 
-# Get git info if available
-GIT_COMMIT=""
-GIT_BRANCH=""
-if git rev-parse --git-dir > /dev/null 2>&1; then
-    GIT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "")
-    GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
-fi
-
 # Update version.json
 echo -e "${BLUE}Updating $VERSION_FILE...${NC}"
 python3 << EOF
@@ -228,19 +220,17 @@ with open('$VERSION_FILE', 'r') as f:
     data = json.load(f)
 
 data['version'] = '$NEW_VERSION'
-data['build_date'] = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
-data['git_commit'] = '$GIT_COMMIT'
-data['git_branch'] = '$GIT_BRANCH'
+# Clear build-specific metadata - will be set during build
+data['build_date'] = ''
+data['git_commit'] = ''
+data['git_branch'] = ''
 
 with open('$VERSION_FILE', 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
 
 print(f"✓ Updated version to {data['version']}")
-print(f"✓ Build date: {data['build_date']}")
-if data['git_commit']:
-    print(f"✓ Git commit: {data['git_commit']}")
-    print(f"✓ Git branch: {data['git_branch']}")
+print(f"✓ Build metadata cleared (will be set during build)")
 EOF
 
 echo ""
