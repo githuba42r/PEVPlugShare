@@ -322,41 +322,22 @@ async function loadVersionInfo() {
         }
         
         const data = await response.json();
-        const versionInfo = document.getElementById('versionInfo');
-        const identificationMethod = document.getElementById('identificationMethod');
+        const versionDisplay = document.getElementById('versionDisplay');
         
-        if (data.version && data.version !== 'unknown') {
-            const buildDate = data.build_date ? formatDate(data.build_date) : 'Unknown';
-            const gitInfo = data.git_commit ? ` (${data.git_commit})` : '';
-            
-            versionInfo.innerHTML = `
-                <span class="version-badge" title="Build Date: ${buildDate}${gitInfo}">
-                    v${data.version}
-                </span>
-                <span class="build-date">${buildDate}</span>
-            `;
-        } else {
-            versionInfo.innerHTML = '<span class="version-badge">Version unknown</span>';
-        }
+        const version = (data.version && data.version !== 'unknown') ? data.version : 'Unknown';
+        const buildDate = data.build_date ? formatDate(data.build_date) : 'Unknown';
+        const method = data.app_identification_method;
+        const methodLabel = method === 'appid' ? 'App ID' : 'Domain';
         
-        // Display identification method
-        if (data.app_identification_method) {
-            const method = data.app_identification_method;
-            const methodLabel = method === 'appid' ? 'App ID' : 'Domain';
-            const methodDescription = method === 'appid' 
-                ? 'Apps identified by app_id parameter'
-                : 'Apps identified by request domain';
-            
-            identificationMethod.innerHTML = `
-                <span class="method-badge" title="${methodDescription}">
-                    ID Method: ${methodLabel}
-                </span>
-            `;
-        } else {
-            identificationMethod.innerHTML = '<span class="method-badge">ID Method: Unknown</span>';
-        }
+        versionDisplay.innerHTML = `
+            <div>Version: ${version}</div>
+            <div>Built: ${buildDate}</div>
+            <div>App ID Method: ${methodLabel}</div>
+        `;
     } catch (error) {
         console.error('Error loading version:', error);
-        document.getElementById('versionInfo').innerHTML = '<span class="version-badge error">Version unavailable</span>';
+        document.getElementById('versionDisplay').innerHTML = `
+            <div>Version: Unavailable</div>
+        `;
     }
 }
