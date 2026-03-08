@@ -152,3 +152,10 @@ terraform.tfvars
 !terraform.tfvars.example
 data/
 secrets.properties.*
+
+# Release management artifacts
+RELEASE_NOTES.txt
+app/src/main/play/release-notes/
+
+# Google Play Publishing credentials (NEVER commit!)
+play-service-account.json

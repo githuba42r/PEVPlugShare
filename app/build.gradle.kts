@@ -1,4 +1,5 @@
 import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.application)
@@ -6,6 +7,24 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.android)
     id("kotlin-parcelize")
+}
+
+// Load version from version.properties
+val versionPropsFile = rootProject.file("version.properties")
+val versionProps = Properties()
+if (versionPropsFile.exists()) {
+    versionProps.load(FileInputStream(versionPropsFile))
+}
+
+val versionMajor = (versionProps["VERSION_MAJOR"] as? String ?: "1").toInt()
+val versionMinor = (versionProps["VERSION_MINOR"] as? String ?: "0").toInt()
+val versionPatch = (versionProps["VERSION_PATCH"] as? String ?: "0").toInt()
+val versionCodeNum = (versionProps["VERSION_CODE"] as? String ?: "1").toInt()
+val versionPrerelease = versionProps["VERSION_PRERELEASE"] as? String ?: ""
+val appVersionName = if (versionPrerelease.isNotEmpty()) {
+    "$versionMajor.$versionMinor.$versionPatch-$versionPrerelease"
+} else {
+    "$versionMajor.$versionMinor.$versionPatch"
 }
 
 android {
@@ -16,10 +35,13 @@ android {
         applicationId = "com.a42r.pevplugshare"
         minSdk = 26
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.2.1"
+        versionCode = versionCodeNum
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Add build timestamp
+        buildConfigField("String", "BUILD_DATE", "\"${java.time.LocalDateTime.now()}\"")
     }
 
     compileOptions {
