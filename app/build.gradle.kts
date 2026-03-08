@@ -29,6 +29,13 @@ val appVersionName = if (versionPrerelease.isNotEmpty()) {
     "$versionMajor.$versionMinor.$versionPatch"
 }
 
+// Load keystore properties for signing
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.a42r.pevplugshare"
     compileSdk = 34
@@ -60,6 +67,18 @@ android {
         viewBinding = true
         aidl = true
         buildConfig = true  // Enable BuildConfig generation
+    }
+
+    // Signing configuration for release builds
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
+        }
     }
 
     // Load OAuth secrets from secrets.properties (NOT in git)
@@ -111,6 +130,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            // Use signing config if keystore is configured
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
 
             // Production secrets
             externalNativeBuild {
