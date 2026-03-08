@@ -47,6 +47,10 @@
 #define OAUTH_PROD_DEEP_LINK_SCHEME "yourapp://oauth/callback"
 #endif
 
+#ifndef APP_ID
+#define APP_ID "pevplugshare"
+#endif
+
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_a42r_pevplugshare_util_NativeSecrets_getOAuthCallbackUrl(
         JNIEnv* env,
@@ -90,4 +94,11 @@ Java_com_a42r_pevplugshare_util_NativeSecrets_getDeepLinkScheme(
         // Development
         return env->NewStringUTF(OAUTH_DEV_DEEP_LINK_SCHEME);
     #endif
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_a42r_pevplugshare_util_NativeSecrets_getAppId(
+        JNIEnv* env,
+        jobject /* this */) {
+    return env->NewStringUTF(APP_ID);
 }
