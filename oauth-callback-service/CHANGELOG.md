@@ -5,6 +5,13 @@ All notable changes to the OAuth2 Redirector Service.
 ## [Unreleased] - 2026-03-07
 
 ### Fixed
+- **Flask Blueprint Routing**: Fixed Web UI static file serving and routing
+  - Changed Flask app to use Blueprint with `/admin` prefix
+  - Configured Flask static_url_path to `/admin/static` for proper asset serving
+  - Updated JavaScript API calls to use `/admin/api` prefix
+  - Removed Traefik stripprefix middleware (no longer needed)
+  - All routes and static assets now work correctly at `/admin` prefix
+
 - **Logging Configuration Error**: Fixed `KeyError: 'levelprefix'` by using proper uvicorn formatter classes
   - Changed from generic `format` to `()` class specification in logging_config.json
   - Now uses `uvicorn.logging.DefaultFormatter` and `uvicorn.logging.AccessFormatter`

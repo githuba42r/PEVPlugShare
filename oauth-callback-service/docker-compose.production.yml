@@ -74,11 +74,8 @@ services:
       - traefik.http.routers.oauth-webui.tls=true
       - traefik.http.routers.oauth-webui.tls.certresolver=letsencrypt
       - traefik.http.routers.oauth-webui.service=oauth-webui-svc
-      - traefik.http.routers.oauth-webui.middlewares=authelia@docker,oauth-webui-stripprefix
+      - traefik.http.routers.oauth-webui.middlewares=authelia@docker
       - traefik.http.routers.oauth-webui.priority=110
-      
-      # Strip /admin prefix before forwarding to web UI
-      - traefik.http.middlewares.oauth-webui-stripprefix.stripprefix.prefixes=/admin
 
       # Web UI service (port 8001)
       - traefik.http.services.oauth-webui-svc.loadbalancer.server.port=8001

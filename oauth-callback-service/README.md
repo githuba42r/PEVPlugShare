@@ -556,8 +556,10 @@ The service supports multiple applications through database configuration. Each 
 The service includes a **web-based management interface** for easy application configuration without requiring command-line or SQL knowledge.
 
 **Access the Web UI**:
-- Local: http://localhost:8001/
+- Local: http://localhost:8001/admin/
 - Production: https://oauth.yourdomain.com/admin/ (requires Authelia authentication)
+
+**Note**: The Web UI is mounted at `/admin` prefix and serves all routes and static assets from this path.
 
 **Features**:
 - 📋 **List Applications**: View all configured OAuth applications
@@ -674,15 +676,14 @@ docker-compose -f docker-compose.production.yml up -d
 # Web UI - Protected by Authelia (port 8001)
 - traefik.http.routers.oauth-webui.rule=Host(`oauth.yourdomain.com`) && PathPrefix(`/admin`)
 - traefik.http.routers.oauth-webui.priority=110  # Higher priority to catch /admin before /
-- traefik.http.routers.oauth-webui.middlewares=authelia@docker,oauth-webui-stripprefix
-- traefik.http.middlewares.oauth-webui-stripprefix.stripprefix.prefixes=/admin
+- traefik.http.routers.oauth-webui.middlewares=authelia@docker
 - traefik.http.services.oauth-webui-svc.loadbalancer.server.port=8001
 ```
 
 **How it works**:
 1. **Priority routing**: `/admin/*` routes have priority 110 (caught first)
 2. **Authentication**: `authelia@docker` middleware protects `/admin/*` routes
-3. **Path rewriting**: `stripprefix` removes `/admin` before forwarding to Flask (e.g., `/admin/` → `/`)
+3. **Flask Blueprint**: Flask serves all routes and static assets at `/admin` prefix (no path rewriting needed)
 4. **Port mapping**: Traefik forwards to port 8001 for Web UI, port 8000 for OAuth API
 
 #### Authelia Configuration

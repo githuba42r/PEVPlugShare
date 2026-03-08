@@ -1,5 +1,8 @@
 // OAuth Application Manager - Frontend JavaScript
 
+// API base path - change this based on deployment
+const API_BASE = '/admin/api';
+
 let currentEditingApp = null;
 
 // Initialize
@@ -46,7 +49,7 @@ async function loadApplications() {
     appList.innerHTML = '<div class="loading">Loading applications...</div>';
 
     try {
-        const response = await fetch('/api/applications');
+        const response = await fetch(`${API_BASE}/applications`);
         if (!response.ok) throw new Error('Failed to load applications');
         
         const apps = await response.json();
@@ -174,14 +177,14 @@ async function handleFormSubmit(e) {
         let response;
         if (currentEditingApp) {
             // Update existing app
-            response = await fetch(`/api/applications/${data.app_id}`, {
+            response = await fetch(`${API_BASE}/applications/${data.app_id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
         } else {
             // Create new app
-            response = await fetch('/api/applications', {
+            response = await fetch(`${API_BASE}/applications`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -203,7 +206,7 @@ async function handleFormSubmit(e) {
 
 async function editApplication(appId) {
     try {
-        const response = await fetch(`/api/applications/${appId}`);
+        const response = await fetch(`${API_BASE}/applications/${appId}`);
         if (!response.ok) throw new Error('Failed to load application');
         
         const app = await response.json();
@@ -216,7 +219,7 @@ async function editApplication(appId) {
 
 async function toggleApplication(appId) {
     try {
-        const response = await fetch(`/api/applications/${appId}/toggle`, {
+        const response = await fetch(`${API_BASE}/applications/${appId}/toggle`, {
             method: 'POST'
         });
         
@@ -235,7 +238,7 @@ async function deleteApplication(appId) {
     }
 
     try {
-        const response = await fetch(`/api/applications/${appId}`, {
+        const response = await fetch(`${API_BASE}/applications/${appId}`, {
             method: 'DELETE'
         });
         
@@ -250,7 +253,7 @@ async function deleteApplication(appId) {
 
 async function viewSecret(appId) {
     try {
-        const response = await fetch(`/api/applications/${appId}`);
+        const response = await fetch(`${API_BASE}/applications/${appId}`);
         if (!response.ok) throw new Error('Failed to load application');
         
         const app = await response.json();
