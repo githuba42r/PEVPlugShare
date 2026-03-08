@@ -151,3 +151,4 @@ coverage/
 terraform.tfvars
 !terraform.tfvars.example
 data/
+secrets.properties.template
