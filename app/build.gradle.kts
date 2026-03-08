@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.triplet.play)
     id("kotlin-parcelize")
 }
 
@@ -38,12 +39,12 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.a42r.pevplugshare"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.a42r.pevplugshare"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = versionCodeNum
         versionName = appVersionName
 
@@ -230,4 +231,14 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+}
+
+play {
+    val serviceAccountFile = rootProject.file("play-service-account.json")
+    if (serviceAccountFile.exists()) {
+        serviceAccountCredentials.set(serviceAccountFile)
+    }
+    track.set("internal")
+    releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.COMPLETED)
+    defaultToAppBundles.set(true)
 }
