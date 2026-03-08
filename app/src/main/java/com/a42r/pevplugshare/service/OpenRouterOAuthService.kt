@@ -34,7 +34,8 @@ class OpenRouterOAuthService @Inject constructor() {
         val codeVerifier: String,
         val codeChallenge: String,
         val callbackUrl: String,
-        val sessionId: String
+        val sessionId: String,
+        val appName: String
     )
 
     /**
@@ -131,7 +132,8 @@ class OpenRouterOAuthService @Inject constructor() {
                 codeVerifier = codeVerifier,
                 codeChallenge = codeChallenge,
                 callbackUrl = response.getString("callback_url"),
-                sessionId = response.getString("session_id")
+                sessionId = response.getString("session_id"),
+                appName = response.getString("app_name")
             )
         } finally {
             connection.disconnect()
@@ -145,10 +147,14 @@ class OpenRouterOAuthService @Inject constructor() {
      * @return Authorization URL to open in browser
      */
     fun buildAuthorizationUrl(pkceState: PKCEState): String {
+        // URL encode the app name
+        val encodedAppName = java.net.URLEncoder.encode(pkceState.appName, "UTF-8")
+        
         return "$AUTH_BASE_URL?" +
                 "callback_url=${pkceState.callbackUrl}" +
                 "&code_challenge=${pkceState.codeChallenge}" +
-                "&code_challenge_method=$CODE_CHALLENGE_METHOD"
+                "&code_challenge_method=$CODE_CHALLENGE_METHOD" +
+                "&app_name=$encodedAppName"
     }
 
     /**
