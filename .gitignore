@@ -41,6 +41,11 @@ local.properties
 secrets.properties
 app/src/main/cpp/native-secrets.local.cpp
 
+# Eclipse/Buildship IDE files
+.project
+.classpath
+.settings/
+
 # Android Studio
 .idea/
 *.iml
