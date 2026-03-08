@@ -8,6 +8,8 @@ from datetime import datetime
 import time
 import sys
 import platform
+import json
+import os
 
 from app.models import OAuthSession, get_db, HealthResponse
 from app.config import settings
@@ -17,6 +19,21 @@ router = APIRouter()
 # Simple in-memory rate limiter for diagnostic endpoints
 _diagnostic_rate_limit = {}
 _diagnostic_limit_per_minute = 5  # Very strict limit
+
+
+def load_version_info():
+    """Load version information from version.json"""
+    version_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'version.json')
+    try:
+        if os.path.exists(version_file):
+            with open(version_file, 'r') as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {'version': '1.0.0', 'build_date': '', 'git_commit': '', 'git_branch': ''}
+
+
+_version_info = load_version_info()
 
 
 def check_diagnostic_rate_limit(client_ip: str) -> bool:
@@ -86,7 +103,9 @@ async def version(request: Request):
 
     return {
         "service": "OAuth Callback Service",
-        "version": "1.0.0",
+        "version": _version_info['version'],
+        "build_date": _version_info['build_date'],
+        "git_commit": _version_info['git_commit'],
         "python_version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
         "platform": platform.system(),
         "platform_release": platform.release(),
@@ -129,7 +148,7 @@ async def health_check(db: Session = Depends(get_db)):
 
     return HealthResponse(
         status="healthy",
-        version="1.0.0",
+        version=_version_info['version'],
         active_sessions=active_count
     )
 
@@ -141,7 +160,8 @@ async def root():
     """
     return {
         "service": "OAuth Callback Service",
-        "version": "1.0.0",
+        "version": _version_info['version'],
+        "build_date": _version_info['build_date'],
         "description": "Generic OAuth 2.0 callback handler for mobile apps",
         "endpoints": {
             "health": "/health",

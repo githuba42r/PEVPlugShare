@@ -11,6 +11,7 @@ class RegisterRequest(BaseModel):
     deep_link_url: str = Field(..., description="Deep link URL to redirect back to your app (e.g., 'myapp://oauth/callback')")
     timestamp: int = Field(..., description="Unix timestamp for request validation")
     signature: str = Field(..., description="HMAC-SHA256 signature of request data")
+    app_id: Optional[str] = Field(None, description="Application ID (required when using appid identification method)")
 
     class Config:
         json_schema_extra = {
@@ -18,7 +19,8 @@ class RegisterRequest(BaseModel):
                 "provider": "openrouter",
                 "deep_link_url": "pevplugshare://oauth/callback",
                 "timestamp": 1700000000,
-                "signature": "abc123..."
+                "signature": "abc123...",
+                "app_id": "pevplugshare"
             }
         }
 

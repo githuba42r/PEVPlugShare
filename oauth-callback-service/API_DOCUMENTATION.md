@@ -7,6 +7,23 @@ This is a generic OAuth 2.0 callback handler service designed for mobile applica
 **Version**: 1.0.0
 **Base URL**: `https://your-domain.com`
 
+## Application Identification Methods
+
+The service supports two methods for identifying applications:
+
+### 1. Domain-Based Identification (Default)
+- Set `APP_IDENTIFICATION_METHOD=domain` in `.env`
+- Application is identified by matching the request hostname against `allowed_domains`
+- Suitable when each app has its own subdomain (e.g., `app1.example.com`, `app2.example.com`)
+- No `app_id` parameter required in requests
+
+### 2. App ID-Based Identification
+- Set `APP_IDENTIFICATION_METHOD=appid` in `.env`
+- Application is identified by the `app_id` parameter in the request body
+- Suitable when hosting on a single domain (e.g., `oauth.example.com`) for multiple apps
+- Requires `app_id` parameter in all registration requests
+- Deep link scheme validation ensures the correct app is being registered
+
 ## Architecture
 
 ```
@@ -86,12 +103,25 @@ Creates a temporary session and returns a callback URL.
 **Content-Type**: `application/json`
 
 **Request Body**:
+
+**Domain-based identification** (when `APP_IDENTIFICATION_METHOD=domain`):
 ```json
 {
   "provider": "openrouter",
   "deep_link_url": "myapp://oauth/callback",
   "timestamp": 1700000000,
   "signature": "abc123def456..."
+}
+```
+
+**App ID-based identification** (when `APP_IDENTIFICATION_METHOD=appid`):
+```json
+{
+  "provider": "openrouter",
+  "deep_link_url": "myapp://oauth/callback",
+  "timestamp": 1700000000,
+  "signature": "abc123def456...",
+  "app_id": "com.example.myapp"
 }
 ```
 
@@ -102,6 +132,7 @@ Creates a temporary session and returns a callback URL.
 | `deep_link_url` | string | Yes | Deep link URL to redirect back to your app (e.g., "myapp://oauth/callback") |
 | `timestamp` | integer | Yes | Unix timestamp (seconds). Must be within ±5 minutes of server time |
 | `signature` | string | Yes | HMAC-SHA256 signature of `{provider}\|{deep_link_url}\|{timestamp}` |
+| `app_id` | string | Conditional | Application ID. Required when `APP_IDENTIFICATION_METHOD=appid`, ignored otherwise |
 
 **Success Response** (200 OK):
 ```json
@@ -122,6 +153,40 @@ Creates a temporary session and returns a callback URL.
 | `provider` | string | OAuth provider name |
 
 **Error Responses**:
+
+**400 Bad Request** - Missing app_id (when using appid identification):
+```json
+{
+  "error": "missing_app_id",
+  "message": "app_id is required when using appid identification method",
+  "details": {
+    "identification_method": "appid"
+  }
+}
+```
+
+**400 Bad Request** - Unknown application:
+```json
+{
+  "error": "unknown_application",
+  "message": "No active application found with app_id 'com.example.myapp'",
+  "details": {
+    "app_id": "com.example.myapp"
+  }
+}
+```
+
+**400 Bad Request** - Invalid deep link scheme:
+```json
+{
+  "error": "invalid_deep_link",
+  "message": "Deep link must start with 'myapp://oauth/callback'",
+  "details": {
+    "provided": "wrongapp://oauth/callback",
+    "expected_scheme": "myapp://oauth/callback"
+  }
+}
+```
 
 **400 Bad Request** - Invalid provider:
 ```json
@@ -630,9 +695,30 @@ RATE_LIMIT_PER_DAY=1000
 # Providers
 OAUTH_PROVIDERS=openrouter,github,google
 
+# Application Identification Method
+# Options: "domain" (default) or "appid"
+# - "domain": Identifies apps by matching request hostname against allowed_domains
+# - "appid": Identifies apps by app_id parameter in request body
+APP_IDENTIFICATION_METHOD=domain
+
 # Logging
 LOG_LEVEL=INFO
 ```
+
+### Application Identification Methods
+
+**Domain-based (default)**:
+- Use when each app has its own subdomain (e.g., `app1.example.com`, `app2.example.com`)
+- Apps are identified by matching the request hostname
+- No `app_id` required in requests
+- Configure different `allowed_domains` for each app in the database
+
+**App ID-based**:
+- Use when hosting on a single domain for multiple apps (e.g., `oauth.example.com`)
+- Apps are identified by the `app_id` parameter in the request
+- All requests must include `app_id`
+- Allows multiple apps to share the same domain
+- Deep link scheme validation ensures correct app registration
 
 **Note**: Domain names, deep link schemes, and secrets are configured **per-application in the database**, not via environment variables. See the main README for application management instructions.
 

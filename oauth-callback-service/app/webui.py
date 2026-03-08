@@ -10,6 +10,7 @@ from datetime import datetime
 import secrets
 import logging
 import os
+import json
 
 from app.models.database import SessionLocal, Application, OAuthSession
 
@@ -286,6 +287,35 @@ def get_sessions():
         } for session in sessions])
     finally:
         db.close()
+
+
+@admin_bp.route('/api/version', methods=['GET'])
+def get_version():
+    """Get service version information"""
+    version_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'version.json')
+    
+    try:
+        if os.path.exists(version_file):
+            with open(version_file, 'r') as f:
+                version_data = json.load(f)
+        else:
+            version_data = {
+                'version': 'unknown',
+                'build_date': '',
+                'git_commit': '',
+                'git_branch': ''
+            }
+        
+        return jsonify(version_data)
+    except Exception as e:
+        logger.error(f"Error reading version file: {e}")
+        return jsonify({
+            'version': 'error',
+            'build_date': '',
+            'git_commit': '',
+            'git_branch': '',
+            'error': str(e)
+        })
 
 
 # Register blueprint

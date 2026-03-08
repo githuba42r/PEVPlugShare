@@ -110,6 +110,40 @@ if ! docker info > /dev/null 2>&1; then
     exit 1
 fi
 
+# Update version.json with build information
+echo -e "${BLUE}Updating version.json with build information...${NC}"
+if [ -f "version.json" ]; then
+    python3 << EOF
+import json
+from datetime import datetime
+
+with open('version.json', 'r') as f:
+    data = json.load(f)
+
+# Update build date
+data['build_date'] = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+
+# Get git info if available
+try:
+    import subprocess
+    git_commit = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], stderr=subprocess.DEVNULL).decode().strip()
+    git_branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], stderr=subprocess.DEVNULL).decode().strip()
+    data['git_commit'] = git_commit
+    data['git_branch'] = git_branch
+except:
+    pass
+
+with open('version.json', 'w') as f:
+    json.dump(data, f, indent=2)
+    f.write('\n')
+
+print(f"✓ Updated version.json: v{data['version']} (built {data['build_date']})")
+EOF
+else
+    echo -e "${YELLOW}Warning: version.json not found, skipping version update${NC}"
+fi
+echo ""
+
 # Check authentication only if --push is specified
 if [ "$PUSH" = true ]; then
     echo -e "${BLUE}Checking GitHub Container Registry authentication...${NC}"
