@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     # Diagnostic endpoints (for testing/debugging)
     enable_diagnostic_endpoints: bool = False
 
+    # Application identification method
+    # Options: "domain" (default, matches by allowed_domains) or "appid" (matches by app_id in request)
+    app_identification_method: str = "domain"
+
     class Config:
         env_file = ".env"
         case_sensitive = False

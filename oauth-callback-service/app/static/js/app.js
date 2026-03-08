@@ -8,6 +8,7 @@ let currentEditingApp = null;
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadApplications();
+    loadVersionInfo();
     setupEventListeners();
 });
 
@@ -301,4 +302,34 @@ function formatDate(isoString) {
     if (!isoString) return 'N/A';
     const date = new Date(isoString);
     return date.toLocaleString();
+}
+
+// Load version information
+async function loadVersionInfo() {
+    try {
+        const response = await fetch(`${API_BASE}/version`);
+        if (!response.ok) {
+            throw new Error('Failed to load version');
+        }
+        
+        const data = await response.json();
+        const versionInfo = document.getElementById('versionInfo');
+        
+        if (data.version && data.version !== 'unknown') {
+            const buildDate = data.build_date ? new Date(data.build_date).toLocaleString() : 'Unknown';
+            const gitInfo = data.git_commit ? ` (${data.git_commit})` : '';
+            
+            versionInfo.innerHTML = `
+                <span class="version-badge" title="Build Date: ${buildDate}${gitInfo}">
+                    v${data.version}
+                </span>
+                <span class="build-date">${buildDate}</span>
+            `;
+        } else {
+            versionInfo.innerHTML = '<span class="version-badge">Version unknown</span>';
+        }
+    } catch (error) {
+        console.error('Error loading version:', error);
+        document.getElementById('versionInfo').innerHTML = '<span class="version-badge error">Version unavailable</span>';
+    }
 }

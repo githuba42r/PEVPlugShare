@@ -56,38 +56,84 @@ async def register_session(
         }
     )
 
-    # Get request hostname to identify the application
-    request_host = request.url.hostname
-    if request.url.port and request.url.port not in (80, 443):
-        request_host = f"{request_host}:{request.url.port}"
-
-    # Lookup application by allowed_domains
-    application = db.query(Application).filter(
-        Application.is_active == True
-    ).all()
-
+    # Determine application identification method
+    identification_method = settings.app_identification_method.lower()
     matching_app = None
-    for app in application:
-        if app.is_domain_allowed(request_host):
-            matching_app = app
-            break
 
-    if not matching_app:
-        logger.warning(
-            "Registration failed - unknown application",
-            extra={
-                "request_hostname": request_host,
-                "provider": request_data.provider
-            }
-        )
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "unknown_application",
-                "message": f"No application configured for domain '{request_host}'",
-                "details": {"request_hostname": request_host}
-            }
-        )
+    if identification_method == "appid":
+        # App ID-based identification
+        if not request_data.app_id:
+            logger.warning(
+                "Registration failed - missing app_id",
+                extra={
+                    "provider": request_data.provider,
+                    "identification_method": identification_method
+                }
+            )
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": "missing_app_id",
+                    "message": "app_id is required when using appid identification method",
+                    "details": {"identification_method": identification_method}
+                }
+            )
+
+        # Lookup application by app_id
+        matching_app = db.query(Application).filter(
+            Application.app_id == request_data.app_id,
+            Application.is_active == True
+        ).first()
+
+        if not matching_app:
+            logger.warning(
+                "Registration failed - unknown app_id",
+                extra={
+                    "app_id": request_data.app_id,
+                    "provider": request_data.provider
+                }
+            )
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": "unknown_application",
+                    "message": f"No active application found with app_id '{request_data.app_id}'",
+                    "details": {"app_id": request_data.app_id}
+                }
+            )
+
+    else:
+        # Domain-based identification (default)
+        request_host = request.url.hostname
+        if request.url.port and request.url.port not in (80, 443):
+            request_host = f"{request_host}:{request.url.port}"
+
+        # Lookup application by allowed_domains
+        applications = db.query(Application).filter(
+            Application.is_active == True
+        ).all()
+
+        for app in applications:
+            if app.is_domain_allowed(request_host):
+                matching_app = app
+                break
+
+        if not matching_app:
+            logger.warning(
+                "Registration failed - unknown application domain",
+                extra={
+                    "request_hostname": request_host,
+                    "provider": request_data.provider
+                }
+            )
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": "unknown_application",
+                    "message": f"No application configured for domain '{request_host}'",
+                    "details": {"request_hostname": request_host}
+                }
+            )
 
     # Validate deep link scheme matches application
     if not request_data.deep_link_url.startswith(matching_app.deep_link_scheme):

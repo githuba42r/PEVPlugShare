@@ -45,6 +45,33 @@ header h1 {
     font-size: 1rem;
 }
 
+.version-info {
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.version-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: help;
+}
+
+.version-badge.error {
+    background: var(--danger-color);
+}
+
+.build-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
 .actions {
     display: flex;
     gap: 1rem;
