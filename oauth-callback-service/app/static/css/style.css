@@ -33,6 +33,23 @@ body {
 
 header {
     margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.header-left {
+    flex: 1;
+    min-width: 300px;
+}
+
+.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
 }
 
 header h1 {
@@ -45,18 +62,10 @@ header h1 {
     font-size: 1rem;
 }
 
-.header-info {
-    margin-top: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-
 .version-info {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .identification-method {
@@ -92,7 +101,8 @@ header h1 {
 
 .build-date {
     color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
 }
 
 .actions {

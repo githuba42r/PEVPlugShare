@@ -302,7 +302,7 @@ function formatDate(isoString) {
     if (!isoString) return 'N/A';
     const date = new Date(isoString);
     
-    // Format: DD MMM YYYY H:i Z (e.g., 08 Mar 2026 18:35 +10:00)
+    // Format: DD MMM YYYY H:i (e.g., 08 Mar 2026 18:35)
     const day = date.getDate().toString().padStart(2, '0');
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const month = monthNames[date.getMonth()];
@@ -310,14 +310,7 @@ function formatDate(isoString) {
     const hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, '0');
     
-    // Get timezone offset in format +HH:MM or -HH:MM
-    const tzOffset = -date.getTimezoneOffset();
-    const tzHours = Math.floor(Math.abs(tzOffset) / 60).toString().padStart(2, '0');
-    const tzMinutes = (Math.abs(tzOffset) % 60).toString().padStart(2, '0');
-    const tzSign = tzOffset >= 0 ? '+' : '-';
-    const timezone = `${tzSign}${tzHours}:${tzMinutes}`;
-    
-    return `${day} ${month} ${year} ${hours}:${minutes} ${timezone}`;
+    return `${day} ${month} ${year} ${hours}:${minutes}`;
 }
 
 // Load version information
