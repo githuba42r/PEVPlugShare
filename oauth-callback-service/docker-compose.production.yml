@@ -74,7 +74,7 @@ services:
       - traefik.http.routers.oauth-webui.tls=true
       - traefik.http.routers.oauth-webui.tls.certresolver=letsencrypt
       - traefik.http.routers.oauth-webui.service=oauth-webui-svc
-      - traefik.http.routers.oauth-webui.middlewares=authelia@docker
+      - traefik.http.routers.oauth-webui.middlewares=authelia-forwardauth@docker
       - traefik.http.routers.oauth-webui.priority=110
 
       # Web UI service (port 8001)

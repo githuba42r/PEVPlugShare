@@ -676,15 +676,25 @@ docker-compose -f docker-compose.production.yml up -d
 # Web UI - Protected by Authelia (port 8001)
 - traefik.http.routers.oauth-webui.rule=Host(`oauth.yourdomain.com`) && PathPrefix(`/admin`)
 - traefik.http.routers.oauth-webui.priority=110  # Higher priority to catch /admin before /
-- traefik.http.routers.oauth-webui.middlewares=authelia@docker
+- traefik.http.routers.oauth-webui.middlewares=authelia-forwardauth@docker  # Use your Authelia middleware name
 - traefik.http.services.oauth-webui-svc.loadbalancer.server.port=8001
 ```
 
 **How it works**:
 1. **Priority routing**: `/admin/*` routes have priority 110 (caught first)
-2. **Authentication**: `authelia@docker` middleware protects `/admin/*` routes
+2. **Authentication**: Authelia ForwardAuth middleware protects `/admin/*` routes
 3. **Flask Blueprint**: Flask serves all routes and static assets at `/admin` prefix (no path rewriting needed)
 4. **Port mapping**: Traefik forwards to port 8001 for Web UI, port 8000 for OAuth API
+
+**Important**: The middleware name must match your Authelia container's label. Check with:
+```bash
+docker inspect authelia --format '{{json .Config.Labels}}' | grep middleware
+```
+
+Common middleware names:
+- `authelia-forwardauth@docker` (most common)
+- `authelia@docker` (older setups)
+- Custom names defined in your Authelia labels
 
 #### Authelia Configuration
 
@@ -766,8 +776,12 @@ docker exec oauth-callback-service curl http://localhost:8000/health
 # Check Traefik labels
 docker inspect oauth-callback-service | grep -A 5 "oauth-webui"
 
-# Verify authelia@docker middleware exists
-docker exec traefik cat /etc/traefik/traefik.yml
+# Verify Authelia middleware exists (check your middleware name)
+docker inspect authelia --format '{{json .Config.Labels}}' | grep middleware
+
+# Common middleware labels:
+# traefik.http.middlewares.authelia-forwardauth.forwardauth.address
+# traefik.http.middlewares.authelia.forwardauth.address
 
 # Check middleware is applied
 curl -I https://oauth.yourdomain.com/admin/
