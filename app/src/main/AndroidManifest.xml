@@ -166,6 +166,16 @@
             </intent-filter>
         </activity>
 
+        <!-- Server Account Activity -->
+        <activity
+            android:name=".ui.server.ServerAccountActivity"
+            android:exported="false" />
+
+        <!-- Sync Location Activity -->
+        <activity
+            android:name=".ui.server.SyncLocationActivity"
+            android:exported="false" />
+
         <!-- OsmAnd Sync Background Service -->
         <service
             android:name=".services.OsmandBackgroundSyncService"
