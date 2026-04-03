@@ -10,6 +10,9 @@ import type {
   Notification,
   NotificationType,
   PaginatedResult,
+  Location,
+  CreateLocationInput,
+  Photo,
 } from '../models';
 
 export interface UserRepository {
@@ -53,9 +56,24 @@ export interface NotificationRepository {
   count(userId: string): Promise<number>;
 }
 
-// Placeholder interfaces for future phases
-export interface LocationRepository {}
-export interface PhotoRepository {}
+export interface LocationRepository {
+  create(input: CreateLocationInput): Promise<Location>;
+  getById(id: string): Promise<Location | null>;
+  getByOwner(ownerId: string, cursor?: string, limit?: number): Promise<PaginatedResult<Location>>;
+  update(id: string, fields: Partial<CreateLocationInput>): Promise<Location>;
+  softDelete(id: string, reason?: string): Promise<boolean>;
+  getSharedWithUser(userId: string, cursor?: string, limit?: number): Promise<PaginatedResult<Location>>;
+  getNearby(lat: number, lon: number, radiusKm: number, cursor?: string, limit?: number): Promise<PaginatedResult<Location>>;
+  findDuplicates(lat: number, lon: number, radiusMetres: number): Promise<Location[]>;
+}
+
+export interface PhotoRepository {
+  create(locationId: string, filePath: string, thumbnailPath: string | null, metadata: Partial<Photo>): Promise<Photo>;
+  getById(id: string): Promise<Photo | null>;
+  getByLocationId(locationId: string): Promise<Photo[]>;
+  delete(id: string): Promise<boolean>;
+  countByLocationId(locationId: string): Promise<number>;
+}
 export interface FriendRepository {}
 export interface GroupRepository {}
 export interface ShareRepository {}
