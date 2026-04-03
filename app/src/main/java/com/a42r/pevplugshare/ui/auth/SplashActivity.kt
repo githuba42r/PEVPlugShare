@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.a42r.pevplugshare.databinding.ActivitySplashBinding
 import com.a42r.pevplugshare.ui.main.MainActivity
 import com.a42r.pevplugshare.ui.ai.AiWelcomeActivity
+import com.a42r.pevplugshare.ui.wizard.SetupWizardActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -28,6 +29,13 @@ class SplashActivity : AppCompatActivity() {
 
                 // Check if activity is still valid and not finishing
                 if (isFinishing || isDestroyed) {
+                    return@launch
+                }
+
+                // First-run wizard check
+                if (SetupWizardActivity.isFirstRun(this@SplashActivity)) {
+                    startActivity(Intent(this@SplashActivity, SetupWizardActivity::class.java))
+                    finish()
                     return@launch
                 }
 
