@@ -25,12 +25,20 @@ class SetupWizardActivity : AppCompatActivity() {
     companion object {
         private const val PREFS_WIZARD = "wizard_prefs"
         private const val KEY_WIZARD_COMPLETED = "wizard_completed"
+        private const val KEY_WIZARD_CURRENT_STEP = "wizard_current_step"
+        private const val KEY_WIZARD_SELECTED_CATEGORY = "wizard_selected_category"
+        private const val KEY_WIZARD_SKIPPED_AI = "wizard_skipped_ai"
         private const val KEY_AI_WELCOME_SEEN = "has_seen_ai_welcome"
         private const val PREFS_AI_WELCOME = "ai_welcome_prefs"
 
         fun isFirstRun(context: Context): Boolean {
             val prefs = context.getSharedPreferences(PREFS_WIZARD, Context.MODE_PRIVATE)
             return !prefs.getBoolean(KEY_WIZARD_COMPLETED, false)
+        }
+
+        fun getSavedStep(context: Context): Int {
+            val prefs = context.getSharedPreferences(PREFS_WIZARD, Context.MODE_PRIVATE)
+            return prefs.getInt(KEY_WIZARD_CURRENT_STEP, 0)
         }
 
         fun newIntent(context: Context): Intent {
@@ -71,6 +79,15 @@ class SetupWizardActivity : AppCompatActivity() {
         setupViewPager()
         setupProgressSegments()
         setupSkipButton()
+
+        // Restore saved step BEFORE observing (to avoid the observer
+        // overwriting saved state with the initial value of 0)
+        val savedStep = getSavedStep(this)
+        if (savedStep > 0) {
+            val restoredStep = if (savedStep > 5) 5 else savedStep  // 5 = Connect Account (0-indexed)
+            viewModel.goToStep(restoredStep)
+        }
+
         observeViewModel()
     }
 
@@ -136,6 +153,7 @@ class SetupWizardActivity : AppCompatActivity() {
                 stepLabel.text = "Step ${step + 1} of ${SetupWizardViewModel.TOTAL_STEPS}"
                 stepName.text = stepNames.getOrNull(step) ?: ""
                 updateProgressSegments(step, viewModel.stepCompleted.value)
+                saveCurrentStep(step)
             }
         }
 
@@ -159,10 +177,18 @@ class SetupWizardActivity : AppCompatActivity() {
         finish()
     }
 
+    private fun saveCurrentStep(step: Int) {
+        getSharedPreferences(PREFS_WIZARD, Context.MODE_PRIVATE)
+            .edit()
+            .putInt(KEY_WIZARD_CURRENT_STEP, step)
+            .apply()
+    }
+
     private fun markWizardCompleted() {
         getSharedPreferences(PREFS_WIZARD, Context.MODE_PRIVATE)
             .edit()
             .putBoolean(KEY_WIZARD_COMPLETED, true)
+            .remove(KEY_WIZARD_CURRENT_STEP)
             .apply()
     }
 

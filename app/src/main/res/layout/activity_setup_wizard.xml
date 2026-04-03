@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -30,20 +31,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="12sp"
-                android:alpha="0.6"
+                android:textSize="14sp"
                 android:text="Step 1 of 9" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/skipButton"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Skip"
-                android:textSize="12sp"
-                android:minHeight="0dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp" />
+                android:text="Skip Wizard"
+                android:textSize="14sp"
+                android:textColor="#4CAF50"
+                app:strokeColor="#4CAF50" />
 
         </LinearLayout>
 
