@@ -146,3 +146,51 @@ data class CreateGroupBody(
 data class AddMembersBody(@SerializedName("userIds") val userIds: List<String>)
 data class ChangeRoleBody(@SerializedName("role") val role: String)
 data class InviteResponse(@SerializedName("token") val token: String, @SerializedName("url") val url: String)
+
+// Sharing models
+data class ServerLocationShare(
+    @SerializedName("id") val id: String,
+    @SerializedName("locationId") val locationId: String,
+    @SerializedName("sharedBy") val sharedBy: String,
+    @SerializedName("sharedWithUser") val sharedWithUser: String?,
+    @SerializedName("sharedWithGroup") val sharedWithGroup: String?,
+    @SerializedName("isActive") val isActive: Boolean,
+    @SerializedName("sharedAt") val sharedAt: String?
+)
+
+data class ShareWithBody(
+    @SerializedName("userId") val userId: String? = null,
+    @SerializedName("groupId") val groupId: String? = null
+)
+
+data class DirectShareBody(
+    @SerializedName("singleUse") val singleUse: Boolean? = null,
+    @SerializedName("maxUses") val maxUses: Int? = null
+)
+
+data class DirectShareResponse(
+    @SerializedName("token") val token: String,
+    @SerializedName("url") val url: String
+)
+
+// Suggestion models
+data class ServerChangeSuggestion(
+    @SerializedName("id") val id: String,
+    @SerializedName("locationId") val locationId: String,
+    @SerializedName("suggestedBy") val suggestedBy: String,
+    @SerializedName("status") val status: String,
+    @SerializedName("changesJson") val changesJson: String,
+    @SerializedName("message") val message: String?,
+    @SerializedName("responseMsg") val responseMsg: String?,
+    @SerializedName("createdAt") val createdAt: String?,
+    @SerializedName("respondedAt") val respondedAt: String?
+)
+
+data class SubmitSuggestionBody(
+    @SerializedName("changesJson") val changesJson: String,
+    @SerializedName("message") val message: String? = null
+)
+
+data class SuggestionResponseBody(
+    @SerializedName("responseMsg") val responseMsg: String? = null
+)

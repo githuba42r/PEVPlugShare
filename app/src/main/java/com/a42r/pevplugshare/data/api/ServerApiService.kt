@@ -148,4 +148,45 @@ interface ServerApiService {
 
     @POST("api/groups/invite/{token}/accept")
     suspend fun acceptGroupInvite(@Path("token") token: String): Response<Unit>
+
+    // Sharing
+    @POST("api/locations/{id}/share")
+    suspend fun shareLocation(@Path("id") id: String, @Body body: ShareWithBody): Response<ServerLocationShare>
+
+    @DELETE("api/locations/{id}/share/{shareId}")
+    suspend fun revokeShare(@Path("id") id: String, @Path("shareId") shareId: String): Response<Unit>
+
+    @GET("api/locations/{id}/shares")
+    suspend fun getLocationShares(@Path("id") id: String, @Query("cursor") cursor: String? = null): Response<PaginatedResponse<ServerLocationShare>>
+
+    @POST("api/locations/{id}/share/direct")
+    suspend fun generateDirectShare(@Path("id") id: String, @Body body: DirectShareBody): Response<DirectShareResponse>
+
+    @GET("api/share/{token}")
+    suspend fun resolveDirectShare(@Path("token") token: String): Response<ServerLocation>
+
+    @POST("api/locations/{shareId}/hide")
+    suspend fun hideShare(@Path("shareId") shareId: String): Response<Unit>
+
+    @DELETE("api/locations/{shareId}/hide")
+    suspend fun unhideShare(@Path("shareId") shareId: String): Response<Unit>
+
+    // Suggestions
+    @POST("api/locations/{id}/suggestions")
+    suspend fun submitSuggestion(@Path("id") id: String, @Body body: SubmitSuggestionBody): Response<ServerChangeSuggestion>
+
+    @GET("api/suggestions/incoming")
+    suspend fun getIncomingSuggestions(@Query("cursor") cursor: String? = null): Response<PaginatedResponse<ServerChangeSuggestion>>
+
+    @GET("api/suggestions/outgoing")
+    suspend fun getOutgoingSuggestions(@Query("cursor") cursor: String? = null): Response<PaginatedResponse<ServerChangeSuggestion>>
+
+    @PUT("api/suggestions/{id}/accept")
+    suspend fun acceptSuggestion(@Path("id") id: String, @Body body: SuggestionResponseBody): Response<ServerChangeSuggestion>
+
+    @PUT("api/suggestions/{id}/reject")
+    suspend fun rejectSuggestion(@Path("id") id: String, @Body body: SuggestionResponseBody): Response<ServerChangeSuggestion>
+
+    @PUT("api/suggestions/{id}/withdraw")
+    suspend fun withdrawSuggestion(@Path("id") id: String): Response<ServerChangeSuggestion>
 }
