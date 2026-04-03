@@ -166,6 +166,11 @@
             </intent-filter>
         </activity>
 
+        <!-- Friends Activity -->
+        <activity
+            android:name=".ui.friends.FriendsActivity"
+            android:exported="false" />
+
         <!-- Server Account Activity -->
         <activity
             android:name=".ui.server.ServerAccountActivity"
