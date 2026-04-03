@@ -89,4 +89,63 @@ interface ServerApiService {
 
     @PUT("api/notifications/read-all")
     suspend fun markAllNotificationsRead(): Response<Map<String, String>>
+
+    // Friends
+    @POST("api/friends/request")
+    suspend fun sendFriendRequest(@Body body: FriendRequestBody): Response<ServerFriendship>
+
+    @GET("api/friends")
+    suspend fun getFriends(@Query("cursor") cursor: String? = null, @Query("limit") limit: Int? = null): Response<PaginatedResponse<ServerUser>>
+
+    @GET("api/friends/requests/incoming")
+    suspend fun getIncomingRequests(@Query("cursor") cursor: String? = null): Response<PaginatedResponse<ServerFriendship>>
+
+    @GET("api/friends/requests/outgoing")
+    suspend fun getOutgoingRequests(@Query("cursor") cursor: String? = null): Response<PaginatedResponse<ServerFriendship>>
+
+    @PUT("api/friends/requests/{id}/accept")
+    suspend fun acceptFriendRequest(@Path("id") id: String): Response<ServerFriendship>
+
+    @PUT("api/friends/requests/{id}/decline")
+    suspend fun declineFriendRequest(@Path("id") id: String): Response<ServerFriendship>
+
+    @DELETE("api/friends/{userId}")
+    suspend fun removeFriend(@Path("userId") userId: String): Response<Unit>
+
+    // Groups
+    @POST("api/groups")
+    suspend fun createGroup(@Body body: CreateGroupBody): Response<ServerFriendGroup>
+
+    @GET("api/groups")
+    suspend fun getGroups(@Query("cursor") cursor: String? = null): Response<PaginatedResponse<ServerFriendGroup>>
+
+    @GET("api/groups/{id}")
+    suspend fun getGroup(@Path("id") id: String): Response<ServerFriendGroup>
+
+    @PUT("api/groups/{id}")
+    suspend fun updateGroup(@Path("id") id: String, @Body body: CreateGroupBody): Response<ServerFriendGroup>
+
+    @DELETE("api/groups/{id}")
+    suspend fun deleteGroup(@Path("id") id: String): Response<Unit>
+
+    @GET("api/groups/{id}/members")
+    suspend fun getGroupMembers(@Path("id") id: String): Response<List<ServerGroupMember>>
+
+    @POST("api/groups/{id}/members")
+    suspend fun addGroupMembers(@Path("id") id: String, @Body body: AddMembersBody): Response<Unit>
+
+    @DELETE("api/groups/{id}/members/{userId}")
+    suspend fun removeGroupMember(@Path("id") id: String, @Path("userId") userId: String): Response<Unit>
+
+    @PUT("api/groups/{id}/members/{userId}/role")
+    suspend fun changeGroupMemberRole(@Path("id") id: String, @Path("userId") userId: String, @Body body: ChangeRoleBody): Response<Unit>
+
+    @POST("api/groups/{id}/invite")
+    suspend fun generateGroupInvite(@Path("id") id: String): Response<InviteResponse>
+
+    @GET("api/groups/invite/{token}")
+    suspend fun getGroupInviteDetails(@Path("token") token: String): Response<ServerGroupInvitation>
+
+    @POST("api/groups/invite/{token}/accept")
+    suspend fun acceptGroupInvite(@Path("token") token: String): Response<Unit>
 }

@@ -99,3 +99,50 @@ data class PaginatedResponse<T>(
     @SerializedName("data") val data: List<T>,
     @SerializedName("pagination") val pagination: PaginationInfo
 )
+
+// Friend models
+data class ServerFriendship(
+    @SerializedName("id") val id: String,
+    @SerializedName("requesterId") val requesterId: String,
+    @SerializedName("addresseeId") val addresseeId: String,
+    @SerializedName("status") val status: String,
+    @SerializedName("requestedAt") val requestedAt: String?,
+    @SerializedName("respondedAt") val respondedAt: String?
+)
+
+data class FriendRequestBody(
+    @SerializedName("email") val email: String? = null,
+    @SerializedName("userId") val userId: String? = null
+)
+
+// Group models
+data class ServerFriendGroup(
+    @SerializedName("id") val id: String,
+    @SerializedName("ownerId") val ownerId: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("description") val description: String?,
+    @SerializedName("createdAt") val createdAt: String?,
+    @SerializedName("updatedAt") val updatedAt: String?
+)
+
+data class ServerGroupMember(
+    @SerializedName("groupId") val groupId: String,
+    @SerializedName("userId") val userId: String,
+    @SerializedName("role") val role: String,
+    @SerializedName("addedAt") val addedAt: String?
+)
+
+data class ServerGroupInvitation(
+    @SerializedName("id") val id: String,
+    @SerializedName("groupId") val groupId: String,
+    @SerializedName("status") val status: String
+)
+
+data class CreateGroupBody(
+    @SerializedName("name") val name: String,
+    @SerializedName("description") val description: String? = null
+)
+
+data class AddMembersBody(@SerializedName("userIds") val userIds: List<String>)
+data class ChangeRoleBody(@SerializedName("role") val role: String)
+data class InviteResponse(@SerializedName("token") val token: String, @SerializedName("url") val url: String)
