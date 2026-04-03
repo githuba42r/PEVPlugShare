@@ -8,8 +8,11 @@ import com.a42r.pevplugshare.data.network.ConnectivityObserver
 import com.a42r.pevplugshare.data.remote.CookieManager
 import com.a42r.pevplugshare.data.remote.GeocodingService
 import com.a42r.pevplugshare.data.remote.OsmandApiClient
+import com.a42r.pevplugshare.data.remote.ServerApiClient
 import com.a42r.pevplugshare.data.remote.TokenManager
 import com.a42r.pevplugshare.data.repository.AuthRepositoryImpl
+import com.a42r.pevplugshare.data.repository.ServerAuthRepository
+import com.a42r.pevplugshare.data.repository.ServerSyncRepository
 import com.a42r.pevplugshare.data.storage.PhotoStorageManager
 import com.a42r.pevplugshare.domain.repository.AuthRepository
 import dagger.Module
@@ -79,5 +82,30 @@ object NetworkModule {
         @ApplicationContext context: Context
     ): ConnectivityObserver {
         return ConnectivityObserver.create(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideServerApiClient(tokenManager: TokenManager): ServerApiClient {
+        return ServerApiClient(tokenManager)
+    }
+
+    @Singleton
+    @Provides
+    fun provideServerAuthRepository(
+        serverApiClient: ServerApiClient,
+        tokenManager: TokenManager
+    ): ServerAuthRepository {
+        return ServerAuthRepository(serverApiClient, tokenManager)
+    }
+
+    @Singleton
+    @Provides
+    fun provideServerSyncRepository(
+        serverApiClient: ServerApiClient,
+        locationDao: LocationDao,
+        photoDao: PhotoDao
+    ): ServerSyncRepository {
+        return ServerSyncRepository(serverApiClient, locationDao, photoDao)
     }
 }
