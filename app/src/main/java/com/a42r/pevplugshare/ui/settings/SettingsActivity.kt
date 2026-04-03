@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.a42r.pevplugshare.databinding.ActivitySettingsBinding
+import com.a42r.pevplugshare.ui.server.ServerAccountActivity
+import com.a42r.pevplugshare.ui.server.SyncLocationActivity
 import com.a42r.pevplugshare.util.PkceUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -49,6 +51,12 @@ class SettingsActivity : AppCompatActivity() {
 
         setupToolbar()
         setupUI()
+        setupServerSection()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshServerSection()
     }
 
     private fun setupToolbar() {
@@ -254,6 +262,35 @@ class SettingsActivity : AppCompatActivity() {
         dialog.show()
     }
     */
+
+    private fun setupServerSection() {
+        binding.apply {
+            connectServerButton.setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, ServerAccountActivity::class.java))
+            }
+            manageServerButton.setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, ServerAccountActivity::class.java))
+            }
+            syncLocationsButton.setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, SyncLocationActivity::class.java))
+            }
+        }
+        refreshServerSection()
+    }
+
+    private fun refreshServerSection() {
+        binding.apply {
+            val connected = tokenManager.isServerConnected()
+            if (connected) {
+                serverDisconnectedSection.visibility = View.GONE
+                serverConnectedSection.visibility = View.VISIBLE
+                serverConnectedEmail.text = tokenManager.getServerEmail() ?: ""
+            } else {
+                serverDisconnectedSection.visibility = View.VISIBLE
+                serverConnectedSection.visibility = View.GONE
+            }
+        }
+    }
 
     private fun updateBottomButtons() {
         binding.bottomButtons.visibility = if (modelChanged) View.VISIBLE else View.GONE
