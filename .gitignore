@@ -165,3 +165,4 @@ app/src/main/play/release-notes/
 
 # Google Play Publishing credentials (NEVER commit!)
 play-service-account.json
+.superpowers/
