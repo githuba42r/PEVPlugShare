@@ -1,0 +1,111 @@
+<%- include('../partials/head', { title: 'Bans' }) %>
+<%- include('../partials/nav') %>
+
+<div class="p-8 max-w-5xl">
+  <h1 class="text-2xl font-bold mb-6">Banned Identifiers</h1>
+
+  <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+    <h2 class="text-lg font-semibold mb-4">Add New Ban</h2>
+    <form id="addBanForm" class="flex flex-wrap gap-3 items-end">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Type</label>
+        <select id="banType" class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+          <option value="EMAIL">EMAIL</option>
+          <option value="GOOGLE_ID">GOOGLE_ID</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Identifier</label>
+        <input type="text" id="banIdentifier" placeholder="email@example.com or Google ID"
+          class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 w-72" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Reason (optional)</label>
+        <input type="text" id="banReason" placeholder="Reason for ban"
+          class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 w-56" />
+      </div>
+      <button type="submit" class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded text-sm">Add Ban</button>
+    </form>
+    <div id="formStatus" class="mt-3 text-sm hidden"></div>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-700 text-gray-300 text-left">
+          <th class="px-4 py-3">Type</th>
+          <th class="px-4 py-3">Identifier</th>
+          <th class="px-4 py-3">Reason</th>
+          <th class="px-4 py-3">Created</th>
+          <th class="px-4 py-3">Expires</th>
+          <th class="px-4 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (bans.length === 0) { %>
+          <tr>
+            <td colspan="6" class="px-4 py-6 text-center text-gray-500">No banned identifiers.</td>
+          </tr>
+        <% } %>
+        <% bans.forEach(function(ban) { %>
+          <tr class="border-t border-gray-700" id="ban-<%= ban.id %>">
+            <td class="px-4 py-3">
+              <span class="bg-gray-700 text-gray-200 text-xs px-2 py-1 rounded"><%= ban.identifierType %></span>
+            </td>
+            <td class="px-4 py-3 font-mono text-xs text-gray-200"><%= ban.identifierValue %></td>
+            <td class="px-4 py-3 text-gray-400 text-xs"><%= ban.reason || '—' %></td>
+            <td class="px-4 py-3 text-gray-400 text-xs"><%= new Date(ban.createdAt).toLocaleDateString() %></td>
+            <td class="px-4 py-3 text-gray-400 text-xs"><%= ban.expiresAt ? new Date(ban.expiresAt).toLocaleDateString() : 'Never' %></td>
+            <td class="px-4 py-3">
+              <button onclick="removeBan('<%= ban.id %>')" class="text-red-400 hover:text-red-300 text-xs">Remove</button>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.getElementById('addBanForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const type = document.getElementById('banType').value;
+    const identifier = document.getElementById('banIdentifier').value.trim();
+    const reason = document.getElementById('banReason').value.trim();
+    if (!identifier) { showStatus('Identifier is required.', true); return; }
+
+    try {
+      const res = await fetch('/admin/api/bans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, identifier, reason: reason || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      showStatus('Ban added. Reloading...', false);
+      setTimeout(() => location.reload(), 800);
+    } catch (err) {
+      showStatus(err.message, true);
+    }
+  });
+
+  async function removeBan(id) {
+    if (!confirm('Remove this ban?')) return;
+    try {
+      const res = await fetch('/admin/api/bans/' + id, { method: 'DELETE' });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed'); }
+      document.getElementById('ban-' + id).remove();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  function showStatus(msg, isError) {
+    const el = document.getElementById('formStatus');
+    el.textContent = msg;
+    el.className = 'mt-3 text-sm ' + (isError ? 'text-red-400' : 'text-green-400');
+    el.classList.remove('hidden');
+  }
+</script>
+
+<%- include('../partials/footer') %>

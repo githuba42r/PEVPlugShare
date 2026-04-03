@@ -1,0 +1,49 @@
+<%- include('partials/head', { title: 'Dashboard' }) %>
+<%- include('partials/nav') %>
+
+<div class="p-8">
+  <h1 class="text-2xl font-bold mb-8">Dashboard</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div class="text-3xl font-bold text-green-400 mb-1"><%= stats.users %></div>
+      <div class="text-gray-400 text-sm">Total Users</div>
+      <a href="/admin/users" class="text-xs text-blue-400 hover:text-blue-300 mt-2 inline-block">View Users &rarr;</a>
+    </div>
+
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div class="text-3xl font-bold text-green-400 mb-1"><%= stats.locations %></div>
+      <div class="text-gray-400 text-sm">Total Locations</div>
+      <a href="/admin/locations" class="text-xs text-blue-400 hover:text-blue-300 mt-2 inline-block">View Locations &rarr;</a>
+    </div>
+
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <div class="text-3xl font-bold text-green-400 mb-1"><%= stats.rateLimits %></div>
+      <div class="text-gray-400 text-sm">Rate Limit Rules</div>
+      <a href="/admin/rate-limits" class="text-xs text-blue-400 hover:text-blue-300 mt-2 inline-block">View Rate Limits &rarr;</a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-lg font-semibold mb-4">Quick Links</h2>
+      <ul class="space-y-2">
+        <li><a href="/admin/bans" class="text-blue-400 hover:text-blue-300 text-sm">Banned Identifiers</a></li>
+        <li><a href="/admin/sharing-bans" class="text-blue-400 hover:text-blue-300 text-sm">Sharing Bans</a></li>
+        <li><a href="/admin/groups" class="text-blue-400 hover:text-blue-300 text-sm">Groups</a></li>
+      </ul>
+    </div>
+
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-lg font-semibold mb-4">Admin API</h2>
+      <ul class="space-y-2 text-sm text-gray-400">
+        <li><code class="text-green-300">GET /admin/api/stats</code> — server statistics</li>
+        <li><code class="text-green-300">GET /admin/api/users</code> — user search</li>
+        <li><code class="text-green-300">GET /admin/api/locations</code> — location list</li>
+        <li><code class="text-green-300">GET /admin/api/rate-limits</code> — rate limit rules</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

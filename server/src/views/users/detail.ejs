@@ -1,0 +1,152 @@
+<%- include('../partials/head', { title: user.displayName }) %>
+<%- include('../partials/nav') %>
+
+<div class="p-8 max-w-4xl">
+  <div class="flex items-center gap-4 mb-6">
+    <a href="/admin/users" class="text-gray-400 hover:text-white text-sm">&larr; Users</a>
+    <h1 class="text-2xl font-bold"><%= user.displayName %></h1>
+    <% if (user.isAdmin) { %>
+      <span class="bg-purple-900 text-purple-200 text-xs px-2 py-1 rounded">Admin</span>
+    <% } %>
+    <% if (user.isBanned) { %>
+      <span class="bg-red-900 text-red-200 text-xs px-2 py-1 rounded">Banned</span>
+    <% } %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-lg font-semibold mb-4 text-gray-200">User Details</h2>
+      <dl class="space-y-3 text-sm">
+        <div class="flex gap-2"><dt class="text-gray-400 w-32">ID:</dt><dd class="text-gray-200 font-mono text-xs break-all"><%= user.id %></dd></div>
+        <div class="flex gap-2"><dt class="text-gray-400 w-32">Email:</dt><dd class="text-gray-200"><%= user.email %></dd></div>
+        <div class="flex gap-2"><dt class="text-gray-400 w-32">Display Name:</dt><dd class="text-gray-200"><%= user.displayName %></dd></div>
+        <div class="flex gap-2"><dt class="text-gray-400 w-32">Google ID:</dt><dd class="text-gray-200 font-mono text-xs"><%= user.googleId %></dd></div>
+        <div class="flex gap-2"><dt class="text-gray-400 w-32">Avatar:</dt><dd><% if (user.avatarUrl) { %><img src="<%= user.avatarUrl %>" class="w-8 h-8 rounded-full" /><% } else { %><span class="text-gray-500">None</span><% } %></dd></div>
+        <div class="flex gap-2"><dt class="text-gray-400 w-32">Created:</dt><dd class="text-gray-200"><%= new Date(user.createdAt).toLocaleString() %></dd></div>
+        <div class="flex gap-2"><dt class="text-gray-400 w-32">Last Seen:</dt><dd class="text-gray-200"><%= new Date(user.lastSeenAt).toLocaleString() %></dd></div>
+      </dl>
+    </div>
+
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+      <h2 class="text-lg font-semibold mb-4 text-gray-200">Ban Info</h2>
+      <% if (user.isBanned) { %>
+        <dl class="space-y-3 text-sm mb-4">
+          <div class="flex gap-2"><dt class="text-gray-400 w-32">Reason:</dt><dd class="text-gray-200"><%= user.banReason || 'No reason given' %></dd></div>
+          <div class="flex gap-2"><dt class="text-gray-400 w-32">Banned At:</dt><dd class="text-gray-200"><%= user.bannedAt ? new Date(user.bannedAt).toLocaleString() : '—' %></dd></div>
+          <div class="flex gap-2"><dt class="text-gray-400 w-32">Banned By:</dt><dd class="text-gray-200"><%= user.bannedBy || '—' %></dd></div>
+        </dl>
+      <% } else { %>
+        <p class="text-gray-500 text-sm mb-4">User is not banned.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-6">
+    <h2 class="text-lg font-semibold mb-4 text-gray-200">Actions</h2>
+    <div class="flex flex-wrap gap-4">
+
+      <button onclick="toggleAdmin()"
+        class="bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded text-sm">
+        <%= user.isAdmin ? 'Revoke Admin' : 'Grant Admin' %>
+      </button>
+
+      <% if (user.isBanned) { %>
+        <button onclick="unbanUser()"
+          class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded text-sm">
+          Unban User
+        </button>
+      <% } else { %>
+        <div class="flex gap-2 items-center">
+          <input type="text" id="banReason" placeholder="Ban reason (optional)"
+            class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-red-500 w-56" />
+          <button onclick="banUser()"
+            class="bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded text-sm">
+            Ban User
+          </button>
+        </div>
+      <% } %>
+
+      <div class="flex gap-2 items-center">
+        <input type="text" id="sharingBanReason" placeholder="Sharing ban reason"
+          class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-orange-500 w-56" />
+        <button onclick="createSharingBan()"
+          class="bg-orange-700 hover:bg-orange-800 text-white px-4 py-2 rounded text-sm">
+          Create Sharing Ban
+        </button>
+      </div>
+    </div>
+
+    <div id="actionStatus" class="mt-4 text-sm hidden"></div>
+  </div>
+</div>
+
+<script>
+  const userId = '<%= user.id %>';
+
+  function showStatus(msg, isError) {
+    const el = document.getElementById('actionStatus');
+    el.textContent = msg;
+    el.className = 'mt-4 text-sm ' + (isError ? 'text-red-400' : 'text-green-400');
+    el.classList.remove('hidden');
+  }
+
+  async function apiCall(method, path, body) {
+    try {
+      const res = await fetch('/admin/api' + path, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async function toggleAdmin() {
+    const isAdmin = <%= user.isAdmin ? 'true' : 'false' %>;
+    try {
+      await apiCall('POST', '/users/' + userId + '/toggle-admin', { isAdmin: !isAdmin });
+      showStatus('Admin status updated. Reloading...', false);
+      setTimeout(() => location.reload(), 800);
+    } catch (err) {
+      showStatus(err.message, true);
+    }
+  }
+
+  async function banUser() {
+    const reason = document.getElementById('banReason').value;
+    try {
+      await apiCall('POST', '/users/' + userId + '/ban', { reason });
+      showStatus('User banned. Reloading...', false);
+      setTimeout(() => location.reload(), 800);
+    } catch (err) {
+      showStatus(err.message, true);
+    }
+  }
+
+  async function unbanUser() {
+    try {
+      await apiCall('POST', '/users/' + userId + '/unban', {});
+      showStatus('User unbanned. Reloading...', false);
+      setTimeout(() => location.reload(), 800);
+    } catch (err) {
+      showStatus(err.message, true);
+    }
+  }
+
+  async function createSharingBan() {
+    const reason = document.getElementById('sharingBanReason').value;
+    if (!reason) { showStatus('Reason is required for sharing ban.', true); return; }
+    try {
+      await apiCall('POST', '/users/' + userId + '/sharing-ban', { reason });
+      showStatus('Sharing ban created.', false);
+    } catch (err) {
+      showStatus(err.message, true);
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>
