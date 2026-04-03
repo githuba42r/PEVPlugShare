@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.a42r.pevplugshare.databinding.ActivitySettingsBinding
+import com.a42r.pevplugshare.ui.friends.FriendsActivity
+import com.a42r.pevplugshare.ui.groups.GroupsActivity
 import com.a42r.pevplugshare.ui.server.ServerAccountActivity
 import com.a42r.pevplugshare.ui.server.SyncLocationActivity
 import com.a42r.pevplugshare.util.PkceUtils
@@ -273,6 +275,12 @@ class SettingsActivity : AppCompatActivity() {
             }
             syncLocationsButton.setOnClickListener {
                 startActivity(Intent(this@SettingsActivity, SyncLocationActivity::class.java))
+            }
+            friendsButton.setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, FriendsActivity::class.java))
+            }
+            groupsButton.setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, GroupsActivity::class.java))
             }
         }
         refreshServerSection()
