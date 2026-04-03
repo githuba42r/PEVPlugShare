@@ -65,6 +65,8 @@ export interface LocationRepository {
   getSharedWithUser(userId: string, cursor?: string, limit?: number): Promise<PaginatedResult<Location>>;
   getNearby(lat: number, lon: number, radiusKm: number, cursor?: string, limit?: number): Promise<PaginatedResult<Location>>;
   findDuplicates(lat: number, lon: number, radiusMetres: number): Promise<Location[]>;
+  listAll(cursor?: string, limit?: number): Promise<PaginatedResult<Location>>;
+  count(): Promise<number>;
 }
 
 export interface PhotoRepository {

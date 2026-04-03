@@ -44,6 +44,8 @@ function makeRepo(locations: Location[]): LocationRepository {
     getSharedWithUser: jest.fn(),
     getNearby: jest.fn(),
     findDuplicates: jest.fn().mockResolvedValue(locations),
+    listAll: jest.fn(),
+    count: jest.fn(),
   };
 }
 

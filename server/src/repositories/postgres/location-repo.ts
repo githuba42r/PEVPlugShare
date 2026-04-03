@@ -241,4 +241,31 @@ export class PostgresLocationRepo implements LocationRepository {
       .map((r) => mapRow(r as LocationRow))
       .filter((loc) => haversineKm(lat, lon, loc.latitude, loc.longitude) <= radiusKm);
   }
+
+  async listAll(cursor?: string, limit?: number): Promise<PaginatedResult<Location>> {
+    const effectiveLimit = clampLimit(limit);
+
+    let qb = this.knex('server_locations')
+      .orderBy('id', 'asc')
+      .limit(effectiveLimit + 1);
+
+    if (cursor) {
+      qb = qb.where('id', '>', cursor);
+    }
+
+    const rows = await qb;
+    const hasMore = rows.length > effectiveLimit;
+    const data = rows.slice(0, effectiveLimit).map((r) => mapRow(r as LocationRow));
+    const nextCursor = hasMore ? data[data.length - 1].id : null;
+
+    return {
+      data,
+      pagination: { cursor: nextCursor, hasMore },
+    };
+  }
+
+  async count(): Promise<number> {
+    const result = await this.knex('server_locations').count('id as count').first();
+    return Number((result as any)?.count ?? 0);
+  }
 }
