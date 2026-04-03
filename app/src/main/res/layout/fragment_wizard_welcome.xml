@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -35,6 +36,7 @@
             android:text="@string/wizard_welcome_pev_definition"
             android:background="@drawable/wizard_info_bg"
             android:padding="12dp"
+            android:textColor="#d1d5db"
             android:textSize="13sp"
             android:lineSpacingMultiplier="1.3"
             android:layout_marginBottom="24dp" />
@@ -63,12 +65,15 @@
             android:text="@string/wizard_welcome_get_started"
             android:layout_marginBottom="8dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/skipButton"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/wizard_welcome_skip" />
+            android:text="@string/wizard_welcome_skip"
+            android:textSize="16sp"
+            android:textColor="#4CAF50"
+            app:strokeColor="#4CAF50" />
 
     </LinearLayout>
 </ScrollView>

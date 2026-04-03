@@ -103,7 +103,7 @@
     <!-- Setup Wizard — Step 1: Welcome -->
     <string name="wizard_welcome_title">Welcome to PEVPlugShare</string>
     <string name="wizard_welcome_description">PEVPlugShare helps you find, record, and share electric vehicle and PEV charging locations with the OsmAnd mapping community.</string>
-    <string name="wizard_welcome_pev_definition">PEV = Personal Electric Vehicle (e-bikes, e-scooters, e-skateboards, small EVs and more)</string>
+    <string name="wizard_welcome_pev_definition">PEV = Personal Electric Vehicle (e-bikes, e-scooters, e-skateboards, EUCs (Electric Unicycles) and more)</string>
     <string name="wizard_welcome_steps_intro">This quick setup will guide you through:</string>
     <string name="wizard_welcome_step_list">• Installing OsmAnd (free map app)\n• Logging in to OsmAnd\n• Creating a folder for your locations\n• Syncing to the cloud\n• Connecting your OsmAnd account\n• Verifying your folder\n• (Optional) Setting up AI features</string>
     <string name="wizard_welcome_get_started">Get Started</string>

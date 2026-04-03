@@ -50,6 +50,7 @@
                 android:id="@+id/errorDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#d1d5db"
                 android:textSize="13sp"
                 android:lineSpacingMultiplier="1.3" />
 
@@ -78,8 +79,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/wizard_connect_password_hint"
             android:layout_marginBottom="12dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            app:passwordToggleEnabled="true"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:endIconMode="password_toggle"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
             <com.google.android.material.textfield.TextInputEditText

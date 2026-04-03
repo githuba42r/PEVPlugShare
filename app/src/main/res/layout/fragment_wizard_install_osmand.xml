@@ -45,12 +45,14 @@
                 android:text="@string/wizard_install_detected_title"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="#86efac"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/wizard_install_detected_message"
+                android:textColor="#d1d5db"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -72,28 +74,30 @@
                 android:text="@string/wizard_install_not_found_title"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:textColor="#fca5a5"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/wizard_install_not_found_message"
+                android:textColor="#d1d5db"
                 android:textSize="14sp"
                 android:layout_marginBottom="12dp" />
 
             <Button
-                android:id="@+id/playStorePlusButton"
+                android:id="@+id/playStoreFreeButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/wizard_install_play_plus"
+                android:text="@string/wizard_install_play_free"
                 android:layout_marginBottom="8dp" />
 
             <Button
-                android:id="@+id/playStoreFreeButton"
+                android:id="@+id/playStorePlusButton"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/wizard_install_play_free" />
+                android:text="@string/wizard_install_play_plus" />
 
         </LinearLayout>
 

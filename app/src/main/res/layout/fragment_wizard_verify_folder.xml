@@ -126,6 +126,7 @@
                     android:layout_height="wrap_content"
                     android:text="How to create a folder in OsmAnd:"
                     android:textStyle="bold"
+                    android:textColor="#7dd3fc"
                     android:textSize="14sp"
                     android:layout_marginBottom="8dp" />
 
@@ -133,6 +134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="1. Open OsmAnd\n2. Tap the star icon (Favorites)\n3. Tap the + button to add a favorite\n4. In the Group/Folder field, enter a name\n5. Save the favorite to create the folder"
+                    android:textColor="#d1d5db"
                     android:textSize="13sp"
                     android:lineSpacingMultiplier="1.5" />
 
@@ -152,6 +154,7 @@
                     android:layout_height="wrap_content"
                     android:text="How to sync to OsmAnd Cloud:"
                     android:textStyle="bold"
+                    android:textColor="#7dd3fc"
                     android:textSize="14sp"
                     android:layout_marginBottom="8dp" />
 
@@ -159,6 +162,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="1. Open OsmAnd\n2. Menu → Settings → OsmAnd Cloud\n3. Tap Back up data or Sync now\n4. Ensure your Favorites folder is included"
+                    android:textColor="#d1d5db"
                     android:textSize="13sp"
                     android:lineSpacingMultiplier="1.5" />
 
@@ -171,6 +175,7 @@
                 android:text="Note: Cloud sync can take a few minutes to propagate. If you just synced, wait a moment then try again."
                 android:background="@drawable/wizard_warning_bg"
                 android:padding="12dp"
+                android:textColor="#fde68a"
                 android:textSize="13sp"
                 android:lineSpacingMultiplier="1.3"
                 android:layout_marginBottom="20dp" />
@@ -212,6 +217,7 @@
                     android:id="@+id/errorDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="#d1d5db"
                     android:textSize="13sp"
                     android:lineSpacingMultiplier="1.3" />
 

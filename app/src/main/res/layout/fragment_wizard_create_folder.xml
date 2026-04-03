@@ -35,6 +35,7 @@
             android:text="@string/wizard_create_folder_instructions"
             android:background="@drawable/wizard_info_bg"
             android:padding="16dp"
+            android:textColor="#d1d5db"
             android:textSize="14sp"
             android:lineSpacingMultiplier="1.5"
             android:layout_marginBottom="16dp" />
@@ -46,6 +47,7 @@
             android:text="@string/wizard_create_folder_info"
             android:background="@drawable/wizard_warning_bg"
             android:padding="12dp"
+            android:textColor="#fde68a"
             android:textSize="13sp"
             android:lineSpacingMultiplier="1.3"
             android:layout_marginBottom="24dp" />
