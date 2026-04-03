@@ -48,7 +48,7 @@ android {
         versionCode = versionCodeNum
         versionName = appVersionName
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.a42r.pevplugshare.HiltTestRunner"
         
         // Add build timestamp
         val buildDate = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
@@ -233,6 +233,11 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.50")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.50")
 }
 
 play {
