@@ -188,6 +188,16 @@
             </intent-filter>
         </activity>
 
+        <!-- Suggestion Composer Activity -->
+        <activity
+            android:name=".ui.suggestions.SuggestionComposerActivity"
+            android:exported="false" />
+
+        <!-- Incoming Suggestions Activity -->
+        <activity
+            android:name=".ui.suggestions.IncomingSuggestionsActivity"
+            android:exported="false" />
+
         <!-- Share Location Activity -->
         <activity
             android:name=".ui.sharing.ShareLocationActivity"
