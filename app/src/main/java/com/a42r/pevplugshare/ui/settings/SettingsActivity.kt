@@ -13,6 +13,8 @@ import com.a42r.pevplugshare.ui.friends.FriendsActivity
 import com.a42r.pevplugshare.ui.groups.GroupsActivity
 import com.a42r.pevplugshare.ui.server.ServerAccountActivity
 import com.a42r.pevplugshare.ui.server.SyncLocationActivity
+import com.a42r.pevplugshare.ui.sharing.SharedWithMeActivity
+import com.a42r.pevplugshare.ui.suggestions.IncomingSuggestionsActivity
 import com.a42r.pevplugshare.util.PkceUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -281,6 +283,12 @@ class SettingsActivity : AppCompatActivity() {
             }
             groupsButton.setOnClickListener {
                 startActivity(Intent(this@SettingsActivity, GroupsActivity::class.java))
+            }
+            sharedWithMeButton.setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, SharedWithMeActivity::class.java))
+            }
+            suggestionsButton.setOnClickListener {
+                startActivity(Intent(this@SettingsActivity, IncomingSuggestionsActivity::class.java))
             }
         }
         refreshServerSection()

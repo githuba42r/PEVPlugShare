@@ -9,7 +9,8 @@ enum class PendingOperationType {
     UPDATE_LOCATION,
     DELETE_LOCATION,
     ADD_PHOTO,
-    DELETE_PHOTO
+    DELETE_PHOTO,
+    SUBMIT_SUGGESTION
 }
 
 @Entity(
