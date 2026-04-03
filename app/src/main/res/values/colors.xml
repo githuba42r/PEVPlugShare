@@ -21,4 +21,9 @@
 
     <color name="selection_background">#E8F5E9</color>
 
+    <!-- Setup Wizard Segment Colors -->
+    <color name="wizard_segment_completed">#4ade80</color>
+    <color name="wizard_segment_current">#4a9eff</color>
+    <color name="wizard_segment_remaining">#333333</color>
+
 </resources>
