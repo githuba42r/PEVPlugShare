@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Sub-screen 0: AI Overview -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wizard_ai_title"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <!-- AI not required info box -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/wizard_info_bg"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ℹ"
+                    android:textColor="#7dd3fc"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="AI is not required. You can use PEVPlugShare fully without it and enable it later in Settings."
+                    android:textColor="#7dd3fc"
+                    android:textSize="13sp"
+                    android:lineSpacingMultiplier="1.3" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wizard_ai_description"
+                android:textSize="15sp"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wizard_ai_how_it_works"
+                android:textSize="14sp"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Features list -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Analyse photos to identify charging equipment\n• Auto-generate location descriptions\n• Suggest tags and categories\n• Works with free AI models"
+                android:textSize="14sp"
+                android:lineSpacingMultiplier="1.5"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Review note -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="All AI-generated content is reviewed by you before saving. You are always in control."
+                android:background="@drawable/wizard_success_bg"
+                android:padding="12dp"
+                android:textColor="#86efac"
+                android:textSize="13sp"
+                android:lineSpacingMultiplier="1.3"
+                android:layout_marginBottom="16dp" />
+
+            <!-- OpenRouter note -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PEVPlugShare uses OpenRouter — a service that gives access to many AI models with a single free account."
+                android:textSize="13sp"
+                android:textColor="#9ca3af"
+                android:lineSpacingMultiplier="1.3"
+                android:layout_marginBottom="24dp" />
+
+            <Button
+                android:id="@+id/connectOpenRouterButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wizard_ai_connect_button"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/skipAiButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wizard_ai_skip"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+        </LinearLayout>
+
+        <!-- Sub-screen 1: Model Selection -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wizard_ai_select_model"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Choose an AI model for analysing photos and generating location descriptions."
+                android:textSize="15sp"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Why model matters info box -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Different models vary in speed, accuracy, and cost. Free models work well for most use cases."
+                android:background="@drawable/wizard_info_bg"
+                android:padding="12dp"
+                android:textSize="13sp"
+                android:lineSpacingMultiplier="1.3"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Free Models section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Free Models"
+                android:textColor="#4ade80"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No cost — great for everyday use"
+                android:textSize="13sp"
+                android:textColor="#9ca3af"
+                android:layout_marginBottom="12dp" />
+
+            <RadioGroup
+                android:id="@+id/modelRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp">
+
+                <RadioButton
+                    android:id="@+id/modelGeminiFlash"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gemini 2.0 Flash — Recommended"
+                    android:checked="true"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioButton
+                    android:id="@+id/modelLlama"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Llama 4 Scout"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioButton
+                    android:id="@+id/modelQwen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Qwen 2.5 VL 72B" />
+
+            </RadioGroup>
+
+            <!-- Paid Models section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Paid Models"
+                android:textColor="#c084fc"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Higher capability — charges your OpenRouter credits"
+                android:textSize="13sp"
+                android:textColor="#9ca3af"
+                android:layout_marginBottom="12dp" />
+
+            <RadioGroup
+                android:id="@+id/paidModelRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp">
+
+                <RadioButton
+                    android:id="@+id/modelClaudeSonnet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Claude Sonnet 4 — Best Value"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioButton
+                    android:id="@+id/modelGpt4o"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="GPT-4o"
+                    android:layout_marginBottom="8dp" />
+
+                <RadioButton
+                    android:id="@+id/modelGeminiPro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gemini 2.5 Pro" />
+
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You can change your model anytime in Settings → AI Features."
+                android:textSize="13sp"
+                android:textColor="#9ca3af"
+                android:lineSpacingMultiplier="1.3"
+                android:layout_marginBottom="24dp" />
+
+            <Button
+                android:id="@+id/modelContinueButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wizard_ai_next" />
+
+        </LinearLayout>
+
+    </ViewSwitcher>
+
+</ScrollView>
