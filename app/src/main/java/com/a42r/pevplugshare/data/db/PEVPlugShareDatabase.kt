@@ -33,7 +33,7 @@ import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
         PendingOperationEntity::class,
         SavedForLaterEntity::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -141,6 +141,15 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE locations ADD COLUMN serverId TEXT DEFAULT NULL")
+                database.execSQL("ALTER TABLE locations ADD COLUMN serverVersion INTEGER DEFAULT NULL")
+                database.execSQL("ALTER TABLE locations ADD COLUMN serverSyncStatus TEXT NOT NULL DEFAULT 'LOCAL_ONLY'")
+                database.execSQL("ALTER TABLE locations ADD COLUMN serverLastSyncedAt INTEGER DEFAULT NULL")
+            }
+        }
+
         fun getDatabase(context: Context): PEVPlugShareDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(
@@ -148,7 +157,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
                     PEVPlugShareDatabase::class.java,
                     "pevplugshare.db"
                 )
-                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
+                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12)
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }

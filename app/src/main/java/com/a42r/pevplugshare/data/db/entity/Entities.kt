@@ -42,7 +42,13 @@ data class LocationEntity(
     val osmandLastSyncedAt: Long? = null,        // Timestamp of last successful sync
     val osmandSyncedToServer: Boolean = false,   // True if exists on OSMAnd server
     val osmandSyncedUsernames: String? = null,   // Comma-separated list of OSMand usernames this location has been synced with
-    val osmandSyncStatus: String = "LOCAL_ONLY"  // Current sync status: LOCAL_ONLY, SYNCED, MODIFIED
+    val osmandSyncStatus: String = "LOCAL_ONLY",  // Current sync status: LOCAL_ONLY, SYNCED, MODIFIED
+
+    // Central server sync tracking fields
+    val serverId: String? = null,
+    val serverVersion: Int? = null,
+    val serverSyncStatus: String = "LOCAL_ONLY",
+    val serverLastSyncedAt: Long? = null
 )
 
 @Entity(tableName = "location_photos")
