@@ -28,6 +28,7 @@ jest.mock('../../src/config', () => ({
     logLevel: 'silent',
     maxUploadSizeMb: 5,
     adminSetupEmail: undefined,
+    sessionSecret: 'test-session-secret',
   },
 }));
 
