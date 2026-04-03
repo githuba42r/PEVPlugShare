@@ -151,7 +151,8 @@
     <string name="wizard_connect_description">Enter your OsmAnd credentials to connect PEVPlugShare to your account.</string>
     <string name="wizard_connect_username_hint">OsmAnd Username or Email</string>
     <string name="wizard_connect_password_hint">OsmAnd Password</string>
-    <string name="wizard_connect_button">Connect Account</string>
+    <string name="wizard_connect_button">Connect &amp; Verify</string>
+    <string name="wizard_connect_loading">Connecting to OsmAnd Cloud…</string>
     <string name="wizard_connect_skip">Skip — Use Local Only</string>
     <string name="wizard_connect_success">Connected successfully!</string>
     <string name="wizard_connect_error">Connection failed. Please check your credentials.</string>
@@ -163,6 +164,8 @@
     <string name="wizard_verify_no_folders">No folders found. Please go back and make sure you created a folder and synced it to OsmAnd Cloud.</string>
     <string name="wizard_verify_select_prompt">Select folder:</string>
     <string name="wizard_verify_next">Use This Folder</string>
+    <string name="wizard_verify_retry">Retry — Check for Folders</string>
+    <string name="wizard_verify_delay_warning">Sync delay: After syncing in OsmAnd, there can be a delay of 1–2 minutes before the folder appears in the OsmAnd Cloud API. If you\'ve already created the folder and synced, please wait a moment and then tap \"Retry\" below.</string>
 
     <!-- Setup Wizard — Step 8: AI Features -->
     <string name="wizard_ai_title">AI-Powered Features (Optional)</string>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -40,6 +41,7 @@ class ConnectAccountFragment : Fragment() {
         val errorDetail = view.findViewById<TextView>(R.id.errorDetail)
         val loadingContainer = view.findViewById<LinearLayout>(R.id.loadingContainer)
         val connectButton = view.findViewById<Button>(R.id.connectButton)
+        val rememberMe = view.findViewById<CheckBox>(R.id.rememberMeCheckbox)
 
         connectButton.setOnClickListener {
             val email = emailInput.text?.toString()?.trim() ?: ""
@@ -60,7 +62,7 @@ class ConnectAccountFragment : Fragment() {
             }
 
             if (valid) {
-                viewModel.loginToOsmand(email, password)
+                viewModel.loginToOsmand(email, password, rememberMe.isChecked)
             }
         }
 
