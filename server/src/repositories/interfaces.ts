@@ -13,6 +13,12 @@ import type {
   Location,
   CreateLocationInput,
   Photo,
+  Friendship,
+  FriendGroup,
+  GroupMember,
+  GroupMemberRole,
+  GroupInvitation,
+  GroupInvitationStatus,
 } from '../models';
 
 export interface UserRepository {
@@ -76,8 +82,39 @@ export interface PhotoRepository {
   delete(id: string): Promise<boolean>;
   countByLocationId(locationId: string): Promise<number>;
 }
-export interface FriendRepository {}
-export interface GroupRepository {}
+export interface FriendRepository {
+  sendRequest(requesterId: string, addresseeId: string): Promise<Friendship>;
+  getRequestById(id: string): Promise<Friendship | null>;
+  acceptRequest(id: string): Promise<Friendship>;
+  declineRequest(id: string): Promise<Friendship>;
+  removeFriend(userId: string, friendId: string): Promise<boolean>;
+  getFriends(userId: string, cursor?: string, limit?: number): Promise<PaginatedResult<User>>;
+  getIncomingRequests(userId: string, cursor?: string, limit?: number): Promise<PaginatedResult<Friendship>>;
+  getOutgoingRequests(userId: string, cursor?: string, limit?: number): Promise<PaginatedResult<Friendship>>;
+  areFriends(userId1: string, userId2: string): Promise<boolean>;
+}
+
+export interface GroupRepository {
+  create(ownerId: string, name: string, description?: string): Promise<FriendGroup>;
+  getById(id: string): Promise<FriendGroup | null>;
+  update(id: string, fields: { name?: string; description?: string }): Promise<FriendGroup>;
+  delete(id: string): Promise<boolean>;
+  getByUser(userId: string, cursor?: string, limit?: number): Promise<PaginatedResult<FriendGroup>>;
+  listAll(cursor?: string, limit?: number): Promise<PaginatedResult<FriendGroup>>;
+
+  addMember(groupId: string, userId: string, role: GroupMemberRole): Promise<GroupMember>;
+  removeMember(groupId: string, userId: string): Promise<boolean>;
+  setMemberRole(groupId: string, userId: string, role: GroupMemberRole): Promise<GroupMember>;
+  getMembers(groupId: string): Promise<GroupMember[]>;
+  isMember(groupId: string, userId: string): Promise<boolean>;
+  isAdmin(groupId: string, userId: string): Promise<boolean>;
+  getUserGroupIds(userId: string): Promise<string[]>;
+
+  createInvitation(groupId: string, invitedBy: string, inviteeId: string): Promise<GroupInvitation>;
+  getInvitationById(id: string): Promise<GroupInvitation | null>;
+  getPendingInvitations(groupId: string): Promise<GroupInvitation[]>;
+  updateInvitationStatus(id: string, status: GroupInvitationStatus, respondedBy?: string): Promise<GroupInvitation>;
+}
 export interface ShareRepository {}
 export interface SuggestionRepository {}
 export interface DeepLinkRepository {}
