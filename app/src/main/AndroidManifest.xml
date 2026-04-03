@@ -188,6 +188,16 @@
             </intent-filter>
         </activity>
 
+        <!-- Share Location Activity -->
+        <activity
+            android:name=".ui.sharing.ShareLocationActivity"
+            android:exported="false" />
+
+        <!-- Shared With Me Activity -->
+        <activity
+            android:name=".ui.sharing.SharedWithMeActivity"
+            android:exported="false" />
+
         <!-- Server Account Activity -->
         <activity
             android:name=".ui.server.ServerAccountActivity"
