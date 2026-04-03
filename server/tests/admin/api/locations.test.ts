@@ -8,6 +8,8 @@ import { PostgresRateLimitRepo } from '../../../src/repositories/postgres/rate-l
 import { PostgresNotificationRepo } from '../../../src/repositories/postgres/notification-repo';
 import { PostgresLocationRepo } from '../../../src/repositories/postgres/location-repo';
 import { PostgresPhotoRepo } from '../../../src/repositories/postgres/photo-repo';
+import { PostgresFriendRepo } from '../../../src/repositories/postgres/friend-repo';
+import { PostgresGroupRepo } from '../../../src/repositories/postgres/group-repo';
 import type { Repositories } from '../../../src/repositories/factory';
 import { requireAdmin } from '../../../src/auth/admin-middleware';
 import { createAdminLocationRouter } from '../../../src/admin/api/locations';
@@ -22,6 +24,8 @@ function buildRepos(db: Knex): Repositories {
     notifications: new PostgresNotificationRepo(db),
     locations: new PostgresLocationRepo(db),
     photos: new PostgresPhotoRepo(db),
+    friends: new PostgresFriendRepo(db),
+    groups: new PostgresGroupRepo(db),
   };
 }
 
@@ -177,9 +181,9 @@ describe('Admin API — Locations and Groups', () => {
     expect(updated!.deletedReason).toBe('Sharing blocked by admin');
   });
 
-  // --- Groups (stubs) ---
+  // --- Groups ---
 
-  it('GET /groups returns empty stub response', async () => {
+  it('GET /groups returns empty list when no groups exist', async () => {
     const app = createAdminApp(repos);
     const res = await request(app).get('/groups');
     expect(res.status).toBe(200);
@@ -187,15 +191,15 @@ describe('Admin API — Locations and Groups', () => {
     expect(res.body.pagination.hasMore).toBe(false);
   });
 
-  it('GET /groups/:id returns 501', async () => {
+  it('GET /groups/:id returns 404 for non-existent group', async () => {
     const app = createAdminApp(repos);
     const res = await request(app).get('/groups/some-id');
-    expect(res.status).toBe(501);
+    expect(res.status).toBe(404);
   });
 
-  it('DELETE /groups/:id returns 501', async () => {
+  it('DELETE /groups/:id returns 404 for non-existent group', async () => {
     const app = createAdminApp(repos);
     const res = await request(app).delete('/groups/some-id');
-    expect(res.status).toBe(501);
+    expect(res.status).toBe(404);
   });
 });

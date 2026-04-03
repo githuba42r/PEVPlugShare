@@ -22,6 +22,10 @@ import { createAdminLocationRouter } from './admin/api/locations';
 import { createAdminGroupRouter } from './admin/api/groups';
 import { createAdminRateLimitRouter } from './admin/api/rate-limits';
 import { createAdminStatsRouter } from './admin/api/stats';
+import { createFriendRouter } from './routes/friends';
+import { createGroupRouter } from './routes/groups';
+import { FriendService } from './services/friend-service';
+import { GroupService } from './services/group-service';
 import type { Repositories } from './repositories/factory';
 import type { FileStorage } from './storage/interfaces';
 import type { Cache } from './cache/interfaces';
@@ -80,6 +84,20 @@ export function createApp(deps?: AppDependencies): express.Express {
     app.use(createLocationRouter(deps.repos));
     app.use(createPhotoRouter(deps.repos, deps.storage));
     app.use(createNotificationRouter(deps.repos));
+
+    // Friend and group services + routes
+    const friendService = new FriendService(
+      deps.repos.friends,
+      deps.repos.users,
+      deps.repos.notifications,
+    );
+    const groupService = new GroupService(
+      deps.repos.groups,
+      deps.repos.notifications,
+      config.serverBaseUrl,
+    );
+    app.use(createFriendRouter(friendService, deps.repos.friends));
+    app.use(createGroupRouter(groupService, deps.repos.groups));
   }
 
   // 404 handler for unmatched routes

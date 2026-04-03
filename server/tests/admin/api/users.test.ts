@@ -8,6 +8,8 @@ import { PostgresRateLimitRepo } from '../../../src/repositories/postgres/rate-l
 import { PostgresNotificationRepo } from '../../../src/repositories/postgres/notification-repo';
 import { PostgresLocationRepo } from '../../../src/repositories/postgres/location-repo';
 import { PostgresPhotoRepo } from '../../../src/repositories/postgres/photo-repo';
+import { PostgresFriendRepo } from '../../../src/repositories/postgres/friend-repo';
+import { PostgresGroupRepo } from '../../../src/repositories/postgres/group-repo';
 import type { Repositories } from '../../../src/repositories/factory';
 import { requireAdmin } from '../../../src/auth/admin-middleware';
 import { createAdminUserRouter } from '../../../src/admin/api/users';
@@ -23,6 +25,8 @@ function buildRepos(db: Knex): Repositories {
     notifications: new PostgresNotificationRepo(db),
     locations: new PostgresLocationRepo(db),
     photos: new PostgresPhotoRepo(db),
+    friends: new PostgresFriendRepo(db),
+    groups: new PostgresGroupRepo(db),
   };
 }
 

@@ -7,6 +7,8 @@ import type {
   NotificationRepository,
   LocationRepository,
   PhotoRepository,
+  FriendRepository,
+  GroupRepository,
 } from './interfaces';
 
 export interface Repositories {
@@ -16,6 +18,8 @@ export interface Repositories {
   notifications: NotificationRepository;
   locations: LocationRepository;
   photos: PhotoRepository;
+  friends: FriendRepository;
+  groups: GroupRepository;
 }
 
 export function createRepositories(knex: Knex): Repositories {
@@ -35,6 +39,10 @@ export function createRepositories(knex: Knex): Repositories {
   const { PostgresLocationRepo } = require(`${dir}/location-repo`);
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { PostgresPhotoRepo } = require(`${dir}/photo-repo`);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PostgresFriendRepo } = require(`${dir}/friend-repo`);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PostgresGroupRepo } = require(`${dir}/group-repo`);
 
   return {
     users: new PostgresUserRepo(knex),
@@ -43,5 +51,7 @@ export function createRepositories(knex: Knex): Repositories {
     notifications: new PostgresNotificationRepo(knex),
     locations: new PostgresLocationRepo(knex),
     photos: new PostgresPhotoRepo(knex),
+    friends: new PostgresFriendRepo(knex),
+    groups: new PostgresGroupRepo(knex),
   };
 }
