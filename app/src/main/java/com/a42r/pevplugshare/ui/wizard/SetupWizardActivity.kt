@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.a42r.pevplugshare.R
+import com.a42r.pevplugshare.ui.auth.LoginActivity
 import com.a42r.pevplugshare.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -147,8 +148,7 @@ class SetupWizardActivity : AppCompatActivity() {
 
     fun skipWizard() {
         markWizardCompleted()
-        markAiWelcomeAsSeen()
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
 

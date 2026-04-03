@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import android.widget.ViewSwitcher
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -71,11 +73,17 @@ class AiFeaturesFragment : Fragment() {
 
     private val oauthLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) {
+    ) { result: ActivityResult ->
         // OAuthActivity saves the API key to TokenManager directly; check if it was saved
         if (tokenManager.hasAiApiKeyConfigured()) {
             viewModel.setOpenRouterConnected(true)
             view?.findViewById<ViewSwitcher>(R.id.viewSwitcher)?.displayedChild = 1
+        } else if (result.resultCode != android.app.Activity.RESULT_CANCELED) {
+            Toast.makeText(
+                requireContext(),
+                "OpenRouter connection failed. You can try again or skip.",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

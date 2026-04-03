@@ -96,11 +96,11 @@ class SetupWizardViewModel @Inject constructor(
         _osmandInstalled.value = installed
     }
 
-    fun loginToOsmand(username: String, password: String) {
+    fun loginToOsmand(username: String, password: String, rememberMe: Boolean = true) {
         viewModelScope.launch {
             _loginState.value = WizardLoginState.Loading
             try {
-                val result = authRepository.loginWithWebApi(username, password, rememberMe = true)
+                val result = authRepository.loginWithWebApi(username, password, rememberMe)
                 result.onSuccess { userId ->
                     val verifyResult = authRepository.getFavoritesCategories()
                     if (verifyResult.isSuccess) {
@@ -111,10 +111,24 @@ class SetupWizardViewModel @Inject constructor(
                         _loginState.value = WizardLoginState.Error("Failed to verify session")
                     }
                 }.onFailure { error ->
-                    _loginState.value = WizardLoginState.Error(error.message ?: "Login failed")
+                    val msg = error.message ?: ""
+                    _loginState.value = if (msg.contains("Unable to resolve host", ignoreCase = true) ||
+                        msg.contains("timeout", ignoreCase = true) ||
+                        msg.contains("connect", ignoreCase = true)) {
+                        WizardLoginState.Error("Connection failed — could not reach the OsmAnd Cloud server. Please check your internet connection.")
+                    } else {
+                        WizardLoginState.Error("Login failed — the email or password is incorrect. Make sure you're using the same credentials from Step 3.")
+                    }
                 }
             } catch (e: Exception) {
-                _loginState.value = WizardLoginState.Error(e.message ?: "Unknown error")
+                val msg = e.message ?: ""
+                _loginState.value = if (msg.contains("Unable to resolve host", ignoreCase = true) ||
+                    msg.contains("timeout", ignoreCase = true) ||
+                    msg.contains("connect", ignoreCase = true)) {
+                    WizardLoginState.Error("Connection failed — could not reach the OsmAnd Cloud server. Please check your internet connection.")
+                } else {
+                    WizardLoginState.Error("Login failed — the email or password is incorrect. Make sure you're using the same credentials from Step 3.")
+                }
             }
         }
     }
@@ -129,8 +143,12 @@ class SetupWizardViewModel @Inject constructor(
             try {
                 val result = authRepository.getFavoritesCategories()
                 result.onSuccess { categories ->
-                    if (categories.isNotEmpty()) {
-                        _folderState.value = FolderVerificationState.Found(categories)
+                    val filtered = categories.filter { category ->
+                        val lower = category.lowercase()
+                        lower != "favorites" && lower != "favourites" && lower.isNotEmpty()
+                    }
+                    if (filtered.isNotEmpty()) {
+                        _folderState.value = FolderVerificationState.Found(filtered)
                     } else {
                         _folderState.value = FolderVerificationState.NotFound
                     }
