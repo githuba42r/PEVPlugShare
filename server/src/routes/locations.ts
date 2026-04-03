@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import type { Repositories } from '../repositories/factory';
+import type { SharingService } from '../services/sharing-service';
 import { AppError } from '../middleware/error-handler';
 
-export function createLocationRouter(repos: Repositories): Router {
+export function createLocationRouter(repos: Repositories, sharingService?: SharingService): Router {
   const router = Router();
 
   // POST /api/locations
@@ -44,8 +45,24 @@ export function createLocationRouter(repos: Repositories): Router {
   });
 
   // GET /api/locations/shared-with-me — MUST be before /:id
-  router.get('/api/locations/shared-with-me', (_req, res) => {
-    res.json({ data: [], pagination: { cursor: null, hasMore: false } });
+  router.get('/api/locations/shared-with-me', async (req, res, next) => {
+    try {
+      const userId = req.userId!;
+      const cursor = req.query['cursor'] as string | undefined;
+      const limitRaw = req.query['limit'];
+      const limit = limitRaw ? parseInt(limitRaw as string, 10) : undefined;
+
+      const userGroupIds = await repos.groups.getUserGroupIds(userId);
+      const result = await repos.shares.getLocationsSharedWithUser(
+        userId,
+        userGroupIds,
+        cursor,
+        limit,
+      );
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
   });
 
   // GET /api/locations/nearby — MUST be before /:id
@@ -131,6 +148,12 @@ export function createLocationRouter(repos: Repositories): Router {
       }
 
       await repos.locations.softDelete(req.params['id']!, reason);
+
+      // Deactivate shares and notify shared users
+      if (sharingService) {
+        await sharingService.onLocationSoftDelete(req.params['id']!, reason);
+      }
+
       res.json({ message: 'Location deleted' });
     } catch (err) {
       next(err);
