@@ -19,6 +19,10 @@ import type {
   GroupMemberRole,
   GroupInvitation,
   GroupInvitationStatus,
+  LocationShare,
+  HiddenShare,
+  ChangeSuggestion,
+  DirectShareToken,
 } from '../models';
 
 export interface UserRepository {
@@ -115,6 +119,34 @@ export interface GroupRepository {
   getPendingInvitations(groupId: string): Promise<GroupInvitation[]>;
   updateInvitationStatus(id: string, status: GroupInvitationStatus, respondedBy?: string): Promise<GroupInvitation>;
 }
-export interface ShareRepository {}
-export interface SuggestionRepository {}
-export interface DeepLinkRepository {}
+export interface ShareRepository {
+  shareWithUser(locationId: string, sharedBy: string, sharedWithUser: string): Promise<LocationShare>;
+  shareWithGroup(locationId: string, sharedBy: string, sharedWithGroup: string): Promise<LocationShare>;
+  revokeShare(shareId: string): Promise<boolean>;
+  getSharesForLocation(locationId: string, cursor?: string, limit?: number): Promise<PaginatedResult<LocationShare>>;
+  getLocationsSharedWithUser(userId: string, userGroupIds: string[], cursor?: string, limit?: number): Promise<PaginatedResult<Location>>;
+  deactivateSharesForLocation(locationId: string): Promise<void>;
+  isSharedWithUser(locationId: string, userId: string, userGroupIds: string[]): Promise<boolean>;
+
+  hideShare(userId: string, locationId: string, shareId: string): Promise<HiddenShare>;
+  unhideShare(userId: string, shareId: string): Promise<boolean>;
+  getHiddenShareIds(userId: string): Promise<string[]>;
+  unhideByLocationVersion(locationId: string): Promise<void>;
+}
+
+export interface SuggestionRepository {
+  create(locationId: string, suggestedBy: string, changesJson: string, message?: string): Promise<ChangeSuggestion>;
+  getById(id: string): Promise<ChangeSuggestion | null>;
+  getIncoming(ownerId: string, cursor?: string, limit?: number): Promise<PaginatedResult<ChangeSuggestion>>;
+  getOutgoing(userId: string, cursor?: string, limit?: number): Promise<PaginatedResult<ChangeSuggestion>>;
+  accept(id: string, responseMsg?: string): Promise<ChangeSuggestion>;
+  reject(id: string, responseMsg?: string): Promise<ChangeSuggestion>;
+  withdraw(id: string): Promise<ChangeSuggestion>;
+}
+
+export interface DeepLinkRepository {
+  createToken(locationId: string, createdBy: string, token: string, isSingleUse?: boolean, maxUses?: number, expiresAt?: Date): Promise<DirectShareToken>;
+  getByToken(token: string): Promise<DirectShareToken | null>;
+  incrementUseCount(id: string): Promise<void>;
+  delete(id: string): Promise<boolean>;
+}

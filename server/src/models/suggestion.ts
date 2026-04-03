@@ -1,4 +1,4 @@
-export type SuggestionStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+export type SuggestionStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'WITHDRAWN';
 
 export interface ChangeSuggestion {
   id: string;
