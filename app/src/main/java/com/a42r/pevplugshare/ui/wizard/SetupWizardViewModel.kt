@@ -22,6 +22,8 @@ sealed class FolderVerificationState {
     object Idle : FolderVerificationState()
     object Loading : FolderVerificationState()
     object Success : FolderVerificationState()
+    data class Found(val categories: List<String>) : FolderVerificationState()
+    object NotFound : FolderVerificationState()
     data class Error(val message: String) : FolderVerificationState()
 }
 
@@ -128,9 +130,9 @@ class SetupWizardViewModel @Inject constructor(
                 val result = authRepository.getFavoritesCategories()
                 result.onSuccess { categories ->
                     if (categories.isNotEmpty()) {
-                        _folderState.value = FolderVerificationState.Success
+                        _folderState.value = FolderVerificationState.Found(categories)
                     } else {
-                        _folderState.value = FolderVerificationState.Error("No folders found. Please create a folder in OsmAnd first.")
+                        _folderState.value = FolderVerificationState.NotFound
                     }
                 }.onFailure { error ->
                     _folderState.value = FolderVerificationState.Error(error.message ?: "Verification failed")
