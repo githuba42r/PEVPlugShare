@@ -10,6 +10,9 @@ import { PostgresLocationRepo } from '../../../src/repositories/postgres/locatio
 import { PostgresPhotoRepo } from '../../../src/repositories/postgres/photo-repo';
 import { PostgresFriendRepo } from '../../../src/repositories/postgres/friend-repo';
 import { PostgresGroupRepo } from '../../../src/repositories/postgres/group-repo';
+import { PostgresShareRepo } from '../../../src/repositories/postgres/share-repo';
+import { PostgresSuggestionRepo } from '../../../src/repositories/postgres/suggestion-repo';
+import { PostgresDeepLinkRepo } from '../../../src/repositories/postgres/deep-link-repo';
 import type { Repositories } from '../../../src/repositories/factory';
 import { requireAdmin } from '../../../src/auth/admin-middleware';
 import { createAdminUserRouter } from '../../../src/admin/api/users';
@@ -27,6 +30,9 @@ function buildRepos(db: Knex): Repositories {
     photos: new PostgresPhotoRepo(db),
     friends: new PostgresFriendRepo(db),
     groups: new PostgresGroupRepo(db),
+    shares: new PostgresShareRepo(db),
+    suggestions: new PostgresSuggestionRepo(db),
+    deepLinks: new PostgresDeepLinkRepo(db),
   };
 }
 

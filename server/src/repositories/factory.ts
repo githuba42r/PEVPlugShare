@@ -9,6 +9,9 @@ import type {
   PhotoRepository,
   FriendRepository,
   GroupRepository,
+  ShareRepository,
+  SuggestionRepository,
+  DeepLinkRepository,
 } from './interfaces';
 
 export interface Repositories {
@@ -20,6 +23,9 @@ export interface Repositories {
   photos: PhotoRepository;
   friends: FriendRepository;
   groups: GroupRepository;
+  shares: ShareRepository;
+  suggestions: SuggestionRepository;
+  deepLinks: DeepLinkRepository;
 }
 
 export function createRepositories(knex: Knex): Repositories {
@@ -43,6 +49,12 @@ export function createRepositories(knex: Knex): Repositories {
   const { PostgresFriendRepo } = require(`${dir}/friend-repo`);
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { PostgresGroupRepo } = require(`${dir}/group-repo`);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PostgresShareRepo } = require(`${dir}/share-repo`);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PostgresSuggestionRepo } = require(`${dir}/suggestion-repo`);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PostgresDeepLinkRepo } = require(`${dir}/deep-link-repo`);
 
   return {
     users: new PostgresUserRepo(knex),
@@ -53,5 +65,8 @@ export function createRepositories(knex: Knex): Repositories {
     photos: new PostgresPhotoRepo(knex),
     friends: new PostgresFriendRepo(knex),
     groups: new PostgresGroupRepo(knex),
+    shares: new PostgresShareRepo(knex),
+    suggestions: new PostgresSuggestionRepo(knex),
+    deepLinks: new PostgresDeepLinkRepo(knex),
   };
 }

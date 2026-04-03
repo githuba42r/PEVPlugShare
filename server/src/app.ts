@@ -24,8 +24,12 @@ import { createAdminRateLimitRouter } from './admin/api/rate-limits';
 import { createAdminStatsRouter } from './admin/api/stats';
 import { createFriendRouter } from './routes/friends';
 import { createGroupRouter } from './routes/groups';
+import { createSharingRouter } from './routes/sharing';
+import { createSuggestionRouter } from './routes/suggestions';
 import { FriendService } from './services/friend-service';
 import { GroupService } from './services/group-service';
+import { SharingService } from './services/sharing-service';
+import { SuggestionService } from './services/suggestion-service';
 import type { Repositories } from './repositories/factory';
 import type { FileStorage } from './storage/interfaces';
 import type { Cache } from './cache/interfaces';
@@ -79,9 +83,26 @@ export function createApp(deps?: AppDependencies): express.Express {
     app.use('/api', createAuthMiddleware(config.jwtSecret));
     app.use('/api', createRateLimiter(deps.cache, deps.repos.rateLimits));
 
+    // Create sharing and suggestion services
+    const sharingService = new SharingService(
+      deps.repos.shares,
+      deps.repos.bans,
+      deps.repos.deepLinks,
+      deps.repos.locations,
+      deps.repos.notifications,
+      deps.repos.groups,
+      config.serverBaseUrl,
+    );
+    const suggestionService = new SuggestionService(
+      deps.repos.suggestions,
+      deps.repos.locations,
+      deps.repos.shares,
+      deps.repos.notifications,
+    );
+
     // Mount API route handlers
     app.use(createUserRouter(deps.repos));
-    app.use(createLocationRouter(deps.repos));
+    app.use(createLocationRouter(deps.repos, sharingService));
     app.use(createPhotoRouter(deps.repos, deps.storage));
     app.use(createNotificationRouter(deps.repos));
 
@@ -98,6 +119,8 @@ export function createApp(deps?: AppDependencies): express.Express {
     );
     app.use(createFriendRouter(friendService, deps.repos.friends));
     app.use(createGroupRouter(groupService, deps.repos.groups));
+    app.use(createSharingRouter(sharingService, deps.repos.shares));
+    app.use(createSuggestionRouter(suggestionService, deps.repos.suggestions));
   }
 
   // 404 handler for unmatched routes
