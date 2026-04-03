@@ -73,6 +73,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.wizard.SetupWizardActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.edit.EditLocationActivity"
             android:exported="false" />
 

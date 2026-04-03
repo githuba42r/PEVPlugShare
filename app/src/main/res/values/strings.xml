@@ -100,4 +100,88 @@
     <string name="add_to_osmand">Add to OSMAnd Favorites</string>
     <string name="navigate_osmand">Navigate (OSMAnd)</string>
 
+    <!-- Setup Wizard — Step 1: Welcome -->
+    <string name="wizard_welcome_title">Welcome to PEVPlugShare</string>
+    <string name="wizard_welcome_description">PEVPlugShare helps you find, record, and share electric vehicle and PEV charging locations with the OsmAnd mapping community.</string>
+    <string name="wizard_welcome_pev_definition">PEV = Personal Electric Vehicle (e-bikes, e-scooters, e-skateboards, small EVs and more)</string>
+    <string name="wizard_welcome_steps_intro">This quick setup will guide you through:</string>
+    <string name="wizard_welcome_step_list">• Installing OsmAnd (free map app)\n• Logging in to OsmAnd\n• Creating a folder for your locations\n• Syncing to the cloud\n• Connecting your OsmAnd account\n• Verifying your folder\n• (Optional) Setting up AI features</string>
+    <string name="wizard_welcome_get_started">Get Started</string>
+    <string name="wizard_welcome_skip">Skip Setup</string>
+
+    <!-- Setup Wizard — Step 2: Install OsmAnd -->
+    <string name="wizard_install_title">Install OsmAnd</string>
+    <string name="wizard_install_description">PEVPlugShare uses OsmAnd as its map and navigation engine. You need OsmAnd installed to use this app.</string>
+    <string name="wizard_install_detected_title">OsmAnd Detected!</string>
+    <string name="wizard_install_detected_message">Great — OsmAnd is already installed on your device.</string>
+    <string name="wizard_install_not_found_title">OsmAnd Not Found</string>
+    <string name="wizard_install_not_found_message">OsmAnd does not appear to be installed. Please install it from the Play Store.</string>
+    <string name="wizard_install_play_plus">Install OsmAnd+ (Paid)</string>
+    <string name="wizard_install_play_free">Install OsmAnd (Free)</string>
+    <string name="wizard_install_recheck">Re-check Installation</string>
+    <string name="wizard_install_checkbox">I have installed OsmAnd</string>
+    <string name="wizard_install_next">Next</string>
+
+    <!-- Setup Wizard — Step 3: Login to OsmAnd -->
+    <string name="wizard_login_osmand_title">Login to OsmAnd</string>
+    <string name="wizard_login_osmand_description">You need an OsmAnd account to sync your charging locations to the cloud and share them with others.</string>
+    <string name="wizard_login_osmand_instructions">1. Open OsmAnd on your device\n2. Tap the menu (hamburger icon)\n3. Go to Settings → OsmAnd Cloud\n4. Sign in or create a free account</string>
+    <string name="wizard_login_osmand_tip">Tip: An OsmAnd account is free and lets you back up your locations and share them with other PEVPlugShare users.</string>
+    <string name="wizard_login_osmand_checkbox">I have logged in to OsmAnd</string>
+    <string name="wizard_login_osmand_next">Next</string>
+
+    <!-- Setup Wizard — Step 4: Create Folder -->
+    <string name="wizard_create_folder_title">Create a Folder in OsmAnd</string>
+    <string name="wizard_create_folder_description">PEVPlugShare stores your charging locations in an OsmAnd Favorites folder. You need to create one before syncing.</string>
+    <string name="wizard_create_folder_instructions">1. Open OsmAnd\n2. Tap the star icon (Favorites) on the map screen\n3. Tap the + button to add a new favorite\n4. In the Group/Folder field, type a name such as "PEV Charging"\n5. Save the favorite — this creates your folder</string>
+    <string name="wizard_create_folder_info">You can use any folder name. You will select it in a later step. The folder name you choose here must match what you select when connecting your account.</string>
+    <string name="wizard_create_folder_checkbox">I have created a folder in OsmAnd</string>
+    <string name="wizard_create_folder_next">Next</string>
+
+    <!-- Setup Wizard — Step 5: Sync to Cloud -->
+    <string name="wizard_sync_title">Sync Your Folder to OsmAnd Cloud</string>
+    <string name="wizard_sync_description">Before PEVPlugShare can access your folder, you need to back it up to OsmAnd Cloud at least once.</string>
+    <string name="wizard_sync_instructions">1. Open OsmAnd\n2. Tap the menu → Settings → OsmAnd Cloud\n3. Tap "Back up data" or "Sync now"\n4. Make sure your Favorites folder is included in the backup</string>
+    <string name="wizard_sync_info">OsmAnd Cloud sync ensures your locations are safely backed up and accessible from PEVPlugShare\'s API integration.</string>
+    <string name="wizard_sync_checkbox">I have synced my folder to OsmAnd Cloud</string>
+    <string name="wizard_sync_next">Next</string>
+
+    <!-- Setup Wizard — Step 6: Connect Account -->
+    <string name="wizard_connect_title">Connect Your OsmAnd Account</string>
+    <string name="wizard_connect_description">Enter your OsmAnd credentials to connect PEVPlugShare to your account.</string>
+    <string name="wizard_connect_username_hint">OsmAnd Username or Email</string>
+    <string name="wizard_connect_password_hint">OsmAnd Password</string>
+    <string name="wizard_connect_button">Connect Account</string>
+    <string name="wizard_connect_skip">Skip — Use Local Only</string>
+    <string name="wizard_connect_success">Connected successfully!</string>
+    <string name="wizard_connect_error">Connection failed. Please check your credentials.</string>
+
+    <!-- Setup Wizard — Step 7: Verify Folder -->
+    <string name="wizard_verify_title">Select Your Charging Folder</string>
+    <string name="wizard_verify_description">PEVPlugShare found your OsmAnd folders. Select the folder you created for PEV charging locations.</string>
+    <string name="wizard_verify_loading">Loading your folders…</string>
+    <string name="wizard_verify_no_folders">No folders found. Please go back and make sure you created a folder and synced it to OsmAnd Cloud.</string>
+    <string name="wizard_verify_select_prompt">Select folder:</string>
+    <string name="wizard_verify_next">Use This Folder</string>
+
+    <!-- Setup Wizard — Step 8: AI Features -->
+    <string name="wizard_ai_title">AI-Powered Features (Optional)</string>
+    <string name="wizard_ai_description">PEVPlugShare can use AI to automatically analyse photos and generate descriptions for your charging locations.</string>
+    <string name="wizard_ai_how_it_works">How it works: You connect a free OpenRouter account, choose a model, and PEVPlugShare uses AI to describe locations from photos you take.</string>
+    <string name="wizard_ai_connect_button">Connect OpenRouter Account</string>
+    <string name="wizard_ai_skip">Skip AI Setup</string>
+    <string name="wizard_ai_connected">OpenRouter connected!</string>
+    <string name="wizard_ai_select_model">Select AI Model</string>
+    <string name="wizard_ai_next">Next</string>
+
+    <!-- Setup Wizard — Step 9: Complete -->
+    <string name="wizard_complete_title">You\'re All Set!</string>
+    <string name="wizard_complete_description">PEVPlugShare is configured and ready to use. Start discovering and sharing PEV charging locations near you.</string>
+    <string name="wizard_complete_summary_title">Setup Summary</string>
+    <string name="wizard_complete_osmand_connected">OsmAnd: Connected</string>
+    <string name="wizard_complete_osmand_local">OsmAnd: Local only</string>
+    <string name="wizard_complete_ai_enabled">AI Features: Enabled</string>
+    <string name="wizard_complete_ai_disabled">AI Features: Not configured</string>
+    <string name="wizard_complete_button">Start Using PEVPlugShare</string>
+
 </resources>

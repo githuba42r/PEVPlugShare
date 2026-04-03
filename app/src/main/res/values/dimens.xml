@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="wizard_segment_gap">3dp</dimen>
+</resources>
