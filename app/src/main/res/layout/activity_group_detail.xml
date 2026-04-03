@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:title="Group" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Group info -->
+            <TextView
+                android:id="@+id/groupNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:paddingBottom="4dp" />
+
+            <TextView
+                android:id="@+id/groupDescriptionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="?android:textColorSecondary"
+                android:paddingBottom="16dp"
+                android:visibility="gone" />
+
+            <!-- Error / Progress -->
+            <TextView
+                android:id="@+id/errorText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/design_default_color_error"
+                android:textSize="14sp"
+                android:visibility="gone"
+                android:paddingBottom="8dp" />
+
+            <ProgressBar
+                android:id="@+id/loadingProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone" />
+
+            <!-- Members section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Members"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/membersList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- Admin actions -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/addMemberButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Member"
+                android:layout_marginTop="16dp"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/generateInviteButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Generate Invite Link"
+                android:layout_marginTop="8dp"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
+
+            <!-- Delete group — owner only -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/deleteGroupButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete Group"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/design_default_color_error"
+                android:visibility="gone"
+                style="@style/Widget.Material3.Button.TextButton" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

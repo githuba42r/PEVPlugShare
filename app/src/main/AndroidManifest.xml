@@ -171,6 +171,23 @@
             android:name=".ui.friends.FriendsActivity"
             android:exported="false" />
 
+        <!-- Groups Activity -->
+        <activity
+            android:name=".ui.groups.GroupsActivity"
+            android:exported="false" />
+
+        <!-- Group Detail Activity (also handles deep links) -->
+        <activity
+            android:name=".ui.groups.GroupDetailActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="pevplugshare" android:host="group" />
+            </intent-filter>
+        </activity>
+
         <!-- Server Account Activity -->
         <activity
             android:name=".ui.server.ServerAccountActivity"
