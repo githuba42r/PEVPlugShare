@@ -14,6 +14,7 @@ export interface Config {
   logLevel: string;
   maxUploadSizeMb: number;
   adminSetupEmail: string | undefined;
+  sessionSecret: string;
 }
 
 function getDbBackend(value: string | undefined): 'postgres' | 'mysql' {
@@ -38,4 +39,5 @@ export const config: Config = {
   logLevel: process.env['LOG_LEVEL'] ?? 'info',
   maxUploadSizeMb: parseInt(process.env['MAX_UPLOAD_SIZE_MB'] ?? '5', 10),
   adminSetupEmail: process.env['ADMIN_SETUP_EMAIL'],
+  sessionSecret: process.env['SESSION_SECRET'] || process.env['JWT_SECRET'] || 'dev-session-secret',
 };
