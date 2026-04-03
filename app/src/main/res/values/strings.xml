@@ -91,6 +91,9 @@
     <string name="success_location_deleted">Location deleted successfully</string>
     <string name="success_synced">Locations synced</string>
 
+    <!-- Central Server -->
+    <string name="google_server_client_id">YOUR_GOOGLE_CLIENT_ID</string>
+
     <!-- OSMAnd Integration -->
     <string name="osmand_required_title">OSMAnd Required</string>
     <string name="osmand_required_message">PEVPlugShare requires OSMAnd to be installed on your device for navigation and mapping features.\n\nPlease install OSMAnd from the Play Store to continue.</string>
