@@ -50,6 +50,44 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
         @Volatile
         private var Instance: PEVPlugShareDatabase? = null
 
+        // Migrations for very old databases to bring them to version 7
+        private val MIGRATION_1_6 = object : Migration(1, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_2_6 = object : Migration(2, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_3_6 = object : Migration(3, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_4_6 = object : Migration(4, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Ensure SavedForLater table exists
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS saved_for_later (
+                        id TEXT PRIMARY KEY NOT NULL,
+                        latitude REAL NOT NULL,
+                        longitude REAL NOT NULL,
+                        bearing REAL,
+                        photoPaths TEXT NOT NULL,
+                        photoMetadata TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL
+                    )
+                """)
+            }
+        }
+
         private val MIGRATION_7_8 = object : Migration(7, 8) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // Add SavedForLater table - version 7 to 8
@@ -143,24 +181,110 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
 
         private val MIGRATION_11_12 = object : Migration(11, 12) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE locations ADD COLUMN serverId TEXT DEFAULT NULL")
-                database.execSQL("ALTER TABLE locations ADD COLUMN serverVersion INTEGER DEFAULT NULL")
-                database.execSQL("ALTER TABLE locations ADD COLUMN serverSyncStatus TEXT NOT NULL DEFAULT 'LOCAL_ONLY'")
-                database.execSQL("ALTER TABLE locations ADD COLUMN serverLastSyncedAt INTEGER DEFAULT NULL")
+                try {
+                    android.util.Log.i("DB_MIGRATION", "Starting MIGRATION_11_12")
+                    val cursor = database.query("SELECT COUNT(*) as count FROM locations")
+                    if (cursor.moveToFirst()) {
+                        val count = cursor.getInt(0)
+                        android.util.Log.i("DB_MIGRATION", "Location count before migration: $count")
+                    }
+                    cursor.close()
+
+                    database.execSQL("ALTER TABLE locations ADD COLUMN serverId TEXT DEFAULT NULL")
+                    database.execSQL("ALTER TABLE locations ADD COLUMN serverVersion INTEGER DEFAULT NULL")
+                    database.execSQL("ALTER TABLE locations ADD COLUMN serverSyncStatus TEXT NOT NULL DEFAULT 'LOCAL_ONLY'")
+                    database.execSQL("ALTER TABLE locations ADD COLUMN serverLastSyncedAt INTEGER DEFAULT NULL")
+
+                    val cursor2 = database.query("SELECT COUNT(*) as count FROM locations")
+                    if (cursor2.moveToFirst()) {
+                        val count = cursor2.getInt(0)
+                        android.util.Log.i("DB_MIGRATION", "Location count after migration: $count")
+                    }
+                    cursor2.close()
+
+                    android.util.Log.i("DB_MIGRATION", "MIGRATION_11_12 completed successfully")
+                } catch (e: Exception) {
+                    android.util.Log.e("DB_MIGRATION", "MIGRATION_11_12 failed: ${e.message}", e)
+                    throw e
+                }
             }
         }
 
         fun getDatabase(context: Context): PEVPlugShareDatabase {
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(
-                    context.applicationContext,
-                    PEVPlugShareDatabase::class.java,
-                    "pevplugshare.db"
-                )
-                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12)
-                    .fallbackToDestructiveMigration()
-                    .build()
-                    .also { Instance = it }
+                try {
+                    android.util.Log.i("DB_INIT", "Opening database...")
+
+                    // Get database path and run diagnostics BEFORE Room opens it
+                    val dbPath = context.getDatabasePath("pevplugshare.db").absolutePath
+                    android.util.Log.i("DB_INIT", "Database path: $dbPath")
+
+                    // Check raw database state before Room opens it
+                    val diagnosticsBefore = DatabaseDiagnostics.getDatabaseDiagnostics(dbPath)
+                    if (diagnosticsBefore != null) {
+                        android.util.Log.i("DB_INIT", "Database state BEFORE Room opens:")
+                        android.util.Log.i("DB_INIT", "  Version: ${diagnosticsBefore.version}")
+                        android.util.Log.i("DB_INIT", "  Tables: ${diagnosticsBefore.tables}")
+                        android.util.Log.i("DB_INIT", "  Location count: ${diagnosticsBefore.locationCount}")
+                        android.util.Log.i("DB_INIT", "  SavedForLater count: ${diagnosticsBefore.savedForLaterCount}")
+
+                        if (diagnosticsBefore.version < 12) {
+                            android.util.Log.w("DB_INIT", "Database version is ${diagnosticsBefore.version}, app expects 12 - migration needed!")
+                        }
+                    } else {
+                        android.util.Log.i("DB_INIT", "No existing database file found")
+                    }
+
+                    android.util.Log.i("DB_INIT", "Building Room database with migrations...")
+                    val db = Room.databaseBuilder(
+                        context.applicationContext,
+                        PEVPlugShareDatabase::class.java,
+                        "pevplugshare.db"
+                    )
+                        .addMigrations(
+                            MIGRATION_1_6, MIGRATION_2_6, MIGRATION_3_6, MIGRATION_4_6, MIGRATION_5_6,
+                            MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12
+                        )
+                        .build()
+
+                    android.util.Log.i("DB_INIT", "Database opened successfully by Room")
+
+                    // Check database state AFTER Room opens it
+                    val diagnosticsAfter = DatabaseDiagnostics.getDatabaseDiagnostics(dbPath)
+                    if (diagnosticsAfter != null) {
+                        android.util.Log.i("DB_INIT", "Database state AFTER Room opens:")
+                        android.util.Log.i("DB_INIT", "  Version: ${diagnosticsAfter.version}")
+                        android.util.Log.i("DB_INIT", "  Tables: ${diagnosticsAfter.tables}")
+                        android.util.Log.i("DB_INIT", "  Location count: ${diagnosticsAfter.locationCount}")
+                        android.util.Log.i("DB_INIT", "  SavedForLater count: ${diagnosticsAfter.savedForLaterCount}")
+                    }
+
+                    // Compare if data was lost during Room initialization
+                    if (diagnosticsBefore != null && diagnosticsAfter != null) {
+                        if (diagnosticsBefore.locationCount > 0 && diagnosticsAfter.locationCount == 0) {
+                            android.util.Log.e("DB_INIT", "ERROR: Lost ${diagnosticsBefore.locationCount} locations during Room initialization!")
+                            android.util.Log.e("DB_INIT", "  Before: ${diagnosticsBefore.locationCount} locations in v${diagnosticsBefore.version}")
+                            android.util.Log.e("DB_INIT", "  After: ${diagnosticsAfter.locationCount} locations in v${diagnosticsAfter.version}")
+                            android.util.Log.e("DB_INIT", "  This indicates fallbackToDestructiveMigration() was called or migration failed")
+                            android.util.Log.e("DB_INIT", "  Checking if DB_MIGRATION logs appeared - if not, migration didn't run")
+                        } else if (diagnosticsBefore.version != diagnosticsAfter.version) {
+                            android.util.Log.i("DB_INIT", "Version upgraded: ${diagnosticsBefore.version} -> ${diagnosticsAfter.version}")
+                        }
+                    }
+
+                    Instance = db
+                    db
+                } catch (e: Exception) {
+                    android.util.Log.e("DB_INIT", "Failed to open database: ${e.message}", e)
+                    throw e
+                }
+            }
+        }
+
+        fun clearDatabase() {
+            synchronized(this) {
+                Instance?.close()
+                Instance = null
             }
         }
     }

@@ -69,4 +69,6 @@ interface LocationRepository {
      * @return Number of locations deleted
      */
     suspend fun deleteAllOsmandLocations(): Result<Int>
+
+    suspend fun getAllLocationsCount(): Int
 }

@@ -288,4 +288,15 @@ class LocalLocationRepository(
             Result.failure(e)
         }
     }
+
+    override suspend fun getAllLocationsCount(): Int {
+        return try {
+            val locations = locationDao.getAllLocations().first()
+            android.util.Log.i(TAG, "Location count: ${locations.size}")
+            locations.size
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "Error getting location count", e)
+            0
+        }
+    }
 }
