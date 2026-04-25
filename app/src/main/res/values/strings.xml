@@ -92,7 +92,7 @@
     <string name="success_synced">Locations synced</string>
 
     <!-- Central Server -->
-    <string name="google_server_client_id">YOUR_GOOGLE_CLIENT_ID</string>
+    <string name="google_server_client_id">617790020896-e60p719jr62tt27r8jng2379fnnshh4d.apps.googleusercontent.com</string>
 
     <!-- OSMAnd Integration -->
     <string name="osmand_required_title">OSMAnd Required</string>
