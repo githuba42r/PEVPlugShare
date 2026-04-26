@@ -252,21 +252,41 @@ class BackupRestoreHelper(private val context: Context) {
         try {
             val appImagesDir = File(context.filesDir, "location_images")
 
+            // Get list of images that were restored from Pictures directory
+            val restoredImages = if (appImagesDir.exists()) {
+                appImagesDir.listFiles()?.filter { it.isFile && (it.extension == "jpg" || it.extension == "png") }
+                    ?.map { it.name }
+                    ?.sorted() ?: emptyList()
+            } else {
+                emptyList()
+            }
+
+            Log.d(TAG, "Found ${restoredImages.size} restored images in app directory")
+
             // Fix photo paths for saved_for_later entries
             Log.d(TAG, "Fixing saved location photo paths...")
-            val savedCursor = db.rawQuery("SELECT id, photoPaths FROM saved_for_later", null)
+            val savedCursor = db.rawQuery("SELECT id, photoPaths FROM saved_for_later ORDER BY id", null)
             val pathUpdates = mutableListOf<Pair<String, String>>()
+            var imageIndex = 0
 
             while (savedCursor.moveToNext()) {
                 val id = savedCursor.getString(0)
                 val oldPaths = savedCursor.getString(1)
 
-                // Extract filenames and create new paths
-                val filenames = oldPaths.split(",").map { it.trim().substringAfterLast("/") }
-                val newPaths = filenames.map { File(appImagesDir, it).absolutePath }.joinToString(",")
+                // Count how many images this saved location expects
+                val expectedCount = oldPaths.split(",").size
 
-                if (newPaths != oldPaths) {
+                // Assign the next N restored images to this saved location
+                val assignedImages = restoredImages.subList(
+                    imageIndex,
+                    minOf(imageIndex + expectedCount, restoredImages.size)
+                )
+
+                if (assignedImages.isNotEmpty()) {
+                    val newPaths = assignedImages.map { File(appImagesDir, it).absolutePath }.joinToString(",")
                     pathUpdates.add(id to newPaths)
+                    Log.d(TAG, "Mapped $id to ${assignedImages.size} images: $assignedImages")
+                    imageIndex += assignedImages.size
                 }
             }
             savedCursor.close()
@@ -274,7 +294,7 @@ class BackupRestoreHelper(private val context: Context) {
             // Apply path updates
             for ((id, newPaths) in pathUpdates) {
                 db.execSQL("UPDATE saved_for_later SET photoPaths = ? WHERE id = ?", arrayOf(newPaths, id))
-                Log.d(TAG, "Fixed photo paths for saved location $id")
+                Log.d(TAG, "Updated paths for saved location $id")
             }
 
             // Restore location names by looking up lat/lng in locations table
@@ -284,7 +304,7 @@ class BackupRestoreHelper(private val context: Context) {
                 null
             )
 
-            val nameUpdates = mutableListOf<Triple<String, String, String>>()
+            val nameUpdates = mutableListOf<Pair<String, String>>()
             while (savedWithoutNames.moveToNext()) {
                 val id = savedWithoutNames.getString(0)
                 val lat = savedWithoutNames.getDouble(1)
@@ -300,18 +320,12 @@ class BackupRestoreHelper(private val context: Context) {
 
                 if (locationCursor.moveToFirst()) {
                     val locationName = locationCursor.getString(0)
-                    nameUpdates.add(Triple(id, locationName, locationName))
+                    nameUpdates.add(id to locationName)
                     Log.d(TAG, "Found location name for $id: $locationName")
                 }
                 locationCursor.close()
             }
             savedWithoutNames.close()
-
-            // Apply name updates - store in createdAt field as fallback if no other storage
-            for ((id, name, _) in nameUpdates) {
-                // If there's a way to store the name, do it here
-                Log.d(TAG, "Location name for $id: $name")
-            }
 
             Log.i(TAG, "Saved locations completed: fixed ${pathUpdates.size} paths, found ${nameUpdates.size} names")
         } finally {
