@@ -235,7 +235,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
                         android.util.Log.i("DB_INIT", "No existing database file found")
                     }
 
-                    android.util.Log.i("DB_INIT", "Building Room database with migrations...")
+                    android.util.Log.i("DB_INIT", "Building Room database with 11 migrations...")
                     val db = Room.databaseBuilder(
                         context.applicationContext,
                         PEVPlugShareDatabase::class.java,
@@ -247,7 +247,7 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
                         )
                         .build()
 
-                    android.util.Log.i("DB_INIT", "Database opened successfully by Room")
+                    android.util.Log.i("DB_INIT", "✓ Room database instance created and opened")
 
                     // Check database state AFTER Room opens it
                     val diagnosticsAfter = DatabaseDiagnostics.getDatabaseDiagnostics(dbPath)

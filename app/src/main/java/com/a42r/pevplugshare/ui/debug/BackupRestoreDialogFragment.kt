@@ -20,7 +20,9 @@ import com.a42r.pevplugshare.viewmodel.BackupRestoreViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
@@ -124,6 +126,7 @@ class BackupRestoreDialogFragment : DialogFragment() {
                     updateProgressDialog(state.message, state.progress)
                     binding.statusText.text = state.message
                     binding.progressBar.visibility = View.VISIBLE
+                    binding.progressBar.isIndeterminate = false
                     binding.progressBar.progress = state.progress
                     binding.selectFileButton.isEnabled = false
                     binding.restoreButton.isEnabled = false
@@ -171,65 +174,102 @@ class BackupRestoreDialogFragment : DialogFragment() {
 
     private fun handleFileSelected(uri: Uri) {
         try {
-            showProgressDialog("Loading backup file...")
+            // Capture context and cacheDir before background operation
+            val context = requireContext()
+            val cacheDir = context.cacheDir
+            val resolver = context.contentResolver
 
             val file = File(uri.path ?: return)
             if (file.exists() && file.canRead()) {
                 selectedFile = file
                 viewModel.onFileSelected(file)
             } else {
-                // Try to copy to cache if direct access fails
-                val inputStream = requireContext().contentResolver.openInputStream(uri)
-                if (inputStream != null) {
-                    val cacheFile = File(requireContext().cacheDir, "backup.zip")
-                    cacheFile.outputStream().use { output ->
-                        inputStream.copyTo(output)
+                // Show progress in main UI instead of dialog
+                binding.statusText.text = "Copying backup file..."
+                binding.progressBar.visibility = View.VISIBLE
+                binding.progressBar.isIndeterminate = true
+                binding.progressBar.progress = 0
+                binding.selectFileButton.isEnabled = false
+                binding.restoreButton.isEnabled = false
+
+                // Copy to cache on background thread if direct access fails
+                viewLifecycleOwner.lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val inputStream = resolver.openInputStream(uri)
+                            if (inputStream != null) {
+                                val cacheFile = File(cacheDir, "backup.zip")
+
+                                // Copy the file
+                                cacheFile.outputStream().use { output ->
+                                    inputStream.copyTo(output, bufferSize = 8192)
+                                }
+                                inputStream.close()
+
+                                withContext(Dispatchers.Main) {
+                                    // Check if fragment is still attached
+                                    if (isAdded) {
+                                        binding.progressBar.visibility = View.GONE
+                                        selectedFile = cacheFile
+                                        viewModel.onFileSelected(cacheFile)
+                                    }
+                                }
+                            } else {
+                                withContext(Dispatchers.Main) {
+                                    if (isAdded) {
+                                        binding.progressBar.visibility = View.GONE
+                                        binding.statusText.text = "Cannot open file"
+                                        binding.selectFileButton.isEnabled = true
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            android.util.Log.e("BackupRestore", "Error copying file", e)
+                            withContext(Dispatchers.Main) {
+                                if (isAdded) {
+                                    binding.progressBar.visibility = View.GONE
+                                    binding.statusText.text = "Error: ${e.message}"
+                                    binding.selectFileButton.isEnabled = true
+                                }
+                            }
+                        }
                     }
-                    selectedFile = cacheFile
-                    viewModel.onFileSelected(cacheFile)
                 }
             }
         } catch (e: Exception) {
-            hideProgressDialog()
-            Snackbar.make(binding.root, "Error: ${e.message}", Snackbar.LENGTH_LONG).show()
+            android.util.Log.e("BackupRestore", "Error handling file selection", e)
+            binding.statusText.text = "Error: ${e.message}"
+            binding.selectFileButton.isEnabled = true
         }
     }
 
     private fun showProgressDialog(message: String) {
         hideProgressDialog()
 
-        val inflater = LayoutInflater.from(requireContext())
-        val view = inflater.inflate(R.layout.dialog_progress, null)
-        progressDialogView = view
-
-        val messageText = view.findViewById<TextView>(R.id.progressMessage)
-        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
-        val percentText = view.findViewById<TextView>(R.id.progressPercent)
-
-        messageText.text = message
-        progressBar.progress = 0
-        percentText.text = "0%"
-
-        progressDialog = MaterialAlertDialogBuilder(requireContext())
-            .setView(view)
-            .setCancelable(false)
-            .show()
-    }
-
-    private fun updateProgressDialog(message: String, progress: Int) {
-        progressDialogView?.let { view ->
-            val messageText = view.findViewById<TextView>(R.id.progressMessage)
-            val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
-            val percentText = view.findViewById<TextView>(R.id.progressPercent)
-
-            messageText?.text = message
-            progressBar?.progress = progress
-            percentText?.text = "$progress%"
+        try {
+            progressDialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Backup Restore")
+                .setMessage(message)
+                .setView(ProgressBar(requireContext()).apply {
+                    isIndeterminate = true
+                })
+                .setCancelable(false)
+                .show()
+        } catch (e: Exception) {
+            android.util.Log.e("BackupRestore", "Error showing progress dialog", e)
         }
     }
 
+    private fun updateProgressDialog(message: String, progress: Int) {
+        // Not used for file copy, but kept for compatibility
+    }
+
     private fun hideProgressDialog() {
-        progressDialog?.dismiss()
+        try {
+            progressDialog?.dismiss()
+        } catch (e: Exception) {
+            android.util.Log.e("BackupRestore", "Error hiding progress dialog", e)
+        }
         progressDialog = null
         progressDialogView = null
     }

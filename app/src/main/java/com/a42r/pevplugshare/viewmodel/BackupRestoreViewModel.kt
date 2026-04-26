@@ -73,8 +73,8 @@ class BackupRestoreViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val progressCallback = BackupRestoreHelper.ProgressCallback { message, progress ->
-                    _restoreState.postValue(RestoreState.Restoring(message, progress))
-                    Log.d(TAG, "Progress: $progress% - $message")
+                    Log.d(TAG, "Progress callback: $progress% - $message")
+                    _restoreState.value = RestoreState.Restoring(message, progress)
                 }
 
                 val result = restoreHelper.restoreFromZip(file, progressCallback)
@@ -82,20 +82,19 @@ class BackupRestoreViewModel @Inject constructor(
                 when (result) {
                     is BackupRestoreHelper.RestoreResult.Success -> {
                         Log.i(TAG, "Restore completed successfully")
-                        _restoreState.postValue(RestoreState.Success)
+                        _restoreState.value = RestoreState.Success
                     }
                     is BackupRestoreHelper.RestoreResult.Error -> {
                         Log.e(TAG, "Restore error: ${result.message}")
-                        _restoreState.postValue(RestoreState.Error(result.message))
+                        _restoreState.value = RestoreState.Error(result.message)
                     }
                     is BackupRestoreHelper.RestoreResult.Progress -> {
-                        // For future progress reporting
                         Log.d(TAG, "Restore progress: ${result.message}")
                     }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Unexpected error during restore", e)
-                _restoreState.postValue(RestoreState.Error("Restore failed: ${e.message}"))
+                _restoreState.value = RestoreState.Error("Restore failed: ${e.message}")
             }
         }
     }
