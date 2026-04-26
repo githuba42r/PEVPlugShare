@@ -211,74 +211,47 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
         }
 
         fun getDatabase(context: Context): PEVPlugShareDatabase {
-            return Instance ?: synchronized(this) {
+            if (Instance != null) return Instance!!
+
+            synchronized(this) {
                 try {
                     android.util.Log.i("DB_INIT", "Opening database...")
-
-                    // Get database path and run diagnostics BEFORE Room opens it
-                    val dbPath = context.getDatabasePath("pevplugshare.db").absolutePath
-                    android.util.Log.i("DB_INIT", "Database path: $dbPath")
-
-                    // Check raw database state before Room opens it
-                    val diagnosticsBefore = DatabaseDiagnostics.getDatabaseDiagnostics(dbPath)
-                    if (diagnosticsBefore != null) {
-                        android.util.Log.i("DB_INIT", "Database state BEFORE Room opens:")
-                        android.util.Log.i("DB_INIT", "  Version: ${diagnosticsBefore.version}")
-                        android.util.Log.i("DB_INIT", "  Tables: ${diagnosticsBefore.tables}")
-                        android.util.Log.i("DB_INIT", "  Location count: ${diagnosticsBefore.locationCount}")
-                        android.util.Log.i("DB_INIT", "  SavedForLater count: ${diagnosticsBefore.savedForLaterCount}")
-
-                        if (diagnosticsBefore.version < 12) {
-                            android.util.Log.w("DB_INIT", "Database version is ${diagnosticsBefore.version}, app expects 12 - migration needed!")
-                        }
-                    } else {
-                        android.util.Log.i("DB_INIT", "No existing database file found")
-                    }
-
-                    android.util.Log.i("DB_INIT", "Building Room database with 11 migrations...")
-                    val db = Room.databaseBuilder(
-                        context.applicationContext,
-                        PEVPlugShareDatabase::class.java,
-                        "pevplugshare.db"
-                    )
-                        .addMigrations(
-                            MIGRATION_1_6, MIGRATION_2_6, MIGRATION_3_6, MIGRATION_4_6, MIGRATION_5_6,
-                            MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12
-                        )
-                        .build()
-
-                    android.util.Log.i("DB_INIT", "✓ Room database instance created and opened")
-
-                    // Check database state AFTER Room opens it
-                    val diagnosticsAfter = DatabaseDiagnostics.getDatabaseDiagnostics(dbPath)
-                    if (diagnosticsAfter != null) {
-                        android.util.Log.i("DB_INIT", "Database state AFTER Room opens:")
-                        android.util.Log.i("DB_INIT", "  Version: ${diagnosticsAfter.version}")
-                        android.util.Log.i("DB_INIT", "  Tables: ${diagnosticsAfter.tables}")
-                        android.util.Log.i("DB_INIT", "  Location count: ${diagnosticsAfter.locationCount}")
-                        android.util.Log.i("DB_INIT", "  SavedForLater count: ${diagnosticsAfter.savedForLaterCount}")
-                    }
-
-                    // Compare if data was lost during Room initialization
-                    if (diagnosticsBefore != null && diagnosticsAfter != null) {
-                        if (diagnosticsBefore.locationCount > 0 && diagnosticsAfter.locationCount == 0) {
-                            android.util.Log.e("DB_INIT", "ERROR: Lost ${diagnosticsBefore.locationCount} locations during Room initialization!")
-                            android.util.Log.e("DB_INIT", "  Before: ${diagnosticsBefore.locationCount} locations in v${diagnosticsBefore.version}")
-                            android.util.Log.e("DB_INIT", "  After: ${diagnosticsAfter.locationCount} locations in v${diagnosticsAfter.version}")
-                            android.util.Log.e("DB_INIT", "  This indicates fallbackToDestructiveMigration() was called or migration failed")
-                            android.util.Log.e("DB_INIT", "  Checking if DB_MIGRATION logs appeared - if not, migration didn't run")
-                        } else if (diagnosticsBefore.version != diagnosticsAfter.version) {
-                            android.util.Log.i("DB_INIT", "Version upgraded: ${diagnosticsBefore.version} -> ${diagnosticsAfter.version}")
-                        }
-                    }
-
+                    val db = buildDatabase(context, false)
                     Instance = db
-                    db
-                } catch (e: Exception) {
-                    android.util.Log.e("DB_INIT", "Failed to open database: ${e.message}", e)
-                    throw e
+                    return db
+                } catch (e: IllegalStateException) {
+                    if (e.message?.contains("Room cannot verify the data integrity") == true) {
+                        android.util.Log.w("DB_INIT", "Schema validation failed - rebuilding with fallback")
+                        val db = buildDatabase(context, true)
+                        Instance = db
+                        return db
+                    } else {
+                        throw e
+                    }
                 }
             }
+        }
+
+        private fun buildDatabase(context: Context, enableFallback: Boolean): PEVPlugShareDatabase {
+            android.util.Log.i("DB_INIT", "Building Room database (fallback=$enableFallback)...")
+            val dbBuilder = Room.databaseBuilder(
+                context.applicationContext,
+                PEVPlugShareDatabase::class.java,
+                "pevplugshare.db"
+            )
+                .addMigrations(
+                    MIGRATION_1_6, MIGRATION_2_6, MIGRATION_3_6, MIGRATION_4_6, MIGRATION_5_6,
+                    MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12
+                )
+
+            if (enableFallback) {
+                android.util.Log.w("DB_INIT", "Enabling fallbackToDestructiveMigration for schema compatibility")
+                dbBuilder.fallbackToDestructiveMigration()
+            }
+
+            val db = dbBuilder.build()
+            android.util.Log.i("DB_INIT", "✓ Room database instance created and opened")
+            return db
         }
 
         fun clearDatabase() {

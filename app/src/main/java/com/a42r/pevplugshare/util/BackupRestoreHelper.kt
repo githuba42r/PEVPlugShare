@@ -237,34 +237,52 @@ class BackupRestoreHelper(private val context: Context) {
 
     private fun restoreImages(tempDir: File): RestoreResult {
         return try {
-            val backupImagesDir = File(tempDir, IMAGES_BACKUP_PATH)
-
-            if (!backupImagesDir.exists()) {
-                Log.w(TAG, "Images directory not found in backup")
-                return RestoreResult.Success // Not critical
-            }
-
             val appImagesDir = File(context.filesDir, "location_images")
             appImagesDir.mkdirs()
 
-            // Copy all image files recursively
             var copiedCount = 0
-            backupImagesDir.walk().forEach { sourceFile ->
-                if (sourceFile.isFile) {
-                    val relativePath = sourceFile.relativeTo(backupImagesDir)
-                    val destFile = File(appImagesDir, relativePath.path)
-                    destFile.parentFile?.mkdirs()
 
-                    try {
-                        sourceFile.copyTo(destFile, overwrite = true)
-                        copiedCount++
-                    } catch (e: Exception) {
-                        Log.w(TAG, "Failed to copy image file: ${sourceFile.name}", e)
+            // Try location_images directory (newer backup format)
+            val backupImagesDir = File(tempDir, IMAGES_BACKUP_PATH)
+            if (backupImagesDir.exists()) {
+                Log.d(TAG, "Restoring images from location_images directory")
+                backupImagesDir.walk().forEach { sourceFile ->
+                    if (sourceFile.isFile) {
+                        val relativePath = sourceFile.relativeTo(backupImagesDir)
+                        val destFile = File(appImagesDir, relativePath.path)
+                        destFile.parentFile?.mkdirs()
+                        try {
+                            sourceFile.copyTo(destFile, overwrite = true)
+                            copiedCount++
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Failed to copy image: ${sourceFile.name}", e)
+                        }
                     }
                 }
             }
 
-            Log.i(TAG, "Restored $copiedCount image files")
+            // Also restore from external files directory (ef/Pictures - older backup format)
+            val externalPicturesDir = File(tempDir, "apps/com.a42r.pevplugshare/ef/Pictures")
+            if (externalPicturesDir.exists()) {
+                Log.d(TAG, "Restoring images from external Pictures directory")
+                externalPicturesDir.walk().forEach { sourceFile ->
+                    if (sourceFile.isFile && (sourceFile.extension == "jpg" || sourceFile.extension == "png")) {
+                        val destFile = File(appImagesDir, sourceFile.name)
+                        try {
+                            sourceFile.copyTo(destFile, overwrite = true)
+                            copiedCount++
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Failed to copy image: ${sourceFile.name}", e)
+                        }
+                    }
+                }
+            }
+
+            if (copiedCount == 0) {
+                Log.w(TAG, "No image files found in backup")
+            } else {
+                Log.i(TAG, "Restored $copiedCount image files")
+            }
             RestoreResult.Success
         } catch (e: Exception) {
             Log.e(TAG, "Error restoring images", e)
