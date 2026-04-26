@@ -74,7 +74,7 @@ class BackupRestoreViewModel @Inject constructor(
             try {
                 val progressCallback = BackupRestoreHelper.ProgressCallback { message, progress ->
                     Log.d(TAG, "Progress callback: $progress% - $message")
-                    _restoreState.value = RestoreState.Restoring(message, progress)
+                    _restoreState.postValue(RestoreState.Restoring(message, progress))
                 }
 
                 val result = restoreHelper.restoreFromZip(file, progressCallback)
