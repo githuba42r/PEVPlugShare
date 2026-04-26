@@ -251,83 +251,13 @@ class BackupRestoreHelper(private val context: Context) {
         val db = SQLiteDatabase.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READWRITE)
         try {
             val appImagesDir = File(context.filesDir, "location_images")
-
-            // Get list of images that were restored from Pictures directory
-            val restoredImages = if (appImagesDir.exists()) {
-                appImagesDir.listFiles()?.filter { it.isFile && (it.extension == "jpg" || it.extension == "png") }
-                    ?.map { it.name }
-                    ?.sorted() ?: emptyList()
+            if (!appImagesDir.exists()) {
+                Log.d(TAG, "No images directory — skipping image matching")
             } else {
-                emptyList()
+                GpsImageMatcher.matchAndUpdate(db, appImagesDir)
             }
 
-            Log.d(TAG, "Found ${restoredImages.size} restored images in app directory")
-
-            // Fix photo paths for saved_for_later entries
-            Log.d(TAG, "Fixing saved location photo paths...")
-            val savedCursor = db.rawQuery("SELECT id, photoPaths FROM saved_for_later ORDER BY id", null)
-            val pathUpdates = mutableListOf<Pair<String, String>>()
-            var imageIndex = 0
-
-            while (savedCursor.moveToNext()) {
-                val id = savedCursor.getString(0)
-                val oldPaths = savedCursor.getString(1)
-
-                // Count how many images this saved location expects
-                val expectedCount = oldPaths.split(",").size
-
-                // Assign the next N restored images to this saved location
-                val assignedImages = restoredImages.subList(
-                    imageIndex,
-                    minOf(imageIndex + expectedCount, restoredImages.size)
-                )
-
-                if (assignedImages.isNotEmpty()) {
-                    val newPaths = assignedImages.map { File(appImagesDir, it).absolutePath }.joinToString(",")
-                    pathUpdates.add(id to newPaths)
-                    Log.d(TAG, "Mapped $id to ${assignedImages.size} images: $assignedImages")
-                    imageIndex += assignedImages.size
-                }
-            }
-            savedCursor.close()
-
-            // Apply path updates
-            for ((id, newPaths) in pathUpdates) {
-                db.execSQL("UPDATE saved_for_later SET photoPaths = ? WHERE id = ?", arrayOf(newPaths, id))
-                Log.d(TAG, "Updated paths for saved location $id")
-            }
-
-            // Restore location names by looking up lat/lng in locations table
-            Log.d(TAG, "Restoring location names for saved items...")
-            val savedWithoutNames = db.rawQuery(
-                "SELECT id, latitude, longitude FROM saved_for_later WHERE id LIKE 'saved_%'",
-                null
-            )
-
-            val nameUpdates = mutableListOf<Pair<String, String>>()
-            while (savedWithoutNames.moveToNext()) {
-                val id = savedWithoutNames.getString(0)
-                val lat = savedWithoutNames.getDouble(1)
-                val lng = savedWithoutNames.getDouble(2)
-
-                // Try to find closest location by coordinates
-                val locationCursor = db.rawQuery(
-                    """SELECT name FROM locations
-                       WHERE ABS(latitude - ?) < 0.001 AND ABS(longitude - ?) < 0.001
-                       LIMIT 1""",
-                    arrayOf(lat.toString(), lng.toString())
-                )
-
-                if (locationCursor.moveToFirst()) {
-                    val locationName = locationCursor.getString(0)
-                    nameUpdates.add(id to locationName)
-                    Log.d(TAG, "Found location name for $id: $locationName")
-                }
-                locationCursor.close()
-            }
-            savedWithoutNames.close()
-
-            Log.i(TAG, "Saved locations completed: fixed ${pathUpdates.size} paths, found ${nameUpdates.size} names")
+            Log.i(TAG, "completeSavedLocations done")
         } finally {
             db.close()
         }

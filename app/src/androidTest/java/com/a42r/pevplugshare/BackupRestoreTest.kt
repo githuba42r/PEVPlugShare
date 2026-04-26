@@ -42,8 +42,9 @@ class BackupRestoreTest {
     @Test
     fun testBackupFileStructure() {
         // Test 1: Verify backup.zip has correct structure
-        // Search for backup file in multiple locations
+        // Search for backup file in multiple locations (prioritize world-readable /data/local/tmp)
         val possibleLocations = listOf(
+            File("/data/local/tmp/backup_full.zip"),  // World-readable, no permissions needed
             File(context.getExternalFilesDir(null), "backup_full.zip"),
             File(context.cacheDir, "backup_full.zip"),
             File(context.filesDir, "backup_full.zip"),
@@ -51,14 +52,10 @@ class BackupRestoreTest {
             File("/sdcard/Downloads/backup_full.zip")
         )
 
-        val backupZip = possibleLocations.firstOrNull { it.exists() }
+        val backupZip = possibleLocations.firstOrNull { it.exists() && it.canRead() }
             ?: run {
                 println("Backup file not found in any location:")
-                possibleLocations.forEach { println("  - ${it.path} (exists: ${it.exists()})") }
-                // Try to find any backup_full.zip
-                File("/sdcard").walk()
-                    .filter { it.name == "backup_full.zip" }
-                    .forEach { println("  Found: ${it.path}") }
+                possibleLocations.forEach { println("  - ${it.path} (exists: ${it.exists()}, canRead: ${it.canRead()})") }
                 possibleLocations[0]
             }
 
@@ -172,11 +169,12 @@ class BackupRestoreTest {
     }
 
     private fun findBackupFile(): File {
+        // Prioritize /data/local/tmp (world-readable, no permissions needed)
         val searchLocations = listOf(
             "/data/local/tmp/backup_full.zip",
+            "${context.cacheDir.path}/backup_full.zip",
             "/sdcard/Downloads/backup_full.zip",
-            "/sdcard/Download/backup_full.zip",
-            "${context.cacheDir.path}/backup_full.zip"
+            "/sdcard/Download/backup_full.zip"
         )
 
         // Check each location
