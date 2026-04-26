@@ -90,11 +90,19 @@ class SavedForLaterActivity : AppCompatActivity() {
     }
 
     private fun continueWithLocation(item: SavedForLaterItem) {
+        Log.d("SavedForLaterActivity", "continueWithLocation called for: ${item.id} at (${item.latitude}, ${item.longitude})")
         lifecycleScope.launch {
+            Log.d("SavedForLaterActivity", "Starting nearby location check...")
             val nearby = viewModel.findNearbyLocations(item.latitude, item.longitude)
+            Log.d("SavedForLaterActivity", "Found ${nearby.size} nearby locations")
+            nearby.forEach { (location, distance) ->
+                Log.d("SavedForLaterActivity", "  - ${location.name}: ${distance}m away")
+            }
             if (nearby.isEmpty()) {
+                Log.d("SavedForLaterActivity", "No nearby locations, launching EditActivity")
                 launchEditActivity(item)
             } else {
+                Log.d("SavedForLaterActivity", "Showing nearby location dialog")
                 showNearbyLocationDialog(item, nearby)
             }
         }

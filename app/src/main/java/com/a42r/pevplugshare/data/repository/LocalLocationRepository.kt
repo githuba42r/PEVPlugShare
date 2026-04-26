@@ -148,19 +148,23 @@ class LocalLocationRepository(
     ): Result<List<Pair<Location, Double>>> {
         return try {
             val locations = getLocationsByCategory(categoryName).getOrThrow()
+            android.util.Log.d("LocalLocationRepository", "findNearbyLocations: checking ${locations.size} locations for nearby ($latitude, $longitude) within ${radiusMeters}m")
             val nearby = locations.mapNotNull { location ->
                 val distance = DistanceCalculator.calculateDistance(
                     latitude, longitude,
                     location.latitude, location.longitude
                 )
                 if (distance <= radiusMeters) {
+                    android.util.Log.d("LocalLocationRepository", "  ✓ ${location.name}: ${distance}m")
                     Pair(location, distance)
                 } else {
                     null
                 }
             }.sortedBy { it.second }
+            android.util.Log.d("LocalLocationRepository", "findNearbyLocations result: ${nearby.size} locations found")
             Result.success(nearby)
         } catch (e: Exception) {
+            android.util.Log.e("LocalLocationRepository", "findNearbyLocations error: ${e.message}", e)
             Result.failure(e)
         }
     }

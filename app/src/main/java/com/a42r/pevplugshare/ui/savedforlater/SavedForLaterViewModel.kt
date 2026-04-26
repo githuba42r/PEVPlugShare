@@ -236,10 +236,13 @@ class SavedForLaterViewModel @Inject constructor(
     suspend fun findNearbyLocations(latitude: Double, longitude: Double): List<Pair<Location, Double>> {
         return withContext(Dispatchers.IO) {
             val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
-            locationRepository
-                .findNearbyLocations(latitude, longitude, radiusMeters = 100.0, categoryName = category)
+            Log.d("SavedForLaterViewModel", "findNearbyLocations: lat=$latitude, lon=$longitude, category=$category")
+            val result = locationRepository
+                .findNearbyLocations(latitude, longitude, radiusMeters = 250.0, categoryName = category)
                 .getOrDefault(emptyList())
                 .sortedBy { it.second }
+            Log.d("SavedForLaterViewModel", "findNearbyLocations result: ${result.size} locations found")
+            result
         }
     }
 
