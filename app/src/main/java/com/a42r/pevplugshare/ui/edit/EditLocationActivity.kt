@@ -2107,7 +2107,7 @@ class EditLocationActivity : AppCompatActivity(), SensorEventListener {
         photoFile?.let { file ->
             currentPhotoUri = FileProvider.getUriForFile(
                 this,
-                "${packageName}.provider",
+                "${packageName}.fileprovider",
                 file
             )
             tempPhotoFile = file
