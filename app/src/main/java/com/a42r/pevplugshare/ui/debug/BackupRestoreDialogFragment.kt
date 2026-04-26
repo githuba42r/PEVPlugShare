@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -305,10 +306,14 @@ class BackupRestoreDialogFragment : DialogFragment() {
 
     private fun shareBackup(backupFile: File) {
         try {
-            val uri = Uri.fromFile(backupFile)
+            val uri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider",
+                backupFile
+            )
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/zip"
-                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(Intent.EXTRA_STREAM, uri as android.os.Parcelable)
                 putExtra(Intent.EXTRA_SUBJECT, "PEVPlugShare Backup - ${backupFile.name}")
                 putExtra(
                     Intent.EXTRA_TEXT,
