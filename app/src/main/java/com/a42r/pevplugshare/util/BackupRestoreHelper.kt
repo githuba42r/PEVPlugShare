@@ -189,26 +189,9 @@ class BackupRestoreHelper(private val context: Context) {
                 Log.e(TAG, "✗ SIZE MISMATCH! Backup: ${backupDbFile.length()}, Copied: ${appDbFile.length()}")
             }
 
-            // Verify the copied database immediately after copy
-            Log.d(TAG, "Step 3: Verifying copied database...")
-            try {
-                val verifyDb = SQLiteDatabase.openDatabase(appDbFile.path, null, SQLiteDatabase.OPEN_READONLY)
-                val verifyVersion = verifyDb.version
-                Log.d(TAG, "  Database version: $verifyVersion")
-
-                val verifyCursor = verifyDb.rawQuery("SELECT COUNT(*) FROM locations", null)
-                val verifyCount = if (verifyCursor.moveToFirst()) verifyCursor.getInt(0) else 0
-                verifyCursor.close()
-
-                Log.d(TAG, "  ✓ Locations in copied database: $verifyCount")
-                if (verifyCount == 0) {
-                    Log.e(TAG, "✗ CRITICAL: Copied database is empty!")
-                }
-
-                verifyDb.close()
-            } catch (e: Exception) {
-                Log.e(TAG, "✗ ERROR verifying database after copy: ${e.message}", e)
-            }
+            // Don't verify the database here - let Room handle opening it
+            // Any verification now could lock the database and interfere with Room's initialization
+            Log.d(TAG, "Step 3: Database file copied successfully, deferring verification to Room initialization")
 
             // Also copy any related files (WAL, SHM)
             Log.d(TAG, "Step 4: Restoring WAL/SHM files...")
@@ -229,37 +212,17 @@ class BackupRestoreHelper(private val context: Context) {
                 Log.d(TAG, "  ⓘ No SHM file in backup")
             }
 
-            // Apply v11→v12 migration if needed
-            Log.d(TAG, "Step 5: Checking if v11→v12 migration is needed...")
+            // Let Room handle any necessary migrations when it opens the database
+            // Don't manually apply migrations as it can cause schema hash mismatches
+            Log.d(TAG, "Step 5: Database ready for Room to open and migrate if needed")
             try {
-                val checkDb = SQLiteDatabase.openDatabase(appDbFile.path, null, SQLiteDatabase.OPEN_READWRITE)
+                val checkDb = SQLiteDatabase.openDatabase(appDbFile.path, null, SQLiteDatabase.OPEN_READONLY)
                 val currentVersion = checkDb.version
-                Log.d(TAG, "  Current database version: $currentVersion")
-
-                if (currentVersion == 11) {
-                    Log.d(TAG, "  Applying v11→v12 migration automatically...")
-                    // Add server sync columns that v11→v12 migration adds
-                    try {
-                        checkDb.execSQL("ALTER TABLE locations ADD COLUMN serverId TEXT DEFAULT NULL")
-                        checkDb.execSQL("ALTER TABLE locations ADD COLUMN serverVersion INTEGER DEFAULT NULL")
-                        checkDb.execSQL("ALTER TABLE locations ADD COLUMN serverSyncStatus TEXT NOT NULL DEFAULT 'LOCAL_ONLY'")
-                        checkDb.execSQL("ALTER TABLE locations ADD COLUMN serverLastSyncedAt INTEGER DEFAULT NULL")
-
-                        // Bump version to 12
-                        checkDb.version = 12
-                        Log.d(TAG, "  ✓ Migration applied successfully. New version: 12")
-                    } catch (e: Exception) {
-                        Log.w(TAG, "  ⚠ Could not apply migration: ${e.message}")
-                        // Continue anyway - Room might handle it on next open
-                    }
-                } else {
-                    Log.d(TAG, "  Migration not needed (already at version $currentVersion)")
-                }
-
+                Log.d(TAG, "  Restored database version: $currentVersion")
+                Log.d(TAG, "  Room will handle any necessary migrations on next app start")
                 checkDb.close()
             } catch (e: Exception) {
-                Log.w(TAG, "  Could not check/upgrade database version: ${e.message}")
-                // Continue - Room will handle it
+                Log.w(TAG, "  Could not verify database version: ${e.message}")
             }
 
             Log.i(TAG, "========== RESTORE DATABASE COMPLETE ==========")
