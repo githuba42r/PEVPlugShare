@@ -4,9 +4,14 @@ import android.graphics.RectF
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a42r.pevplugshare.data.db.entity.PhotoEntity
 import com.a42r.pevplugshare.data.db.entity.SavedForLaterEntity
+import com.a42r.pevplugshare.data.model.Location
 import com.a42r.pevplugshare.data.model.PhotoMetadata
 import com.a42r.pevplugshare.data.remote.GeocodingService
+import com.a42r.pevplugshare.data.remote.TokenManager
+import com.a42r.pevplugshare.domain.repository.LocationRepository
+import com.a42r.pevplugshare.domain.repository.PhotoRepository
 import com.a42r.pevplugshare.domain.repository.SavedForLaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 sealed class SavedForLaterState {
@@ -40,6 +46,9 @@ data class SavedForLaterItem(
 @HiltViewModel
 class SavedForLaterViewModel @Inject constructor(
     private val savedForLaterRepository: SavedForLaterRepository,
+    private val locationRepository: LocationRepository,
+    private val photoRepository: PhotoRepository,
+    private val tokenManager: TokenManager,
     private val geocodingService: GeocodingService
 ) : ViewModel() {
 
@@ -220,6 +229,55 @@ class SavedForLaterViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("SavedForLaterViewModel", "Error deleting saved for later", e)
                 _savedLocationsState.value = SavedForLaterState.Error("Failed to delete: ${e.message}")
+            }
+        }
+    }
+
+    suspend fun findNearbyLocations(latitude: Double, longitude: Double): List<Pair<Location, Double>> {
+        return withContext(Dispatchers.IO) {
+            val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+            locationRepository
+                .findNearbyLocations(latitude, longitude, radiusMeters = 100.0, categoryName = category)
+                .getOrDefault(emptyList())
+                .sortedBy { it.second }
+        }
+    }
+
+    suspend fun mergePhotosIntoLocation(
+        item: SavedForLaterItem,
+        targetLocation: Location,
+        newPhotoPaths: List<String>
+    ) {
+        withContext(Dispatchers.IO) {
+            try {
+                val category = tokenManager.getSelectedCategory() ?: "Charging Locations"
+                val now = System.currentTimeMillis()
+
+                // Insert a PhotoEntity record for each new path
+                newPhotoPaths.forEach { path ->
+                    photoRepository.insertPhoto(
+                        PhotoEntity(
+                            id = UUID.randomUUID().toString(),
+                            locationId = targetLocation.id,
+                            filePath = path,
+                            timestamp = now
+                        )
+                    )
+                }
+
+                // Update Location.imagePaths
+                val updatedLocation = targetLocation.copy(
+                    imagePaths = targetLocation.imagePaths + newPhotoPaths
+                )
+                locationRepository.updateLocation(updatedLocation, category)
+
+                // Delete the saved-for-later entry (but NOT the photo files, we already moved them)
+                savedForLaterRepository.deleteSavedForLater(item.id)
+
+                loadSavedLocations()
+            } catch (e: Exception) {
+                Log.e("SavedForLaterViewModel", "Error merging photos into location", e)
+                _savedLocationsState.value = SavedForLaterState.Error("Merge failed: ${e.message}")
             }
         }
     }

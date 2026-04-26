@@ -10,10 +10,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.a42r.pevplugshare.data.model.Location
 import com.a42r.pevplugshare.databinding.ActivitySavedForLaterBinding
 import com.a42r.pevplugshare.ui.edit.EditLocationActivity
+import com.a42r.pevplugshare.util.ImageUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 @AndroidEntryPoint
 class SavedForLaterActivity : AppCompatActivity() {
@@ -85,6 +90,17 @@ class SavedForLaterActivity : AppCompatActivity() {
     }
 
     private fun continueWithLocation(item: SavedForLaterItem) {
+        lifecycleScope.launch {
+            val nearby = viewModel.findNearbyLocations(item.latitude, item.longitude)
+            if (nearby.isEmpty()) {
+                launchEditActivity(item)
+            } else {
+                showNearbyLocationDialog(item, nearby)
+            }
+        }
+    }
+
+    private fun launchEditActivity(item: SavedForLaterItem) {
         val intent = Intent(this, EditLocationActivity::class.java).apply {
             putExtra("latitude", item.latitude)
             putExtra("longitude", item.longitude)
@@ -108,6 +124,64 @@ class SavedForLaterActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    private fun showNearbyLocationDialog(item: SavedForLaterItem, nearby: List<Pair<Location, Double>>) {
+        if (nearby.size == 1) {
+            val (location, distance) = nearby[0]
+            val distanceText = "%.0fm".format(distance)
+            AlertDialog.Builder(this)
+                .setTitle("Nearby Location Found")
+                .setMessage("\"${location.name}\" is $distanceText away. Merge photos into it, or create a new location?")
+                .setPositiveButton("Merge") { _, _ ->
+                    lifecycleScope.launch { doMerge(item, location) }
+                }
+                .setNegativeButton("Create New") { _, _ ->
+                    launchEditActivity(item)
+                }
+                .setNeutralButton("Cancel", null)
+                .show()
+        } else {
+            val labels = nearby.map { (loc, dist) -> "${loc.name} (${"%.0f".format(dist)}m)" }.toTypedArray()
+            var selectedIndex = 0
+            AlertDialog.Builder(this)
+                .setTitle("Nearby Locations Found")
+                .setSingleChoiceItems(labels, 0) { _, which -> selectedIndex = which }
+                .setPositiveButton("Merge") { _, _ ->
+                    val (location, _) = nearby[selectedIndex]
+                    lifecycleScope.launch { doMerge(item, location) }
+                }
+                .setNegativeButton("Create New") { _, _ ->
+                    launchEditActivity(item)
+                }
+                .setNeutralButton("Cancel", null)
+                .show()
+        }
+    }
+
+    private suspend fun doMerge(item: SavedForLaterItem, targetLocation: Location) {
+        val newPaths = copyPhotosToLocation(item.photoPaths, targetLocation.id)
+        if (newPaths.isEmpty() && item.photoPaths.isNotEmpty()) {
+            Toast.makeText(this, "Failed to copy photos", Toast.LENGTH_LONG).show()
+            return
+        }
+        viewModel.mergePhotosIntoLocation(item, targetLocation, newPaths)
+        Toast.makeText(this, "Photos merged into \"${targetLocation.name}\"", Toast.LENGTH_SHORT).show()
+    }
+
+    private suspend fun copyPhotosToLocation(photoPaths: List<String>, locationId: String): List<String> =
+        withContext(Dispatchers.IO) {
+            val existingCount = ImageUtils.getLocationImageDirectory(this@SavedForLaterActivity, locationId)
+                .listFiles()?.size ?: 0
+            photoPaths.mapIndexedNotNull { index, path ->
+                ImageUtils.resizeAndSaveImage(
+                    this@SavedForLaterActivity,
+                    File(path),
+                    locationId,
+                    existingCount + index,
+                    isTemporary = false
+                )?.absolutePath
+            }
+        }
 
     private fun confirmDelete(item: SavedForLaterItem) {
         AlertDialog.Builder(this)
