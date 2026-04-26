@@ -14,11 +14,15 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.Lifecycle
 import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.databinding.FragmentBackupRestoreBinding
 import com.a42r.pevplugshare.viewmodel.BackupRestoreViewModel
+import com.a42r.pevplugshare.viewmodel.BackupCreationViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +30,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
- * Dialog fragment for restoring backups in debug builds.
+ * Dialog fragment for backing up and restoring app data in debug builds.
  * Only available when BuildConfig.DEBUG is true.
  */
 @AndroidEntryPoint
@@ -35,10 +39,16 @@ class BackupRestoreDialogFragment : DialogFragment() {
     private var _binding: FragmentBackupRestoreBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: BackupRestoreViewModel
+    private lateinit var restoreViewModel: BackupRestoreViewModel
+    private lateinit var backupViewModel: BackupCreationViewModel
     private var selectedFile: File? = null
     private var progressDialog: AlertDialog? = null
     private var progressDialogView: View? = null
+    private var currentMode = Mode.BACKUP
+
+    enum class Mode {
+        BACKUP, RESTORE
+    }
 
     private val filePickerLauncher = registerForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -60,14 +70,49 @@ class BackupRestoreDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize ViewModel with proper parent
-        viewModel = ViewModelProvider(requireActivity()).get(BackupRestoreViewModel::class.java)
+        // Initialize ViewModels with proper parent
+        restoreViewModel = ViewModelProvider(requireActivity()).get(BackupRestoreViewModel::class.java)
+        backupViewModel = ViewModelProvider(requireActivity()).get(BackupCreationViewModel::class.java)
 
         setupUI()
         setupObservers()
+        setupModeTab()
+    }
+
+    private fun setupModeTab() {
+        binding.modeTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                currentMode = if (tab.position == 0) Mode.BACKUP else Mode.RESTORE
+                updateModeVisibility()
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+    }
+
+    private fun updateModeVisibility() {
+        val isBackupMode = currentMode == Mode.BACKUP
+        binding.backupModeContainer.visibility = if (isBackupMode) View.VISIBLE else View.GONE
+        binding.restoreModeContainer.visibility = if (isBackupMode) View.GONE else View.VISIBLE
     }
 
     private fun setupUI() {
+        // Backup UI
+        binding.createBackupButton.setOnClickListener {
+            val includePhotos = binding.includePhotosCheckbox.isChecked
+            val description = binding.backupDescriptionInput.text.toString()
+            createBackup(includePhotos, description)
+        }
+
+        binding.shareBackupButton.setOnClickListener {
+            val state = backupViewModel.backupState.value
+            if (state is BackupCreationViewModel.BackupState.Success) {
+                shareBackup(state.backupFile)
+            }
+        }
+
+        // Restore UI
         binding.selectFileButton.setOnClickListener {
             filePickerLauncher.launch(arrayOf("application/zip"))
         }
@@ -84,7 +129,89 @@ class BackupRestoreDialogFragment : DialogFragment() {
     }
 
     private fun setupObservers() {
-        viewModel.restoreState.observe(viewLifecycleOwner) { state ->
+        // Backup observers
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                backupViewModel.backupState.collect { state ->
+                    when (state) {
+                        is BackupCreationViewModel.BackupState.Idle -> {
+                            binding.backupStatusText.text = "Ready to create backup"
+                            binding.backupStatusText.setTextColor(
+                                requireContext().getColor(R.color.md_theme_secondary)
+                            )
+                            binding.backupProgressBar.visibility = View.GONE
+                            binding.createBackupButton.isEnabled = true
+                            binding.shareBackupButton.isEnabled = false
+                            binding.backupInfoCard.visibility = View.GONE
+                        }
+
+                        is BackupCreationViewModel.BackupState.Creating -> {
+                            binding.backupStatusText.text = "Creating backup..."
+                            binding.backupStatusText.setTextColor(
+                                requireContext().getColor(R.color.md_theme_secondary)
+                            )
+                            binding.backupProgressBar.visibility = View.VISIBLE
+                            binding.createBackupButton.isEnabled = false
+                            binding.shareBackupButton.isEnabled = false
+                        }
+
+                        is BackupCreationViewModel.BackupState.Success -> {
+                            binding.backupStatusText.text = "✓ Backup created successfully!"
+                            binding.backupStatusText.setTextColor(
+                                requireContext().getColor(android.R.color.holo_green_dark)
+                            )
+                            binding.backupProgressBar.visibility = View.GONE
+                            binding.backupProgressBar.progress = 100
+                            binding.createBackupButton.isEnabled = true
+                            binding.shareBackupButton.isEnabled = true
+
+                            // Show backup info
+                            binding.backupInfoCard.visibility = View.VISIBLE
+                            binding.backupInfoText.text = buildString {
+                                append("Backup: ${state.backupFile.name}\n")
+                                append("Size: ${formatFileSize(state.fileSize)}\n")
+                                append("Database: ${formatFileSize(state.databaseSize)}\n")
+                                append("Photos: ${state.photosCount} files\n")
+                                append("Items: ${state.itemCount} entries\n")
+                                append("Location: ${state.backupFile.parentFile?.name}")
+                            }
+                        }
+
+                        is BackupCreationViewModel.BackupState.Error -> {
+                            binding.backupStatusText.text = "✗ Error: ${state.message}"
+                            binding.backupStatusText.setTextColor(
+                                requireContext().getColor(android.R.color.holo_red_dark)
+                            )
+                            binding.backupProgressBar.visibility = View.GONE
+                            binding.createBackupButton.isEnabled = true
+                            binding.shareBackupButton.isEnabled = false
+                            binding.backupInfoCard.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                backupViewModel.progress.collect { progress ->
+                    binding.backupProgressBar.progress = progress
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                backupViewModel.progressMessage.collect { message ->
+                    if (message.isNotEmpty()) {
+                        binding.backupStatusText.text = message
+                    }
+                }
+            }
+        }
+
+        // Restore observers
+        restoreViewModel.restoreState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is BackupRestoreViewModel.RestoreState.Idle -> {
                     binding.statusText.text = "Ready to restore backup"
@@ -158,7 +285,7 @@ class BackupRestoreDialogFragment : DialogFragment() {
             }
         }
 
-        viewModel.backupInfo.observe(viewLifecycleOwner) { info ->
+        restoreViewModel.backupInfo.observe(viewLifecycleOwner) { info ->
             if (info != null) {
                 binding.infoText.text = """
                     Database: ${if (info.hasDatabase) "✓ Present" else "✗ Missing"}
@@ -172,6 +299,31 @@ class BackupRestoreDialogFragment : DialogFragment() {
         }
     }
 
+    private fun createBackup(includePhotos: Boolean, description: String) {
+        backupViewModel.createBackup(includePhotos, description)
+    }
+
+    private fun shareBackup(backupFile: File) {
+        try {
+            val uri = Uri.fromFile(backupFile)
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "application/zip"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                putExtra(Intent.EXTRA_SUBJECT, "PEVPlugShare Backup - ${backupFile.name}")
+                putExtra(
+                    Intent.EXTRA_TEXT,
+                    "PEVPlugShare backup file. Import this file to restore your saved locations and photos."
+                )
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            startActivity(Intent.createChooser(intent, "Share backup with..."))
+        } catch (e: Exception) {
+            android.util.Log.e("BackupRestore", "Error sharing backup", e)
+            binding.backupStatusText.text = "Error sharing backup: ${e.message}"
+        }
+    }
+
     private fun handleFileSelected(uri: Uri) {
         try {
             // Capture context and cacheDir before background operation
@@ -182,7 +334,7 @@ class BackupRestoreDialogFragment : DialogFragment() {
             val file = File(uri.path ?: return)
             if (file.exists() && file.canRead()) {
                 selectedFile = file
-                viewModel.onFileSelected(file)
+                restoreViewModel.onFileSelected(file)
             } else {
                 // Show progress in main UI instead of dialog
                 binding.statusText.text = "Copying backup file..."
@@ -211,7 +363,7 @@ class BackupRestoreDialogFragment : DialogFragment() {
                                     if (isAdded) {
                                         binding.progressBar.visibility = View.GONE
                                         selectedFile = cacheFile
-                                        viewModel.onFileSelected(cacheFile)
+                                        restoreViewModel.onFileSelected(cacheFile)
                                     }
                                 }
                             } else {
@@ -275,7 +427,7 @@ class BackupRestoreDialogFragment : DialogFragment() {
     }
 
     private fun showRestoreConfirmation(file: File) {
-        val info = viewModel.backupInfo.value
+        val info = restoreViewModel.backupInfo.value
         val message = buildString {
             append("Restore from: ${file.name}?\n\n")
             if (info != null) {
@@ -290,7 +442,7 @@ class BackupRestoreDialogFragment : DialogFragment() {
             .setMessage(message)
             .setPositiveButton("Restore") { _, _ ->
                 selectedFile?.let {
-                    viewModel.restoreBackup(it)
+                    restoreViewModel.restoreBackup(it)
                 }
             }
             .setNegativeButton("Cancel") { dialog, _ ->

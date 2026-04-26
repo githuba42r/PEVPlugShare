@@ -321,10 +321,7 @@ class MainActivity : AppCompatActivity() {
         val popup = PopupMenu(this, binding.menuButton)
         popup.menuInflater.inflate(R.menu.main_menu, popup.menu)
 
-        // Hide debug menu items in release builds
-        if (!BuildConfig.DEBUG) {
-            popup.menu.findItem(R.id.menu_debug_restore_backup)?.isVisible = false
-        }
+        // Backup & Restore is now available in all builds
 
         // Update menu items based on OSMand connection status
         lifecycleScope.launch {
@@ -388,10 +385,8 @@ class MainActivity : AppCompatActivity() {
                     showAboutDialog()
                     true
                 }
-                R.id.menu_debug_restore_backup -> {
-                    if (BuildConfig.DEBUG) {
-                        showBackupRestoreDialog()
-                    }
+                R.id.menu_backup_restore -> {
+                    showBackupRestoreDialog()
                     true
                 }
                 else -> false

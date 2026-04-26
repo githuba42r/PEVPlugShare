@@ -25,6 +25,6 @@
         android:id="@+id/menu_about"
         android:title="About" />
     <item
-        android:id="@+id/menu_debug_restore_backup"
-        android:title="[DEBUG] Restore Backup" />
+        android:id="@+id/menu_backup_restore"
+        android:title="Backup &amp; Restore" />
 </menu>
