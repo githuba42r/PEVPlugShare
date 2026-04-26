@@ -4,13 +4,14 @@ import android.util.Log
 import com.a42r.pevplugshare.data.api.GeocodingApiService
 import com.a42r.pevplugshare.data.api.NominatimResponse
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.delay
 
 class GeocodingService {
 
@@ -20,7 +21,9 @@ class GeocodingService {
         private const val MIN_REQUEST_INTERVAL_MS = 1100L // 1.1 seconds to be safe
     }
 
-    private var lastRequestTime = 0L
+    private val cache = ConcurrentHashMap<String, GeocodingResult>()
+    private val rateLimitMutex = Mutex()
+    private var lastRequestTimeMs = 0L
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
@@ -45,19 +48,28 @@ class GeocodingService {
     private val apiService = retrofit.create(GeocodingApiService::class.java)
 
     suspend fun reverseGeocode(lat: Double, lon: Double): GeocodingResult {
-        // Implement rate limiting - Nominatim requires at least 1 second between requests
-        val currentTime = System.currentTimeMillis()
-        val timeSinceLastRequest = currentTime - lastRequestTime
-        if (timeSinceLastRequest < MIN_REQUEST_INTERVAL_MS) {
-            val delayMs = MIN_REQUEST_INTERVAL_MS - timeSinceLastRequest
-            Log.d(TAG, "Rate limiting: delaying request by ${delayMs}ms")
-            delay(delayMs)
+        // Check cache first
+        val cacheKey = "%.4f_%.4f".format(lat, lon)
+        cache[cacheKey]?.let {
+            Log.d(TAG, "Cache hit for lat=$lat, lon=$lon")
+            return it
         }
-        lastRequestTime = System.currentTimeMillis()
 
         Log.d(TAG, "Reverse geocoding request: lat=$lat, lon=$lon")
 
-        return try {
+        val result = try {
+            // Rate limiting - guard with mutex to ensure thread-safe serialization
+            rateLimitMutex.withLock {
+                val currentTime = System.currentTimeMillis()
+                val timeSinceLastRequest = currentTime - lastRequestTimeMs
+                if (timeSinceLastRequest < MIN_REQUEST_INTERVAL_MS) {
+                    val delayMs = MIN_REQUEST_INTERVAL_MS - timeSinceLastRequest
+                    Log.d(TAG, "Rate limiting: delaying request by ${delayMs}ms")
+                    delay(delayMs)
+                }
+                lastRequestTimeMs = System.currentTimeMillis()
+            }
+
             val response = apiService.reverseGeocode(lat = lat, lon = lon)
             Log.d(TAG, "Reverse geocoding response: code=${response.code()}, message=${response.message()}")
 
@@ -89,6 +101,14 @@ class GeocodingService {
             Log.e(TAG, "Reverse geocoding exception", e)
             error
         }
+
+        // Only cache successful results
+        if (result is GeocodingResult.Success) {
+            cache[cacheKey] = result
+            Log.d(TAG, "Cached result for lat=$lat, lon=$lon")
+        }
+
+        return result
     }
 
     private fun parseGeocodingResult(response: NominatimResponse): GeocodingResult {
