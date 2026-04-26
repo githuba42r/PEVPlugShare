@@ -48,13 +48,30 @@ class SavedForLaterViewModel @Inject constructor(
 
     fun loadSavedLocations() {
         viewModelScope.launch {
-            _savedLocationsState.value = SavedForLaterState.Loading
+            // Check if we already have loaded data to avoid showing Loading spinner on return
+            val alreadyLoaded = _savedLocationsState.value is SavedForLaterState.Success
+            if (!alreadyLoaded) {
+                _savedLocationsState.value = SavedForLaterState.Loading
+            }
+
             try {
+                // Load all entities from database (fast, no network calls)
                 val entities = savedForLaterRepository.getAllSavedForLaterList()
+
+                // Build items with coordinates as placeholder names (fast path)
                 val items = entities.map { entity ->
-                    convertToItem(entity)
+                    buildItemWithCoordinates(entity)
                 }
+
+                // Emit Success immediately with coordinates as display names
                 _savedLocationsState.value = SavedForLaterState.Success(items)
+
+                // Launch parallel geocoding tasks for each item (background)
+                items.forEach { item ->
+                    launch(Dispatchers.IO) {
+                        geocodeAndUpdateItem(item)
+                    }
+                }
             } catch (e: Exception) {
                 Log.e("SavedForLaterViewModel", "Error loading saved locations", e)
                 _savedLocationsState.value = SavedForLaterState.Error("Failed to load saved locations: ${e.message}")
@@ -62,57 +79,73 @@ class SavedForLaterViewModel @Inject constructor(
         }
     }
 
-    private suspend fun convertToItem(entity: SavedForLaterEntity): SavedForLaterItem {
-        return withContext(Dispatchers.IO) {
-            val photoPaths = entity.photoPaths.split(",").filter { it.isNotBlank() }
-            val photoMetadata = deserializePhotoMetadata(entity.photoMetadata)
+    private fun buildItemWithCoordinates(entity: SavedForLaterEntity): SavedForLaterItem {
+        // Synchronous helper: builds item with coordinates as placeholder name
+        val photoPaths = entity.photoPaths.split(",").filter { it.isNotBlank() }
+        val photoMetadata = deserializePhotoMetadata(entity.photoMetadata)
+        val coordinatesText = "Lat: %.4f, Lng: %.4f".format(entity.latitude, entity.longitude)
+        val createdAtText = formatTimeAgo(entity.createdAt)
 
-            // Get location display name using reverse geocoding
-            val locationDisplayName = try {
-                val result = geocodingService.reverseGeocode(entity.latitude, entity.longitude)
-                when (result) {
-                    is com.a42r.pevplugshare.data.remote.GeocodingResult.Success -> {
-                        buildString {
-                            if (!result.suburb.isNullOrBlank()) {
-                                append(result.suburb)
-                            }
-                            if (!result.state.isNullOrBlank()) {
-                                if (isNotEmpty()) append(", ")
-                                append(result.state)
-                            }
-                            if (!result.postcode.isNullOrBlank()) {
-                                if (isNotEmpty()) append(" ")
-                                append(result.postcode)
-                            }
-                            if (isEmpty()) {
-                                append("Unknown location")
-                            }
+        return SavedForLaterItem(
+            id = entity.id,
+            latitude = entity.latitude,
+            longitude = entity.longitude,
+            bearing = entity.bearing,
+            photoPaths = photoPaths,
+            photoMetadata = photoMetadata,
+            createdAt = entity.createdAt,
+            locationDisplayName = coordinatesText,  // Use coordinates as placeholder
+            coordinatesText = coordinatesText,
+            createdAtText = createdAtText
+        )
+    }
+
+    private suspend fun geocodeAndUpdateItem(item: SavedForLaterItem) {
+        // Background geocoding: reverse geocode and update the item's display name
+        try {
+            val result = geocodingService.reverseGeocode(item.latitude, item.longitude)
+            val displayName = when (result) {
+                is com.a42r.pevplugshare.data.remote.GeocodingResult.Success -> {
+                    buildString {
+                        if (!result.suburb.isNullOrBlank()) {
+                            append(result.suburb)
+                        }
+                        if (!result.state.isNullOrBlank()) {
+                            if (isNotEmpty()) append(", ")
+                            append(result.state)
+                        }
+                        if (!result.postcode.isNullOrBlank()) {
+                            if (isNotEmpty()) append(" ")
+                            append(result.postcode)
+                        }
+                        if (isEmpty()) {
+                            append("Unknown location")
                         }
                     }
-                    is com.a42r.pevplugshare.data.remote.GeocodingResult.Error -> {
-                        "Unknown location"
-                    }
                 }
-            } catch (e: Exception) {
-                Log.e("SavedForLaterViewModel", "Error geocoding", e)
-                "Unknown location"
+                is com.a42r.pevplugshare.data.remote.GeocodingResult.Error -> {
+                    "Unknown location"
+                }
             }
+            updateItemDisplayName(item.id, displayName)
+        } catch (e: Exception) {
+            Log.e("SavedForLaterViewModel", "Error geocoding item ${item.id}", e)
+            updateItemDisplayName(item.id, "Unknown location")
+        }
+    }
 
-            val coordinatesText = "Lat: %.4f, Lng: %.4f".format(entity.latitude, entity.longitude)
-            val createdAtText = formatTimeAgo(entity.createdAt)
-
-            SavedForLaterItem(
-                id = entity.id,
-                latitude = entity.latitude,
-                longitude = entity.longitude,
-                bearing = entity.bearing,
-                photoPaths = photoPaths,
-                photoMetadata = photoMetadata,
-                createdAt = entity.createdAt,
-                locationDisplayName = locationDisplayName,
-                coordinatesText = coordinatesText,
-                createdAtText = createdAtText
-            )
+    private fun updateItemDisplayName(id: String, displayName: String) {
+        // Update the Success state with the new display name for this item
+        val currentState = _savedLocationsState.value
+        if (currentState is SavedForLaterState.Success) {
+            val updatedItems = currentState.items.map { item ->
+                if (item.id == id) {
+                    item.copy(locationDisplayName = displayName)
+                } else {
+                    item
+                }
+            }
+            _savedLocationsState.value = SavedForLaterState.Success(updatedItems)
         }
     }
 
