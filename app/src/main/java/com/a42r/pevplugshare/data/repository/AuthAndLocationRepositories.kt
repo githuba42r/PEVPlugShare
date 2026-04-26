@@ -427,6 +427,10 @@ class LocationRepositoryImpl(
         // we return a not-supported error
         return Result.failure(UnsupportedOperationException("Bulk deletion of OSMAnd locations not supported via API"))
     }
+
+    override suspend fun getAllLocationsCount(): Int {
+        return 0
+    }
 }
 
 fun OsmandMarker.toLocation(): Location {

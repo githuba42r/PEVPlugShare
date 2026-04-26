@@ -639,6 +639,15 @@ class MainViewModel @Inject constructor(
         // For other cases, assume open (could be enhanced with time parsing)
         return true
     }
+
+    suspend fun getLocationCount(): Int {
+        return try {
+            locationRepository.getAllLocationsCount()
+        } catch (e: Exception) {
+            android.util.Log.e("MainViewModel", "Error getting location count", e)
+            0
+        }
+    }
 }
 
 data class SyncProgress(

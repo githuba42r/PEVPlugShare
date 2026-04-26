@@ -5,7 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import java.io.File
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -19,9 +21,11 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import com.a42r.pevplugshare.BuildConfig
 import com.a42r.pevplugshare.R
 import com.a42r.pevplugshare.data.model.Location
 import com.a42r.pevplugshare.databinding.ActivityMainBinding
+import com.a42r.pevplugshare.ui.debug.BackupRestoreDialogFragment
 import com.a42r.pevplugshare.ui.edit.EditLocationActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -63,6 +67,26 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Diagnostic logging for database
+        val dbDir = File(filesDir.parentFile, "databases")
+        val dbFile = File(dbDir, "pevplugshare.db")
+        Log.i("MainActivity", "Database path: ${dbFile.path}")
+        Log.i("MainActivity", "Database exists: ${dbFile.exists()}, size: ${if (dbFile.exists()) dbFile.length() else "N/A"} bytes")
+
+        // Debug: Copy test database if it exists in cache
+        if (BuildConfig.DEBUG) {
+            val testDbFile = File(cacheDir, "test_db.db")
+            if (testDbFile.exists()) {
+                try {
+                    dbDir.mkdirs()
+                    testDbFile.copyTo(dbFile, overwrite = true)
+                    Log.i("MainActivity", "✓ Installed test database from cache: ${dbFile.length()} bytes")
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "Failed to install test database", e)
+                }
+            }
+        }
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Register back button handler for image gallery modal
@@ -72,12 +96,22 @@ class MainActivity : AppCompatActivity() {
         setupObservers()
         requestLocationPermission()
 
+        // Check location count in database
+        lifecycleScope.launch {
+            try {
+                val locationCount = viewModel.getLocationCount()
+                Log.i("MainActivity", "Location count in database: $locationCount")
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error counting locations", e)
+            }
+        }
+
         // Validate session token in background and load data (if OSMand is connected)
         lifecycleScope.launch {
             val isValid = viewModel.validateSessionAndLoadData()
             if (!isValid) {
                 // OSMand not connected or session invalid - still allow local database usage
-                android.util.Log.d("MainActivity", "OSMand not connected, using local database only")
+                Log.d("MainActivity", "OSMand not connected, using local database only")
                 // Load categories/locations from local database
                 viewModel.loadFromLocalDatabase()
             }
@@ -287,6 +321,11 @@ class MainActivity : AppCompatActivity() {
         val popup = PopupMenu(this, binding.menuButton)
         popup.menuInflater.inflate(R.menu.main_menu, popup.menu)
 
+        // Hide debug menu items in release builds
+        if (!BuildConfig.DEBUG) {
+            popup.menu.findItem(R.id.menu_debug_restore_backup)?.isVisible = false
+        }
+
         // Update menu items based on OSMand connection status
         lifecycleScope.launch {
             val isOsmandConnected = viewModel.isOsmandConnected()
@@ -349,10 +388,20 @@ class MainActivity : AppCompatActivity() {
                     showAboutDialog()
                     true
                 }
+                R.id.menu_debug_restore_backup -> {
+                    if (BuildConfig.DEBUG) {
+                        showBackupRestoreDialog()
+                    }
+                    true
+                }
                 else -> false
             }
         }
         popup.show()
+    }
+
+    private fun showBackupRestoreDialog() {
+        BackupRestoreDialogFragment().show(supportFragmentManager, "backup_restore")
     }
 
     private fun showOsmandConnectionFlow() {

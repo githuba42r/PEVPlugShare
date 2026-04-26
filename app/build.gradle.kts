@@ -202,6 +202,7 @@ dependencies {
 
     // Location Services
     implementation(libs.play.services.location)
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     // Map
     implementation("org.osmdroid:osmdroid-android:6.1.18")

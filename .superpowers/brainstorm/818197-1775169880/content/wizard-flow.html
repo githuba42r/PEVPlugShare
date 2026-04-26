@@ -1,0 +1,198 @@
+<h2>Setup Wizard Flow Design</h2>
+<p class="subtitle">End-to-end first-run onboarding — covering OsmAnd prerequisites, login, and OpenRouter setup</p>
+
+<div class="section">
+  <h3>App Flow (with wizard)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Navigation Flow</div>
+    <div class="mockup-body" style="padding: 24px; font-family: monospace; font-size: 14px; line-height: 2;">
+      <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Splash</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #ff9f43; color: white; padding: 6px 14px; border-radius: 6px;">First run?</span>
+        <span style="color: #888;">→ yes →</span>
+        <span style="background: #2ed573; color: white; padding: 6px 14px; border-radius: 6px; border: 2px solid #1fa85a;">Setup Wizard</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Main</span>
+      </div>
+      <div style="margin-top: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Splash</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #ff9f43; color: white; padding: 6px 14px; border-radius: 6px;">First run?</span>
+        <span style="color: #888;">→ no →</span>
+        <span style="background: #a55eea; color: white; padding: 6px 14px; border-radius: 6px;">Login</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Main</span>
+      </div>
+      <div style="margin-top: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span style="background: #2ed573; color: white; padding: 6px 14px; border-radius: 6px;">Wizard</span>
+        <span style="color: #888;">→ skip →</span>
+        <span style="background: #a55eea; color: white; padding: 6px 14px; border-radius: 6px;">Login</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #ffa502; color: white; padding: 6px 14px; border-radius: 6px;">AI Welcome</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Main</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 32px;">
+  <h3>Wizard Steps</h3>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+
+    <div class="mockup">
+      <div class="mockup-header">Step 1: Welcome</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Welcome to PEVPlugShare</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">This wizard will help you set up everything you need. PEVPlugShare uses OsmAnd for location storage and OpenRouter for AI-powered features.</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 16px;">We'll walk you through:</p>
+        <ul style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li>Installing OsmAnd (map app)</li>
+          <li>Creating an OsmAnd account</li>
+          <li>Setting up a favourites folder</li>
+          <li>Syncing to OsmAnd Cloud</li>
+          <li>Connecting your OsmAnd account</li>
+          <li>Setting up AI features (optional)</li>
+        </ul>
+        <div style="margin-top: 16px; display: flex; gap: 8px;">
+          <button class="mock-button" style="flex: 1;">Get Started</button>
+          <button class="mock-button" style="flex: 1; opacity: 0.6;">Skip Wizard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 2: Install OsmAnd</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Install OsmAnd</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">OsmAnd is the map application PEVPlugShare uses to store and sync your EV charger locations.</p>
+        <div style="background: #1a3a1a; border: 1px solid #2d5a2d; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+          <p style="color: #4ade80; font-size: 13px;">&#10003; OsmAnd+ detected on this device</p>
+        </div>
+        <p style="color: #aaa; font-size: 11px; font-style: italic;">— or if not installed —</p>
+        <div style="background: #3a2a1a; border: 1px solid #5a3a1d; border-radius: 8px; padding: 12px; margin-top: 8px;">
+          <p style="color: #fbbf24; font-size: 13px;">OsmAnd is not installed</p>
+          <button class="mock-button" style="margin-top: 8px; width: 100%;">Open Play Store</button>
+        </div>
+        <div style="margin-top: 16px;">
+          <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> OsmAnd is installed</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 3: Log into OsmAnd</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Log into OsmAnd</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">You need an OsmAnd Cloud account to sync locations. Open OsmAnd and sign in or create an account:</p>
+        <ol style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li>Open OsmAnd on your device</li>
+          <li>Tap the <b>menu</b> (&#9776;) button</li>
+          <li>Tap <b>Settings</b></li>
+          <li>Tap <b>OsmAnd Cloud</b></li>
+          <li>Sign in or <b>Create account</b></li>
+        </ol>
+        <div style="margin-top: 16px;">
+          <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> I have logged into OsmAnd</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 4: Create Favourites Folder</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Create a Favourites Folder</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">PEVPlugShare stores charger locations in a dedicated OsmAnd favourites folder (not the default "Favourites").</p>
+        <ol style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li>In OsmAnd, tap <b>My Places</b></li>
+          <li>Go to the <b>Favourites</b> tab</li>
+          <li>Tap <b>+</b> to add a favourite</li>
+          <li>In the folder field, create a <b>new folder</b> (e.g. "EV Chargers")</li>
+          <li>Save the favourite (you can delete it later)</li>
+        </ol>
+        <div style="margin-top: 16px;">
+          <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> I have created a favourites folder</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 5: Sync to Cloud</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Sync to OsmAnd Cloud</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">Sync your favourites so PEVPlugShare can access the folder via the OsmAnd Cloud API.</p>
+        <ol style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li>Open OsmAnd <b>Settings</b></li>
+          <li>Tap <b>OsmAnd Cloud</b></li>
+          <li>Tap <b>Sync now</b></li>
+          <li>Wait for sync to complete</li>
+        </ol>
+        <p style="color: #aaa; font-size: 12px; margin-top: 8px; font-style: italic;">The sync uploads your new folder so PEVPlugShare can find it when you connect your account.</p>
+        <div style="margin-top: 16px;">
+          <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> I have synced to the cloud</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 6: Connect OsmAnd Account</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Connect Your Account</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">Enter your OsmAnd credentials to connect PEVPlugShare to your cloud account.</p>
+        <input class="mock-input" placeholder="Email" style="width: 100%; margin-bottom: 8px;">
+        <input class="mock-input" placeholder="Password" style="width: 100%; margin-bottom: 8px;">
+        <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> Remember me</label>
+        <button class="mock-button" style="width: 100%; margin-top: 12px;">Connect &amp; Verify</button>
+        <p style="color: #aaa; font-size: 11px; margin-top: 8px;">On success: fetches categories, confirms folder exists, auto-advances.</p>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 7: OpenRouter AI (Optional)</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">AI Features (Optional)</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">PEVPlugShare can use AI to analyse charger photos, detect socket types, and extract operating hours.</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">This requires a free OpenRouter.ai account.</p>
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button class="mock-button" style="flex: 1;">Connect OpenRouter</button>
+          <button class="mock-button" style="flex: 1; opacity: 0.6;">Skip for Now</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 8: All Done!</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">You're All Set!</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 16px;">Here's a summary of your setup:</p>
+        <div style="font-size: 13px; line-height: 2.2; color: #aaa;">
+          <div><span style="color: #4ade80;">&#10003;</span> OsmAnd installed</div>
+          <div><span style="color: #4ade80;">&#10003;</span> Logged into OsmAnd</div>
+          <div><span style="color: #4ade80;">&#10003;</span> Favourites folder created</div>
+          <div><span style="color: #4ade80;">&#10003;</span> Cloud synced</div>
+          <div><span style="color: #4ade80;">&#10003;</span> Account connected</div>
+          <div><span style="color: #fbbf24;">&#9711;</span> OpenRouter — skipped</div>
+        </div>
+        <button class="mock-button" style="width: 100%; margin-top: 16px;">Start Using PEVPlugShare</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" style="margin-top: 32px;">
+  <h3>Key Design Decisions</h3>
+  <div style="color: #aaa; font-size: 13px; line-height: 1.8;">
+    <ul style="padding-left: 20px;">
+      <li><b>Single Activity + ViewPager2</b> — swipeable steps with a progress indicator at the top</li>
+      <li><b>Step 2 auto-detects</b> OsmAnd installation — checkbox auto-ticks if detected</li>
+      <li><b>Step 6 actually logs in</b> — reuses existing LoginViewModel, validates session + fetches categories</li>
+      <li><b>Step 7 absorbs AiWelcomeActivity</b> — same OAuth flow, embedded in wizard</li>
+      <li><b>Skip wizard at any time</b> — button visible on all steps, falls through to Login → AiWelcome → Main</li>
+      <li><b>Checklist on each step</b> — user confirms completion before advancing</li>
+      <li><b>Back navigation</b> — allowed to revisit previous steps</li>
+      <li><b>First-run flag</b> — stored in SharedPreferences, wizard never shown again</li>
+    </ul>
+  </div>
+</div>

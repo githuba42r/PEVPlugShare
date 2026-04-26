@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/requestUserInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="14sp" />
+
+    <!-- Accept button — visible for incoming requests only -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/acceptButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accept"
+        android:visibility="gone"
+        style="@style/Widget.Material3.Button" />
+
+    <!-- Decline button — visible for incoming requests only -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/declineButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Decline"
+        android:visibility="gone"
+        style="@style/Widget.Material3.Button.TextButton" />
+
+    <!-- Pending label — visible for outgoing requests only -->
+    <TextView
+        android:id="@+id/pendingLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pending"
+        android:textSize="12sp"
+        android:textColor="?android:textColorSecondary"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -37,6 +37,13 @@ class TokenManager(context: Context) {
         private const val KEY_OSMAND_CONNECTED = "osmand_connected"
         private const val KEY_OSMAND_CONNECTED_USERNAME = "osmand_connected_username"
         private const val KEY_PKCE_CODE_VERIFIER = "pkce_code_verifier"
+
+        private const val KEY_SERVER_JWT = "server_jwt"
+        private const val KEY_SERVER_USER_ID = "server_user_id"
+        private const val KEY_SERVER_EMAIL = "server_email"
+        private const val KEY_SERVER_DISPLAY_NAME = "server_display_name"
+        private const val KEY_SERVER_CONNECTED = "server_connected"
+        private const val KEY_SERVER_URL = "server_url"
     }
 
     enum class AuthType {
@@ -302,5 +309,34 @@ class TokenManager(context: Context) {
 
     fun clearPkceCodeVerifier() {
         encryptedPrefs.edit().remove(KEY_PKCE_CODE_VERIFIER).apply()
+    }
+
+    // Central server integration
+    fun saveServerJwt(token: String) { encryptedPrefs.edit().putString(KEY_SERVER_JWT, token).apply() }
+    fun getServerJwt(): String? = encryptedPrefs.getString(KEY_SERVER_JWT, null)
+
+    fun saveServerUserInfo(userId: String, email: String, displayName: String) {
+        encryptedPrefs.edit()
+            .putString(KEY_SERVER_USER_ID, userId)
+            .putString(KEY_SERVER_EMAIL, email)
+            .putString(KEY_SERVER_DISPLAY_NAME, displayName)
+            .putBoolean(KEY_SERVER_CONNECTED, true)
+            .apply()
+    }
+
+    fun getServerUserId(): String? = encryptedPrefs.getString(KEY_SERVER_USER_ID, null)
+    fun getServerEmail(): String? = encryptedPrefs.getString(KEY_SERVER_EMAIL, null)
+    fun getServerDisplayName(): String? = encryptedPrefs.getString(KEY_SERVER_DISPLAY_NAME, null)
+    fun isServerConnected(): Boolean = encryptedPrefs.getBoolean(KEY_SERVER_CONNECTED, false)
+
+    fun saveServerUrl(url: String) { encryptedPrefs.edit().putString(KEY_SERVER_URL, url).apply() }
+    fun getServerUrl(): String? = encryptedPrefs.getString(KEY_SERVER_URL, null)
+
+    fun disconnectServer() {
+        encryptedPrefs.edit()
+            .remove(KEY_SERVER_JWT).remove(KEY_SERVER_USER_ID).remove(KEY_SERVER_EMAIL)
+            .remove(KEY_SERVER_DISPLAY_NAME).remove(KEY_SERVER_URL)
+            .putBoolean(KEY_SERVER_CONNECTED, false)
+            .apply()
     }
 }

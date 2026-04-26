@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Required for Android 10+ to access location EXIF data from images -->
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <!-- Required for backup file migration from sdcard -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
@@ -169,6 +171,70 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
+        <!-- Friends Activity -->
+        <activity
+            android:name=".ui.friends.FriendsActivity"
+            android:exported="false" />
+
+        <!-- Groups Activity -->
+        <activity
+            android:name=".ui.groups.GroupsActivity"
+            android:exported="false" />
+
+        <!-- Group Detail Activity (also handles deep links) -->
+        <activity
+            android:name=".ui.groups.GroupDetailActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="pevplugshare" android:host="group" />
+            </intent-filter>
+        </activity>
+
+        <!-- Deep Link Handler Activity -->
+        <activity
+            android:name=".ui.sharing.DeepLinkHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="pevplugshare" android:host="location" />
+            </intent-filter>
+        </activity>
+
+        <!-- Suggestion Composer Activity -->
+        <activity
+            android:name=".ui.suggestions.SuggestionComposerActivity"
+            android:exported="false" />
+
+        <!-- Incoming Suggestions Activity -->
+        <activity
+            android:name=".ui.suggestions.IncomingSuggestionsActivity"
+            android:exported="false" />
+
+        <!-- Share Location Activity -->
+        <activity
+            android:name=".ui.sharing.ShareLocationActivity"
+            android:exported="false" />
+
+        <!-- Shared With Me Activity -->
+        <activity
+            android:name=".ui.sharing.SharedWithMeActivity"
+            android:exported="false" />
+
+        <!-- Server Account Activity -->
+        <activity
+            android:name=".ui.server.ServerAccountActivity"
+            android:exported="false" />
+
+        <!-- Sync Location Activity -->
+        <activity
+            android:name=".ui.server.SyncLocationActivity"
+            android:exported="false" />
 
         <!-- OsmAnd Sync Background Service -->
         <service

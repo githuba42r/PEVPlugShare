@@ -1,0 +1,169 @@
+<%- include('../partials/head', { title: 'Rate Limits' }) %>
+<%- include('../partials/nav') %>
+
+<div class="p-8 max-w-6xl">
+  <h1 class="text-2xl font-bold mb-6">Rate Limit Rules</h1>
+
+  <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+    <h2 class="text-lg font-semibold mb-4">Create New Rule</h2>
+    <form id="createForm" class="flex flex-wrap gap-3 items-end">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Scope</label>
+        <select id="scope" class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+          <option value="GLOBAL">GLOBAL</option>
+          <option value="GROUP">GROUP</option>
+          <option value="USER">USER</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Scope ID (optional)</label>
+        <input type="text" id="scopeId" placeholder="Group or User ID"
+          class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 w-48" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Endpoint</label>
+        <input type="text" id="endpoint" placeholder="/api/locations"
+          class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 w-48" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Max Requests</label>
+        <input type="number" id="maxRequests" placeholder="100" min="1"
+          class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 w-28" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Window (seconds)</label>
+        <input type="number" id="windowSeconds" placeholder="3600" min="1"
+          class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 w-32" />
+      </div>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Create Rule</button>
+    </form>
+    <div id="createStatus" class="mt-3 text-sm hidden"></div>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden mb-8">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-700 text-gray-300 text-left">
+          <th class="px-4 py-3">Scope</th>
+          <th class="px-4 py-3">Scope ID</th>
+          <th class="px-4 py-3">Endpoint</th>
+          <th class="px-4 py-3">Max Requests</th>
+          <th class="px-4 py-3">Window</th>
+          <th class="px-4 py-3">Updated</th>
+          <th class="px-4 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (rateLimits.length === 0) { %>
+          <tr>
+            <td colspan="7" class="px-4 py-6 text-center text-gray-500">No rate limit rules configured.</td>
+          </tr>
+        <% } %>
+        <% rateLimits.forEach(function(rl) { %>
+          <tr class="border-t border-gray-700" id="rl-<%= rl.id %>">
+            <td class="px-4 py-3">
+              <span class="text-xs px-2 py-1 rounded
+                <% if (rl.scope === 'GLOBAL') { %>bg-blue-900 text-blue-200<% } else if (rl.scope === 'GROUP') { %>bg-yellow-900 text-yellow-200<% } else { %>bg-purple-900 text-purple-200<% } %>">
+                <%= rl.scope %>
+              </span>
+            </td>
+            <td class="px-4 py-3 text-gray-400 font-mono text-xs"><%= rl.scopeId || '—' %></td>
+            <td class="px-4 py-3 text-gray-200 font-mono text-xs"><%= rl.endpoint %></td>
+            <td class="px-4 py-3 text-gray-200"><%= rl.maxRequests %></td>
+            <td class="px-4 py-3 text-gray-400 text-xs"><%= rl.windowSeconds %>s</td>
+            <td class="px-4 py-3 text-gray-400 text-xs"><%= new Date(rl.updatedAt).toLocaleDateString() %></td>
+            <td class="px-4 py-3">
+              <button onclick="deleteRule('<%= rl.id %>')" class="text-red-400 hover:text-red-300 text-xs">Delete</button>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+    <h2 class="text-lg font-semibold mb-4">Resolve Effective Limits for User</h2>
+    <div class="flex gap-3 items-end">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">User ID</label>
+        <input type="text" id="resolveUserId" placeholder="User UUID"
+          class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 w-72" />
+      </div>
+      <button onclick="resolveUser()" class="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded text-sm">Resolve</button>
+    </div>
+    <div id="resolveResult" class="mt-4 text-sm hidden"></div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('createForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const body = {
+      scope: document.getElementById('scope').value,
+      scopeId: document.getElementById('scopeId').value.trim() || null,
+      endpoint: document.getElementById('endpoint').value.trim(),
+      maxRequests: parseInt(document.getElementById('maxRequests').value),
+      windowSeconds: parseInt(document.getElementById('windowSeconds').value),
+    };
+    if (!body.endpoint || !body.maxRequests || !body.windowSeconds) {
+      showCreateStatus('Endpoint, Max Requests, and Window are required.', true);
+      return;
+    }
+    try {
+      const res = await fetch('/admin/api/rate-limits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      showCreateStatus('Rule created. Reloading...', false);
+      setTimeout(() => location.reload(), 800);
+    } catch (err) {
+      showCreateStatus(err.message, true);
+    }
+  });
+
+  async function deleteRule(id) {
+    if (!confirm('Delete this rate limit rule?')) return;
+    try {
+      const res = await fetch('/admin/api/rate-limits/' + id, { method: 'DELETE' });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed'); }
+      document.getElementById('rl-' + id).remove();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function resolveUser() {
+    const userId = document.getElementById('resolveUserId').value.trim();
+    if (!userId) { showResolveResult('User ID is required.', true); return; }
+    try {
+      const res = await fetch('/admin/api/rate-limits/resolve/' + encodeURIComponent(userId));
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      const el = document.getElementById('resolveResult');
+      el.innerHTML = '<pre class="bg-gray-700 p-3 rounded text-xs overflow-auto">' + JSON.stringify(data, null, 2) + '</pre>';
+      el.className = 'mt-4 text-sm';
+      el.classList.remove('hidden');
+    } catch (err) {
+      showResolveResult(err.message, true);
+    }
+  }
+
+  function showCreateStatus(msg, isError) {
+    const el = document.getElementById('createStatus');
+    el.textContent = msg;
+    el.className = 'mt-3 text-sm ' + (isError ? 'text-red-400' : 'text-green-400');
+    el.classList.remove('hidden');
+  }
+
+  function showResolveResult(msg, isError) {
+    const el = document.getElementById('resolveResult');
+    el.textContent = msg;
+    el.className = 'mt-4 text-sm ' + (isError ? 'text-red-400' : 'text-green-400');
+    el.classList.remove('hidden');
+  }
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,208 @@
+<h2>Setup Wizard Flow Design (v2)</h2>
+<p class="subtitle">Updated — "PEV Charging Locations" folder naming, clearer purpose on Step 4</p>
+
+<div class="section">
+  <h3>App Flow (with wizard)</h3>
+  <div class="mockup">
+    <div class="mockup-header">Navigation Flow</div>
+    <div class="mockup-body" style="padding: 24px; font-family: monospace; font-size: 14px; line-height: 2;">
+      <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Splash</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #ff9f43; color: white; padding: 6px 14px; border-radius: 6px;">First run?</span>
+        <span style="color: #888;">→ yes →</span>
+        <span style="background: #2ed573; color: white; padding: 6px 14px; border-radius: 6px; border: 2px solid #1fa85a;">Setup Wizard</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Main</span>
+      </div>
+      <div style="margin-top: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Splash</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #ff9f43; color: white; padding: 6px 14px; border-radius: 6px;">First run?</span>
+        <span style="color: #888;">→ no →</span>
+        <span style="background: #a55eea; color: white; padding: 6px 14px; border-radius: 6px;">Login</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Main</span>
+      </div>
+      <div style="margin-top: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <span style="background: #2ed573; color: white; padding: 6px 14px; border-radius: 6px;">Wizard</span>
+        <span style="color: #888;">→ skip →</span>
+        <span style="background: #a55eea; color: white; padding: 6px 14px; border-radius: 6px;">Login</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #ffa502; color: white; padding: 6px 14px; border-radius: 6px;">AI Welcome</span>
+        <span style="color: #888;">→</span>
+        <span style="background: #4a9eff; color: white; padding: 6px 14px; border-radius: 6px;">Main</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 32px;">
+  <h3>Wizard Steps</h3>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+
+    <div class="mockup">
+      <div class="mockup-header">Step 1: Welcome</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Welcome to PEVPlugShare</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">PEVPlugShare helps you find and share PEV (Plug-in Electric Vehicle) charging locations with the community.</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">The app uses <b>OsmAnd</b> to store and sync your charging locations, and <b>OpenRouter</b> for optional AI-powered features like photo analysis and socket detection.</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 16px;">This wizard will guide you through setting up everything you need:</p>
+        <ul style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li>Installing OsmAnd (map &amp; navigation app)</li>
+          <li>Creating an OsmAnd Cloud account</li>
+          <li>Creating a "PEV Charging Locations" favourites folder</li>
+          <li>Syncing your folder to OsmAnd Cloud</li>
+          <li>Connecting your OsmAnd account to this app</li>
+          <li>Setting up AI features (optional)</li>
+        </ul>
+        <div style="margin-top: 16px; display: flex; gap: 8px;">
+          <button class="mock-button" style="flex: 1;">Get Started</button>
+          <button class="mock-button" style="flex: 1; opacity: 0.6;">Skip Wizard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 2: Install OsmAnd</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Install OsmAnd</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">OsmAnd is an open-source map and navigation app. PEVPlugShare uses OsmAnd Cloud to store and sync your PEV charging locations across devices.</p>
+        <div style="background: #1a3a1a; border: 1px solid #2d5a2d; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+          <p style="color: #4ade80; font-size: 13px;">&#10003; OsmAnd+ detected on this device</p>
+        </div>
+        <p style="color: #aaa; font-size: 11px; font-style: italic;">— or if not installed —</p>
+        <div style="background: #3a2a1a; border: 1px solid #5a3a1d; border-radius: 8px; padding: 12px; margin-top: 8px;">
+          <p style="color: #fbbf24; font-size: 13px;">OsmAnd is not installed on this device</p>
+          <p style="color: #aaa; font-size: 12px; margin-top: 4px;">Install either OsmAnd or OsmAnd+ from the Play Store, then return here.</p>
+          <button class="mock-button" style="margin-top: 8px; width: 100%;">Open Play Store</button>
+          <button class="mock-button" style="margin-top: 6px; width: 100%; opacity: 0.7;">Re-check Installation</button>
+        </div>
+        <div style="margin-top: 16px;">
+          <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> OsmAnd is installed <span style="font-size: 11px; color: #666;">(auto-detected)</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 3: Log into OsmAnd</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Log into OsmAnd</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">You need an OsmAnd Cloud account so your PEV charging locations can sync between the OsmAnd app and PEVPlugShare. If you don't have one yet, you can create a free account inside the OsmAnd app.</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 8px;"><b>In the OsmAnd app:</b></p>
+        <ol style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li>Open OsmAnd on your device</li>
+          <li>Tap the <b>menu</b> (&#9776;) button</li>
+          <li>Tap <b>Settings</b></li>
+          <li>Tap <b>OsmAnd Cloud</b></li>
+          <li>Sign in with your existing account, or tap <b>Create account</b> to register</li>
+        </ol>
+        <div style="margin-top: 16px;">
+          <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> I have logged into OsmAnd Cloud</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 4: Create Favourites Folder</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Create "PEV Charging Locations" Folder</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">PEVPlugShare needs a dedicated favourites folder in OsmAnd to store the charging locations you discover and share. This must be a <b>separate folder</b> from the default "Favourites" — it keeps your PEV data organized and lets the app manage it without affecting your other OsmAnd favourites.</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 8px;"><b>In the OsmAnd app:</b></p>
+        <ol style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li>Tap <b>My Places</b> (&#9733; star icon)</li>
+          <li>Go to the <b>Favourites</b> tab</li>
+          <li>Tap the <b>+</b> button to add a new favourite point</li>
+          <li>In the <b>folder</b> / <b>group</b> field, tap to create a new folder</li>
+          <li>Name it <b>"PEV Charging Locations"</b> (or any name you'll recognise)</li>
+          <li>Save the temporary favourite point (you can delete it afterward)</li>
+        </ol>
+        <div style="background: #1a2a3a; border: 1px solid #2a4a6a; border-radius: 8px; padding: 10px; margin-top: 12px;">
+          <p style="color: #7dd3fc; font-size: 12px;"><b>Why a separate folder?</b> PEVPlugShare reads and writes to this folder via the OsmAnd Cloud API. Using a dedicated folder ensures your personal OsmAnd favourites are never modified.</p>
+        </div>
+        <div style="margin-top: 16px;">
+          <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> I have created a dedicated favourites folder</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 5: Sync to Cloud</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Sync to OsmAnd Cloud</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">Your new "PEV Charging Locations" folder exists locally on your device. You need to sync it to OsmAnd Cloud so that PEVPlugShare can access it via the API.</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 8px;"><b>In the OsmAnd app:</b></p>
+        <ol style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li>Tap the <b>menu</b> (&#9776;) button</li>
+          <li>Tap <b>Settings</b></li>
+          <li>Tap <b>OsmAnd Cloud</b></li>
+          <li>Tap <b>Sync now</b> (or wait for auto-sync)</li>
+          <li>Wait until the sync completes — look for the <b>green checkmark</b></li>
+        </ol>
+        <div style="background: #1a2a3a; border: 1px solid #2a4a6a; border-radius: 8px; padding: 10px; margin-top: 12px;">
+          <p style="color: #7dd3fc; font-size: 12px;"><b>Why sync now?</b> PEVPlugShare connects to OsmAnd Cloud (not the local app) to read your folders. If the folder hasn't been synced, it won't appear when you connect your account in the next step.</p>
+        </div>
+        <div style="margin-top: 16px;">
+          <label style="color: #aaa; font-size: 13px;"><input type="checkbox" disabled> I have synced my favourites to OsmAnd Cloud</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 6: Connect OsmAnd Account</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">Connect Your OsmAnd Account</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">Enter the same credentials you used to log into OsmAnd Cloud. PEVPlugShare will verify your account and check that your "PEV Charging Locations" folder is available.</p>
+        <input class="mock-input" placeholder="Email" style="width: 100%; margin-bottom: 8px;">
+        <input class="mock-input" placeholder="Password" style="width: 100%; margin-bottom: 8px;">
+        <label style="color: #aaa; font-size: 13px; display: block; margin-bottom: 12px;"><input type="checkbox" disabled> Remember me</label>
+        <button class="mock-button" style="width: 100%;">Connect &amp; Verify</button>
+        <div style="margin-top: 12px;">
+          <p style="color: #aaa; font-size: 12px;"><b>On success, the app will:</b></p>
+          <ul style="color: #aaa; font-size: 12px; padding-left: 16px; line-height: 1.8;">
+            <li>Log into OsmAnd Cloud API</li>
+            <li>Fetch your favourites categories</li>
+            <li>Confirm folders beyond default "Favourites" exist</li>
+            <li>Let you select your PEV folder in the next step</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 7: OpenRouter AI (Optional)</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">AI Features (Optional)</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 12px;">PEVPlugShare can use AI to help you document charging locations:</p>
+        <ul style="color: #aaa; font-size: 13px; line-height: 1.8; padding-left: 20px;">
+          <li><b>Photo analysis</b> — identify charger types from photos</li>
+          <li><b>Socket detection</b> — detect plug/socket types automatically</li>
+          <li><b>Hours extraction</b> — read operating hours from signage</li>
+        </ul>
+        <p style="color: #aaa; font-size: 13px; margin-top: 12px;">This requires a free <b>OpenRouter.ai</b> account. You can set this up later from Settings if you prefer.</p>
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button class="mock-button" style="flex: 1;">Connect OpenRouter</button>
+          <button class="mock-button" style="flex: 1; opacity: 0.6;">Skip for Now</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">Step 8: All Done!</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <p style="font-weight: bold; font-size: 16px; margin-bottom: 8px;">You're All Set!</p>
+        <p style="color: #aaa; font-size: 13px; margin-bottom: 16px;">Setup complete. Here's your configuration summary:</p>
+        <div style="font-size: 13px; line-height: 2.2; color: #aaa;">
+          <div><span style="color: #4ade80;">&#10003;</span> OsmAnd installed</div>
+          <div><span style="color: #4ade80;">&#10003;</span> Logged into OsmAnd Cloud</div>
+          <div><span style="color: #4ade80;">&#10003;</span> "PEV Charging Locations" folder created</div>
+          <div><span style="color: #4ade80;">&#10003;</span> Synced to OsmAnd Cloud</div>
+          <div><span style="color: #4ade80;">&#10003;</span> OsmAnd account connected</div>
+          <div><span style="color: #fbbf24;">&#9711;</span> OpenRouter AI — skipped (set up later in Settings)</div>
+        </div>
+        <button class="mock-button" style="width: 100%; margin-top: 16px;">Start Using PEVPlugShare</button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -56,6 +56,15 @@ interface LocationDao {
 
     @Query("DELETE FROM locations WHERE osmandSyncSource = 'OSMAND'")
     suspend fun deleteOsmandLocations(): Int
+
+    @Query("UPDATE locations SET serverId = :serverId, serverVersion = :serverVersion, serverSyncStatus = :syncStatus, serverLastSyncedAt = :syncedAt WHERE id = :id")
+    suspend fun updateServerSyncInfo(id: String, serverId: String, serverVersion: Int, syncStatus: String, syncedAt: Long)
+
+    @Query("SELECT * FROM locations WHERE serverSyncStatus != 'LOCAL_ONLY'")
+    suspend fun getServerSyncedLocations(): List<LocationEntity>
+
+    @Query("SELECT * FROM locations WHERE serverSyncStatus = 'MODIFIED'")
+    suspend fun getModifiedLocations(): List<LocationEntity>
 }
 
 @Dao

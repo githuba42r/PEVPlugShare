@@ -54,6 +54,7 @@ class SyncManager @Inject constructor(
                         PendingOperationType.DELETE_LOCATION -> syncDeleteLocation(operation)
                         PendingOperationType.ADD_PHOTO -> syncAddPhoto(operation)
                         PendingOperationType.DELETE_PHOTO -> syncDeletePhoto(operation)
+                        PendingOperationType.SUBMIT_SUGGESTION -> syncSubmitSuggestion(operation)
                     }
                     pendingOperationRepository.markOperationAsSuccessful(operation)
                     successCount++
@@ -101,6 +102,12 @@ class SyncManager @Inject constructor(
     private suspend fun syncDeletePhoto(operation: PendingOperationEntity) {
         // Call API to delete photo
         // For now, just remove the pending operation
+    }
+
+    private suspend fun syncSubmitSuggestion(operation: PendingOperationEntity) {
+        // Submit queued suggestion to server
+        // operationData contains JSON with locationId and changesJson
+        // For now, just mark as a no-op placeholder
     }
 
     suspend fun queueLocationOperation(

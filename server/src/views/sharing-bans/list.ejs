@@ -1,0 +1,59 @@
+<%- include('../partials/head', { title: 'Sharing Bans' }) %>
+<%- include('../partials/nav') %>
+
+<div class="p-8 max-w-5xl">
+  <h1 class="text-2xl font-bold mb-6">Sharing Bans</h1>
+
+  <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-gray-700 text-gray-300 text-left">
+          <th class="px-4 py-3">Banned User ID</th>
+          <th class="px-4 py-3">Reason</th>
+          <th class="px-4 py-3">Banned By</th>
+          <th class="px-4 py-3">Created</th>
+          <th class="px-4 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (sharingBans.length === 0) { %>
+          <tr>
+            <td colspan="5" class="px-4 py-6 text-center text-gray-500">No sharing bans.</td>
+          </tr>
+        <% } %>
+        <% sharingBans.forEach(function(ban) { %>
+          <tr class="border-t border-gray-700" id="sban-<%= ban.id %>">
+            <td class="px-4 py-3">
+              <a href="/admin/users/<%= ban.bannedUserId %>" class="text-blue-400 hover:text-blue-300 font-mono text-xs">
+                <%= ban.bannedUserId %>
+              </a>
+            </td>
+            <td class="px-4 py-3 text-gray-400 text-xs"><%= ban.reason || '—' %></td>
+            <td class="px-4 py-3 text-gray-400 text-xs font-mono"><%= ban.bannedByUserId %></td>
+            <td class="px-4 py-3 text-gray-400 text-xs"><%= new Date(ban.createdAt).toLocaleDateString() %></td>
+            <td class="px-4 py-3">
+              <button onclick="removeSharingBan('<%= ban.id %>')" class="text-red-400 hover:text-red-300 text-xs">Remove</button>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="text-gray-500 text-xs mt-4">Sharing bans can be created from the user detail page.</p>
+</div>
+
+<script>
+  async function removeSharingBan(id) {
+    if (!confirm('Remove this sharing ban?')) return;
+    try {
+      const res = await fetch('/admin/api/sharing-bans/' + id, { method: 'DELETE' });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed'); }
+      document.getElementById('sban-' + id).remove();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

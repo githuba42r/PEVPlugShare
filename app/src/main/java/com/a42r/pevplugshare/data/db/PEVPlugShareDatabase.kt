@@ -33,7 +33,7 @@ import com.a42r.pevplugshare.data.db.entity.UserPreferencesEntity
         PendingOperationEntity::class,
         SavedForLaterEntity::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -49,6 +49,44 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var Instance: PEVPlugShareDatabase? = null
+
+        // Migrations for very old databases to bring them to version 7
+        private val MIGRATION_1_6 = object : Migration(1, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_2_6 = object : Migration(2, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_3_6 = object : Migration(3, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_4_6 = object : Migration(4, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {}
+        }
+
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Ensure SavedForLater table exists
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS saved_for_later (
+                        id TEXT PRIMARY KEY NOT NULL,
+                        latitude REAL NOT NULL,
+                        longitude REAL NOT NULL,
+                        bearing REAL,
+                        photoPaths TEXT NOT NULL,
+                        photoMetadata TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL
+                    )
+                """)
+            }
+        }
 
         private val MIGRATION_7_8 = object : Migration(7, 8) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -141,17 +179,85 @@ abstract class PEVPlugShareDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                try {
+                    android.util.Log.i("DB_MIGRATION", "Starting MIGRATION_11_12")
+                    val cursor = database.query("SELECT COUNT(*) as count FROM locations")
+                    if (cursor.moveToFirst()) {
+                        val count = cursor.getInt(0)
+                        android.util.Log.i("DB_MIGRATION", "Location count before migration: $count")
+                    }
+                    cursor.close()
+
+                    database.execSQL("ALTER TABLE locations ADD COLUMN serverId TEXT DEFAULT NULL")
+                    database.execSQL("ALTER TABLE locations ADD COLUMN serverVersion INTEGER DEFAULT NULL")
+                    database.execSQL("ALTER TABLE locations ADD COLUMN serverSyncStatus TEXT NOT NULL DEFAULT 'LOCAL_ONLY'")
+                    database.execSQL("ALTER TABLE locations ADD COLUMN serverLastSyncedAt INTEGER DEFAULT NULL")
+
+                    val cursor2 = database.query("SELECT COUNT(*) as count FROM locations")
+                    if (cursor2.moveToFirst()) {
+                        val count = cursor2.getInt(0)
+                        android.util.Log.i("DB_MIGRATION", "Location count after migration: $count")
+                    }
+                    cursor2.close()
+
+                    android.util.Log.i("DB_MIGRATION", "MIGRATION_11_12 completed successfully")
+                } catch (e: Exception) {
+                    android.util.Log.e("DB_MIGRATION", "MIGRATION_11_12 failed: ${e.message}", e)
+                    throw e
+                }
+            }
+        }
+
         fun getDatabase(context: Context): PEVPlugShareDatabase {
-            return Instance ?: synchronized(this) {
-                Room.databaseBuilder(
-                    context.applicationContext,
-                    PEVPlugShareDatabase::class.java,
-                    "pevplugshare.db"
+            if (Instance != null) return Instance!!
+
+            synchronized(this) {
+                try {
+                    android.util.Log.i("DB_INIT", "Opening database...")
+                    val db = buildDatabase(context, false)
+                    Instance = db
+                    return db
+                } catch (e: IllegalStateException) {
+                    if (e.message?.contains("Room cannot verify the data integrity") == true) {
+                        android.util.Log.w("DB_INIT", "Schema validation failed - rebuilding with fallback")
+                        val db = buildDatabase(context, true)
+                        Instance = db
+                        return db
+                    } else {
+                        throw e
+                    }
+                }
+            }
+        }
+
+        private fun buildDatabase(context: Context, enableFallback: Boolean): PEVPlugShareDatabase {
+            android.util.Log.i("DB_INIT", "Building Room database (fallback=$enableFallback)...")
+            val dbBuilder = Room.databaseBuilder(
+                context.applicationContext,
+                PEVPlugShareDatabase::class.java,
+                "pevplugshare.db"
+            )
+                .addMigrations(
+                    MIGRATION_1_6, MIGRATION_2_6, MIGRATION_3_6, MIGRATION_4_6, MIGRATION_5_6,
+                    MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11, MIGRATION_11_12
                 )
-                    .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
-                    .fallbackToDestructiveMigration()
-                    .build()
-                    .also { Instance = it }
+
+            if (enableFallback) {
+                android.util.Log.w("DB_INIT", "Enabling fallbackToDestructiveMigration for schema compatibility")
+                dbBuilder.fallbackToDestructiveMigration()
+            }
+
+            val db = dbBuilder.build()
+            android.util.Log.i("DB_INIT", "✓ Room database instance created and opened")
+            return db
+        }
+
+        fun clearDatabase() {
+            synchronized(this) {
+                Instance?.close()
+                Instance = null
             }
         }
     }
