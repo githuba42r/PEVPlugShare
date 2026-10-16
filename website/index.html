@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PEV PlugShare — charging locations for personal electric vehicles</title>
+<meta name="description" content="PEV PlugShare is an open-source Android app for sharing and discovering PEV charging locations. Works offline, syncs with OsmAnd for navigation, and keeps your data on your device.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a2a'/%3E%3Cpath d='M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z' fill='%235cd47a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="brand" href="index.html" aria-label="PEV PlugShare home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#1b3a2a"/><path d="M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z" fill="#5cd47a"/></svg>
+      <span class="brand-name">PEV PlugShare</span>
+    </a>
+    <nav class="head-nav" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#screens">Screens</a>
+      <a href="privacy.html">Privacy</a>
+      <a class="btn btn-small" href="https://github.com/githuba42r/PEVPlugShare">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1>Every wall socket is a charging station — if you can find it.</h1>
+        <p class="lede">PEV PlugShare is an open-source Android app for personal
+        electric vehicles — unicycles, scooters, e-bikes. Record the ordinary
+        GPO outlets that actually charge your ride: where they are, how many
+        sockets, whether they're free, and what to expect when you get there.
+        Works fully offline; syncs with OsmAnd for turn-by-turn navigation.</p>
+        <div class="cta-row">
+          <a class="btn" href="https://github.com/githuba42r/PEVPlugShare">Get the app</a>
+          <a class="btn btn-ghost" href="#screens">See it work</a>
+        </div>
+      </div>
+      <div class="hero-shots">
+        <figure class="frame phone">
+          <img src="images/locations-list.png" alt="The PEV PlugShare location list showing charging spots with socket counts, distance, and open/free badges." width="720" height="1503">
+        </figure>
+        <figure class="frame phone phone-behind">
+          <img src="images/location-detail.png" alt="An expanded location card with a description, socket details, opening hours, and address." width="720" height="1080">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="band">
+    <div class="wrap">
+      <h2>What it does</h2>
+      <div class="feature-grid">
+        <article class="card">
+          <h3>Share real charging spots</h3>
+          <p>Add, edit, and share ordinary power-point locations that work for
+          PEVs — socket type, count, cost, hours, and notes from the last rider
+          who plugged in.</p>
+        </article>
+        <article class="card">
+          <h3>OsmAnd navigation</h3>
+          <p>One tap hands any location to OsmAnd for turn-by-turn navigation,
+          and syncs your saved spots into OsmAnd's favourites.</p>
+        </article>
+        <article class="card">
+          <h3>Works offline</h3>
+          <p>Everything lives in a local database. No signal, no problem —
+          your locations are on the device wherever you ride.</p>
+        </article>
+        <article class="card">
+          <h3>Photos with context</h3>
+          <p>Photograph the socket, the wall, the landmark you'll look for.
+          EXIF metadata is extracted so photos stay pinned to the right spot,
+          with a full-screen gallery viewer.</p>
+        </article>
+        <article class="card">
+          <h3>Status at a glance</h3>
+          <p>Each card shows what matters before you detour: socket count,
+          public or private, free or paid, 24/7 or business hours.</p>
+        </article>
+        <article class="card">
+          <h3>AI-assisted notes</h3>
+          <p>Optional AI-generated descriptions help fill in details about a
+          location — you stay in control of what gets saved.</p>
+        </article>
+        <article class="card">
+          <h3>Favourites &amp; categories</h3>
+          <p>Heart the spots you rely on, organise by category, and filter the
+          list down to what's useful right now.</p>
+        </article>
+        <article class="card">
+          <h3>Optional cloud sync</h3>
+          <p>Keep your library in sync across devices with standards-based
+          OAuth 2.0 — no account required if you'd rather stay local.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens" class="band band-alt">
+    <div class="wrap">
+      <h2>Screens</h2>
+      <p class="section-lede">The list is the home screen: distance, sockets,
+      access, cost, hours — everything you need to pick a spot.</p>
+      <div class="shot-row">
+        <figure class="frame phone">
+          <img src="images/locations-list.png" alt="Charging location list with cards for bus stations and a shopping centre, each showing GPO count, public access, free cost, and 24/7 hours." width="720" height="1503" loading="lazy">
+          <figcaption>Locations near you, sorted by distance</figcaption>
+        </figure>
+        <figure class="frame phone">
+          <img src="images/location-detail.png" alt="Expanded card for a shopping centre: food-court socket description, ten AS3112 sockets, free, 24/7, with address." width="720" height="1080" loading="lazy">
+          <figcaption>Tap the info button for the full story</figcaption>
+        </figure>
+        <figure class="frame phone">
+          <img src="images/add-location.png" alt="Add Location form with name, socket type dropdown, socket-count chips, description, opening hours, and photo picker." width="720" height="1503" loading="lazy">
+          <figcaption>Log a new spot in under a minute</figcaption>
+        </figure>
+        <figure class="frame phone">
+          <img src="images/drawer.png" alt="Navigation drawer listing Saved, Favourite Category, Settings, AI Settings, OsmAnd connection, Image Gallery, and About." width="720" height="807" loading="lazy">
+          <figcaption>Saved spots, settings, gallery — one drawer</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap steps">
+      <h2>How riders use it</h2>
+      <ol class="step-list">
+        <li>
+          <strong>Find.</strong> Open the list or map and look for a spot with
+          the sockets your vehicle needs — AU GPO (AS3112) today, more types
+          as the community adds them.
+        </li>
+        <li>
+          <strong>Navigate.</strong> Hit the navigation arrow and OsmAnd takes
+          you there, offline maps and all.
+        </li>
+        <li>
+          <strong>Share.</strong> Plugged in successfully? Your notes and photos
+          help the next rider. Found a new socket? Add it while the details are
+          fresh.
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="band band-cta">
+    <div class="wrap cta-block">
+      <h2>Open source. Local first. Built for riders.</h2>
+      <p>PEV PlugShare is free and open source. Grab an APK from GitHub,
+      read the code, or open an issue when you find a socket worth sharing.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://github.com/githuba42r/PEVPlugShare">View on GitHub</a>
+        <a class="btn btn-ghost" href="privacy.html">Privacy</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <span>PEV PlugShare — open-source PEV charging locations for Android.</span>
+    <nav aria-label="Footer">
+      <a href="https://github.com/githuba42r/PEVPlugShare">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

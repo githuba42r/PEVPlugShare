@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy — PEV PlugShare</title>
+<meta name="description" content="PEV PlugShare keeps your charging locations on your device. Optional cloud sync uses OAuth 2.0; no ads, no tracking, no data sale.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a2a'/%3E%3Cpath d='M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z' fill='%235cd47a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="brand" href="index.html" aria-label="PEV PlugShare home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#1b3a2a"/><path d="M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z" fill="#5cd47a"/></svg>
+      <span class="brand-name">PEV PlugShare</span>
+    </a>
+    <nav class="head-nav" aria-label="Main">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#screens">Screens</a>
+      <a href="privacy.html" aria-current="page">Privacy</a>
+      <a class="btn btn-small" href="https://github.com/githuba42r/PEVPlugShare">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap prose">
+  <h1>Privacy</h1>
+
+  <p><strong>Your data stays on your device.</strong> PEV PlugShare stores
+  charging locations, photos, and notes in a local database on your Android
+  device. The app works with no network connection and no account.</p>
+
+  <h2>Optional cloud sync</h2>
+  <p>If you choose to enable cloud sync, authentication uses a standard
+  OAuth 2.0 flow with your chosen provider (for example OpenRouter). The app
+  never sees or stores your provider password; it receives an access token
+  through the browser and stores only what is needed to sync your own
+  locations. You can disconnect at any time from the menu.</p>
+
+  <h2>What is not collected</h2>
+  <ul>
+    <li>No advertising identifiers and no ad networks.</li>
+    <li>No third-party analytics or crash trackers.</li>
+    <li>No sale or sharing of location data with data brokers.</li>
+  </ul>
+
+  <h2>Photos</h2>
+  <p>Photos you attach to a location stay in the app's storage and are
+  included in your own backups. EXIF metadata (including coordinates when
+  present) is read to keep photos associated with the right location; it is
+  not transmitted anywhere unless you enable sync and sync that location.</p>
+
+  <h2>Sharing</h2>
+  <p>When you explicitly share a location (for example via Android's share
+  sheet or by syncing to OsmAnd), that location's details leave the app under
+  the terms of the app or service you share to. Nothing is shared
+  automatically with other PlugShare users.</p>
+
+  <h2>Source code</h2>
+  <p>PEV PlugShare is open source. You can review exactly what the app does
+  at <a href="https://github.com/githuba42r/PEVPlugShare">github.com/githuba42r/PEVPlugShare</a>.</p>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <span>PEV PlugShare — open-source PEV charging locations for Android.</span>
+    <nav aria-label="Footer">
+      <a href="https://github.com/githuba42r/PEVPlugShare">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
