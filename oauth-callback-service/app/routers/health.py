@@ -23,13 +23,16 @@ _diagnostic_limit_per_minute = 5  # Very strict limit
 
 def load_version_info():
     """Load version information from version.json"""
-    version_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'version.json')
-    try:
+    d = os.path.dirname(__file__)
+    for _ in range(4):  # routers -> app -> service root
+        version_file = os.path.join(d, 'version.json')
         if os.path.exists(version_file):
-            with open(version_file, 'r') as f:
-                return json.load(f)
-    except Exception:
-        pass
+            try:
+                with open(version_file, 'r') as f:
+                    return json.load(f)
+            except Exception:
+                break
+        d = os.path.dirname(d)
     return {'version': '1.0.0', 'build_date': '', 'git_commit': '', 'git_branch': ''}
 
 
