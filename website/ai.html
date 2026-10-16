@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI integration — PEV PlugShare</title>
+<meta name="description" content="Optional AI features in PEV PlugShare: photo analysis that reads sockets and warnings from your pictures, generated location descriptions, and structured note parsing — powered by your own OpenRouter key, with free models supported.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a2a'/%3E%3Cpath d='M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z' fill='%235cd47a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="brand" href="index.html" aria-label="PEV PlugShare home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#1b3a2a"/><path d="M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z" fill="#5cd47a"/></svg>
+      <span class="brand-name">PEV PlugShare</span>
+    </a>
+    <nav class="head-nav" aria-label="Main">
+      <a href="index.html">App</a>
+      <a href="ai.html" aria-current="page">AI</a>
+      <a href="osmand.html">OsmAnd</a>
+      <a href="github.html">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="wrap page-hero">
+    <span class="eyebrow">AI integration</span>
+    <h1>Let the photos do the paperwork.</h1>
+    <p class="lede">Optional, on-device-initiated AI features handle the tedious
+    parts of logging a charging spot — reading socket details straight out of
+    your photos, writing standard descriptions, and turning scribbled notes
+    into structured fields. Powered by <strong>OpenRouter</strong> with a key
+    from <em>your own</em> account; free models work fine.</p>
+    <div class="cta-row">
+      <a class="btn" href="#features">What it can do</a>
+      <a class="btn btn-ghost" href="#setup">How to turn it on</a>
+    </div>
+  </section>
+
+  <section class="wrap page-body">
+    <div id="features" class="feature-list">
+      <article class="card">
+        <h3>Photo analysis — sockets, ratings, warnings</h3>
+        <p>Add up to five photos of a spot and let the model read them:
+        socket count and types, where the sockets are located (wall, pillar,
+        splashback…), power rating if it's visible on the plate, and warnings
+        like "customers only", "weathered", or "may be turned off". You can
+        draw focus rectangles on a photo to point the analysis at the outlet
+        plate. Results land in a review dialog — <strong>you approve before
+        anything is applied</strong>. A brand-new location with photos and an
+        empty description gets analysed automatically.</p>
+      </article>
+      <article class="card">
+        <h3>Description generation — the standard format</h3>
+        <p>Generates the structured description the app and OsmAnd sync
+        expect: a one-or-two sentence opener, then a <code>Details:</code>
+        block covering public access, sockets, hours, cost, extra
+        information, and type. Used when you sync a location to OsmAnd —
+        with an optional "verify description before syncing" checkbox so you
+        can review first. If AI is off or fails, a programmatic template in
+        the same format fills in, so sync never breaks.</p>
+      </article>
+      <article class="card">
+        <h3>Description parser — text into fields</h3>
+        <p>Paste or write an existing description and tap <em>Parse
+        description</em>: opening hours, socket count, capacity, free/paid,
+        public/restricted, and notes are extracted and auto-filled into the
+        form. Perfect for turning a forum post or a note-to-self into proper
+        location data.</p>
+      </article>
+      <article class="card">
+        <h3>Your key, your models</h3>
+        <p>Link an OpenRouter account (or pick up a free tier key) and choose
+        from OpenRouter's full model catalogue — the picker has live search
+        and a free-models-only filter. Free options like Gemini 2.0 Flash,
+        Llama 4 Scout, and Qwen 2.5 VL are plenty for photo reading;
+        paid models (Claude Sonnet 4, GPT-4o, Gemini 2.5 Pro) are there when
+        you want them. The selected model is used for all three features.</p>
+      </article>
+    </div>
+
+    <div id="setup" class="note">
+      <p><strong>Turning it on:</strong> AI features are hidden until you
+      configure them. Run the first-time setup wizard (AI step), or open
+      <em>menu &rarr; AI Settings</em>: the app opens the OpenRouter
+      authorization page in your browser, you approve, and the app receives
+      an API key via its OAuth callback — nothing to copy or paste. Pick a
+      model, and the AI buttons appear. <em>AI Settings &rarr; Disconnect</em>
+      clears the key at any time.</p>
+    </div>
+
+    <h2>Privacy</h2>
+    <p>AI is entirely optional — the app works fully without it. When you use
+    it, your photos and location descriptions are sent directly from your
+    device to OpenRouter under your own key, for the single request you
+    triggered. No AI provider or analytics SDK is embedded in the app, and
+    nothing is sent in the background. See the
+    <a href="privacy.html">privacy policy</a>.</p>
+
+    <div class="cta-row">
+      <a class="btn" href="index.html">Back to the app</a>
+      <a class="btn btn-ghost" href="osmand.html">OsmAnd integration</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <span>PEV PlugShare — PEV charging locations for Android.</span>
+    <nav aria-label="Footer">
+      <a href="github.html">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

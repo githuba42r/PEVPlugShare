@@ -19,9 +19,9 @@ fronting is no longer required.
 - **Data**: `/opt/apps/oauth/data` (SQLite), env in `/opt/apps/oauth/oauth.env`
   (mode 600; holds bootstrap admin password)
 - **TLS/nginx**: vhost `/etc/nginx/sites-available/oauth.a42r.com`
-  (`/admin` → 18083, everything else → 18082), cert via certbot
-  dns-cloudflare (`/root/.secrets/cloudflare.ini`), also covers
-  `pevplugshare.a42r.com`
+  (`/` → 302 to `/admin/login`, `/admin` → 18083, everything else → 18082),
+  cert via certbot dns-cloudflare (`/root/.secrets/cloudflare.ini`), also
+  covers `pevplugshare.a42r.com`
 - **DNS**: Cloudflare proxied A record `oauth.a42r.com` → 161.33.93.37
 
 ### Upgrade procedure

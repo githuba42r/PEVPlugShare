@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PEV PlugShare — charging locations for personal electric vehicles</title>
-<meta name="description" content="PEV PlugShare is an open-source Android app for sharing and discovering PEV charging locations. Works offline, syncs with OsmAnd for navigation, and keeps your data on your device.">
+<meta name="description" content="PEV PlugShare is an open-source Android app for sharing and discovering PEV charging locations. Works offline, syncs with OsmAnd, optional AI assistance.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a2a'/%3E%3Cpath d='M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z' fill='%235cd47a'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,10 +17,11 @@
       <span class="brand-name">PEV PlugShare</span>
     </a>
     <nav class="head-nav" aria-label="Main">
-      <a href="#features">Features</a>
-      <a href="#screens">Screens</a>
+      <a href="index.html" aria-current="page">App</a>
+      <a href="ai.html">AI</a>
+      <a href="osmand.html">OsmAnd</a>
+      <a href="github.html">GitHub</a>
       <a href="privacy.html">Privacy</a>
-      <a class="btn btn-small" href="https://github.com/githuba42r/PEVPlugShare">GitHub</a>
     </nav>
   </div>
 </header>
@@ -31,13 +32,14 @@
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <h1>Every wall socket is a charging station — if you can find it.</h1>
-        <p class="lede">PEV PlugShare is an open-source Android app for personal
+        <p class="lede">PEV PlugShare is an Android app for personal
         electric vehicles — unicycles, scooters, e-bikes. Record the ordinary
         GPO outlets that actually charge your ride: where they are, how many
         sockets, whether they're free, and what to expect when you get there.
-        Works fully offline; syncs with OsmAnd for turn-by-turn navigation.</p>
+        Works fully offline; syncs with OsmAnd favourites for navigation
+        across your devices.</p>
         <div class="cta-row">
-          <a class="btn" href="https://github.com/githuba42r/PEVPlugShare">Get the app</a>
+          <a class="btn" href="github.html">Get the app</a>
           <a class="btn btn-ghost" href="#screens">See it work</a>
         </div>
       </div>
@@ -63,9 +65,11 @@
           who plugged in.</p>
         </article>
         <article class="card">
-          <h3>OsmAnd navigation</h3>
-          <p>One tap hands any location to OsmAnd for turn-by-turn navigation,
-          and syncs your saved spots into OsmAnd's favourites.</p>
+          <h3>OsmAnd navigation &amp; favourites sync</h3>
+          <p>Hand any location to OsmAnd for turn-by-turn navigation, and
+          two-way sync your spots with an <strong>OsmAnd Cloud favourites
+          folder</strong>. <a href="osmand.html">How the OsmAnd integration
+          works &rarr;</a></p>
         </article>
         <article class="card">
           <h3>Works offline</h3>
@@ -84,9 +88,11 @@
           public or private, free or paid, 24/7 or business hours.</p>
         </article>
         <article class="card">
-          <h3>AI-assisted notes</h3>
-          <p>Optional AI-generated descriptions help fill in details about a
-          location — you stay in control of what gets saved.</p>
+          <h3>AI-assisted notes <span class="badge-soon">Optional</span></h3>
+          <p>Analyse photos of a socket to extract details, generate standard
+          descriptions, and parse your own notes into structured fields —
+          powered by your own OpenRouter key.
+          <a href="ai.html">AI details &rarr;</a></p>
         </article>
         <article class="card">
           <h3>Favourites &amp; categories</h3>
@@ -94,9 +100,11 @@
           list down to what's useful right now.</p>
         </article>
         <article class="card">
-          <h3>Optional cloud sync</h3>
-          <p>Keep your library in sync across devices with standards-based
-          OAuth 2.0 — no account required if you'd rather stay local.</p>
+          <h3>Cloud sync &amp; sharing <span class="badge-soon">Coming soon</span></h3>
+          <p>Today, cloud sync means your <strong>OsmAnd favourites</strong>
+          (two-way, on the folder you choose). Full first-party cloud sync
+          across devices — and sharing locations with other riders — is
+          coming soon.</p>
         </article>
       </div>
     </div>
@@ -152,12 +160,14 @@
 
   <section class="band band-cta">
     <div class="wrap cta-block">
-      <h2>Open source. Local first. Built for riders.</h2>
-      <p>PEV PlugShare is free and open source. Grab an APK from GitHub,
-      read the code, or open an issue when you find a socket worth sharing.</p>
+      <h2>Local first. Built for riders.</h2>
+      <p>PEV PlugShare keeps your data on your device, works with no network
+      connection, and is free to use. The source is on GitHub — build it
+      yourself, read the code, or open an issue when you find a socket worth
+      sharing.</p>
       <div class="cta-row">
-        <a class="btn" href="https://github.com/githuba42r/PEVPlugShare">View on GitHub</a>
-        <a class="btn btn-ghost" href="privacy.html">Privacy</a>
+        <a class="btn" href="github.html">Get the app</a>
+        <a class="btn btn-ghost" href="https://github.com/githuba42r/PEVPlugShare">Source on GitHub</a>
       </div>
     </div>
   </section>
@@ -166,9 +176,9 @@
 
 <footer class="site-foot">
   <div class="wrap foot-row">
-    <span>PEV PlugShare — open-source PEV charging locations for Android.</span>
+    <span>PEV PlugShare — PEV charging locations for Android.</span>
     <nav aria-label="Footer">
-      <a href="https://github.com/githuba42r/PEVPlugShare">GitHub</a>
+      <a href="github.html">GitHub</a>
       <a href="privacy.html">Privacy</a>
     </nav>
   </div>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OsmAnd integration — PEV PlugShare</title>
+<meta name="description" content="How PEV PlugShare works with OsmAnd: turn-by-turn navigation handoff and two-way sync of charging locations with an OsmAnd Cloud favourites folder. Full cloud sync and sharing between riders coming soon.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a2a'/%3E%3Cpath d='M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z' fill='%235cd47a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="brand" href="index.html" aria-label="PEV PlugShare home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#1b3a2a"/><path d="M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z" fill="#5cd47a"/></svg>
+      <span class="brand-name">PEV PlugShare</span>
+    </a>
+    <nav class="head-nav" aria-label="Main">
+      <a href="index.html">App</a>
+      <a href="ai.html">AI</a>
+      <a href="osmand.html" aria-current="page">OsmAnd</a>
+      <a href="github.html">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="wrap page-hero">
+    <span class="eyebrow">OsmAnd integration</span>
+    <h1>Your charging spots, live in OsmAnd.</h1>
+    <p class="lede">PEV PlugShare and OsmAnd are built for the same rider:
+    offline maps, no account required, your data yours. The integration has
+    two halves — <strong>navigation handoff</strong> in one tap, and
+    <strong>two-way favourites sync</strong> through an OsmAnd Cloud folder,
+    which is the app's current cloud-sync story.</p>
+    <div class="cta-row">
+      <a class="btn" href="#sync">Favourites sync</a>
+      <a class="btn btn-ghost" href="#navigate">Navigation</a>
+    </div>
+  </section>
+
+  <section class="wrap page-body">
+
+    <div class="note">
+      <p><strong>Cloud sync today = OsmAnd favourites.</strong> Your locations
+      sync two-way with the OsmAnd favourites folder you choose, riding on
+      OsmAnd Cloud — no separate account to create. Full first-party cloud
+      sync across all your devices, and sharing locations with other riders,
+      is <span class="badge-soon">Coming soon</span>.</p>
+    </div>
+
+    <h2 id="sync">Two-way favourites sync</h2>
+    <p>Pick an favourites folder in OsmAnd (e.g. "PEV Charging") and
+    PEVPlugShare keeps it current in both directions:</p>
+
+    <div class="feature-list two-col">
+      <article class="card">
+        <h3>Import</h3>
+        <p>Connect your OsmAnd account (osmand.net) and choose a folder — the
+        app reads the folder's GPX waypoint file from OsmAnd Cloud and pulls
+        every favourite into your local database, ready offline. One-off
+        import per folder, with the folder available as your "Favourite
+        Category".</p>
+      </article>
+      <article class="card">
+        <h3>Write back</h3>
+        <p>When you save a location, the app matches it against your OsmAnd
+        favourites by name and GPS (nearest point within a configurable
+        distance, default 10 m) and pushes an add-or-update into the folder's
+        GPX file through OsmAnd's web API. Background auto-sync picks up
+        anything made while offline (6-hourly worker, plus on-save).</p>
+      </article>
+      <article class="card">
+        <h3>You approve the description</h3>
+        <p>Save triggers an optional <em>"Sync to OsmAnd?"</em> prompt with a
+        <em>"verify description before syncing"</em> checkbox — review the
+        generated description first, or let it push straight through.</p>
+      </article>
+      <article class="card">
+        <h3>Disconnect cleanly</h3>
+        <p>Menu &rarr; <em>Disconnect from OsmAnd</em> clears the session and
+        stored credentials, optionally removing OsmAnd-synced locations from
+        the phone. It never deletes anything from your OsmAnd Cloud
+        account.</p>
+      </article>
+    </div>
+
+    <h3>Setup (driven by the in-app wizard)</h3>
+    <ol class="step-list">
+      <li><strong>Install OsmAnd</strong> — the wizard checks for it (free or paid package).</li>
+      <li><strong>Sign in</strong> with your OsmAnd (osmand.net) account.</li>
+      <li><strong>Create a favourites folder</strong> in OsmAnd and back it up to OsmAnd Cloud.</li>
+      <li><strong>Connect it in PEVPlugShare</strong> and pick the folder —
+      new folders take 1–2 minutes to appear in OsmAnd's API.</li>
+    </ol>
+
+    <h2 id="navigate">One-tap navigation</h2>
+    <p>Every location card has a navigation arrow: PEVPlugShare hands the
+    destination to OsmAnd via its deep-link API using the
+    <strong>bicycle profile</strong> (sensible for unicycles and scooters too),
+    with the map shown on OsmAnd's side if you'd rather preview first.
+    Works with both <code>net.osmand</code> (free) and
+    <code>net.osand.plus</code> (paid). Because it's OsmAnd, the route
+    works with downloaded offline maps — no signal needed at the
+    trailhead.</p>
+
+    <div class="note">
+      <p><strong>Coming soon:</strong> first-party cloud sync (your own
+      account, all your devices) and sharing locations with other riders —
+      friends, groups, and suggestions. The OsmAnd favourites integration
+      above is how cloud sync works today and will keep working.</p>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn" href="index.html">Back to the app</a>
+      <a class="btn btn-ghost" href="ai.html">AI integration</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <span>PEV PlugShare — PEV charging locations for Android.</span>
+    <nav aria-label="Footer">
+      <a href="github.html">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
