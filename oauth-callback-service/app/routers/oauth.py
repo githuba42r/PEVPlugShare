@@ -65,6 +65,11 @@ async def register_session(
     if request.url.port and request.url.port not in (80, 443):
         request_host = f"{request_host}:{request.url.port}"
 
+    # Behind a TLS-terminating proxy the ASGI scope scheme is plain http;
+    # nginx sets X-Forwarded-Proto (possibly comma-separated with multiple hops).
+    request_scheme = request.headers.get("x-forwarded-proto", request.url.scheme)
+    request_scheme = request_scheme.split(",")[0].strip()
+
     if identification_method == "appid":
         # App ID-based identification
         if not request_data.app_id:
@@ -227,7 +232,7 @@ async def register_session(
     db.commit()
 
     # Build callback URL - use request hostname for the callback URL
-    callback_url = f"{request.url.scheme}://{request_host}/oauth/callback/{session_id}"
+    callback_url = f"{request_scheme}://{request_host}/oauth/callback/{session_id}"
 
     logger.info(
         "OAuth session registered successfully",
