@@ -11,21 +11,69 @@
         <header>
             <div class="header-left">
                 <h1>OAuth Application Manager</h1>
-                <p class="subtitle">Manage OAuth2 callback applications and secrets</p>
+                <p class="subtitle">Applications, manager logins, and API clients</p>
             </div>
-            <div class="header-right" id="versionDisplay">
-                <div>Loading...</div>
+            <div class="header-right">
+                <div id="versionDisplay">Loading...</div>
+                <div id="userDisplay">{{ username }} ({{ role }})</div>
+                <form method="post" action="{{ url_for('logout') }}" class="logout-form">
+                    <input type="hidden" name="csrf" value="">
+                    <button type="submit" class="btn btn-secondary btn-small">Sign out</button>
+                </form>
             </div>
         </header>
 
-        <div class="actions">
-            <button id="addAppBtn" class="btn btn-primary">+ Add New Application</button>
-            <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
-        </div>
+        <nav class="tabs" id="tabs">
+            <button class="tab active" data-tab="apps">Applications</button>
+            <button class="tab" data-tab="users">Users</button>
+            <button class="tab" data-tab="clients">API Clients</button>
+            <button class="tab" data-tab="sessions">Sessions</button>
+            <button class="tab" data-tab="audit">Audit</button>
+        </nav>
 
-        <div id="appList" class="app-list">
-            <div class="loading">Loading applications...</div>
-        </div>
+        <!-- Applications tab -->
+        <section class="tab-panel active" id="panel-apps">
+            <div class="actions">
+                <button id="addAppBtn" class="btn btn-primary">+ Add New Application</button>
+                <button id="refreshAppsBtn" class="btn btn-secondary">Refresh</button>
+            </div>
+            <div id="appList" class="app-list"><div class="loading">Loading applications...</div></div>
+        </section>
+
+        <!-- Users tab -->
+        <section class="tab-panel" id="panel-users">
+            <div class="actions">
+                <button id="addUserBtn" class="btn btn-primary">+ Add User</button>
+                <button id="refreshUsersBtn" class="btn btn-secondary">Refresh</button>
+            </div>
+            <div id="userList" class="app-list"><div class="loading">Loading users...</div></div>
+        </section>
+
+        <!-- API Clients tab -->
+        <section class="tab-panel" id="panel-clients">
+            <div class="actions">
+                <button id="addClientBtn" class="btn btn-primary">+ Create API Client</button>
+                <button id="refreshClientsBtn" class="btn btn-secondary">Refresh</button>
+            </div>
+            <div id="clientList" class="app-list"><div class="loading">Loading API clients...</div></div>
+        </section>
+
+        <!-- Sessions tab -->
+        <section class="tab-panel" id="panel-sessions">
+            <div class="actions">
+                <button id="purgeSessionsBtn" class="btn btn-danger">Purge All Sessions</button>
+                <button id="refreshSessionsBtn" class="btn btn-secondary">Refresh</button>
+            </div>
+            <div id="sessionList" class="app-list"><div class="loading">Loading sessions...</div></div>
+        </section>
+
+        <!-- Audit tab -->
+        <section class="tab-panel" id="panel-audit">
+            <div class="actions">
+                <button id="refreshAuditBtn" class="btn btn-secondary">Refresh</button>
+            </div>
+            <div id="auditList" class="app-list"><div class="loading">Loading audit log...</div></div>
+        </section>
     </div>
 
     <!-- Add/Edit Application Modal -->
@@ -38,39 +86,34 @@
             <form id="appForm">
                 <div class="form-group">
                     <label for="appId">App ID *</label>
-                    <input type="text" id="appId" name="app_id" required 
-                           pattern="[a-z0-9_-]+" 
+                    <input type="text" id="appId" name="app_id" required
+                           pattern="[a-z0-9_-]+"
                            title="Lowercase letters, numbers, hyphens and underscores only">
                     <small>Unique identifier (e.g., myapp, my-app-name)</small>
                 </div>
-
                 <div class="form-group">
                     <label for="appName">App Name *</label>
                     <input type="text" id="appName" name="name" required>
                     <small>Display name for the application</small>
                 </div>
-
                 <div class="form-group">
                     <label for="allowedDomains">Allowed Domains *</label>
                     <textarea id="allowedDomains" name="allowed_domains" required rows="3"></textarea>
                     <small>Comma-separated list (e.g., myapp.com,localhost:8000)</small>
                 </div>
-
                 <div class="form-group">
                     <label for="deepLinkScheme">Deep Link Scheme *</label>
                     <input type="text" id="deepLinkScheme" name="deep_link_scheme" required>
                     <small>Format: scheme://path (e.g., myapp://oauth/callback)</small>
                 </div>
-
                 <div class="form-group">
                     <label for="sharedSecret">Shared Secret</label>
                     <div class="input-with-button">
                         <input type="text" id="sharedSecret" name="shared_secret" readonly>
                         <button type="button" id="generateSecretBtn" class="btn btn-secondary">Generate</button>
                     </div>
-                    <small>Auto-generated if left empty. Click to copy.</small>
+                    <small>Auto-generated if left empty. Shown once after save.</small>
                 </div>
-
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
@@ -79,23 +122,111 @@
         </div>
     </div>
 
-    <!-- View Secret Modal -->
+    <!-- Add User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add User</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="newUsername">Username *</label>
+                    <input type="text" id="newUsername" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Password * (min 8 chars)</label>
+                    <input type="password" id="newPassword" required minlength="8" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="newRole">Role</label>
+                    <select id="newRole">
+                        <option value="operator">operator</option>
+                        <option value="admin">admin</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create API Client Modal -->
+    <div id="clientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create API Client</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="clientForm">
+                <div class="form-group">
+                    <label for="clientName">Name *</label>
+                    <input type="text" id="clientName" required>
+                </div>
+                <div class="form-group">
+                    <label for="clientIdInput">Client ID</label>
+                    <input type="text" id="clientIdInput" pattern="[a-z0-9_-]+"
+                           placeholder="auto-generated if empty">
+                </div>
+                <div class="form-group">
+                    <label>Scopes *</label>
+                    <div class="scope-grid">
+                        <label><input type="checkbox" value="apps:read" checked> apps:read</label>
+                        <label><input type="checkbox" value="apps:write"> apps:write</label>
+                        <label><input type="checkbox" value="clients:manage"> clients:manage</label>
+                        <label><input type="checkbox" value="users:manage"> users:manage</label>
+                        <label><input type="checkbox" value="sessions:read"> sessions:read</label>
+                        <label><input type="checkbox" value="sessions:write"> sessions:write</label>
+                        <label><input type="checkbox" value="audit:read"> audit:read</label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Secret Modal -->
     <div id="secretModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Shared Secret</h2>
+                <h2 id="secretTitle">Secret</h2>
                 <span class="close">&times;</span>
             </div>
             <div class="secret-display">
-                <p><strong>App:</strong> <span id="secretAppName"></span></p>
+                <p><strong id="secretLabel">Secret:</strong> <span id="secretSubject"></span></p>
                 <div class="secret-value">
                     <code id="secretValue"></code>
                     <button id="copySecretBtn" class="btn btn-secondary">Copy</button>
                 </div>
                 <div class="warning">
-                    <strong>⚠️ Warning:</strong> Keep this secret secure. Anyone with this secret can authenticate as this application.
+                    <strong>Warning:</strong> This value is shown only once. Store it securely now.
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Change Password — <span id="pwUsername"></span></h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="pwNew">New password * (min 8 chars)</label>
+                    <input type="password" id="pwNew" required minlength="8" autocomplete="new-password">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 

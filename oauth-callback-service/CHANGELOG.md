@@ -2,7 +2,56 @@
 
 All notable changes to the OAuth2 Redirector Service.
 
-## [Unreleased] - 2026-03-08
+## [1.3.0] - 2026-10-16
+
+### Added
+- **In-app authentication** for the admin Web UI (`/admin`):
+  - Argon2id password hashing (`app/utils/passwords.py`)
+  - Login/logout, rate-limited (5 failures / 5 min per IP+username)
+  - HttpOnly `oauth_admin_session` cookie (Secure when behind HTTPS,
+    SameSite=Lax, path `/admin`), backed by the new `web_sessions` table
+  - First-run bootstrap: `BOOTSTRAP_ADMIN_USER`/`BOOTSTRAP_ADMIN_PASSWORD`
+    create an admin when the users table is empty; otherwise use
+    `oauthctl user add`
+  - Management UI: Applications / Users / API Clients / Sessions / Audit tabs
+  - CSRF protection on all mutating `/admin/api/*` calls (double-submit
+    token via `X-CSRF-Token` header)
+  - Roles: `admin` (full), `operator` (read + app management, no user/client
+    administration)
+- **Pluggable database layer** (`app/db/`):
+  - SQLAlchemy models for all tables (`models.py`), engine factory selected
+    by `DATABASE_URL` scheme — SQLite (default), MySQL, Postgres
+  - Lightweight migration runner (`migrations.py`, `schema_migrations`
+    table): v1 baseline + v2 auth tables; pre-1.3.0 databases are detected
+    and stamped without re-running DDL. (Deliberately not Alembic — single
+    operator, two migrations; can migrate later if the schema grows.)
+  - Repositories (`repositories.py`) — single seam for a future DynamoDB /
+    Firebase backend
+  - Back-compat shims in `app/models/` for existing routers
+- **client_credentials management API** (OAuth 2.0 RFC 6749):
+  - `POST /oauth/token` (Basic or form client authentication)
+  - Bearer-token CRUD under `/api/v1/` (applications, clients, users,
+    sessions, audit, whoami)
+  - Tokens are opaque, stored SHA-256-hashed, individually revocable,
+    default TTL 3600s (`ACCESS_TOKEN_TTL_SECONDS`)
+  - Scopes: `apps:read apps:write clients:manage users:manage sessions:read
+    sessions:write audit:read`
+- **`oauthctl` CLI** (`app/cli.py`, typer): host-side administration of
+  apps, users, API clients, tokens, audit log, and DB migrations;
+  `--json` output mode; runs migrations automatically
+
+### Changed
+- Admin routes now require an authenticated session; nginx basic auth for
+  `/admin` is no longer needed (remove it when deploying 1.3.0)
+- `manage_db.py` reduced to a deprecated shim that forwards legacy verbs to
+  `oauthctl` (explicit-secret arguments no longer accepted)
+- Cleanup task now also expires `web_sessions` and API access tokens
+- Dockerfile installs `oauthctl` at `/usr/local/bin`
+
+### Dependencies
+- Added `argon2-cffi==23.1.0`, `typer==0.12.5`
+
+## [1.2.4] - 2026-03-08
 
 ### Fixed
 - **Authelia Middleware Configuration**: Corrected Traefik middleware name
@@ -24,7 +73,7 @@ All notable changes to the OAuth2 Redirector Service.
   - Added instructions to verify middleware name
   - Listed common middleware naming patterns
 
-## [Unreleased] - 2026-03-07
+## [1.2.3] - 2026-03-07
 
 ### Fixed
 - **Flask Blueprint Routing**: Fixed Web UI static file serving and routing

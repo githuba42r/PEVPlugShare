@@ -1,0 +1,4 @@
+#!/bin/sh
+# oauthctl — thin wrapper so the CLI is on PATH inside the container.
+# On the host:  sudo podman exec -it oauth oauthctl --help
+exec python -m app.cli "$@"

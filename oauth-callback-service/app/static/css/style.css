@@ -367,3 +367,119 @@ form {
     border-radius: 0.5rem;
     margin-bottom: 1rem;
 }
+
+/* ---------------------------------------------------------------- tabs */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.tab {
+    padding: 0.6rem 1.25rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+}
+
+.tab:hover { color: var(--text-color); }
+
+.tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ---------------------------------------------------------------- login */
+body.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.login-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.login-card h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.login-card .subtitle {
+    margin-bottom: 1.5rem;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* ---------------------------------------------------------------- tables */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    font-size: 0.875rem;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.data-table th {
+    background: var(--bg-color);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+
+/* ---------------------------------------------------------------- misc */
+.scope-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.5rem;
+}
+
+.scope-grid label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 400;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.status-role {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.logout-form { display: inline-block; }
+
+.header-right #userDisplay {
+    font-weight: 500;
+    color: var(--text-color);
+}

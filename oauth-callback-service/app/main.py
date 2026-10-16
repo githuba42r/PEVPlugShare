@@ -10,8 +10,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import settings
-from app.models import init_db, cleanup_expired_sessions, seed_sample_application
+from app.models import (
+    init_db,
+    cleanup_expired_sessions,
+    cleanup_expired_web_and_api,
+    seed_sample_application,
+)
 from app.routers import oauth_router, health_router
+from app.api.routes_token import router as token_router
+from app.api.routes_v1 import router as v1_router
+from app.bootstrap import bootstrap_admin
 from app.utils import RateLimiter
 
 
@@ -72,13 +80,20 @@ rate_limiter = RateLimiter(
 
 
 async def cleanup_task():
-    """Background task to cleanup expired sessions"""
+    """Background task to cleanup expired sessions and tokens"""
     while True:
         try:
             await asyncio.sleep(settings.cleanup_interval_minutes * 60)
             deleted = cleanup_expired_sessions()
-            if deleted > 0:
-                logger.info(f"Cleaned up {deleted} expired sessions")
+            extras = cleanup_expired_web_and_api()
+            total = deleted + sum(extras.values())
+            if total > 0:
+                logger.info(
+                    "Cleaned up %s expired OAuth sessions, %s web sessions, %s api tokens",
+                    deleted,
+                    extras.get("web_sessions", 0),
+                    extras.get("api_tokens", 0),
+                )
         except Exception as e:
             logger.error(f"Error in cleanup task: {e}")
 
@@ -90,6 +105,10 @@ async def lifespan(app: FastAPI):
     logger.info("Starting OAuth Callback Service...")
     init_db()
     logger.info("Database initialized")
+
+    # Bootstrap first admin (no-op once any user exists)
+    if bootstrap_admin():
+        logger.info("Bootstrap admin user created")
 
     # Seed sample application for development
     if seed_sample_application():
@@ -127,7 +146,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.get_allowed_origins_list(),
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -189,6 +208,8 @@ async def general_exception_handler(request: Request, exc: Exception):
 # Include routers
 app.include_router(health_router, tags=["Health"])
 app.include_router(oauth_router, tags=["OAuth"])
+app.include_router(token_router, tags=["OAuth2 Token"])
+app.include_router(v1_router, tags=["Management API"])
 
 if __name__ == "__main__":
     import uvicorn

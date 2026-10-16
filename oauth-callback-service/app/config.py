@@ -52,6 +52,20 @@ class Settings(BaseSettings):
     # Options: "domain" (default, matches by allowed_domains) or "appid" (matches by app_id in request)
     app_identification_method: str = "domain"
 
+    # Admin UI sessions (in-app auth)
+    admin_session_ttl_minutes: int = 1440
+
+    # client_credentials management API
+    access_token_ttl_seconds: int = 3600
+
+    # Bootstrap first admin (only used when the users table is empty)
+    bootstrap_admin_user: str = "admin"
+    bootstrap_admin_password: str = ""
+
+    # Cloudflare tunnel (legacy; nginx terminates TLS on the oracle host)
+    cloudflare_tunnel_enabled: bool = False
+    cloudflare_tunnel_token: str = ""
+
     class Config:
         env_file = ".env"
         case_sensitive = False

@@ -30,8 +30,9 @@ COPY logging_config.json ./logging_config.json
 # Copy version information
 COPY version.json ./version.json
 
-# Copy database management script
+# Copy database management script (deprecated shim) and the oauthctl CLI
 COPY manage_db.py ./manage_db.py
+COPY oauthctl /usr/local/bin/oauthctl
 
 # Copy supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -41,7 +42,7 @@ COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 COPY start-cloudflared.sh /app/start-cloudflared.sh
 COPY start-fastapi.sh /app/start-fastapi.sh
 COPY start-webui.sh /app/start-webui.sh
-RUN chmod +x /app/docker-entrypoint.sh /app/start-cloudflared.sh /app/start-fastapi.sh /app/start-webui.sh
+RUN chmod +x /app/docker-entrypoint.sh /app/start-cloudflared.sh /app/start-fastapi.sh /app/start-webui.sh /usr/local/bin/oauthctl
 
 # Create directories
 RUN mkdir -p /app/data /var/log/supervisor /root/.cloudflared
