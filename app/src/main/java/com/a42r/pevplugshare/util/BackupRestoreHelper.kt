@@ -29,6 +29,11 @@ class BackupRestoreHelper(private val context: Context) {
         data class Progress(val message: String, val progress: Int) : RestoreResult()
     }
 
+    private fun isImageFile(fileName: String): Boolean {
+        val imageExtensions = setOf(".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".tiff")
+        return imageExtensions.any { ext -> fileName.lowercase().endsWith(ext) }
+    }
+
     /**
      * Restore backup from zip file.
      * Extracts database and images, then installs them.
@@ -396,7 +401,7 @@ class BackupRestoreHelper(private val context: Context) {
                 while (entry != null) {
                     when {
                         entry.name == DB_BACKUP_PATH -> hasDatabase = true
-                        entry.name.startsWith(IMAGES_BACKUP_PATH) && entry.name.endsWith(".jpg") -> imageCount++
+                        entry.name.startsWith(IMAGES_BACKUP_PATH) && isImageFile(entry.name) -> imageCount++
                     }
                     entry = zis.nextEntry
                 }
