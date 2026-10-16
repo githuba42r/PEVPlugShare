@@ -2,9 +2,52 @@
 
 ## Overview
 
-This guide covers deploying the OAuth2 Redirector Service with Web Management UI to your production server with Traefik + Authelia integration.
+**Current production** runs on oracle-cloud (`/opt/apps/oauth`, podman +
+systemd + nginx) — see [Oracle Cloud deployment](#oracle-cloud-current-production)
+below. The rest of this document describes the older home-server setup
+(Traefik + Authelia + Docker Compose), retained for reference; with 1.3.0
+the admin UI uses **in-app login**, so reverse-proxy basic auth / Authelia
+fronting is no longer required.
 
-## Prerequisites
+## Oracle Cloud (current production)
+
+- **Host**: `oracle-cloud` (161.33.93.37), rootful podman + systemd + nginx
+- **Image**: `ghcr.io/githuba42r/oauth2-redirector:vX.Y.Z` (never `latest`;
+  build with `./build.sh vX.Y.Z` and `--push`)
+- **Unit**: `/etc/systemd/system/oauth.service` → container `oauth`,
+  loopback `127.0.0.1:18082` (FastAPI) and `127.0.0.1:18083` (Flask admin UI)
+- **Data**: `/opt/apps/oauth/data` (SQLite), env in `/opt/apps/oauth/oauth.env`
+  (mode 600; holds bootstrap admin password)
+- **TLS/nginx**: vhost `/etc/nginx/sites-available/oauth.a42r.com`
+  (`/admin` → 18083, everything else → 18082), cert via certbot
+  dns-cloudflare (`/root/.secrets/cloudflare.ini`), also covers
+  `pevplugshare.a42r.com`
+- **DNS**: Cloudflare proxied A record `oauth.a42r.com` → 161.33.93.37
+
+### Upgrade procedure
+
+```bash
+# local machine
+./build.sh vX.Y.Z --push
+
+# oracle-cloud
+sudo podman pull ghcr.io/githuba42r/oauth2-redirector:vX.Y.Z
+sudo systemctl restart oauth
+curl -sf http://127.0.0.1:18082/health
+```
+
+Note: `systemctl restart` alone reuses the cached image — always
+`podman pull` first when re-tagging.
+
+### Administration
+
+```bash
+sudo podman exec -it oauth oauthctl --help          # full CLI
+sudo podman exec -it oauth oauthctl user add bob --role admin
+# or the Web UI: https://oauth.a42r.com/admin/ (in-app login)
+```
+
+## Prerequisites (legacy home-server path)
 
 ### On Your Local Machine
 - Docker installed and running

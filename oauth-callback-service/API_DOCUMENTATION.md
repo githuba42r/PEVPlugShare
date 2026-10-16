@@ -38,6 +38,77 @@ Mobile App → POST /oauth/register → Get callback_url
         Deep link to mobile app
 ```
 
+## Management API (v1) — OAuth 2.0 client_credentials
+
+Since 1.3.0 the service exposes an OAuth 2.0 `client_credentials` grant for
+programmatic administration, alongside the `/admin` Web UI (in-app login,
+no reverse-proxy basic auth required).
+
+### Getting a token
+
+```bash
+curl -u "$CLIENT_ID:$CLIENT_SECRET" \
+     -d "grant_type=client_credentials" \
+     https://oauth.example.com/oauth/token
+# => {"access_token":"...","token_type":"Bearer","expires_in":3600,
+#     "scope":"apps:read apps:write ..."}
+```
+
+Client credentials may also be sent as form fields (`client_id`,
+`client_secret`) instead of HTTP Basic. Requested `scope` must be a subset
+of the client's registered scopes; the default is all of them.
+
+Tokens are **opaque** random strings, stored SHA-256-hashed, individually
+revocable, with a default lifetime of 3600s (`ACCESS_TOKEN_TTL_SECONDS`).
+
+### Scopes
+
+| Scope            | Grants                                        |
+|------------------|-----------------------------------------------|
+| `apps:read`      | List/view applications                        |
+| `apps:write`     | Create/update/delete/rotate application secrets |
+| `clients:manage` | Manage API clients and revoke their tokens    |
+| `users:manage`   | Manage admin-UI users                         |
+| `sessions:read`  | List active admin sessions                    |
+| `sessions:write` | Purge admin sessions                          |
+| `audit:read`     | Read the audit log                            |
+
+### Endpoints (Bearer token required)
+
+| Method   | Path                                   | Scope(s)            |
+|----------|----------------------------------------|---------------------|
+| GET      | `/api/v1/whoami`                       | — (any valid token) |
+| GET/POST | `/api/v1/applications`                 | apps:read / write   |
+| GET/PATCH/DELETE | `/api/v1/applications/{app_id}` | apps:read / write   |
+| POST     | `/api/v1/applications/{app_id}/rotate-secret` | apps:write   |
+| GET/POST | `/api/v1/clients`                      | clients:manage      |
+| POST     | `/api/v1/clients/{client_id}/rotate-secret`    | clients:manage |
+| POST     | `/api/v1/clients/{client_id}/revoke-tokens`    | clients:manage |
+| DELETE   | `/api/v1/clients/{client_id}`          | clients:manage      |
+| GET/POST | `/api/v1/users`                        | users:manage        |
+| PATCH/DELETE | `/api/v1/users/{username}`         | users:manage        |
+| GET      | `/api/v1/sessions`                     | sessions:read       |
+| DELETE   | `/api/v1/sessions`                     | sessions:write      |
+| GET      | `/api/v1/audit`                        | audit:read          |
+
+Operations are recorded in the audit log with the API client id as actor.
+Missing scopes return `403 {"error": "insufficient_scope"}`; revoked or
+expired tokens return `401`.
+
+### Host CLI
+
+Inside the container, `oauthctl` (typer CLI) offers the same operations for
+a human operator, with `--json` output:
+
+```bash
+sudo podman exec -it oauth oauthctl app list
+sudo podman exec -it oauth oauthctl user add alice --role admin
+sudo podman exec -it oauth oauthctl client create deploy-bot "apps:read,apps:write"
+```
+
+`manage_db.py` remains as a deprecated shim that forwards its old verbs to
+`oauthctl`.
+
 ## Authentication
 
 All requests to `/oauth/register` must include an HMAC-SHA256 signature for security.
