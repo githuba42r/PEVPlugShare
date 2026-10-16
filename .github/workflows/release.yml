@@ -1,6 +1,7 @@
 name: Release
 
-# Builds the signed release APK + AAB and publishes a GitHub Release.
+# Builds the signed release APK and publishes a GitHub Release for sideloading.
+# Google Play publishing (AAB upload) is a future stage and is not handled here.
 #
 # Triggers:
 #   - push of a tag matching v* (normal flow: ./release.sh && git push --tags)
@@ -84,8 +85,8 @@ jobs:
           printf 'storeFile=pevplugshare-release.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
             "$KS_PASS" "$KEY_ALIAS" "$KEY_PASS" > keystore.properties
 
-      - name: Build release APK and AAB
-        run: ./gradlew --no-daemon assembleRelease bundleRelease
+      - name: Build release APK
+        run: ./gradlew --no-daemon assembleRelease
 
       - name: Collect artifacts
         run: |
@@ -101,7 +102,6 @@ jobs:
           TAG="${RELEASE_TAG:-build}"
           mkdir -p dist
           cp app/build/outputs/apk/release/app-release.apk "dist/PEVPlugShare-${TAG}.apk"
-          cp app/build/outputs/bundle/release/app-release.aab "dist/PEVPlugShare-${TAG}.aab"
           ls -l dist/
 
       - name: Upload build artifact
