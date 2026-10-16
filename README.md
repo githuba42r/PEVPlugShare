@@ -147,7 +147,7 @@ Current version is managed in `version.properties`.
 
 ## OAuth Service
 
-PEV PlugShare uses a custom OAuth 2.0 callback service for authentication. The service is deployed at `https://oauth.a42r.com`.
+PEV PlugShare uses a custom OAuth 2.0 callback service for authentication. The service is deployed at `https://pevplugshare.a42r.com`.
 
 ### OAuth Flow
 
@@ -258,7 +258,7 @@ See [oauth-callback-service/DEPLOYMENT.md](oauth-callback-service/DEPLOYMENT.md)
 ## Contact
 
 - **Developer**: philg@a42r.com
-- **OAuth Service**: https://oauth.a42r.com/admin/ (Authelia protected)
+- **OAuth Service**: https://pevplugshare.a42r.com/admin/ (Authelia protected)
 
 ## Acknowledgments
 
