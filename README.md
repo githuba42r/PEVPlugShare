@@ -1,5 +1,9 @@
 # PEV PlugShare
 
+[![Latest release](https://img.shields.io/github/v/release/githuba42r/PEVPlugShare)](https://github.com/githuba42r/PEVPlugShare/releases/latest)
+
+**Latest release:** [download the signed APK / AAB](https://github.com/githuba42r/PEVPlugShare/releases/latest) — built automatically by GitHub Actions on every `v*` tag (see [.github/workflows/release.yml](.github/workflows/release.yml)).
+
 Android application for sharing and discovering PEV (Personal Electric Vehicle) charging locations. Integrates with OsmAnd for navigation and provides OAuth-based authentication for cloud sync.
 
 ## Features
