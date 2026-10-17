@@ -39,12 +39,12 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.a42r.pevplugshare"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.a42r.pevplugshare"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = versionCodeNum
         versionName = appVersionName
 
