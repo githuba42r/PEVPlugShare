@@ -1,0 +1,90 @@
+name: Deploy website
+
+# Mirrors website/ to the oracle-cloud web root served at
+# https://pevplugshare.a42r.com/ (nginx static vhost).
+#
+# Triggers:
+#   - push to the default branch touching website/**
+#   - manual dispatch
+#
+# Required repository secrets:
+#   WEBSITE_DEPLOY_HOST         SSH host (161.33.93.37 — the Cloudflare-proxied name won't carry SSH)
+#   WEBSITE_DEPLOY_USER         SSH user with write access to WEBSITE_DEPLOY_PATH
+#   WEBSITE_DEPLOY_SSH_KEY      private key for that user (ed25519, no passphrase)
+#   WEBSITE_DEPLOY_KNOWN_HOSTS  output of: ssh-keyscan -t ed25519 <host>
+# Optional repository variable:
+#   WEBSITE_DEPLOY_PATH         defaults to /opt/apps/pevplugshare/website
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - "website/**"
+      - ".github/workflows/deploy-website.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-website
+  cancel-in-progress: true
+
+env:
+  DEPLOY_PATH: ${{ vars.WEBSITE_DEPLOY_PATH || '/opt/apps/pevplugshare/website' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Verify deploy secrets are configured
+        env:
+          HOST: ${{ secrets.WEBSITE_DEPLOY_HOST }}
+          USER: ${{ secrets.WEBSITE_DEPLOY_USER }}
+          KEY: ${{ secrets.WEBSITE_DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.WEBSITE_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          missing=""
+          if [ -z "$HOST" ]; then missing="$missing WEBSITE_DEPLOY_HOST"; fi
+          if [ -z "$USER" ]; then missing="$missing WEBSITE_DEPLOY_USER"; fi
+          if [ -z "$KEY" ]; then missing="$missing WEBSITE_DEPLOY_SSH_KEY"; fi
+          if [ -z "$KNOWN_HOSTS" ]; then missing="$missing WEBSITE_DEPLOY_KNOWN_HOSTS"; fi
+          if [ -n "$missing" ]; then
+            echo "::error::Missing GitHub Actions secrets:$missing"
+            exit 1
+          fi
+
+      - name: Set up SSH
+        env:
+          KEY: ${{ secrets.WEBSITE_DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.WEBSITE_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Sync website/ to server
+        env:
+          HOST: ${{ secrets.WEBSITE_DEPLOY_HOST }}
+          USER: ${{ secrets.WEBSITE_DEPLOY_USER }}
+        run: |
+          # Trailing slashes: copy the contents of website/ into DEPLOY_PATH.
+          # --delete keeps the server an exact mirror of the repo directory.
+          rsync -rlvz --delete --chmod=D755,F644 \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
+            website/ "$USER@$HOST:$DEPLOY_PATH/"
+
+      - name: Smoke-test live site
+        run: |
+          for path in "" robots.txt sitemap.xml favicon.ico; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://pevplugshare.a42r.com/$path")
+            echo "/$path -> $code"
+            if [ "$code" != "200" ]; then
+              echo "::error::https://pevplugshare.a42r.com/$path returned $code"
+              exit 1
+            fi
+          done

@@ -1,7 +1,8 @@
 name: Release
 
-# Builds the signed release APK and publishes a GitHub Release for sideloading.
-# Google Play publishing (AAB upload) is a future stage and is not handled here.
+# Builds the signed release APK + AAB, publishes a GitHub Release (APK, for
+# sideloading) and uploads the AAB to Google Play. Play only accepts AABs for
+# this app, so the APK is GitHub-only.
 #
 # Triggers:
 #   - push of a tag matching v* (normal flow: ./release.sh && git push --tags)
@@ -13,6 +14,13 @@ name: Release
 #   ANDROID_KEY_ALIAS              key alias
 #   ANDROID_KEY_PASSWORD           key password
 #   APP_SECRETS_PROPERTIES_B64     base64 of secrets.properties (OAuth secrets)
+#
+# Google Play upload (skipped with a warning when the secret is absent):
+#   PLAY_SERVICE_ACCOUNT_JSON      contents of play-service-account.json
+# Optional repository variables:
+#   PLAY_TRACK                     internal (default) | alpha | beta | production
+#   PLAY_RELEASE_STATUS            completed (default) | draft — use draft until
+#                                  the app has been published once in Play Console
 
 on:
   push:
@@ -85,8 +93,8 @@ jobs:
           printf 'storeFile=pevplugshare-release.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
             "$KS_PASS" "$KEY_ALIAS" "$KEY_PASS" > keystore.properties
 
-      - name: Build release APK
-        run: ./gradlew --no-daemon assembleRelease
+      - name: Build release APK and AAB
+        run: ./gradlew --no-daemon assembleRelease bundleRelease
 
       - name: Collect artifacts
         run: |
@@ -99,16 +107,24 @@ jobs:
             echo "::error::APK build produced an unsigned artifact"
             exit 1
           fi
+          if [ ! -f app/build/outputs/bundle/release/app-release.aab ]; then
+            echo "::error::Release AAB not found"
+            exit 1
+          fi
           TAG="${RELEASE_TAG:-build}"
-          mkdir -p dist
+          mkdir -p dist play
           cp app/build/outputs/apk/release/app-release.apk "dist/PEVPlugShare-${TAG}.apk"
-          ls -l dist/
+          # AAB kept out of dist/ so it isn't attached to the GitHub release
+          cp app/build/outputs/bundle/release/app-release.aab "play/PEVPlugShare-${TAG}.aab"
+          ls -l dist/ play/
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: pevplugshare-${{ env.RELEASE_TAG || 'build' }}
-          path: dist/
+          path: |
+            dist/
+            play/
 
       - name: Create GitHub release
         if: env.RELEASE_TAG != ''
@@ -120,3 +136,27 @@ jobs:
               --title "$RELEASE_TAG" --generate-notes --verify-tag
           fi
           gh release upload "$RELEASE_TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+
+      - name: Check Play upload credentials
+        id: play
+        if: env.RELEASE_TAG != ''
+        env:
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$PLAY_JSON" ]; then
+            echo "::warning::PLAY_SERVICE_ACCOUNT_JSON not set — skipping Google Play upload"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload AAB to Google Play
+        if: steps.play.outputs.enabled == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.a42r.pevplugshare
+          releaseFiles: play/*.aab
+          releaseName: ${{ env.RELEASE_TAG }}
+          track: ${{ vars.PLAY_TRACK || 'internal' }}
+          status: ${{ vars.PLAY_RELEASE_STATUS || 'completed' }}
