@@ -12,6 +12,9 @@ name: Deploy website
 #   WEBSITE_DEPLOY_USER         SSH user with write access to WEBSITE_DEPLOY_PATH
 #   WEBSITE_DEPLOY_SSH_KEY      private key for that user (ed25519, no passphrase)
 #   WEBSITE_DEPLOY_KNOWN_HOSTS  output of: ssh-keyscan -t ed25519 <host>
+# Cloudflare cache purge (skipped with a warning when either is absent):
+#   CLOUDFLARE_API_TOKEN        API token with Zone > Cache Purge on a42r.com
+#   CLOUDFLARE_ZONE_ID          zone ID of a42r.com (dashboard > Overview)
 # Optional repository variable:
 #   WEBSITE_DEPLOY_PATH         defaults to /opt/apps/pevplugshare/website
 
@@ -77,6 +80,31 @@ jobs:
           rsync -rlvz --delete --chmod=D755,F644 \
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
             website/ "$USER@$HOST:$DEPLOY_PATH/"
+
+      - name: Purge Cloudflare cache
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ZONE: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          if [ -z "$CF_TOKEN" ] || [ -z "$CF_ZONE" ]; then
+            echo "::warning::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ZONE_ID not set — skipping cache purge"
+            exit 0
+          fi
+          # Purge by URL (works on every plan): the site root plus every deployed file.
+          base="https://pevplugshare.a42r.com/"
+          { echo "$base"; (cd website && find . -type f | sed "s#^\./#$base#"); } > urls.txt
+          # 30 URLs per request keeps within the smallest per-call limit
+          split -l 30 urls.txt chunk.
+          for c in chunk.*; do
+            body=$(jq -R . "$c" | jq -s '{files: .}')
+            resp=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE/purge_cache" \
+              -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" --data "$body")
+            if [ "$(echo "$resp" | jq -r .success)" != "true" ]; then
+              echo "::error::Cloudflare purge failed: $(echo "$resp" | jq -c .errors)"
+              exit 1
+            fi
+          done
+          echo "Purged $(wc -l < urls.txt) URLs"
 
       - name: Smoke-test live site
         run: |
