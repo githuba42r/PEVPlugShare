@@ -3,9 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PEV PlugShare — charging locations for personal electric vehicles</title>
-<meta name="description" content="PEV PlugShare is an open-source Android app for sharing and discovering PEV charging locations. Works offline, syncs with OsmAnd, optional AI assistance.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a2a'/%3E%3Cpath d='M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z' fill='%235cd47a'/%3E%3C/svg%3E">
+<title>PEV PlugShare — find charging spots for e-scooters, e-bikes &amp; EUCs</title>
+<meta name="description" content="Open-source Android app for finding and sharing charging spots for e-scooters, e-bikes and electric unicycles. Works offline, syncs with OsmAnd, optional AI.">
+<link rel="canonical" href="https://pevplugshare.a42r.com/">
+<meta name="theme-color" content="#1e824c">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PEV PlugShare">
+<meta property="og:title" content="PEV PlugShare — find charging spots for e-scooters, e-bikes &amp; EUCs">
+<meta property="og:description" content="Open-source Android app for finding and sharing charging spots for e-scooters, e-bikes and electric unicycles. Works offline, syncs with OsmAnd, optional AI.">
+<meta property="og:url" content="https://pevplugshare.a42r.com/">
+<meta property="og:image" content="https://pevplugshare.a42r.com/images/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PEV PlugShare app icon and charging location list">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PEV PlugShare",
+  "url": "https://pevplugshare.a42r.com/",
+  "description": "Open-source Android app for finding and sharing charging spots for personal electric vehicles — e-scooters, e-bikes and electric unicycles. Works offline and syncs with OsmAnd.",
+  "operatingSystem": "Android 8.0+",
+  "applicationCategory": "TravelApplication",
+  "softwareVersion": "1.3.2",
+  "downloadUrl": "https://github.com/githuba42r/PEVPlugShare/releases/latest",
+  "image": "https://pevplugshare.a42r.com/icon-512.png",
+  "screenshot": "https://pevplugshare.a42r.com/images/locations-list.webp",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "codeRepository": "https://github.com/githuba42r/PEVPlugShare"
+}
+</script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -46,10 +79,10 @@
       </div>
       <div class="hero-shots">
         <figure class="frame phone">
-          <img src="images/locations-list.png" alt="The PEV PlugShare location list showing charging spots with socket counts, distance, and open/free badges." width="720" height="1503">
+          <img src="images/locations-list.webp" alt="The PEV PlugShare location list showing charging spots with socket counts, distance, and open/free badges." width="720" height="1503" fetchpriority="high">
         </figure>
         <figure class="frame phone phone-behind">
-          <img src="images/location-detail.png" alt="An expanded location card with a description, socket details, opening hours, and address." width="720" height="1080">
+          <img src="images/location-detail.webp" alt="An expanded location card with a description, socket details, opening hours, and address." width="720" height="1080">
         </figure>
       </div>
     </div>
@@ -118,19 +151,19 @@
       access, cost, hours — everything you need to pick a spot.</p>
       <div class="shot-row">
         <figure class="frame phone">
-          <img src="images/locations-list.png" alt="Charging location list with cards for bus stations and a shopping centre, each showing GPO count, public access, free cost, and 24/7 hours." width="720" height="1503" loading="lazy">
+          <img src="images/locations-list.webp" alt="Charging location list with cards for bus stations and a shopping centre, each showing GPO count, public access, free cost, and 24/7 hours." width="720" height="1503" loading="lazy">
           <figcaption>Locations near you, sorted by distance</figcaption>
         </figure>
         <figure class="frame phone">
-          <img src="images/location-detail.png" alt="Expanded card for a shopping centre: food-court socket description, ten AS3112 sockets, free, 24/7, with address." width="720" height="1080" loading="lazy">
+          <img src="images/location-detail.webp" alt="Expanded card for a shopping centre: food-court socket description, ten AS3112 sockets, free, 24/7, with address." width="720" height="1080" loading="lazy">
           <figcaption>Tap the info button for the full story</figcaption>
         </figure>
         <figure class="frame phone">
-          <img src="images/add-location.png" alt="Add Location form with name, socket type dropdown, socket-count chips, description, opening hours, and photo picker." width="720" height="1503" loading="lazy">
+          <img src="images/add-location.webp" alt="Add Location form with name, socket type dropdown, socket-count chips, description, opening hours, and photo picker." width="720" height="1503" loading="lazy">
           <figcaption>Log a new spot in under a minute</figcaption>
         </figure>
         <figure class="frame phone">
-          <img src="images/drawer.png" alt="Navigation drawer listing Saved, Favourite Category, Settings, AI Settings, OsmAnd connection, Image Gallery, and About." width="720" height="807" loading="lazy">
+          <img src="images/drawer.webp" alt="Navigation drawer listing Saved, Favourite Category, Settings, AI Settings, OsmAnd connection, Image Gallery, and About." width="720" height="807" loading="lazy">
           <figcaption>Saved spots, settings, gallery — one drawer</figcaption>
         </figure>
       </div>

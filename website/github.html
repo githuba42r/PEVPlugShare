@@ -4,8 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GitHub — PEV PlugShare source, builds, and contributing</title>
-<meta name="description" content="PEV PlugShare on GitHub: browse the source, build the Android app from scratch (SDK 34, JDK 17, CMake), and see how releases are cut.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a2a'/%3E%3Cpath d='M18.5 4 9 18h5l-1.5 10L23 13h-5.2l.7-9z' fill='%235cd47a'/%3E%3C/svg%3E">
+<meta name="description" content="PEV PlugShare on GitHub: browse the source, build the Android app from scratch (SDK 36, JDK 17, CMake), and see how releases are cut.">
+<link rel="canonical" href="https://pevplugshare.a42r.com/github.html">
+<meta name="theme-color" content="#1e824c">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PEV PlugShare">
+<meta property="og:title" content="GitHub — PEV PlugShare source, builds, and contributing">
+<meta property="og:description" content="PEV PlugShare on GitHub: browse the source, build the Android app from scratch (SDK 36, JDK 17, CMake), and see how releases are cut.">
+<meta property="og:url" content="https://pevplugshare.a42r.com/github.html">
+<meta property="og:image" content="https://pevplugshare.a42r.com/images/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PEV PlugShare app icon and charging location list">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -32,7 +47,7 @@
     <h1>Read it. Build it. Change it.</h1>
     <p class="lede">PEV PlugShare's entire Android app lives at
     <a href="https://github.com/githuba42r/PEVPlugShare">github.com/githuba42r/PEVPlugShare</a>
-    — current release <strong>1.3.0</strong>. No closed components: what you
+    — current release <strong>1.3.2</strong>. No closed components: what you
     see in the store is what's in the repo.</p>
     <div class="cta-row">
       <a class="btn" href="https://github.com/githuba42r/PEVPlugShare/releases/latest">Download the latest release</a>
@@ -71,7 +86,7 @@
     </div>
 
     <div class="note">
-      <p><strong>Current version:</strong> 1.3.0 (version code 11) — see
+      <p><strong>Current version:</strong> 1.3.2 (version code 13) — see
       <code>version.properties</code> and the git tags in the repository.
       Prebuilt downloads (signed APK) are on the
       <a href="https://github.com/githuba42r/PEVPlugShare/releases/latest">latest release</a>
@@ -82,7 +97,7 @@
     <p>Prerequisites:</p>
     <ul>
       <li>Android Studio Hedgehog or later</li>
-      <li>Android SDK 34</li>
+      <li>Android SDK 36</li>
       <li>JDK 17</li>
       <li>CMake 3.22.1 or later (the native C++ module holds the OAuth secrets)</li>
     </ul>
@@ -99,9 +114,9 @@
 
     <p>Releases are cut with the repo's release script, which keeps
     everything in lock-step:</p>
-    <div class="code-block">./release.sh patch            # 1.3.0 -> 1.3.1
-./release.sh minor            # 1.3.0 -> 1.4.0
-./release.sh major            # 1.3.0 -> 2.0.0
+    <div class="code-block">./release.sh patch            # 1.3.2 -> 1.3.3
+./release.sh minor            # 1.3.2 -> 1.4.0
+./release.sh major            # 1.3.2 -> 2.0.0
 ./release.sh minor --pre-release</div>
 
     <p>The script verifies a clean working tree, updates

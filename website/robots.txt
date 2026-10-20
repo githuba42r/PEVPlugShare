@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /admin/
+
+Sitemap: https://pevplugshare.a42r.com/sitemap.xml
