@@ -220,16 +220,27 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           # whatsNewDirectory requires files named whatsnew-<BCP47-locale>.
-          # Checkout is shallow (repo is ~1.4 GiB), so take the auto-generated
-          # GitHub release notes instead of a local git log.
+          # Checkout is shallow (repo is ~1.4 GiB), so list the commits since
+          # the previous release through the API; fall back to the generated
+          # release body, then to a one-line placeholder. Play caps notes at
+          # 500 characters.
           mkdir -p dist/whatsnew
-          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json body -q .body \
-            | grep -vE '^[[:space:]]*#|^[[:space:]]*\*\*Full Changelog' \
-            | sed 's/[[:space:]]*$//' | awk 'NF' \
-            | head -c 500 > dist/whatsnew/whatsnew-en-US
-          if [ ! -s dist/whatsnew/whatsnew-en-US ]; then
-            printf 'New in %s' "$RELEASE_TAG" > dist/whatsnew/whatsnew-en-US
+          notes=""
+          prev=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=20" \
+            --jq '.[].tag_name' | grep -vx "$RELEASE_TAG" | head -1)
+          if [ -n "$prev" ]; then
+            notes=$(gh api "repos/$GITHUB_REPOSITORY/compare/$prev...$RELEASE_TAG" \
+              --jq '.commits[] | "• " + (.commit.message | split("\n")[0])' 2>/dev/null || true)
           fi
+          if [ -z "$notes" ]; then
+            notes=$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json body -q .body 2>/dev/null \
+              | grep -vE '^[[:space:]]*#' | sed 's/\*\*//g; s/[[:space:]]*$//' | awk 'NF' || true)
+          fi
+          if [ -z "$notes" ]; then
+            notes="New in $RELEASE_TAG"
+          fi
+          printf 'New in %s:\n\n%s\n' "$RELEASE_TAG" "$notes" | head -c 500 \
+            > dist/whatsnew/whatsnew-en-US
           echo "whatsnew-en-US:"
           cat dist/whatsnew/whatsnew-en-US
 
