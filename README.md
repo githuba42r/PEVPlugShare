@@ -253,7 +253,11 @@ See [oauth-callback-service/DEPLOYMENT.md](oauth-callback-service/DEPLOYMENT.md)
 
 ## License
 
-[Add your license here]
+Licensed under the **GNU General Public License v3.0** — see [LICENSE](LICENSE) for the full text.
+
+You are free to use, study, share and improve this software under the terms
+of GPL-3.0; any derivative work must in turn be distributed under GPL-3.0
+with its corresponding source.
 
 ## Contact
 
