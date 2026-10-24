@@ -7,7 +7,7 @@ name: Release
 # Download links used by the website/README:
 #   https://pevplugshare.a42r.com/download/PEVPlugShare.apk      (public, always latest)
 #   https://github.com/githuba42r/PEVPlugShare/releases/latest/download/PEVPlugShare-latest.apk
-#     (stable per-release alias asset; needs repo access — the repo is private)
+#     (stable per-release alias asset; the repo is public, so this works too)
 #
 # Triggers:
 #   - push of a tag matching v* (normal flow: ./release.sh && git push --tags)
