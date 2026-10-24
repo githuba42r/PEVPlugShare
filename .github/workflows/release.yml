@@ -209,6 +209,25 @@ jobs:
           fi
           echo "Verified $APK_URL ($(stat -c%s dist/PEVPlugShare-latest.apk) bytes)"
 
+      - name: Generate Play release notes
+        if: env.RELEASE_TAG != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # whatsNewDirectory requires files named whatsnew-<BCP47-locale>.
+          # Checkout is shallow (repo is ~1.4 GiB), so take the auto-generated
+          # GitHub release notes instead of a local git log.
+          mkdir -p dist/whatsnew
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json body -q .body \
+            | grep -vE '^[[:space:]]*#|^[[:space:]]*\*\*Full Changelog' \
+            | sed 's/[[:space:]]*$//' | awk 'NF' \
+            | head -c 500 > dist/whatsnew/whatsnew-en-US
+          if [ ! -s dist/whatsnew/whatsnew-en-US ]; then
+            printf 'New in %s' "$RELEASE_TAG" > dist/whatsnew/whatsnew-en-US
+          fi
+          echo "whatsnew-en-US:"
+          cat dist/whatsnew/whatsnew-en-US
+
       - name: Check Play upload credentials
         id: play
         if: env.RELEASE_TAG != ''
@@ -230,5 +249,6 @@ jobs:
           packageName: com.a42r.pevplugshare
           releaseFiles: play/*.aab
           releaseName: ${{ env.RELEASE_TAG }}
-          track: ${{ vars.PLAY_TRACK || 'internal' }}
+          tracks: ${{ vars.PLAY_TRACK || 'internal' }}
           status: ${{ vars.PLAY_RELEASE_STATUS || 'completed' }}
+          whatsNewDirectory: dist/whatsnew
