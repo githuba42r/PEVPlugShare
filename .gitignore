@@ -167,3 +167,6 @@ app/src/main/play/release-notes/
 play-service-account.json
 .superpowers/
 device_backups/
+
+# generated font cache for marketing/generate-play-assets.py
+marketing/.fonts-cache/

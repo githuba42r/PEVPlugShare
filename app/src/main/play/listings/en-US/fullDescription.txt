@@ -1,0 +1,29 @@
+PEV PlugShare is the open-source Android app for finding and sharing charging spots for personal electric vehicles — e-scooters, e-bikes and electric unicycles (EUCs).
+
+Whether you commute or tour on the weekend, PlugShare helps you find a power point before your battery runs out — and share the spots you discover with other riders.
+
+FEATURES
+
+• Browse charging locations as a list sorted by distance, with socket type, cost, access and availability visible at a glance
+• Add and edit locations: socket type, number of sockets, opening hours, cost, public access and extra notes
+• Take photos of charging spots — EXIF location metadata is extracted automatically
+• AI-assisted descriptions: generate a clear, consistent description for any location
+• Full offline support: everything works from the on-device database, no signal required
+• Sync with OsmAnd and navigate turn-by-turn to a charging spot
+• Optional cloud sync over OAuth 2.0 — your locations, wherever you sign in
+• Favourites, categories and a full-screen photo gallery
+
+OPEN SOURCE
+
+The entire app lives on GitHub — no closed components. What you install is what's in the repository, and you can build it yourself.
+
+PRIVACY
+
+PlugShare works fully offline by default. Cloud sync is optional and uses standard OAuth 2.0.
+
+LINKS
+
+• Project website and direct APK download: https://pevplugshare.a42r.com
+• Source code on GitHub: https://github.com/githuba42r/PEVPlugShare
+
+Find a spot. Share a spot. Keep riding.
