@@ -175,12 +175,15 @@ jobs:
 
           # The deploy key is restricted to rsync (/usr/bin/rrsync forced
           # command), so ssh/scp are rejected — publish over rsync only.
-          # download/ itself is created by the website mirror from
-          # website/download/.gitkeep; deploy-website.yml excludes only this APK
-          # file, so --delete never removes it. rsync stages a temp file and
-          # renames, so visitors never fetch a half-written APK.
-          mkdir -p dist/site
-          cp dist/PEVPlugShare-latest.apk dist/site/
+          # The payload is seeded from the repo's download/ dir (holds the
+          # .gitkeep that lets the website mirror create the directory) with the
+          # APK renamed to its public name; deploy-website.yml excludes only
+          # download/PEVPlugShare.apk, so the mirror never deletes the release
+          # copy. rsync stages a temp file and renames, so visitors never fetch
+          # a half-written APK.
+          mkdir -p dist/site website/download
+          cp -a website/download/. dist/site/
+          cp dist/PEVPlugShare-latest.apk dist/site/PEVPlugShare.apk
           rsync -rlvz -e "ssh -i $HOME/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
             dist/site/ "$USER@$HOST:$REMOTE_DIR/"
           echo "Published $REMOTE_DIR/PEVPlugShare.apk"
