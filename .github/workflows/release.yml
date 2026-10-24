@@ -1,8 +1,13 @@
 name: Release
 
 # Builds the signed release APK + AAB, publishes a GitHub Release (APK, for
-# sideloading) and uploads the AAB to Google Play. Play only accepts AABs for
-# this app, so the APK is GitHub-only.
+# sideloading), mirrors the APK onto the website as the stable "latest APK"
+# download, and uploads the AAB to Google Play (Play only accepts AABs).
+#
+# Download links used by the website/README:
+#   https://pevplugshare.a42r.com/download/PEVPlugShare.apk      (public, always latest)
+#   https://github.com/githuba42r/PEVPlugShare/releases/latest/download/PEVPlugShare-latest.apk
+#     (stable per-release alias asset; needs repo access — the repo is private)
 #
 # Triggers:
 #   - push of a tag matching v* (normal flow: ./release.sh && git push --tags)
@@ -21,6 +26,13 @@ name: Release
 #   PLAY_TRACK                     internal (default) | alpha | beta | production
 #   PLAY_RELEASE_STATUS            completed (default) | draft — use draft until
 #                                  the app has been published once in Play Console
+#
+# Website APK publish (skipped with a warning when WEBSITE_DEPLOY_* is absent):
+#   WEBSITE_DEPLOY_HOST / WEBSITE_DEPLOY_USER / WEBSITE_DEPLOY_SSH_KEY /
+#   WEBSITE_DEPLOY_KNOWN_HOSTS     same key used by deploy-website.yml
+#   WEBSITE_DEPLOY_PATH            variable; defaults to /opt/apps/pevplugshare/website
+# Cloudflare cache purge of the APK URL (skipped when absent):
+#   CLOUDFLARE_API_TOKEN / CLOUDFLARE_ZONE_ID
 
 on:
   push:
@@ -114,6 +126,8 @@ jobs:
           TAG="${RELEASE_TAG:-build}"
           mkdir -p dist play
           cp app/build/outputs/apk/release/app-release.apk "dist/PEVPlugShare-${TAG}.apk"
+          # Stable alias so releases/latest/download/<asset> is a fixed URL
+          cp app/build/outputs/apk/release/app-release.apk dist/PEVPlugShare-latest.apk
           # AAB kept out of dist/ so it isn't attached to the GitHub release
           cp app/build/outputs/bundle/release/app-release.aab "play/PEVPlugShare-${TAG}.aab"
           ls -l dist/ play/
@@ -136,6 +150,64 @@ jobs:
               --title "$RELEASE_TAG" --generate-notes --verify-tag
           fi
           gh release upload "$RELEASE_TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+
+      - name: Publish APK to website
+        if: env.RELEASE_TAG != ''
+        env:
+          HOST: ${{ secrets.WEBSITE_DEPLOY_HOST }}
+          USER: ${{ secrets.WEBSITE_DEPLOY_USER }}
+          KEY: ${{ secrets.WEBSITE_DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.WEBSITE_DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_PATH: ${{ vars.WEBSITE_DEPLOY_PATH || '/opt/apps/pevplugshare/website' }}
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ZONE: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          if [ -z "$HOST" ] || [ -z "$USER" ] || [ -z "$KEY" ] || [ -z "$KNOWN_HOSTS" ]; then
+            echo "::warning::WEBSITE_DEPLOY_* secrets not set — skipping website APK publish"
+            exit 0
+          fi
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          SSH_OPTS=(-i "$HOME/.ssh/deploy_key" -o StrictHostKeyChecking=yes)
+          REMOTE_DIR="$DEPLOY_PATH/download"
+          REMOTE_APK="$REMOTE_DIR/PEVPlugShare.apk"
+          APK_URL="https://pevplugshare.a42r.com/download/PEVPlugShare.apk"
+
+          # download/ is excluded from the website mirror rsync (deploy-website.yml),
+          # so this upload is the only copy on the server. Write to a temp name, then
+          # rename, so visitors never fetch a half-written APK.
+          ssh "${SSH_OPTS[@]}" "$USER@$HOST" "mkdir -p '$REMOTE_DIR'"
+          scp "${SSH_OPTS[@]}" dist/PEVPlugShare-latest.apk "$USER@$HOST:$REMOTE_DIR/.PEVPlugShare.apk.tmp"
+          ssh "${SSH_OPTS[@]}" "$USER@$HOST" "mv '$REMOTE_DIR/.PEVPlugShare.apk.tmp' '$REMOTE_APK'"
+          echo "Published $REMOTE_DIR/PEVPlugShare.apk"
+
+          if [ -n "$CF_TOKEN" ] && [ -n "$CF_ZONE" ]; then
+            resp=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE/purge_cache" \
+              -H "Authorization: Bearer $CF_TOKEN" -H "Content-Type: application/json" \
+              --data "$(jq -n --arg f "$APK_URL" '{files: [$f]}')")
+            if [ "$(echo "$resp" | jq -r .success)" != "true" ]; then
+              echo "::warning::Cloudflare purge failed: $(echo "$resp" | jq -c .errors)"
+            fi
+          fi
+
+          # The purge is async — retry until the public file matches the build
+          verified=""
+          for attempt in 1 2 3 4 5 6; do
+            if curl -fsS -o "$RUNNER_TEMP/remote.apk" "$APK_URL" \
+               && cmp -s dist/PEVPlugShare-latest.apk "$RUNNER_TEMP/remote.apk"; then
+              verified=1
+              break
+            fi
+            echo "attempt $attempt: $APK_URL not matching yet — retrying in 10s"
+            sleep 10
+          done
+          if [ -z "$verified" ]; then
+            echo "::error::$APK_URL does not match the APK just built"
+            exit 1
+          fi
+          echo "Verified $APK_URL ($(stat -c%s dist/PEVPlugShare-latest.apk) bytes)"
 
       - name: Check Play upload credentials
         id: play

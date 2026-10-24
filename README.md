@@ -2,7 +2,7 @@
 
 [![Latest release](https://img.shields.io/github/v/release/githuba42r/PEVPlugShare)](https://github.com/githuba42r/PEVPlugShare/releases/latest)
 
-**Latest release:** [download the signed APK](https://github.com/githuba42r/PEVPlugShare/releases/latest) — built automatically by GitHub Actions on every `v*` tag (see [.github/workflows/release.yml](.github/workflows/release.yml)) for sideloading.
+**Latest release:** [download the signed APK](https://pevplugshare.a42r.com/download/PEVPlugShare.apk) — always the newest build, published automatically by GitHub Actions on every `v*` tag (see [.github/workflows/release.yml](.github/workflows/release.yml)): mirrored to the website for sideloading, attached to the GitHub release, and the AAB uploaded to the Google Play internal track.
 
 Android application for sharing and discovering PEV (Personal Electric Vehicle) charging locations. Integrates with OsmAnd for navigation and provides OAuth-based authentication for cloud sync.
 
@@ -103,7 +103,7 @@ app/
 
 ## Release Management
 
-**Current stage:** releases are published as signed APKs on GitHub Releases for sideloading (`.github/workflows/release.yml`, triggered by `v*` tags). Google Play Store publishing is a planned future stage — `release.sh` and [RELEASE_PROCESS.md](RELEASE_PROCESS.md) already document that flow for when it is enabled.
+**Current stage:** releases are published as signed APKs on GitHub Releases and mirrored to `https://pevplugshare.a42r.com/download/PEVPlugShare.apk` for sideloading, while the AAB goes to the Google Play internal testing track (`.github/workflows/release.yml`, triggered by `v*` tags). Promotion to production is still manual — `release.sh` and [RELEASE_PROCESS.md](RELEASE_PROCESS.md) document that flow.
 
 ### Quick Start
 

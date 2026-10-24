@@ -47,10 +47,10 @@
     <h1>Read it. Build it. Change it.</h1>
     <p class="lede">PEV PlugShare's entire Android app lives at
     <a href="https://github.com/githuba42r/PEVPlugShare">github.com/githuba42r/PEVPlugShare</a>
-    — current release <strong>1.3.2</strong>. No closed components: what you
+    — current release <strong>1.3.3</strong>. No closed components: what you
     see in the store is what's in the repo.</p>
     <div class="cta-row">
-      <a class="btn" href="https://github.com/githuba42r/PEVPlugShare/releases/latest">Download the latest release</a>
+      <a class="btn" href="https://pevplugshare.a42r.com/download/PEVPlugShare.apk">Download the latest release</a>
       <a class="btn btn-ghost" href="https://github.com/githuba42r/PEVPlugShare">View the repository</a>
       <a class="btn btn-ghost" href="#build">Build from source</a>
     </div>
@@ -86,11 +86,13 @@
     </div>
 
     <div class="note">
-      <p><strong>Current version:</strong> 1.3.2 (version code 13) — see
+      <p><strong>Current version:</strong> 1.3.3 (version code 14) — see
       <code>version.properties</code> and the git tags in the repository.
-      Prebuilt downloads (signed APK) are on the
-      <a href="https://github.com/githuba42r/PEVPlugShare/releases/latest">latest release</a>
-      page, published automatically by GitHub Actions on every release tag.</p>
+      Prebuilt downloads (signed APK) are at
+      <a href="https://pevplugshare.a42r.com/download/PEVPlugShare.apk">download/PEVPlugShare.apk</a>
+      — always the newest build, published automatically by GitHub Actions on
+      every release tag, alongside the
+      <a href="https://github.com/githuba42r/PEVPlugShare/releases/latest">GitHub release</a>.</p>
     </div>
 
     <h2 id="build">Build from source</h2>
@@ -114,17 +116,17 @@
 
     <p>Releases are cut with the repo's release script, which keeps
     everything in lock-step:</p>
-    <div class="code-block">./release.sh patch            # 1.3.2 -> 1.3.3
-./release.sh minor            # 1.3.2 -> 1.4.0
-./release.sh major            # 1.3.2 -> 2.0.0
+    <div class="code-block">./release.sh patch            # 1.3.3 -> 1.3.4
+./release.sh minor            # 1.3.3 -> 1.4.0
+./release.sh major            # 1.3.3 -> 2.0.0
 ./release.sh minor --pre-release</div>
 
     <p>The script verifies a clean working tree, updates
     <code>version.properties</code>, commits, tags, and writes release
-    notes. Publishing itself is handled by GitHub Actions, which uploads a
-    signed APK for sideloading on every release tag — the Play Console
-    upload steps in <code>RELEASE_PROCESS.md</code> are reserved for a
-    future Play Store stage.</p>
+    notes. Publishing itself is handled by GitHub Actions, which on every
+    release tag uploads the signed APK to the GitHub release, mirrors it to
+    <a href="https://pevplugshare.a42r.com/download/PEVPlugShare.apk">download/PEVPlugShare.apk</a>,
+    and ships the AAB to the Google Play internal testing track.</p>
 
     <h2>Project layout</h2>
     <div class="code-block">app/src/main/java/com/a42r/pevplugshare/
