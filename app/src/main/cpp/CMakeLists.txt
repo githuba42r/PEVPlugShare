@@ -51,6 +51,11 @@ endif()
 find_library(log-lib log)
 target_link_libraries(${CMAKE_PROJECT_NAME} ${log-lib})
 
+# 16 KB page-size support: NDK r26 and older link shared libraries with 4 KB
+# LOAD alignment, which Google Play flags as an app-compatibility warning for
+# apps targeting SDK 35+. (androidx.camera ships its own libs aligned already.)
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Wl,-z,max-page-size=16384")
+
 # Strip debug symbols in release builds for additional security
 if(CMAKE_BUILD_TYPE MATCHES Release)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s")

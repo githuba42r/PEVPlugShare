@@ -132,6 +132,53 @@ jobs:
           cp app/build/outputs/bundle/release/app-release.aab "play/PEVPlugShare-${TAG}.aab"
           ls -l dist/ play/
 
+      - name: Verify 16 KB page-size compatibility
+        run: |
+          # Google Play flags ELF files with 4 KB-aligned LOAD segments as an
+          # app-compatibility warning for apps targeting SDK 35+. Fail the
+          # release before anything is published if a bundled .so regresses.
+          work=$(mktemp -d)
+          fail=0
+          total=0
+          scan() {
+            local dir=$1 label=$2 so rel aligns
+            while IFS= read -r so; do
+              rel=${so#"$dir"/}
+              aligns=$(readelf -lW "$so" 2>/dev/null | awk '/ LOAD /{print $NF}' | sort -u | tr '\n' ' ')
+              total=$((total + 1))
+              if printf '%s' "$aligns" | grep -q '0x1000'; then
+                echo "::error::$label: $rel has 4 KB LOAD alignment [$aligns]"
+                fail=1
+              else
+                echo "$label: $rel [$aligns]"
+              fi
+            done < <(find "$dir" -name '*.so' | sort)
+          }
+          for apk in dist/*.apk; do
+            [ -f "$apk" ] || continue
+            rm -rf "$work/apk"
+            mkdir -p "$work/apk"
+            unzip -qo "$apk" 'lib/*' -d "$work/apk" || true
+            scan "$work/apk" "$(basename "$apk")"
+          done
+          for aab in play/*.aab; do
+            [ -f "$aab" ] || continue
+            rm -rf "$work/aab"
+            mkdir -p "$work/aab"
+            unzip -qo "$aab" 'base/lib/*' -d "$work/aab" || true
+            scan "$work/aab" "$(basename "$aab")"
+          done
+          rm -rf "$work"
+          if [ "$total" -eq 0 ]; then
+            echo "::error::No native libraries found to check — packaging changed?"
+            exit 1
+          fi
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::Release blocked: bundled native libraries are not 16 KB aligned"
+            exit 1
+          fi
+          echo "Checked $total native libraries — all 16 KB page-size compatible"
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
