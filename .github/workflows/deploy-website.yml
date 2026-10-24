@@ -2,8 +2,8 @@ name: Deploy website
 
 # Mirrors website/ to the oracle-cloud web root served at
 # https://pevplugshare.a42r.com/ (nginx static vhost).
-# The download/ subdirectory (latest APK, uploaded by release.yml) is excluded
-# from the mirror so this sync never deletes the released APK.
+# Only download/PEVPlugShare.apk (the latest APK, uploaded by release.yml) is
+# excluded from the mirror, so this sync never deletes the released APK.
 #
 # Triggers:
 #   - push to the default branch touching website/**
@@ -79,11 +79,11 @@ jobs:
         run: |
           # Trailing slashes: copy the contents of website/ into DEPLOY_PATH.
           # --delete keeps the server an exact mirror of the repo directory.
-          # download/ holds the APK published by release.yml (it is not in the
-          # repo), and rsync never deletes excluded paths — so the release copy
-          # survives every website deploy.
+          # download/ exists in the repo (website/download/.gitkeep), so the
+          # mirror creates it; only the APK that release.yml drops in there is
+          # excluded, and rsync never deletes excluded paths.
           rsync -rlvz --delete --chmod=D755,F644 \
-            --exclude 'download/' \
+            --exclude 'download/PEVPlugShare.apk' \
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
             website/ "$USER@$HOST:$DEPLOY_PATH/"
 

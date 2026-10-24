@@ -170,17 +170,19 @@ jobs:
           printf '%s\n' "$KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          SSH_OPTS=(-i "$HOME/.ssh/deploy_key" -o StrictHostKeyChecking=yes)
           REMOTE_DIR="$DEPLOY_PATH/download"
-          REMOTE_APK="$REMOTE_DIR/PEVPlugShare.apk"
           APK_URL="https://pevplugshare.a42r.com/download/PEVPlugShare.apk"
 
-          # download/ is excluded from the website mirror rsync (deploy-website.yml),
-          # so this upload is the only copy on the server. Write to a temp name, then
-          # rename, so visitors never fetch a half-written APK.
-          ssh "${SSH_OPTS[@]}" "$USER@$HOST" "mkdir -p '$REMOTE_DIR'"
-          scp "${SSH_OPTS[@]}" dist/PEVPlugShare-latest.apk "$USER@$HOST:$REMOTE_DIR/.PEVPlugShare.apk.tmp"
-          ssh "${SSH_OPTS[@]}" "$USER@$HOST" "mv '$REMOTE_DIR/.PEVPlugShare.apk.tmp' '$REMOTE_APK'"
+          # The deploy key is restricted to rsync (/usr/bin/rrsync forced
+          # command), so ssh/scp are rejected — publish over rsync only.
+          # download/ itself is created by the website mirror from
+          # website/download/.gitkeep; deploy-website.yml excludes only this APK
+          # file, so --delete never removes it. rsync stages a temp file and
+          # renames, so visitors never fetch a half-written APK.
+          mkdir -p dist/site
+          cp dist/PEVPlugShare-latest.apk dist/site/
+          rsync -rlvz -e "ssh -i $HOME/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
+            dist/site/ "$USER@$HOST:$REMOTE_DIR/"
           echo "Published $REMOTE_DIR/PEVPlugShare.apk"
 
           if [ -n "$CF_TOKEN" ] && [ -n "$CF_ZONE" ]; then
