@@ -37,6 +37,7 @@ concurrency:
 
 env:
   DEPLOY_PATH: ${{ vars.WEBSITE_DEPLOY_PATH || '/opt/apps/pevplugshare/website' }}
+  NOTIFY_ENABLED: ${{ secrets.RELEASE_NOTIFY_EMAIL != '' && secrets.SMTP_HOST != '' && secrets.SMTP_USER != '' && secrets.SMTP_PASS != '' && secrets.SMTP_FROM != '' }}
 
 jobs:
   deploy:
@@ -134,3 +135,20 @@ jobs:
           if [ "$code" = "404" ]; then
             echo "::warning::$apk not published yet — run the Release workflow"
           fi
+
+      - name: Send success email
+        if: env.NOTIFY_ENABLED == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT || 465 }}
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASS }}
+          from: "GitHub Actions <${{ secrets.SMTP_FROM }}>"
+          to: ${{ secrets.RELEASE_NOTIFY_EMAIL }}
+          subject: "[PEVPlugShare] website deployed"
+          html_body: |
+            <h2>PEVPlugShare — website deployed</h2>
+            <p>The website was published to <a href="https://pevplugshare.a42r.com/" target="_blank">https://pevplugshare.a42r.com/</a>
+            (commit ${{ github.sha }}, smoke test passed).</p>
+          convert_markdown: false

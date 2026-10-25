@@ -54,6 +54,7 @@ concurrency:
 
 env:
   RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || github.event.inputs.tag }}
+  NOTIFY_ENABLED: ${{ secrets.RELEASE_NOTIFY_EMAIL != '' && secrets.SMTP_HOST != '' && secrets.SMTP_USER != '' && secrets.SMTP_PASS != '' && secrets.SMTP_FROM != '' }}
 
 jobs:
   release:
@@ -315,3 +316,47 @@ jobs:
           tracks: ${{ vars.PLAY_TRACK || 'internal' }}
           status: ${{ vars.PLAY_RELEASE_STATUS || 'completed' }}
           whatsNewDirectory: dist/whatsnew
+
+      - name: Export release notes for the notification email
+        if: env.RELEASE_TAG != '' && env.NOTIFY_ENABLED == 'true'
+        run: |
+          {
+            echo "RELEASE_NOTES_HTML<<NOTES_EOF"
+            python3 -c 'import html,sys; print(html.escape(open(sys.argv[1]).read().strip()))' \
+              dist/whatsnew/whatsnew-en-US 2>/dev/null || true
+            echo "NOTES_EOF"
+          } >> "$GITHUB_ENV"
+
+      - name: Send success email
+        if: env.RELEASE_TAG != '' && env.NOTIFY_ENABLED == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT || 465 }}
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASS }}
+          from: "GitHub Actions <${{ secrets.SMTP_FROM }}>"
+          to: ${{ secrets.RELEASE_NOTIFY_EMAIL }}
+          subject: "[PEVPlugShare] ${{ env.RELEASE_TAG }} built & released"
+          html_body: |
+            <h2>PEVPlugShare — release ${{ env.RELEASE_TAG }} is built and published</h2>
+            <p>The signed release APK for tag <b>${{ env.RELEASE_TAG }}</b> was built, attached to a
+            <b>GitHub Release</b> and mirrored to the website download.</p>
+            <h3>Google Play</h3>
+            <p>AAB upload: ${{ steps.play.outputs.enabled == 'true' && 'uploaded' || 'skipped (PLAY_SERVICE_ACCOUNT_JSON not configured)' }}.</p>
+            <p><u>Links</u></p>
+            <ul>
+              <li><b>GitHub Release</b> (download APK / release notes):
+                <a href="${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.RELEASE_TAG }}">
+                  ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.RELEASE_TAG }}</a></li>
+              <li><b>Website download</b> (always latest APK):
+                <a href="https://pevplugshare.a42r.com/download/PEVPlugShare.apk" target="_blank">https://pevplugshare.a42r.com/download/PEVPlugShare.apk</a></li>
+              <li><b>Build log:</b>
+                <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">
+                  ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}</a></li>
+              <li><b>Google Play Console</b> (review / roll out the release):
+                <a href="${{ secrets.PLAY_CONSOLE_LINK || 'https://play.google.com/console/' }}" target="_blank">Open console</a></li>
+            </ul>
+            <h3>Release notes</h3>
+            <pre>${{ env.RELEASE_NOTES_HTML }}</pre>
+          convert_markdown: false
